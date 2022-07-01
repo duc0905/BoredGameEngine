@@ -2,18 +2,25 @@
 
 void IGame::Loop()
 {
-	while (!Window_->ShouldClose())
+	Window& window_ = Get<Window>();
+	Input& input_ = Get<Input>();
+	World& world_ = Get<World>();
+	Renderer& renderer_ = Get<Renderer>();
+
+	std::cout << "Start running" << std::endl;
+
+	while (!Get<Window>().ShouldClose())
 	{
 		// Poll input
-		Input_->PollEvents();
+		input_.PollEvents();
 
 		// Update world
-		World_->Update(0.01f);
+		world_.Update(0.01f);
 
 		// Render
-		Renderer_->Render();
+		renderer_.Render();
 
-		Window_->SwapBuffer();
+		window_.SwapBuffer();
 	}
 }
 
@@ -24,26 +31,6 @@ void IGame::Run()
 	Stop();
 }
 
-void IGame::CreateWorld()
+IGame::~IGame()
 {
-	World_ = std::make_unique<World>(this);
-	World_->Init();
-}
-
-void IGame::CreateWindow(const unsigned int& width, const unsigned int& height, const std::string& title)
-{
-	Window_ = std::make_unique<Window>(this, width, height, title);
-	Window_->Init();
-}
-
-void IGame::InitInput()
-{
-	Input_ = std::make_unique<Input>(this, GetWindow());
-	Input_->Init();
-}
-
-void IGame::InitRenderer()
-{
-	Renderer_ = std::make_unique<Renderer>(this);
-	Renderer_->Init();
 }

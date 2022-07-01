@@ -2,12 +2,8 @@
 
 VertexArray::VertexArray()
 {
-	unsigned int tempId;
 	std::cout << "Vert arr constructor" << std::endl;
-	glGenVertexArrays(1, &tempId);
-	ID = tempId;
-	std::cout << &ID << std::endl;
-	std::cout << "Vert arr constructor end" << std::endl;
+	glGenVertexArrays(1, &ID);
 }
 
 VertexArray::~VertexArray()
@@ -24,15 +20,11 @@ void VertexArray::AddVertexBuffer(VertexBuffer& vb)
 
 	uint16_t stride = layout.GetStride();
 	int index = 0;
-	std::cout << "===================" << std::endl;
-	std::cout << (int)stride << std::endl;
 	for (auto comp : layout) {
-		std::cout << comp.Name << ": " << (int)comp.Count << " " << (int)comp.Offset << std::endl;
 		glEnableVertexArrayAttrib(ID, index);
 		glVertexAttribPointer(index, comp.Count, GetOpenGLTypeOf(comp.Type), comp.Normalized, stride, (void*)comp.Offset);
 		index++;
 	}
-	std::cout << "===================" << std::endl;
 	vb.Unbind();
 }
 

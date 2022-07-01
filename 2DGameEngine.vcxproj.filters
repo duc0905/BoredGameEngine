@@ -99,6 +99,7 @@
     <ClInclude Include="src\Renderer\VertexBuffer.h" />
     <ClInclude Include="src\Renderer\ShaderClass.h" />
     <ClInclude Include="src\Actor\Component.h" />
+    <ClInclude Include="src\Utils\Locator.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\GLFW\lib-vc2022\glfw3.lib" />

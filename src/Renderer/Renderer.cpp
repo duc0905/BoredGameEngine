@@ -4,7 +4,16 @@
 
 void Renderer::Init()
 {
-	std::cout << "Renderer Init" << std::endl;
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+		glfwTerminate();
+		std::cout << "Failed to initialize GLAD" << std::endl;
+	}
+	else {
+		std::cout << "Initialized GLAD" << std::endl;
+	}
+
+	std::cout << "OpenGL version: " << (char*)glGetString(GL_VERSION) << std::endl;
+
 	quadDrawer_.Init();
 }
 
@@ -44,26 +53,27 @@ void Renderer::QuadDrawer::Init()
 		0, 2, 3
 	};
 
-	ib_ = IndexBuffer(indices, sizeof(indices), GL_STATIC_DRAW);
-	vb_ = VertexBuffer(vertices, sizeof(vertices), GL_STATIC_DRAW);
-	vb_.PrintData();
+	va_ = std::make_unique<VertexArray>();
+	ib_ = std::make_unique<IndexBuffer>(indices, sizeof(indices), GL_STATIC_DRAW);
+	vb_ = std::make_unique<VertexBuffer>(vertices, sizeof(vertices), GL_STATIC_DRAW);
+	//vb_->PrintData();
 	BufferLayout bl{
 		{ VertLayCompType::Float3, "Position", GL_FALSE},
 		{ VertLayCompType::Float4, "Color", GL_FALSE} };
-	vb_.SetLayout(bl);
-	va_.AddVertexBuffer(vb_);
+	vb_->SetLayout(bl);
+	va_->AddVertexBuffer(*vb_);
 
-	va_.Unbind();
-	vb_.Unbind();
-	ib_.Unbind();
+	va_->Unbind();
+	vb_->Unbind();
+	ib_->Unbind();
 }
 
 void Renderer::QuadDrawer::Draw(const glm::vec2& pos, const glm::vec2& size, const glm::vec4& color)
 {
 	shader_.Activate();
-	va_.Bind();
-	vb_.Bind();
-	ib_.Bind();
+	va_->Bind();
+	vb_->Bind();
+	ib_->Bind();
 
 	glm::mat4 Model = glm::mat4(1.0f);
 	Model = glm::scale(Model, glm::vec3(size, 1.0f));

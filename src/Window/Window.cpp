@@ -33,7 +33,7 @@ void Window::Init()
     /* Make the window's context current */
     glfwMakeContextCurrent(Window_);
 
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+    /*if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         glfwTerminate();
         std::cout << "Failed to initialize GLAD" << std::endl;
     }
@@ -41,5 +41,5 @@ void Window::Init()
         std::cout << "Initialized GLAD" << std::endl;
     }
 
-    std::cout << "OpenGL version: " << (char*)glGetString(GL_VERSION) << std::endl;
+    std::cout << "OpenGL version: " << (char*)glGetString(GL_VERSION) << std::endl;*/
 }

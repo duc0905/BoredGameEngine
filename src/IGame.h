@@ -1,27 +1,38 @@
 #pragma once
 #include <memory>
 #include <vector>
+#include "Utils/Locator.h"
+
 #include "World/World.h"
 #include "Window/Window.h"
 #include "Input/Input.h"
 #include "Renderer/Renderer.h"
 
-class IGame
+class IGame : public Locator<System>
 {
 private:
 	//std::vector<std::unique_ptr<Level>> Levels_;
-	std::unique_ptr<World> World_;
+	/*std::unique_ptr<World> World_;
 	std::unique_ptr<Window> Window_;
 	std::unique_ptr<Input> Input_;
-	std::unique_ptr<Renderer> Renderer_;
-
+	std::unique_ptr<Renderer> Renderer_;*/
 	virtual void Init() = 0;
 	void Loop();
 	virtual void Stop() = 0;
 public:
 	void Run();
+	virtual ~IGame();
 
-	inline const World& GetWorld() { return *World_.get(); };
+	template <class SubSys, class ... Args>
+	inline void AddSystem(Args&& ... args)
+	{
+		Add<SubSys>(args...);
+		Get<SubSys>().Init();
+	}
+	/*template <class Sys, class ...Args>
+	void CreateSystem(Args&&...);*/
+
+	/*inline const World& GetWorld() { return *World_.get(); };
 	void CreateWorld();
 	inline void DeleteWorld() { World_.reset(); }
 
@@ -35,6 +46,6 @@ public:
 
 	void InitRenderer();
 	inline const Renderer& GetRenderer() { return *Renderer_.get(); }
-	inline void DeleteRenderer() { Renderer_.reset(); }
+	inline void DeleteRenderer() { Renderer_.reset(); }*/
 };
 

@@ -1,5 +1,8 @@
 #pragma once
+#include <memory>
+
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/common.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -18,9 +21,9 @@ private:
     //Shader defaultShader_;
     
     class QuadDrawer {
-        VertexArray va_;
-        VertexBuffer vb_;
-        IndexBuffer ib_;
+        std::unique_ptr<VertexArray> va_;
+        std::unique_ptr<VertexBuffer> vb_;
+        std::unique_ptr<IndexBuffer> ib_;
         Shader shader_;
     public:
         QuadDrawer() = default;

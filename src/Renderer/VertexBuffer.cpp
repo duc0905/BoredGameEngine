@@ -28,7 +28,6 @@ void VertexBuffer::Unbind()
 
 void VertexBuffer::Delete()
 {
-	std::cout << "DELETETETETET" << std::endl;
 	glDeleteBuffers(1, &ID);
 }
 
