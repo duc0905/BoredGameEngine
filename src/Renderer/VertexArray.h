@@ -9,8 +9,10 @@ class VertexBuffer;
 
 class VertexArray
 {
+private:
 	GLuint ID;
 	std::vector<VertexBuffer> _vbs;
+	unsigned int layoutCount_ = 0;
 public:
 
 	// Constructor that generates a VertexArray ID

@@ -10,34 +10,35 @@ template <class Ty>
 class Locator
 {
 private:
-	std::map<std::type_index, std::unique_ptr<Ty>> services_;
+	std::map<std::type_index, std::shared_ptr<Ty>> services_;
 public:
 	template <class SubTy, class ... Args,
 		std::enable_if_t<!std::is_array_v<SubTy>, int> = 0,
 		std::enable_if_t<std::is_constructible_v<SubTy, Args&&...>, int> = 0,
 		std::enable_if_t<std::is_base_of_v<Ty, SubTy>, int> = 0>
-	inline void Add(Args&&... args)
+	inline std::shared_ptr<SubTy> Add(Args&&... args)
 	{
 		if (services_[typeid(SubTy)])
 		{
 			std::cout << "Warning: Service '" << typeid(SubTy).name() << "' has already been added!" << std::endl;
-			return;
+			return std::dynamic_pointer_cast<SubTy>(services_[typeid(SubTy)]);
 		}
 
-		std::unique_ptr<Ty> newService(new SubTy(std::forward<Args>(args)...));
-		services_[typeid(SubTy)] = std::move(newService);
+		std::shared_ptr<SubTy> newService = std::make_shared<SubTy>(std::forward<Args>(args)...);
+		services_[typeid(SubTy)] = newService;
+		return newService;
 	};
 
 	template <class SubTy, std::enable_if_t<std::is_base_of_v<Ty, SubTy>, int> = 0>
-	inline SubTy& Get() const
+	inline std::shared_ptr<SubTy> Get() const
 	{
-		if (services_.find(typeid(SubTy)) == services_.end())
+		auto it = services_.find(typeid(SubTy));
+		if (it == services_.end())
 		{
-			//std::cout << "Fatal: Service '" << typeid(SubTy).name() << "' does not exist!" << std::endl;
 			throw std::logic_error("Fatal: Service '" + std::string(typeid(SubTy).name()) + "' does not exist!");
 		}
 
-		return dynamic_cast<SubTy&>(*(services_.find(typeid(SubTy)))->second);
+		return std::dynamic_pointer_cast<SubTy>(it->second);
 	};
 
 	template <class SubTy, std::enable_if_t<std::is_base_of_v<Ty, SubTy>, int> = 0>

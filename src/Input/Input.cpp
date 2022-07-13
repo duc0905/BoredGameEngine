@@ -1,7 +1,15 @@
 #include "Input.h"
+#include <vector>
 
-Input::Input(IGame* game, const Window& window)
-	: System(game), Window_(window)
+double Input::mouseX_ = 0.0f;
+double Input::mouseY_ = 0.0f;
+bool Input::leftMouseDown_ = false;
+bool Input::middleMouseDown_ = false;
+bool Input::rightMouseDown_ = false;
+std::array<bool, 256> Input::keyDown_ = {false};
+
+Input::Input(const Window& window)
+	: Window_(window)
 {
 }
 
@@ -12,6 +20,7 @@ void Input::PollEvents()
 
 void Input::Init()
 {
+	keyDown_.fill(false);
 	SetupCallbacks();
 }
 
@@ -27,34 +36,44 @@ void Input::SetupCallbacks()
 
 void Input::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+	if (GLFW_KEY_A <= key && key <= GLFW_KEY_Z)
+	{
+		int mappedKeyPos = key - GLFW_KEY_A + (int)('a');
+		if (action == GLFW_PRESS)
+			keyDown_[mappedKeyPos] = true;
+		else if (action == GLFW_RELEASE)
+			keyDown_[mappedKeyPos] = false;
+	}
 
+	if (GLFW_KEY_0 <= key && key <= GLFW_KEY_9)
+	{
+		int mappedKeyPos = key - GLFW_KEY_0 + (int)('0');
+		if (action == GLFW_PRESS)
+			keyDown_[mappedKeyPos] = true;
+		else if (action == GLFW_RELEASE)
+			keyDown_[mappedKeyPos] = false;
+	}
+	// Broadcast to listeners
 }
 
 void Input::MousePosCallback(GLFWwindow* window, double x, double y)
 {
-	//std::cout << "Mouse pos: " << x << " " << y << std::endl;
+	mouseX_ = x;
+	mouseY_ = y;
+	// Broadcast to listeners
 }
 
 void Input::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
-	//std::cout << "Mouse pos: " << x << " " << y << std::endl;
-	std::cout << (action == GLFW_PRESS ? "Press " : "Release ");
-	switch (button)
-	{
-	case GLFW_MOUSE_BUTTON_LEFT:
-		std::cout << "left mouse" << std::endl;
-		break;
-	case GLFW_MOUSE_BUTTON_RIGHT:
-		std::cout << "right mouse" << std::endl;
-		break;
-	}
+	// Broadcast to listeners
 }
 
 void Input::MouseEnterCallback(GLFWwindow* window, int entered)
 {
-	//std::cout << "Mouse : " << (entered ? "Entered" : "Left") << std::endl;
+	// Broadcast to listeners
 }
 
 void Input::MouseScrollCallback(GLFWwindow* window, double x, double y)
 {
+	// Broadcast to listeners
 }

@@ -11,7 +11,7 @@ class Window : public System
 	unsigned int Width_, Height_;
 	std::string Title_;
 public:
-	Window(IGame* game, const unsigned int& width, const unsigned int& height, const std::string& title = "My game");
+	Window(const unsigned int& width, const unsigned int& height, const std::string& title = "My game");
 	~Window();
 
 	inline const unsigned int GetWidth() const { return Width_; }

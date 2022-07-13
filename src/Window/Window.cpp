@@ -1,12 +1,13 @@
 #include "Window.h"
 
-Window::Window(IGame* game, const unsigned int& width, const unsigned int& height, const std::string& title)
-    : System(game), Width_(width), Height_(height), Title_(title)
+Window::Window(const unsigned int& width, const unsigned int& height, const std::string& title)
+    : Width_(width), Height_(height), Title_(title)
 {
 }
 
 Window::~Window()
 {
+    std::cout << "Cleaning up Window!" << std::endl;
     glfwTerminate();
 }
 
@@ -32,14 +33,4 @@ void Window::Init()
 
     /* Make the window's context current */
     glfwMakeContextCurrent(Window_);
-
-    /*if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        glfwTerminate();
-        std::cout << "Failed to initialize GLAD" << std::endl;
-    }
-    else {
-        std::cout << "Initialized GLAD" << std::endl;
-    }
-
-    std::cout << "OpenGL version: " << (char*)glGetString(GL_VERSION) << std::endl;*/
 }

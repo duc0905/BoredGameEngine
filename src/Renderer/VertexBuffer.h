@@ -5,7 +5,7 @@
 
 class VertexArray;
 
-enum class VertLayCompType {
+enum VertLayCompType {
 	None = 0,
 	Bool,
 	Float, Float2, Float3, Float4,
@@ -72,7 +72,7 @@ struct BufferLayoutComp {
 	unsigned int Offset;
 	bool Normalized;
 
-	BufferLayoutComp(VertLayCompType type, const std::string& name, bool normalized)
+	BufferLayoutComp(const std::string& name, VertLayCompType type, bool normalized)
 		: Name(name), Type(type), Size(GetSizeOf(type)), Count(GetCountOf(type)), Offset(0), Normalized(normalized) {}
 
 
