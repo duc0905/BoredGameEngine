@@ -10,9 +10,6 @@ void World::Init()
 
 void World::Update(float dt)
 {
-	auto transComp = actors_.begin()->get()->FindComponent<TransformComponent>();
-	auto curRotation = transComp->GetRotation();
-	transComp->Rotate(curRotation + glm::vec3(glm::pi<float>() / 180 * dt * 10));
 }
 
 void World::AddActor(std::shared_ptr<Actor> actor)

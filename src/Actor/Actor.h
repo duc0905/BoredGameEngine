@@ -11,7 +11,6 @@ class Actor
 {
 private:
 	std::map<std::type_index, std::shared_ptr<Component>> components_;
-	//Component& FindComponent(const std::type_index& ti);
 public:
 	Actor();
 

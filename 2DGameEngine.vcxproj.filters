@@ -47,12 +47,6 @@
     <ClCompile Include="src\IGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Client\Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Client\MyGame.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\OurscraftEngine\Dependencies\GLAD\include\glad\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -71,7 +65,43 @@
     <ClCompile Include="src\Renderer\ShaderClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Actor\Component.cpp">
+    <ClCompile Include="src\Components\Component.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utils\Helper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer\Mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Actor\BaseCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Components\TransformComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Components\MeshComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Actor\OrthoCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Components\CameraComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Components\OrthoCameraComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Components\InputComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Input\Context.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Client\MyGame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Client\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -89,23 +119,31 @@
       <Filter>Playground\MessageBus</Filter>
     </ClInclude>
     <ClInclude Include="src\IGame.h" />
-    <ClInclude Include="Dependencies\GLFW\include\GLFW\glfw3.h" />
-    <ClInclude Include="Dependencies\GLFW\include\GLFW\glfw3native.h" />
-    <ClInclude Include="Client\MyGame.h" />
     <ClInclude Include="src\System.h" />
     <ClInclude Include="src\Renderer\Renderer.h" />
     <ClInclude Include="src\Renderer\IndexBuffer.h" />
     <ClInclude Include="src\Renderer\VertexArray.h" />
     <ClInclude Include="src\Renderer\VertexBuffer.h" />
     <ClInclude Include="src\Renderer\ShaderClass.h" />
-    <ClInclude Include="src\Actor\Component.h" />
+    <ClInclude Include="src\Components\Component.h" />
     <ClInclude Include="src\Utils\Locator.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="Dependencies\GLFW\lib-vc2022\glfw3.lib" />
+    <ClInclude Include="src\Utils\Helper.h" />
+    <ClInclude Include="src\Renderer\Mesh.h" />
+    <ClInclude Include="src\Actor\BaseCamera.h" />
+    <ClInclude Include="src\Components\TransformComponent.h" />
+    <ClInclude Include="src\Components\MeshComponent.h" />
+    <ClInclude Include="src\Actor\OrthoCamera.h" />
+    <ClInclude Include="src\Components\CameraComponent.h" />
+    <ClInclude Include="src\Components\OrthoCameraComponent.h" />
+    <ClInclude Include="src\Components\InputComponent.h" />
+    <ClInclude Include="src\Utils\LinkedList.h" />
+    <ClInclude Include="src\Input\Context.h" />
+    <ClInclude Include="Client\MyGame.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\default.frag" />
     <None Include="res\shaders\default.vert" />
+    <None Include="res\shaders\mymesh.vert" />
+    <None Include="res\shaders\mymesh.frag" />
   </ItemGroup>
 </Project>
