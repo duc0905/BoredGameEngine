@@ -20,7 +20,7 @@ void Input::PollEvents()
 
 void Input::Init()
 {
-	keyDown_.fill(false);
+	//keyDown_.fill(false);
 	SetupCallbacks();
 }
 

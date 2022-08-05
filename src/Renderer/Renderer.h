@@ -29,7 +29,7 @@ class Renderer :
 private:
     //Shader defaultShader_;
     
-    class QuadDrawer {
+    /*class QuadDrawer {
     private:
         std::unique_ptr<VertexArray> va_;
         std::unique_ptr<VertexBuffer> vb_;
@@ -39,10 +39,10 @@ private:
         QuadDrawer() = default;
         void Init();
         void Draw(const glm::vec2& pos, const glm::vec2& size, const glm::vec4& color);
-    };
+    };*/
 
     Shader meshShader_;
-    QuadDrawer quadDrawer_;
+    //QuadDrawer quadDrawer_;
 public:
     Renderer() {};
     virtual ~Renderer() override
@@ -51,7 +51,7 @@ public:
     }
 
     void Render(World& world);
-    void DrawQuad(const glm::vec2& pos, const glm::vec2& size, const glm::vec3& color);
+    //void DrawQuad(const glm::vec2& pos, const glm::vec2& size, const glm::vec3& color);
 
     void Draw(const Mesh& mesh);
     void Draw(const Actor& actor);

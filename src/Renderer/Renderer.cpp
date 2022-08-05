@@ -16,7 +16,7 @@ void Renderer::Init()
 
 	glEnable(GL_DEPTH_TEST);
 
-	quadDrawer_.Init();
+	//quadDrawer_.Init();
 	//cube_.LoadModel("cube.obj");
 	/*std::shared_ptr<Mesh> cubeMesh = std::make_shared<Mesh>();
 	cubeMesh->LoadModel("cube.obj");
@@ -42,10 +42,10 @@ void Renderer::Render(World& world)
 	}
 }
 
-void Renderer::DrawQuad(const glm::vec2& pos, const glm::vec2& size, const glm::vec3& color)
-{
-	quadDrawer_.Draw(pos, size, glm::vec4(color, 1.0f));
-}
+//void Renderer::DrawQuad(const glm::vec2& pos, const glm::vec2& size, const glm::vec3& color)
+//{
+//	quadDrawer_.Draw(pos, size, glm::vec4(color, 1.0f));
+//}
 
 void Renderer::Draw(const Mesh& mesh)
 {
@@ -94,7 +94,7 @@ void Renderer::Draw(const Actor& actor)
 }
 
 /* ========== QuadDrawer =========== */
-
+/*
 void Renderer::QuadDrawer::Init()
 {
 	shader_ = Shader("default.vert", "default.frag");

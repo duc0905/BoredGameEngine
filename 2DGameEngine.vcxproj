@@ -150,7 +150,6 @@
   <ItemGroup>
     <ClCompile Include="..\OurscraftEngine\Dependencies\GLAD\include\glad\glad.c" />
     <ClCompile Include="Client\Main.cpp" />
-    <ClCompile Include="Client\MyGame.cpp" />
     <ClCompile Include="src\Components\InputComponent.cpp" />
     <ClCompile Include="src\Components\OrthoCameraComponent.cpp" />
     <ClCompile Include="src\Components\CameraComponent.cpp" />
@@ -172,9 +171,9 @@
     <ClCompile Include="src\Window\Window.cpp" />
     <ClCompile Include="src\World\World.cpp" />
     <ClCompile Include="src\Components\TransformComponent.cpp" />
+    <ClCompile Include="vendors\glad.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Client\MyGame.h" />
     <ClInclude Include="src\Input\Context.h" />
     <ClInclude Include="src\Utils\LinkedList.h" />
     <ClInclude Include="src\Components\InputComponent.h" />
