@@ -24,6 +24,10 @@ void Input::BindRange(const std::string& name, RangeCallback)
 {
 }
 
+void Input::AddContext(Context* con)
+{
+}
+
 void Input::RemoveContext(Context* con)
 {
 }
