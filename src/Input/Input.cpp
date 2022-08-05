@@ -40,7 +40,7 @@ void Input::DeactivateContext(Context* con)
 {
 }
 
-void Input::ResetPriority(Context* con, int priorityLevel = 10000)
+void Input::ResetPriority(Context* con, int priorityLevel)
 {
 }
 

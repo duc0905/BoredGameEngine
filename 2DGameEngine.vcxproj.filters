@@ -47,9 +47,6 @@
     <ClCompile Include="src\IGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\OurscraftEngine\Dependencies\GLAD\include\glad\glad.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Renderer\Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -98,10 +95,13 @@
     <ClCompile Include="src\Input\Context.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Client\MyGame.cpp">
+    <ClCompile Include="Client\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Client\Main.cpp">
+    <ClCompile Include="vendors\glad.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Client\CubeActor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -138,7 +138,7 @@
     <ClInclude Include="src\Components\InputComponent.h" />
     <ClInclude Include="src\Utils\LinkedList.h" />
     <ClInclude Include="src\Input\Context.h" />
-    <ClInclude Include="Client\MyGame.h" />
+    <ClInclude Include="Client\CubeActor.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\default.frag" />
