@@ -8,22 +8,30 @@
 #include "Input/Input.h"
 #include "Renderer/Renderer.h"
 
-class IGame : public Locator<System>
+class IGame
 {
 private:
-	virtual void Init() = 0;
-	void Loop();
-	virtual void Stop() = 0;
-public:
-	void Run();
-	virtual ~IGame();
+	static void Loop();
+	static void Stop();
 
-	template <class SubSys, class ... Args>
-	inline std::shared_ptr<SubSys> AddSystem(Args&& ... args)
-	{
-		std::shared_ptr<SubSys> ss = Add<SubSys>(args...);
-		ss->Init();
-		return ss;
-	}
+	static std::shared_ptr<World> worldSystem_;
+	static std::shared_ptr<Window> windowSystem_;
+	static std::shared_ptr<Input> inputSystem_;
+	static std::shared_ptr<Renderer> rendererSystem_;
+public:
+	static void Run();
+	virtual ~IGame() = delete;
+
+	static World& GetWorld();
+	static void SetWorld(World* world);
+
+	static Window& GetWindow();
+	static void SetWindow(Window* window);
+
+	static Input& GetInput();
+	static void SetInput(Input* input);
+
+	static Renderer& GetRenderer();
+	static void SetRenderer(Renderer* renderer);
 };
 

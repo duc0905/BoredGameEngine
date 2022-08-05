@@ -28,11 +28,7 @@ class Input;
 * Multiple contexts can be active at once
 * Using Chain of responsibility pattern
 */
-enum ActionEnum
-{
-	ACTION,
-	RANGE
-};
+
 
 class Context
 {

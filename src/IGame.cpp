@@ -1,36 +1,80 @@
 #include "IGame.h"
 
+std::shared_ptr<Input> IGame::inputSystem_ = nullptr;
+std::shared_ptr<World> IGame::worldSystem_ = nullptr;
+std::shared_ptr<Window> IGame::windowSystem_ = nullptr;
+std::shared_ptr<Renderer> IGame::rendererSystem_ = nullptr;
+
 void IGame::Loop()
 {
-	auto window_ = Get<Window>();
-	auto input_ = Get<Input>();
-	auto world_ = Get<World>();
-	auto renderer_ = Get<Renderer>();
+	auto window_ = IGame::GetWindow();
+	auto input_ = IGame::GetInput();
+	auto world_ = IGame::GetWorld();
+	auto renderer_ = IGame::GetRenderer();
 
 	std::cout << "Start running" << std::endl;
 
-	while (!window_->ShouldClose())
+	while (!window_.ShouldClose())
 	{
 		// Poll input
-		input_->PollEvents();
+		input_.PollEvents();
 
 		// Update world
-		world_->Update(0.01f);
+		world_.Update(0.01f);
 
 		// Render
-		renderer_->Render(*world_);
+		renderer_.Render(world_);
 
-		window_->SwapBuffer();
+		window_.SwapBuffer();
 	}
+}
+
+void IGame::Stop()
+{
 }
 
 void IGame::Run()
 {
-	Init();
 	Loop();
 	Stop();
 }
 
-IGame::~IGame()
+World& IGame::GetWorld()
 {
+	return *worldSystem_;
+}
+
+void IGame::SetWorld(World* world)
+{
+	worldSystem_ = std::shared_ptr<World>(world);
+}
+
+Window& IGame::GetWindow()
+{
+	return *windowSystem_;
+}
+
+void IGame::SetWindow(Window* window)
+{
+	windowSystem_ = std::shared_ptr<Window>(window);
+}
+
+Input& IGame::GetInput()
+{
+	return *inputSystem_;
+}
+
+void IGame::SetInput(Input* input)
+{
+	inputSystem_ = std::shared_ptr<Input>(input);
+}
+
+Renderer& IGame::GetRenderer()
+{
+	return *rendererSystem_;
+}
+
+void IGame::SetRenderer(Renderer* renderer)
+{
+	rendererSystem_ = std::shared_ptr<Renderer>(renderer);
 }
