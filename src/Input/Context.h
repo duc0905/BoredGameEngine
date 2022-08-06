@@ -2,24 +2,7 @@
 #include <iostream>
 #include <map>
 #include <string>
-
-namespace KeyInput
-{
-	enum Key
-	{};
-
-	enum Mod
-	{};
-
-	enum Action
-	{};
-}
-
-enum ActionEnum
-{
-	ACTION,
-	RANGE
-};
+#include "Constant.h"
 
 class Input;
 
@@ -47,6 +30,19 @@ private:
 	void Deactivate();
 public:
 	Context() = default;
+
+	void Debuggin() {
+		std::cout << "Printing Action Map" << std::endl;
+		for (const auto& elem : actionMap_) {
+			std::cout << elem.first.first << " " << elem.first.second << " " << elem.second << std::endl;
+		};
+
+		std::cout << "Printing Range Map" << std::endl;
+		for (const auto& elem : rangeMap_) {
+			std::cout << elem.first.first << " " << elem.first.second << " " << elem.second.first << " " << elem.second.second << std::endl;
+		};
+
+	}
 	
 	void AddActionMapping(KeyInput::Key key, KeyInput::Mod mods, const std::string& name);
 	void RemoveActionMapping(KeyInput::Key key, KeyInput::Mod mods);

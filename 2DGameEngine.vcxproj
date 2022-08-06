@@ -176,6 +176,7 @@
   <ItemGroup>
     <ClInclude Include="Client\CubeActor.h" />
     <ClInclude Include="src\Input\Context.h" />
+    <ClInclude Include="src\Input\Constant.h" />
     <ClInclude Include="src\Utils\LinkedList.h" />
     <ClInclude Include="src\Components\InputComponent.h" />
     <ClInclude Include="src\Components\OrthoCameraComponent.h" />

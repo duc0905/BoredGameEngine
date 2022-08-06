@@ -139,6 +139,7 @@
     <ClInclude Include="src\Utils\LinkedList.h" />
     <ClInclude Include="src\Input\Context.h" />
     <ClInclude Include="Client\CubeActor.h" />
+    <ClInclude Include="src\Input\Constant.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\default.frag" />
