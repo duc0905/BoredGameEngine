@@ -4,9 +4,16 @@
 #include "CubeActor.h"
 #include "../src/Input/Context.h"
 #include "../src/Input/Constant.h"
+#include "../src/Input/Input.h"
 
 //class MyAlocator : public Alocator<A>
 //{};
+
+void InputTesting()
+{
+	std::cout << "Running Input Testing Suites" << std::endl;
+	auto input = Input::GetInstance();
+}
 
 void ContextTesting()
 {

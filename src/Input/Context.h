@@ -18,12 +18,12 @@ class Context
 	friend class Input;
 
 private:
-	Context* next_;
+	std::shared_ptr<Context> next_;
 	unsigned int priority_;
 	bool isActive_;
 
-	std::map<std::pair<KeyInput::Key, KeyInput::Mod>, std::string> actionMap_;
-	std::map<std::pair<KeyInput::Key, KeyInput::Mod>, std::pair<std::string, float>> rangeMap_;
+	std::map<std::pair<KeyInput::Key, int>, std::string> actionMap_;
+	std::map<std::pair<KeyInput::Key, int>, std::pair<std::string, float>> rangeMap_;
 
 	void ResetPriority(int priority);
 	void Activate();
@@ -33,12 +33,13 @@ public:
 
 	void Debuggin();
 	
-	void AddActionMapping(KeyInput::Key key, KeyInput::Mod mods, const std::string& name);
-	void RemoveActionMapping(KeyInput::Key key, KeyInput::Mod mods);
+	void AddActionMapping(KeyInput::Key key, int mods, const std::string& name);
+	void RemoveActionMapping(KeyInput::Key key, int mods);
 
-	void AddRangeMapping(KeyInput::Key key, KeyInput::Mod mods, const std::string& name, const float& weight);
-	void RemoveRangeMapping(KeyInput::Key key, KeyInput::Mod mods);
+	void AddRangeMapping(KeyInput::Key key, int mods, const std::string& name, const float& weight);
+	void RemoveRangeMapping(KeyInput::Key key, int mods);
 
-	std::pair<ActionEnum, std::string> MapKey(KeyInput::Key key, KeyInput::Mod mods, KeyInput::Action);
+	std::string MapKeyAction(KeyInput::Key key, int mods);
+	std::string MapKeyRange(KeyInput::Key key, int mods);
 };
 

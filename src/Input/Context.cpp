@@ -29,7 +29,7 @@ void Context::Debuggin()
     }
 }
 
-void Context::AddActionMapping(KeyInput::Key key, KeyInput::Mod mods, const std::string& name)
+void Context::AddActionMapping(KeyInput::Key key, int mods, const std::string& name)
 {
     auto it = actionMap_.find({ key, mods });
 
@@ -40,7 +40,7 @@ void Context::AddActionMapping(KeyInput::Key key, KeyInput::Mod mods, const std:
     actionMap_[{key, mods}] = name;
 }
 
-void Context::AddRangeMapping(KeyInput::Key key, KeyInput::Mod mods, const std::string& name, const float& weight)
+void Context::AddRangeMapping(KeyInput::Key key, int mods, const std::string& name, const float& weight)
 {
     auto it = rangeMap_.find({ key, mods });
 
@@ -51,7 +51,7 @@ void Context::AddRangeMapping(KeyInput::Key key, KeyInput::Mod mods, const std::
     rangeMap_[{key, mods}] = { name, weight};
 }
 
-void Context::RemoveActionMapping(KeyInput::Key key, KeyInput::Mod mods)
+void Context::RemoveActionMapping(KeyInput::Key key, int mods)
 {
     auto it = actionMap_.find({ key, mods });
 
@@ -60,7 +60,7 @@ void Context::RemoveActionMapping(KeyInput::Key key, KeyInput::Mod mods)
         actionMap_.erase(it);
 }
 
-void Context::RemoveRangeMapping(KeyInput::Key key, KeyInput::Mod mods)
+void Context::RemoveRangeMapping(KeyInput::Key key, int mods)
 {
     auto it = rangeMap_.find({ key, mods });
 
@@ -69,7 +69,22 @@ void Context::RemoveRangeMapping(KeyInput::Key key, KeyInput::Mod mods)
         rangeMap_.erase(it);
 }
 
-std::pair<ActionEnum, std::string> Context::MapKey(KeyInput::Key key, KeyInput::Mod mods, KeyInput::Action)
+std::string Context::MapKeyAction(KeyInput::Key key, int mods)
 {
-    return std::pair<ActionEnum, std::string>();
+    auto it = actionMap_.find({ key, mods });
+    if (it != actionMap_.end() && isActive_)
+        return it->second;
+    if (next_)
+        return next_->MapKeyAction(key, mods);
+    return "";
+}
+
+std::string Context::MapKeyRange(KeyInput::Key key, int mods)
+{
+    auto it = rangeMap_.find({ key, mods });
+    if (it != rangeMap_.end() && isActive_)
+        return it->second.first;
+    if (next_)
+        return next_->MapKeyRange(key, mods);
+    return "";
 }
