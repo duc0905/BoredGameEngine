@@ -70,6 +70,6 @@ int RendererTesting()
 
 int main()
 {
-	ContextTesting();
-	return 0;
+	MyGame game;
+	game.Run();
 }
