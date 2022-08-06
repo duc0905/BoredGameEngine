@@ -36,8 +36,8 @@ public:
 	// Inherited via System
 	virtual void Init() override;
 
-	void BindAction(const std::string& name, ActionCallback);
-	void BindRange(const std::string& name, RangeCallback);
+	void BindAction(const std::string& name, ActionCallback func);
+	void BindRange(const std::string& name, RangeCallback func);
 	void AddContext(Context* con);
 	void RemoveContext(Context* con);
 	void ActivateContext(Context* con);

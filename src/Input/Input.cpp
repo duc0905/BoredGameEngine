@@ -16,12 +16,22 @@ void Input::Init()
 	SetupCallbacks();
 }
 
-void Input::BindAction(const std::string& name, ActionCallback)
+void Input::BindAction(const std::string& name, ActionCallback func)
 {
+	auto it = actionMap.find(name);
+	if (it != actionMap.end()) {
+		std::cout << "WARNING! Overwriting alias for action function" << std::endl;
+	};
+	actionMap[name] = func;
 }
 
-void Input::BindRange(const std::string& name, RangeCallback)
+void Input::BindRange(const std::string& name, RangeCallback func)
 {
+	auto it = rangeMap.find(name);
+	if (it != rangeMap.end()) {
+		std::cout << "WARNING! Overwriting alias for range function" << std::endl;
+	};
+	rangeMap[name] = func;
 }
 
 void Input::AddContext(Context* con)
