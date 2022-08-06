@@ -15,6 +15,20 @@ void Context::Deactivate()
     isActive_ = false;
 }
 
+void Context::Debuggin()
+{
+    std::cout << isActive_ << "AS ACTIVATION" << std::endl;
+    std::cout << "Printing Action Map" << std::endl;
+    for (const auto& elem : actionMap_) {
+        std::cout << elem.first.first << " " << elem.first.second << " " << elem.second << std::endl;
+    };
+
+    std::cout << "Printing Range Map" << std::endl;
+    for (const auto& elem : rangeMap_) {
+        std::cout << elem.first.first << " " << elem.first.second << " " << elem.second.first << " " << elem.second.second << std::endl;
+    }
+}
+
 void Context::AddActionMapping(KeyInput::Key key, KeyInput::Mod mods, const std::string& name)
 {
     auto it = actionMap_.find({ key, mods });

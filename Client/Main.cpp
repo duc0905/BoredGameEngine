@@ -31,6 +31,11 @@ void ContextTesting()
 	con->AddRangeMapping(KeyInput::KEY_3, KeyInput::MOD_SHIFT, "New_Range3", 10);
 	con->AddRangeMapping(KeyInput::KEY_1, KeyInput::MOD_SHIFT, "NEW_Range1", 0);
 	con->Debuggin();
+	std::cout << "Removing actions" << std::endl;
+	con->RemoveActionMapping(KeyInput::KEY_1, KeyInput::MOD_SHIFT);
+	con->RemoveActionMapping(KeyInput::KEY_1, KeyInput::MOD_SHIFT);
+	con->RemoveActionMapping(KeyInput::KEY_2, KeyInput::MOD_SHIFT);
+	con->Debuggin();
 }
 
 int RendererTesting()

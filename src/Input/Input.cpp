@@ -26,18 +26,58 @@ void Input::BindRange(const std::string& name, RangeCallback)
 
 void Input::AddContext(Context* con)
 {
+	if (headContext != nullptr) {
+		Context* cur = headContext.get();
+		while (cur->next_ != NULL) {
+			cur = cur->next_;
+		}
+		cur->next_ = con;
+		con->ResetPriority(cur->priority_ + 1);
+		delete cur;
+	}
+	else {
+		std::shared_ptr<Context> new_head(con);
+		headContext = new_head;
+	}
 }
 
 void Input::RemoveContext(Context* con)
 {
+	Context* cur = headContext.get();
+	if (cur != NULL) {
+		if ((cur->next_) != NULL) {
+			while ((cur->next_->next_) != NULL) {
+				cur = cur->next_;
+			}
+			cur->next_ = NULL;
+		}
+		headContext = nullptr;
+	}
+	delete cur;
 }
 
 void Input::ActivateContext(Context* con)
 {
+	Context* cur = headContext.get();
+	while (cur != NULL) {
+		if (cur == con) {
+			con->Activate();
+		}
+		cur = cur->next_;
+	}
+	delete cur;
 }
 
 void Input::DeactivateContext(Context* con)
 {
+	Context* cur = headContext.get();
+	while (cur != NULL) {
+		if (cur == con) {
+			con->Deactivate();
+		}
+		cur = cur->next_;
+	}
+	delete cur;
 }
 
 void Input::ResetPriority(Context* con, int priorityLevel)
