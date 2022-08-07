@@ -1,12 +1,12 @@
 //#include "MyGame.h"
-#include "../src/IGame.h"
+#include "IGame.h"
 
 //class MyAlocator : public Alocator<A>
 //{};
 
 int main()
 {
-	auto* window = new Window(800, 600, "Ourscraft");
+	/*auto* window = new Window(800, 600, "Ourscraft");
 	window->Init();
 	IGame::SetWindow(window);
 
@@ -22,5 +22,5 @@ int main()
 	world->Init();
 	IGame::SetWorld(world);
 
-	IGame::Run();
+	IGame::Run();*/
 }
