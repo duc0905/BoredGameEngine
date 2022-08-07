@@ -11,8 +11,45 @@
 
 void InputTesting()
 {
+	auto* window = new Window(800, 600, "Ourscraft");
+	window->Init();
+	IGame::SetWindow(window);
+
 	std::cout << "Running Input Testing Suites" << std::endl;
 	auto input = Input::GetInstance();
+	auto con1 = std::shared_ptr<Context>(new Context());
+	auto con2 = std::shared_ptr<Context>(new Context());
+	auto con3 = std::shared_ptr<Context>(new Context());
+	con1->AddActionMapping(KeyInput::KEY_A, 0, "String1 1");
+	con1->AddActionMapping(KeyInput::KEY_B, 0, "String1 2");
+	con1->AddActionMapping(KeyInput::KEY_C, 0, "String1 3");
+	input->AddContext(con1);
+	input->ActivateContext(con1);
+	input->EvaluateKey(KeyInput::KEY_A, KeyInput::REPEAT, 0);
+
+	auto* renderer = new Renderer();
+	renderer->Init();
+	IGame::SetRenderer(renderer);
+
+	IGame::SetInput(input.get());
+
+	auto* world = new World();
+	world->Init();
+	IGame::SetWorld(world);
+
+	std::shared_ptr<BaseCamera> camera = std::make_shared<OrthoCamera>(glm::vec4(-800, 800, -600, 600));
+	auto transcomp = camera->FindComponent<TransformComponent>();
+	transcomp->SetTranslation({ -5.0f, 0.0f, 0.0f });
+	renderer->UseCamera(camera);
+
+	// std::shared_ptr<Actor> cube = std::make_shared<Actor>();
+	std::shared_ptr<Actor> cube = std::make_shared<CubeActor>();
+	auto meshC = cube->CreateComponent<MeshComponent>();
+	meshC->LoadMesh("cube.obj");
+
+	world->AddActor(cube);
+
+	IGame::Run();
 }
 
 void ContextTesting()
@@ -55,9 +92,9 @@ int RendererTesting()
 	renderer->Init();
 	IGame::SetRenderer(renderer);
 
-	auto* input = new Input(*window);
+	auto input = Input::GetInstance();
 	input->Init();
-	IGame::SetInput(input);
+	IGame::SetInput(input.get());
 
 	auto* world = new World();
 	world->Init();
@@ -82,6 +119,6 @@ int RendererTesting()
 
 int main()
 {
-	ContextTesting();
+	InputTesting();
 	return 0;
 }

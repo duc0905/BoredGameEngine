@@ -19,7 +19,8 @@ class Context
 
 private:
 	std::shared_ptr<Context> next_;
-	unsigned int priority_;
+	// Usinged Not match -> int
+	int priority_;
 	bool isActive_;
 
 	std::map<std::pair<KeyInput::Key, int>, std::string> actionMap_;

@@ -1,10 +1,11 @@
 #include "Input.h"
 #include <vector>
-std::shared_ptr<Input> instance_ = nullptr;
+std::shared_ptr<Input> Input::instance_ = nullptr;
 
 Input::Input(const Window& window)
 	: Window_(window)
 {
+	SetupCallbacks();
 }
 
 std::shared_ptr<Input> Input::GetInstance() {
