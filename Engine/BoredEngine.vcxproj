@@ -54,6 +54,7 @@
     <ClInclude Include="src\Components\OrthoCameraComponent.h" />
     <ClInclude Include="src\Components\TransformComponent.h" />
     <ClInclude Include="src\IGame.h" />
+    <ClInclude Include="src\Input\Constant.h" />
     <ClInclude Include="src\Input\Context.h" />
     <ClInclude Include="src\Input\Input.h" />
     <ClInclude Include="src\Renderer\IndexBuffer.h" />

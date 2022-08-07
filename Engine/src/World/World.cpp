@@ -10,6 +10,9 @@ void World::Init()
 
 void World::Update(float dt)
 {
+	for (auto actor : actors_) {
+		actor->OnUpdate(dt);
+	}
 }
 
 void World::AddActor(std::shared_ptr<Actor> actor)
