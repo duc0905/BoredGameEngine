@@ -41,6 +41,6 @@ public:
 	void RemoveRangeMapping(KeyInput::Key key, int mods);
 
 	std::string MapKeyAction(KeyInput::Key key, int mods);
-	std::string MapKeyRange(KeyInput::Key key, int mods);
+	std::pair<std::string, float> MapKeyRange(KeyInput::Key key, int mods);
 };
 

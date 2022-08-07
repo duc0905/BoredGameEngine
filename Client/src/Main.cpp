@@ -4,6 +4,22 @@
 #include "Input/Context.h"
 #include "Input/Constant.h"
 #include "Input/Input.h"
+void testingActionRelease() {
+	std::cout << "Binding Release call" << std::endl;
+}
+
+void testingActionRepeat() {
+	std::cout << "Binding Repeat call" << std::endl;
+}
+
+void testingAction(KeyInput::Action action) {
+	switch (action) {
+	case KeyInput::RELEASE: testingActionRelease();
+		break;
+	case KeyInput::REPEAT: testingActionRepeat();
+		break;
+	}
+}
 
 void InputTesting()
 {
@@ -19,8 +35,15 @@ void InputTesting()
 	con1->AddActionMapping(KeyInput::KEY_A, 0, "String1 1");
 	con1->AddActionMapping(KeyInput::KEY_B, 0, "String1 2");
 	con1->AddActionMapping(KeyInput::KEY_C, 0, "String1 3");
+	con1->AddRangeMapping(KeyInput::KEY_Y, 0, "rY", 1);
+	con1->AddRangeMapping(KeyInput::KEY_X, 0, "rX", 1);
+	con1->AddRangeMapping(KeyInput::KEY_Z, 0, "rZ", 1);
+	con1->AddRangeMapping(KeyInput::KEY_Y, KeyInput::MOD_CTRL, "-rY", -1.0f);
+	con1->AddRangeMapping(KeyInput::KEY_X, KeyInput::MOD_CTRL, "-rX", -1.0f);
+	con1->AddRangeMapping(KeyInput::KEY_Z, KeyInput::MOD_CTRL, "-rZ", -1.0f);
 	input->AddContext(con1);
 	input->ActivateContext(con1);
+	input->BindAction("String1 1", testingAction);
 	input->EvaluateKey(KeyInput::KEY_A, KeyInput::REPEAT, 0);
 
 	auto* renderer = new Renderer();

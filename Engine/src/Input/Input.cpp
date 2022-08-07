@@ -18,7 +18,23 @@ std::shared_ptr<Input> Input::GetInstance() {
 void Input::EvaluateKey(KeyInput::Key key, KeyInput::Action action, int mods)
 {
 	std::string actionName = headContext->MapKeyAction(key, mods);
-	std::cout << actionName << std::endl;
+	std::pair<std::string, float> rangePack = headContext->MapKeyRange(key, mods);
+	if (!(actionName == "")) {
+//		std::cout << "Calling Action: " << actionName << std::endl;
+		auto it = actionMap.find(actionName);
+		if (it != actionMap.end())
+			it->second(action);
+	}
+	
+	if (!(rangePack.first == "")) {
+		std::cout << "Calling Range: " << rangePack.first << "Mod" << mods << std::endl;
+		auto it = rangeMap.find(rangePack.first);
+		if (it != rangeMap.end())
+		{
+			it->second.first(action, rangePack.second);
+			std::cout << it->second.second << std::endl;
+		}
+	}
 }
 
 void Input::PollEvents()
@@ -41,13 +57,14 @@ void Input::BindAction(const std::string& name, ActionCallback func)
 	actionMap[name] = func;
 }
 
-void Input::BindRange(const std::string& name, RangeCallback func)
+void Input::BindRange(const std::string& name, RangeCallback func, float weight)
 {
 	auto it = rangeMap.find(name);
 	if (it != rangeMap.end()) {
 		std::cout << "WARNING! Overwriting alias for range function" << std::endl;
 	};
-	rangeMap[name] = func;
+	rangeMap[name] = { func, weight };
+	std::cout << "name" << name << weight << std::endl;
 }
 
 void Input::AddContext(Context* con)
@@ -216,7 +233,7 @@ void Input::SetupCallbacks()
 void Input::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	auto input = GetInstance();
-	input->EvaluateKey(GetKey(key),GetAction(action), GetMods(mods));
+	input->EvaluateKey(GetKey(key), GetAction(action), GetMods(mods));
 }
 
 void Input::MousePosCallback(GLFWwindow* window, double x, double y)

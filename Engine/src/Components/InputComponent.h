@@ -7,11 +7,12 @@
 class InputComponent :
     public Component
 {
+public:
     // Inherited via Component
     virtual const std::string& GetComponentName() override;
 
     virtual void Update(double dt) override;
 
-    void BindAction(const std::string& name, Input::ActionCallback);
-    void BindRange(const std::string& name, Input::RangeCallback);
+    void BindAction(const std::string& name, Input::ActionCallback func);
+    void BindRange(const std::string& name, Input::RangeCallback func);
 };

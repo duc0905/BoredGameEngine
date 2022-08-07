@@ -32,7 +32,7 @@ private:
 	static void MouseScrollCallback(GLFWwindow* window, double x, double y);
 
 	std::map<std::string, ActionCallback> actionMap;
-	std::map<std::string, RangeCallback> rangeMap;
+	std::map<std::string, std::pair<RangeCallback, float>> rangeMap;
 
 public:
 
@@ -46,15 +46,18 @@ public:
 	void EvaluateKey(KeyInput::Key key, KeyInput::Action action, int mods);
 
 	void BindAction(const std::string& name, ActionCallback func);
-	void BindRange(const std::string& name, RangeCallback func);
+	void BindRange(const std::string& name, RangeCallback func, float weight = 1.0f);
+	
 	void AddContext(Context* con);
 	void AddContext(std::shared_ptr<Context> con);
 	void RemoveContext(Context* con);
 	void RemoveContext(std::shared_ptr<Context> con);
+	
 	void ActivateContext(Context* con);
 	void ActivateContext(std::shared_ptr<Context> con);
 	void DeactivateContext(Context* con);
 	void DeactivateContext(std::shared_ptr<Context> con);
+	
 	void ResetPriority(Context* con, int priorityLevel = 10000);
 	void ResetPriority(std::shared_ptr<Context> con, int priorityLevel = 10000);
 	
