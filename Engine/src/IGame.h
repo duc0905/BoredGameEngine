@@ -1,7 +1,6 @@
 #pragma once
 #include <memory>
 #include <vector>
-#include "Utils/Locator.h"
 
 #include "World/World.h"
 #include "Window/Window.h"

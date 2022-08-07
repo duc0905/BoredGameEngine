@@ -1,13 +1,9 @@
-//#include "MyGame.h"
-#include "../src/IGame.h"
-#include "../src/Actor//OrthoCamera.h"
+#include "IGame.h"
+#include "Actor/OrthoCamera.h"
 #include "CubeActor.h"
-#include "../src/Input/Context.h"
-#include "../src/Input/Constant.h"
-#include "../src/Input/Input.h"
-
-//class MyAlocator : public Alocator<A>
-//{};
+#include "Input/Context.h"
+#include "Input/Constant.h"
+#include "Input/Input.h"
 
 void InputTesting()
 {
@@ -105,7 +101,6 @@ int RendererTesting()
 	transcomp->SetTranslation({-5.0f, 0.0f, 0.0f});
 	renderer->UseCamera(camera);
 
-	// std::shared_ptr<Actor> cube = std::make_shared<Actor>();
 	std::shared_ptr<Actor> cube = std::make_shared<CubeActor>();
 	auto meshC = cube->CreateComponent<MeshComponent>();
 	meshC->LoadMesh("cube.obj");
