@@ -10,6 +10,6 @@ public:
 	//inline const IGame& GetGame() const { return *Game_; }
 	System() {};
 
-	virtual void Init() = 0;
+	virtual void Init() {};
 	virtual ~System() {}
 };

@@ -78,10 +78,10 @@
     <ClCompile Include="src\IGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Client\Main.cpp">
+    <ClCompile Include="vendors\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="vendors\glad.c">
+    <ClCompile Include="src\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -156,6 +156,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\System.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Input\Constant.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -685,7 +685,7 @@ __pycache__/
 /buildtrees/
 /build*/
 /downloads/
-/*installed/
+**/*installed/
 /packages/
 /scripts/buildsystems/tmp/
 #ignore custom triplets
