@@ -1,0 +1,6 @@
+#include "BoredInt.h"
+#include "BoredFLoat.h"
+#include "BoredString.h"
+#include "BoredMap.h"
+#include "BoredArray.h"
+#include "BoredBool.h"

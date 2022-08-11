@@ -127,27 +127,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\BoredArray.cpp" />
-    <ClCompile Include="src\BoredBool.cpp" />
-    <ClCompile Include="src\BoredFloat.cpp" />
-    <ClCompile Include="src\BoredInt.cpp" />
     <ClCompile Include="src\BoredFileSystem.cpp" />
-    <ClCompile Include="src\BoredMap.cpp" />
+    <ClCompile Include="src\BoredType\BoredArray.cpp" />
+    <ClCompile Include="src\BoredType\BoredBool.cpp" />
+    <ClCompile Include="src\BoredType\BoredFloat.cpp" />
+    <ClCompile Include="src\BoredType\BoredInt.cpp" />
+    <ClCompile Include="src\BoredFileSystem.cpp" />
+    <ClCompile Include="src\BoredType\BoredMap.cpp" />
     <ClCompile Include="src\BoredObject.cpp" />
-    <ClCompile Include="src\BoredData.cpp" />
-    <ClCompile Include="src\BoredString.cpp" />
+    <ClCompile Include="src\BoredType\BoredData.cpp" />
+    <ClCompile Include="src\BoredType\BoredString.cpp" />
     <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\TestActor.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\BoredArray.h" />
-    <ClInclude Include="src\BoredBool.h" />
-    <ClInclude Include="src\BoredFloat.h" />
-    <ClInclude Include="src\BoredMap.h" />
-    <ClInclude Include="src\BoredInt.h" />
     <ClInclude Include="src\BoredFileSystem.h" />
+    <ClInclude Include="src\BoredType\BoredArray.h" />
+    <ClInclude Include="src\BoredType\BoredBool.h" />
+    <ClInclude Include="src\BoredType\BoredFloat.h" />
+    <ClInclude Include="src\BoredType\BoredMap.h" />
+    <ClInclude Include="src\BoredType\BoredInt.h" />
     <ClInclude Include="src\BoredObject.h" />
-    <ClInclude Include="src\BoredData.h" />
-    <ClInclude Include="src\BoredString.h" />
+    <ClInclude Include="src\BoredType\BoredData.h" />
+    <ClInclude Include="src\BoredType\BoredString.h" />
+    <ClInclude Include="src\BoredType\BoredType.h" />
+    <ClInclude Include="src\TestActor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

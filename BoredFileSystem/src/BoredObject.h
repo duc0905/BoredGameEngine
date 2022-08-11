@@ -10,6 +10,7 @@ private:
 	void CreateId();
 public:
 	BoredObject();
+	virtual std::string ToString() = 0;
 	inline unsigned int GetID() { return id_; };
 };
 

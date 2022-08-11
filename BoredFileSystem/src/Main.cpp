@@ -1,9 +1,5 @@
 #include <iostream>
-#include "BoredInt.h"
-#include "BoredMap.h"
-#include "BoredFloat.h"
-#include "BoredString.h"
-#include "BoredArray.h"
+#include "BoredType/BoredType.h"
 
 int main()
 {

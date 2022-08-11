@@ -18,7 +18,7 @@
     <ClCompile Include="src\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\BoredData.cpp">
+    <ClCompile Include="src\BoredType\BoredData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\BoredFileSystem.cpp">
@@ -27,51 +27,63 @@
     <ClCompile Include="src\BoredObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\BoredInt.cpp">
+    <ClCompile Include="src\BoredType\BoredInt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\BoredMap.cpp">
+    <ClCompile Include="src\BoredType\BoredMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\BoredFloat.cpp">
+    <ClCompile Include="src\BoredType\BoredFloat.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\BoredString.cpp">
+    <ClCompile Include="src\BoredType\BoredString.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\BoredArray.cpp">
+    <ClCompile Include="src\BoredType\BoredArray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\BoredBool.cpp">
+    <ClCompile Include="src\BoredType\BoredBool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BoredFileSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TestActor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\BoredData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BoredFileSystem.h">
+    <ClInclude Include="src\BoredType\BoredData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\BoredObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\BoredInt.h">
+    <ClInclude Include="src\BoredType\BoredInt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\BoredMap.h">
+    <ClInclude Include="src\BoredType\BoredMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\BoredFloat.h">
+    <ClInclude Include="src\BoredType\BoredFloat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\BoredString.h">
+    <ClInclude Include="src\BoredType\BoredString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\BoredArray.h">
+    <ClInclude Include="src\BoredType\BoredArray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\BoredBool.h">
+    <ClInclude Include="src\BoredType\BoredBool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BoredFileSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TestActor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BoredType\BoredType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
