@@ -2,6 +2,10 @@
 #include <iostream>
 #include <windows.h>
 
+#define LOG(msg) ConsoleLogger::Log(msg)
+#define LOG_COLOR(msg, textCol, bgCol) ConsoleLogger::Log(msg, textCol, bgCol)
+#define COLOR ConsoleLogger::OutputColor
+
 class ConsoleLogger
 {
 	//static unsigned int outputColorCode_;
