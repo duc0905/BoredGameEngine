@@ -1,7 +1,7 @@
 #include "BoredFileSystem.h"
 using json = nlohmann::json;
 
-int BoredFileSystem::saveBject(std::shared_ptr<BoredObject> bject)
+int BoredFileSystem::SaveBject(std::shared_ptr<BoredObject> bject)
 {
 	const char* path = "./SavedBoredData/";
 	std::string fileName = "BoredObject@" + bject->GetID().ToString();
@@ -17,7 +17,7 @@ int BoredFileSystem::saveBject(std::shared_ptr<BoredObject> bject)
 	return 1;
 ;}
 
-json BoredFileSystem::readBoredFile(const std::string& filename)
+json BoredFileSystem::ReadBoredFile(const std::string& filename)
 {
 	const char* path = "./SavedBoredData/";
 	std::ifstream f(path + filename);
@@ -30,14 +30,14 @@ json BoredFileSystem::readBoredFile(const std::string& filename)
 	return data;
 }
 
-BoredMap BoredFileSystem::parseJsonString(json jsonData)
+BoredMap BoredFileSystem::ParseJson(json jsonData)
 {
 	BoredMap result;
-	result["root"] = helper(jsonData);
+	result["root"] = ParseJsonHelper(jsonData);
 	return result;
 }
 
-BoredData* BoredFileSystem::helper(nlohmann::json root)
+BoredData* BoredFileSystem::ParseJsonHelper(nlohmann::json root)
 {
 	switch (root.type()) {
 	case json::value_t::number_unsigned:
@@ -56,14 +56,14 @@ BoredData* BoredFileSystem::helper(nlohmann::json root)
 	case json::value_t::object: {
 		BoredMap* result = new BoredMap();
 		for (auto& ele : root.items()) {
-			(* result)[ele.key()] = helper(ele.value());
+			(* result)[ele.key()] = ParseJsonHelper(ele.value());
 		}
 		return result;
 	} 
 	case json::value_t::array: {
 		BoredArray* result = new BoredArray;
 		for (json::iterator it = root.begin(); it != root.end(); ++it) {
-			result->PushBack(helper(*it));
+			result->PushBack(ParseJsonHelper(*it));
 		}
 		return result;
 	}
@@ -71,7 +71,7 @@ BoredData* BoredFileSystem::helper(nlohmann::json root)
 	return new BoredBool(false);
 }
 
-void BoredFileSystem::printCurrentDir()
+void BoredFileSystem::PrintCurrentDir()
 {
 	std::string path = "./SavedBoredData";
 	for (const auto& entry : std::filesystem::directory_iterator(path))

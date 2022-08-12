@@ -8,6 +8,11 @@
 #include<nlohmann/json.hpp>
 
 class BoredFileSystem
+/*
+	BoredFileSystem represent a file system that able to save data 
+	from actors, components,... from the user's client code and write
+	files from dir "SavedBoredData" from client code
+*/
 {
 public:
 	/*
@@ -15,26 +20,28 @@ public:
 
 		@return int 1 if success
 	*/
-	int saveBject(std::shared_ptr<BoredObject> bject);
+	int SaveBject(std::shared_ptr<BoredObject> bject);
 	
 	/*
 		@arg a SavedBoredData json file (.bored.json)
 
 		@return data in Json format
 	*/
-	nlohmann::json readBoredFile(const std::string& filename); 
+	nlohmann::json ReadBoredFile(const std::string& filename); 
 
 	/*
 		@arg string jsonData as a json string format
 
 		@return a BoredMap contain the json string's data from jsonData
 	*/
-	BoredMap parseJsonString(nlohmann::json jsonData);
-	BoredData* helper(nlohmann::json root);
+	BoredMap ParseJson(nlohmann::json jsonData);
+
+	// Helper method to perform parsing json type to BoredData*
+	BoredData* ParseJsonHelper(nlohmann::json root);
 
 	/*
 		Print current directory for debugging
 	*/
-	void printCurrentDir();
+	void PrintCurrentDir();
 };
 
