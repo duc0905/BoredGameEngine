@@ -58,7 +58,9 @@
     <ClInclude Include="src\Input\Context.h" />
     <ClInclude Include="src\Input\Input.h" />
     <ClInclude Include="src\Renderer\IndexBuffer.h" />
+    <ClInclude Include="src\Renderer\IRenderer.h" />
     <ClInclude Include="src\Renderer\Mesh.h" />
+    <ClInclude Include="src\Renderer\NullRenderer.h" />
     <ClInclude Include="src\Renderer\Renderer.h" />
     <ClInclude Include="src\Renderer\ShaderClass.h" />
     <ClInclude Include="src\Renderer\VertexArray.h" />

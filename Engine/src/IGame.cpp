@@ -3,14 +3,14 @@
 std::shared_ptr<Input> IGame::inputSystem_ = nullptr;
 std::shared_ptr<World> IGame::worldSystem_ = nullptr;
 std::shared_ptr<Window> IGame::windowSystem_ = nullptr;
-std::shared_ptr<Renderer> IGame::rendererSystem_ = nullptr;
+IRenderer& IGame::rendererSystem_ = IRenderer::GetDefault();
 
 void IGame::Loop()
 {
-	auto window_ = IGame::GetWindow();
-	auto input_ = IGame::GetInput();
-	auto world_ = IGame::GetWorld();
-	auto renderer_ = IGame::GetRenderer();
+	auto& window_ = IGame::GetWindow();
+	auto& input_ = IGame::GetInput();
+	auto& world_ = IGame::GetWorld();
+	auto& renderer_ = IGame::GetRenderer();
 
 	std::cout << "Start running" << std::endl;
 
@@ -69,12 +69,12 @@ void IGame::SetInput(Input* input)
 	inputSystem_ = std::shared_ptr<Input>(input);
 }
 
-Renderer& IGame::GetRenderer()
+IRenderer& IGame::GetRenderer()
 {
 	return *rendererSystem_;
 }
 
-void IGame::SetRenderer(Renderer* renderer)
+void IGame::SetRenderer(IRenderer* renderer)
 {
-	rendererSystem_ = std::shared_ptr<Renderer>(renderer);
+	rendererSystem_ = std::shared_ptr<IRenderer>(renderer);
 }

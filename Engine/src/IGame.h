@@ -5,7 +5,8 @@
 #include "World/World.h"
 #include "Window/Window.h"
 #include "Input/Input.h"
-#include "Renderer/Renderer.h"
+
+#include "Renderer/IRenderer.h"
 
 class IGame
 {
@@ -16,7 +17,7 @@ private:
 	static std::shared_ptr<World> worldSystem_;
 	static std::shared_ptr<Window> windowSystem_;
 	static std::shared_ptr<Input> inputSystem_;
-	static std::shared_ptr<Renderer> rendererSystem_;
+	static IRenderer& rendererSystem_;
 public:
 	static void Run();
 	virtual ~IGame() = delete;
@@ -30,7 +31,7 @@ public:
 	static Input& GetInput();
 	static void SetInput(Input* input);
 
-	static Renderer& GetRenderer();
-	static void SetRenderer(Renderer* renderer);
+	static IRenderer& GetRenderer();
+	static void SetRenderer(IRenderer* renderer);
 };
 
