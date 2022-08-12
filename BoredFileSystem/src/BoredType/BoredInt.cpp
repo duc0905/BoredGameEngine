@@ -2,6 +2,9 @@
 
 std::string BoredInt::ToString()
 {
+	if (data == 0) {
+		return "0";
+	}
 	int temp = abs(data);
 	bool negative = data < 0;
 	std::string ans = "";
@@ -13,5 +16,6 @@ std::string BoredInt::ToString()
 		temp /= 10;
 	}
 
-	return negative ? "-" + ans : ans;
+	std::string anss = negative ? "-" + ans : ans;
+	return ans;
 }

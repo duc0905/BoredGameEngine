@@ -18,88 +18,35 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\Actor\Actor.cpp" />
-    <ClCompile Include="src\Actor\BaseCamera.cpp" />
-    <ClCompile Include="src\Actor\OrthoCamera.cpp" />
-    <ClCompile Include="src\Components\CameraComponent.cpp" />
-    <ClCompile Include="src\Components\Component.cpp" />
-    <ClCompile Include="src\Components\InputComponent.cpp" />
-    <ClCompile Include="src\Components\MeshComponent.cpp" />
-    <ClCompile Include="src\Components\OrthoCameraComponent.cpp" />
-    <ClCompile Include="src\Components\TransformComponent.cpp" />
-    <ClCompile Include="src\IGame.cpp" />
-    <ClCompile Include="src\Input\Context.cpp" />
-    <ClCompile Include="src\Input\Input.cpp" />
-    <ClCompile Include="src\Main.cpp" />
-    <ClCompile Include="src\Renderer\IndexBuffer.cpp" />
-    <ClCompile Include="src\Renderer\Mesh.cpp" />
-    <ClCompile Include="src\Renderer\Renderer.cpp" />
-    <ClCompile Include="src\Renderer\ShaderClass.cpp" />
-    <ClCompile Include="src\Renderer\VertexArray.cpp" />
-    <ClCompile Include="src\Renderer\VertexBuffer.cpp" />
-    <ClCompile Include="src\Utils\Helper.cpp" />
-    <ClCompile Include="src\Window\Window.cpp" />
-    <ClCompile Include="src\World\World.cpp" />
-    <ClCompile Include="vendors\glad.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\Actor\Actor.h" />
-    <ClInclude Include="src\Actor\BaseCamera.h" />
-    <ClInclude Include="src\Actor\OrthoCamera.h" />
-    <ClInclude Include="src\Components\CameraComponent.h" />
-    <ClInclude Include="src\Components\Component.h" />
-    <ClInclude Include="src\Components\InputComponent.h" />
-    <ClInclude Include="src\Components\MeshComponent.h" />
-    <ClInclude Include="src\Components\OrthoCameraComponent.h" />
-    <ClInclude Include="src\Components\TransformComponent.h" />
-    <ClInclude Include="src\IGame.h" />
-    <ClInclude Include="src\Input\Constant.h" />
-    <ClInclude Include="src\Input\Context.h" />
-    <ClInclude Include="src\Input\Input.h" />
-    <ClInclude Include="src\Renderer\IndexBuffer.h" />
-    <ClInclude Include="src\Renderer\Mesh.h" />
-    <ClInclude Include="src\Renderer\Renderer.h" />
-    <ClInclude Include="src\Renderer\ShaderClass.h" />
-    <ClInclude Include="src\Renderer\VertexArray.h" />
-    <ClInclude Include="src\Renderer\VertexBuffer.h" />
-    <ClInclude Include="src\System.h" />
-    <ClInclude Include="src\Utils\Helper.h" />
-    <ClInclude Include="src\Utils\LinkedList.h" />
-    <ClInclude Include="src\Utils\Locator.h" />
-    <ClInclude Include="src\Window\Window.h" />
-    <ClInclude Include="src\World\World.h" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{4af165b1-85d8-4649-88c3-bb167daac672}</ProjectGuid>
-    <RootNamespace>vcpkgtest</RootNamespace>
+    <ProjectGuid>{d0d17ced-44c5-4a34-89db-dc0c1090609a}</ProjectGuid>
+    <RootNamespace>ClientUnitTest</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>BoredEngine</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -123,28 +70,13 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Label="Vcpkg">
-    <VcpkgEnableManifest>true</VcpkgEnableManifest>
-  </PropertyGroup>
-  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <VcpkgUseStatic>false</VcpkgUseStatic>
-  </PropertyGroup>
-  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <VcpkgUseStatic>false</VcpkgUseStatic>
-  </PropertyGroup>
-  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <VcpkgUseStatic>false</VcpkgUseStatic>
-  </PropertyGroup>
-  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <VcpkgUseStatic>false</VcpkgUseStatic>
-  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)BoredTest\src;$(SolutionDir)DebugSystem\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -159,7 +91,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)BoredTest\src;$(SolutionDir)DebugSystem\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -174,7 +106,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)BoredTest\src;$(SolutionDir)DebugSystem\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -189,7 +121,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)BoredTest\src;$(SolutionDir)DebugSystem\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -198,6 +130,20 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\ClientUnitTest.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BoredTest\BoredTest.vcxproj">
+      <Project>{1d01fc17-5262-47ba-b2bc-8cc4373b2e8f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Client\Client.vcxproj">
+      <Project>{960337e8-57d6-4da3-9e03-2b576e6bf2f8}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\DebugSystem\DebugSystem.vcxproj">
+      <Project>{e1aba078-d9af-4095-9208-bb1bd5766d02}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

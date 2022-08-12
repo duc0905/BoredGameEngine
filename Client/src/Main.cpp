@@ -4,6 +4,12 @@
 #include "Input/Context.h"
 #include "Input/Constant.h"
 #include "Input/Input.h"
+#include "BoredFileSystem.h"
+#include "TestActor.h"
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
+
 void testingActionRelease() {
 	std::cout << "Binding Release call" << std::endl;
 }
@@ -137,6 +143,18 @@ int RendererTesting()
 
 int main()
 {
-	InputTesting();
+	BoredFileSystem objF;
+	std::shared_ptr<BoredObject> target = std::make_shared<TestActor>();
+	std::shared_ptr<BoredObject> target2 = std::make_shared<TestActor>();
+	std::shared_ptr<BoredObject> target3 = std::make_shared<TestActor>();
+	objF.printCurrentDir();
+	objF.saveBject(std::shared_ptr<BoredObject>(target));
+	objF.saveBject(std::shared_ptr<BoredObject>(target2));
+	objF.saveBject(std::shared_ptr<BoredObject>(target3));
+	json test = objF.readBoredFile("BoredObject@1.bored.json");
+	std::cout << test << std::endl;
+	BoredMap r = objF.parseJsonString(test);
+	std::cout << "Test" << std::endl;
+	std::cout << r.ToString();
 	return 0;
 }

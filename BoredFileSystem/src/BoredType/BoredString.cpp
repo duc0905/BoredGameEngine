@@ -2,5 +2,5 @@
 
 std::string BoredString::ToString()
 {
-	return data;
+	return "\"" + data + "\"";
 }

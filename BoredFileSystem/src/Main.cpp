@@ -1,5 +1,7 @@
 #include <iostream>
 #include "BoredType/BoredType.h"
+#include<filesystem>
+#include<iostream>
 
 int main()
 {
@@ -18,6 +20,10 @@ int main()
     arr1.PushBack(new BoredString("Fuk"));
     m["Array"] = &arr1;
     m["EArray"] = &arr2;
+
+    std::string path = "../Client/SavedBoredData";
+    for (const auto& entry : std::filesystem::directory_iterator(path))
+        std::cout << entry.path() << std::endl;
 
     std::cout << m.ToString();
 }

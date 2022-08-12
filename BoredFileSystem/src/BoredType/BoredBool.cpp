@@ -1,4 +1,5 @@
 #include "BoredBool.h"
+#include <string>
 
 BoredBool::BoredBool(bool val)
 {
@@ -7,6 +8,7 @@ BoredBool::BoredBool(bool val)
 
 std::string BoredBool::ToString()
 {
-	return data ? "True" : "False";
+	std::string ans = data ? "true" : "false";
+	return ans;
 }
 
