@@ -46,9 +46,9 @@ namespace KeyInput
 
 	enum Mod
 	{	
-		MOD_CTRL = 1 << 0,
-		MOD_SHIFT = 1 << 1,
-		MOD_ALT = 1 << 2,
+		CTRL = 0 << 0,
+		SHIFT = 1 << 1,
+		ALT = 1 << 2,
 		MOD_UNKNOWN = 1 << 8
 	};
 

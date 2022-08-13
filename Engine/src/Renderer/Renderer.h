@@ -28,7 +28,7 @@ public:
         std::cout << "Cleaning up Renderer!" << std::endl;
     }
 
-    virtual void Render(World& world) override;
+    virtual void Render(IWorld& world) override;
 
     void Draw(const Mesh& mesh);
     virtual void Draw(const Actor& actor) override;

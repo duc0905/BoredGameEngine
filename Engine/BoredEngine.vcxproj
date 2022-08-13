@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Input\IInput.cpp" />
+    <ClCompile Include="src\World\IWorld.cpp" />
     <ClCompile Include="src\Actor\Actor.cpp" />
     <ClCompile Include="src\Actor\BaseCamera.cpp" />
     <ClCompile Include="src\Actor\OrthoCamera.cpp" />
@@ -30,20 +32,25 @@
     <ClCompile Include="src\Components\TransformComponent.cpp" />
     <ClCompile Include="src\IGame.cpp" />
     <ClCompile Include="src\Input\Context.cpp" />
-    <ClCompile Include="src\Input\Input.cpp" />
+    <ClCompile Include="src\Input\GLFWInput.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Renderer\IndexBuffer.cpp" />
+    <ClCompile Include="src\Renderer\IRenderer.cpp" />
     <ClCompile Include="src\Renderer\Mesh.cpp" />
+    <ClCompile Include="src\Renderer\NullRenderer.cpp" />
     <ClCompile Include="src\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Renderer\ShaderClass.cpp" />
     <ClCompile Include="src\Renderer\VertexArray.cpp" />
     <ClCompile Include="src\Renderer\VertexBuffer.cpp" />
     <ClCompile Include="src\Utils\Helper.cpp" />
-    <ClCompile Include="src\Window\Window.cpp" />
+    <ClCompile Include="src\Window\GLFWWindow.cpp" />
+    <ClCompile Include="src\Window\IWindow.cpp" />
     <ClCompile Include="src\World\World.cpp" />
     <ClCompile Include="vendors\glad.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Input\IInput.h" />
+    <ClInclude Include="src\World\IWorld.h" />
     <ClInclude Include="src\Actor\Actor.h" />
     <ClInclude Include="src\Actor\BaseCamera.h" />
     <ClInclude Include="src\Actor\OrthoCamera.h" />
@@ -56,7 +63,7 @@
     <ClInclude Include="src\IGame.h" />
     <ClInclude Include="src\Input\Constant.h" />
     <ClInclude Include="src\Input\Context.h" />
-    <ClInclude Include="src\Input\Input.h" />
+    <ClInclude Include="src\Input\GLFWInput.h" />
     <ClInclude Include="src\Renderer\IndexBuffer.h" />
     <ClInclude Include="src\Renderer\IRenderer.h" />
     <ClInclude Include="src\Renderer\Mesh.h" />
@@ -69,8 +76,14 @@
     <ClInclude Include="src\Utils\Helper.h" />
     <ClInclude Include="src\Utils\LinkedList.h" />
     <ClInclude Include="src\Utils\Locator.h" />
-    <ClInclude Include="src\Window\Window.h" />
+    <ClInclude Include="src\Window\IWindow.h" />
+    <ClInclude Include="src\Window\GLFWWindow.h" />
     <ClInclude Include="src\World\World.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DebugSystem\DebugSystem.vcxproj">
+      <Project>{e1aba078-d9af-4095-9208-bb1bd5766d02}</Project>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -147,6 +160,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)DebugSystem\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -162,6 +176,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)DebugSystem\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -177,6 +192,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)DebugSystem\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -192,6 +208,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)DebugSystem\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

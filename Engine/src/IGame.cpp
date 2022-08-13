@@ -1,9 +1,9 @@
 #include "IGame.h"
 
-std::shared_ptr<Input> IGame::inputSystem_ = nullptr;
-std::shared_ptr<World> IGame::worldSystem_ = nullptr;
-std::shared_ptr<Window> IGame::windowSystem_ = nullptr;
-IRenderer& IGame::rendererSystem_ = IRenderer::GetDefault();
+std::shared_ptr<IInput> IGame::inputSystem_ = IInput::GetDefault();
+std::shared_ptr<IWorld> IGame::worldSystem_ = IWorld::GetDefault();
+std::shared_ptr<IWindow> IGame::windowSystem_ = IWindow::GetDefault();
+std::shared_ptr<IRenderer> IGame::rendererSystem_ = IRenderer::GetDefault();
 
 void IGame::Loop()
 {
@@ -17,15 +17,15 @@ void IGame::Loop()
 	while (!window_.ShouldClose())
 	{
 		// Poll input
-		input_.PollEvents();
+		input_.OnTick(0.01f);
 
 		// Update world
-		world_.Update(0.01f);
+		world_.OnTick(0.01f);
 
 		// Render
 		renderer_.Render(world_);
 
-		window_.SwapBuffer();
+		window_.OnTick(0.01f);
 	}
 }
 
@@ -39,42 +39,64 @@ void IGame::Run()
 	Stop();
 }
 
-World& IGame::GetWorld()
+IWorld& IGame::GetWorld()
 {
 	return *worldSystem_;
 }
 
-void IGame::SetWorld(World* world)
+void IGame::SetWorld(IWorld* world)
 {
-	worldSystem_ = std::shared_ptr<World>(world);
+	worldSystem_ = std::shared_ptr<IWorld>(world);
 }
 
-Window& IGame::GetWindow()
+void IGame::SetWorld(std::shared_ptr<IWorld> world)
+{
+	worldSystem_ = world;
+}
+
+IWindow& IGame::GetWindow()
 {
 	return *windowSystem_;
 }
 
-void IGame::SetWindow(Window* window)
+void IGame::SetWindow(IWindow* window)
 {
-	windowSystem_ = std::shared_ptr<Window>(window);
+	windowSystem_ = std::shared_ptr<IWindow>(window);
 }
 
-Input& IGame::GetInput()
+void IGame::SetWindow(std::shared_ptr<IWindow> window)
+{
+	windowSystem_ = window;
+}
+
+IInput& IGame::GetInput()
 {
 	return *inputSystem_;
 }
 
-void IGame::SetInput(Input* input)
+void IGame::SetInput(IInput* input)
 {
-	inputSystem_ = std::shared_ptr<Input>(input);
+	inputSystem_ = std::shared_ptr<IInput>(input);
+}
+
+void IGame::SetInput(std::shared_ptr<IInput> input)
+{
+	inputSystem_ = input;
 }
 
 IRenderer& IGame::GetRenderer()
 {
+	if (!rendererSystem_)
+		return *IRenderer::GetDefault();
 	return *rendererSystem_;
 }
 
 void IGame::SetRenderer(IRenderer* renderer)
 {
 	rendererSystem_ = std::shared_ptr<IRenderer>(renderer);
+}
+
+void IGame::SetRenderer(std::shared_ptr<IRenderer> renderer)
+{
+	rendererSystem_ = renderer;
 }

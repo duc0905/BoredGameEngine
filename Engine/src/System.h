@@ -10,6 +10,7 @@ public:
 	//inline const IGame& GetGame() const { return *Game_; }
 	System() {};
 
+	virtual void OnTick(float dt) {}
 	virtual void Init() {};
 	virtual ~System() {}
 };
