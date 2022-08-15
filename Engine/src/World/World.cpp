@@ -8,7 +8,7 @@ void World::Init()
 {
 }
 
-void World::Update(float dt)
+void World::OnTick(float dt)
 {
 	for (auto actor : actors_) {
 		actor->OnUpdate(dt);
