@@ -143,18 +143,19 @@ int RendererTesting()
 
 int main()
 {
-	BoredFileSystem objF;
+	/*BoredFileSystem objF;
 	std::shared_ptr<BoredObject> target = std::make_shared<TestActor>();
 	std::shared_ptr<BoredObject> target2 = std::make_shared<TestActor>();
 	std::shared_ptr<BoredObject> target3 = std::make_shared<TestActor>();
-	objF.printCurrentDir();
-	objF.saveBject(std::shared_ptr<BoredObject>(target));
-	objF.saveBject(std::shared_ptr<BoredObject>(target2));
-	objF.saveBject(std::shared_ptr<BoredObject>(target3));
-	json test = objF.readBoredFile("BoredObject@1.bored.json");
+	objF.PrintCurrentDir();
+	objF.SaveBject(std::shared_ptr<BoredObject>(target));
+	objF.SaveBject(std::shared_ptr<BoredObject>(target2));
+	objF.SaveBject(std::shared_ptr<BoredObject>(target3));
+	json test = objF.ReadBoredFile("BoredObject@1.bored.json");
 	std::cout << test << std::endl;
-	BoredMap r = objF.parseJsonString(test);
+	BoredMap r = objF.ParseJson(test);
 	std::cout << "Test" << std::endl;
-	std::cout << r.ToString();
+	std::cout << r.ToString();*/
+	InputTesting();
 	return 0;
 }
