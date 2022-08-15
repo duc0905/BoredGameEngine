@@ -4,22 +4,18 @@
 #include <string>
 #include "Constant.h"
 
-class Input;
+class IInput;
 
-/* Context
+/** Context
 * Define a set of actions/state/ranges those are available when this context is active
 * Multiple contexts can be active at once
 * Using Chain of responsibility pattern
 */
-
-
 class Context
 {
-	friend class Input;
-
+	friend class IInput;
 private:
 	std::shared_ptr<Context> next_;
-	// Usinged Not match -> int
 	int priority_;
 	bool isActive_;
 

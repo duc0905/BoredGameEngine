@@ -4,6 +4,7 @@ class IComponent :
     public BoredObject
 {
 public: 
+
     virtual BoredMap GetSavableData() = 0;
 };
 

@@ -1,17 +1,17 @@
-#include "Window.h"
+#include "GLFWWindow.h"
 
-Window::Window(const unsigned int& width, const unsigned int& height, const std::string& title)
+GLFWWindow::GLFWWindow(const unsigned int& width, const unsigned int& height, const std::string& title)
     : Width_(width), Height_(height), Title_(title)
 {
 }
 
-Window::~Window()
+GLFWWindow::~GLFWWindow()
 {
-    std::cout << "Cleaning up Window!" << std::endl;
+    std::cout << "Cleaning up GLFWWindow!" << std::endl;
     glfwTerminate();
 }
 
-void Window::Init()
+void GLFWWindow::Init()
 {
     /* Initialize the library */
     if (!glfwInit())
@@ -33,4 +33,9 @@ void Window::Init()
 
     /* Make the window's context current */
     glfwMakeContextCurrent(Window_);
+}
+
+void GLFWWindow::OnTick(float)
+{
+    SwapBuffer();
 }
