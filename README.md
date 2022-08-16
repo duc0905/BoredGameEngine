@@ -31,7 +31,18 @@ The ClientUnitTest is used to test your Client project, but does not mandatory.
 
 // TODO
 
-# Contribute
+# Contribution notes
+
+The Engine project is using Precompiled header (pch.h and pch.cpp). However, there are some small issue with it and here is how to work around.
+
+Each time you create a new .cpp file:
+- Need to have #include "path/to/pch.h"
+- Right click on the newly created .cpp file and choose Properties
+- Go to C/C++ -> Precompiled Headers
+- Set "Precompiled Headers" to Use (/Yu), and "Precompiled Header file" to the path exactly like in the #include
+- Done!
+
+Sorry for the inconvenience, will find a way to solve this in the future.
 
 # Authors
 
