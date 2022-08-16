@@ -1,5 +1,5 @@
 #pragma once
-#include <functional>
+#include "../pch.h"
 
 #include "Component.h"
 #include "../Input/IInput.h"

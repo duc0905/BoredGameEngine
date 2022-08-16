@@ -1,6 +1,6 @@
 #pragma once
-#include<glad/glad.h>
-#include <string>
+
+#include "../pch.h"
 #include "VertexArray.h"
 
 class VertexArray;

@@ -1,3 +1,4 @@
+#include "../pch.h"
 #include "Mesh.h"
 
 bool Mesh::LoadModel(const std::string& file)

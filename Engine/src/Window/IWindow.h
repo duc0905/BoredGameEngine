@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../pch.h"
 #include "../System.h"
 
 class IWindow : public System

@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "ConsoleLogger.h"
 
 //unsigned int ConsoleLogger::outputColorCode_ = 15;

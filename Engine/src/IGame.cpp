@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "IGame.h"
 
 std::shared_ptr<IInput> IGame::inputSystem_ = IInput::GetDefault();

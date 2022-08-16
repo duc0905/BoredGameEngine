@@ -1,8 +1,5 @@
 #pragma once
-
-#include <glad/glad.h>
-#include <vector>
-#include <iostream>
+#include "../pch.h"
 #include "VertexBuffer.h"
 
 class VertexBuffer;

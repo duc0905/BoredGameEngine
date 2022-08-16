@@ -1,3 +1,5 @@
+
+#include "../pch.h"
 #include "TransformComponent.h"
 
 const std::string& TransformComponent::GetComponentName()
