@@ -1,3 +1,4 @@
+#include "../pch.h"
 #include "OrthoCamera.h"
 
 OrthoCamera::OrthoCamera(const glm::vec4& viewDim, const glm::vec3& lookAt, const glm::vec3& up)

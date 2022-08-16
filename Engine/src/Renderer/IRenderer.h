@@ -1,5 +1,5 @@
 #pragma once
-#include <memory>
+#include "../pch.h"
 #include "../System.h"
 #include "../World/World.h"
 #include "../Actor/BaseCamera.h"

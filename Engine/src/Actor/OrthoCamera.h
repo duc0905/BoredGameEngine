@@ -1,6 +1,7 @@
 #pragma once
-#include "../Components/OrthoCameraComponent.h"
+#include "../pch.h"
 
+#include "../Components/OrthoCameraComponent.h"
 #include "BaseCamera.h"
 
 class OrthoCamera :

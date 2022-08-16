@@ -1,8 +1,5 @@
 #pragma once
-#include <memory>
-#include <string>
-#include <vector>
-#include <glm/glm.hpp>
+#include "../pch.h"
 
 #include "../Utils/Helper.h"
 #include "VertexArray.h"

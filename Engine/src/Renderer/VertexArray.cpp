@@ -1,3 +1,4 @@
+#include "../pch.h"
 #include "VertexArray.h"
 
 VertexArray::VertexArray()
@@ -46,6 +47,6 @@ void VertexArray::PrintAttribs(GLenum pname)
 	GLuint data[100];
 	glGetVertexAttribIuiv(ID, pname, data);
 
-	std::cout << "VA attrib: " << data[0] << std::endl;
+	//std::cout << "VA attrib: " << data[0] << std::endl;
 }
 

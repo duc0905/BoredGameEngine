@@ -1,6 +1,5 @@
 #pragma once
-#include <iostream>
-#include <map>
+#include "../pch.h"
 
 #include "../IGame.h"
 #include "IInput.h"
@@ -33,7 +32,7 @@ public:
 
 	virtual ~GLFWInput() override
 	{
-		std::cout << "Cleaning up Input!" << std::endl;
+		//std::cout << "Cleaning up Input!" << std::endl;
 		instance_.reset();
 	}
 };

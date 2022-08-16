@@ -1,10 +1,5 @@
 #pragma once
-
-#include <iostream>
-#include <typeindex>
-#include <map>
-#include <memory>
-#include <vector>
+#include "../pch.h"
 
 template <class Ty>
 class Locator
@@ -20,7 +15,7 @@ public:
 	{
 		if (services_[typeid(SubTy)])
 		{
-			std::cout << "Warning: Service '" << typeid(SubTy).name() << "' has already been added!" << std::endl;
+			//std::cout << "Warning: Service '" << typeid(SubTy).name() << "' has already been added!" << std::endl;
 			return std::dynamic_pointer_cast<SubTy>(services_[typeid(SubTy)]);
 		}
 
@@ -46,7 +41,7 @@ public:
 	{
 		if (!services_[typeid(SubTy)])
 		{
-			std::cout << "Warning: Service '" << typeid(SubTy).name() << "' has not been added before!" << std::endl;
+			//std::cout << "Warning: Service '" << typeid(SubTy).name() << "' has not been added before!" << std::endl;
 			return;
 		}
 		services_.erase(typeid(SubTy));

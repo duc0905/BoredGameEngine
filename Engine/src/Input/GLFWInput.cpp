@@ -1,6 +1,5 @@
+#include "../pch.h"
 #include "GLFWInput.h"
-#include <vector>
-#include "ConsoleLogger.h"
 
 std::shared_ptr<GLFWInput> GLFWInput::instance_ = nullptr;
 

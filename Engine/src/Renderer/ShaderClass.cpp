@@ -1,8 +1,5 @@
-#include"shaderClass.h"
-#include <string>
-#include <iostream>
-#include <filesystem>
-namespace fs = std::filesystem;
+#include "../pch.h"
+#include "ShaderClass.h"
 
 // Reads a text file and outputs a string with everything in the text file
 std::string get_file_contents(const char* filename)
@@ -88,7 +85,7 @@ GLint Shader::GetUniformLocation(const std::string& name)
 
 	int location = glGetUniformLocation(ID, name.c_str());
 	if (location == -1)
-		std::cout << "Warning: uniform '" << name << "' doesn't exist!" << std::endl;
+		//std::cout << "Warning: uniform '" << name << "' doesn't exist!" << std::endl;
 
 	LocationCache.insert(std::pair<std::string, int>(name, location));
 	return location;
@@ -133,7 +130,7 @@ void Shader::compileErrors(unsigned int shader, const char* type)
 		if (hasCompiled == GL_FALSE)
 		{
 			glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-			std::cout << "SHADER_COMPILATION_ERROR for:" << type << "\n" << infoLog << std::endl;
+			//std::cout << "SHADER_COMPILATION_ERROR for:" << type << "\n" << infoLog << std::endl;
 		}
 	}
 	else
@@ -142,7 +139,7 @@ void Shader::compileErrors(unsigned int shader, const char* type)
 		if (hasCompiled == GL_FALSE)
 		{
 			glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-			std::cout << "SHADER_LINKING_ERROR for:" << type << "\n" << infoLog << std::endl;
+			//std::cout << "SHADER_LINKING_ERROR for:" << type << "\n" << infoLog << std::endl;
 		}
 	}
 }

@@ -1,6 +1,5 @@
 #pragma once
-#include <glm/glm.hpp>
-
+#include "../pch.h"
 #include "Component.h"
 
 class CameraComponent :

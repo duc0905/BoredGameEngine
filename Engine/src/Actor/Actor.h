@@ -1,8 +1,5 @@
 #pragma once
-
-#include <typeindex>
-#include <map>
-#include <iostream>
+#include "../pch.h"
 
 #include "../Components/Component.h"
 #include "../Components/TransformComponent.h"

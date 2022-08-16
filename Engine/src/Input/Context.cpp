@@ -1,3 +1,5 @@
+
+#include "../pch.h"
 #include "Context.h"
 
 void Context::ResetPriority(int priority)
@@ -17,16 +19,16 @@ void Context::Deactivate()
 
 void Context::Debuggin()
 {
-    std::cout << isActive_ << "AS ACTIVATION" << std::endl;
-    std::cout << "Printing Action Map" << std::endl;
-    for (const auto& elem : actionMap_) {
-        std::cout << elem.first.first << " " << elem.first.second << " " << elem.second << std::endl;
-    };
+    //std::cout << isActive_ << "AS ACTIVATION" << std::endl;
+    //std::cout << "Printing Action Map" << std::endl;
+    //for (const auto& elem : actionMap_) {
+    //    std::cout << elem.first.first << " " << elem.first.second << " " << elem.second << std::endl;
+    //};
 
-    std::cout << "Printing Range Map" << std::endl;
-    for (const auto& elem : rangeMap_) {
-        std::cout << elem.first.first << " " << elem.first.second << " " << elem.second.first << " " << elem.second.second << std::endl;
-    }
+    //std::cout << "Printing Range Map" << std::endl;
+    //for (const auto& elem : rangeMap_) {
+    //    std::cout << elem.first.first << " " << elem.first.second << " " << elem.second.first << " " << elem.second.second << std::endl;
+    //}
 }
 
 void Context::AddActionMapping(KeyInput::Key key, int mods, const std::string& name)

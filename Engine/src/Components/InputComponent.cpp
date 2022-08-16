@@ -1,3 +1,5 @@
+
+#include "../pch.h"
 #include "InputComponent.h"
 
 const std::string& InputComponent::GetComponentName()

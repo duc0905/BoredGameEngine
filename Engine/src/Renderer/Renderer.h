@@ -1,20 +1,12 @@
 #pragma once
-#include <memory>
+#include "../pch.h"
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/common.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
 #include "IRenderer.h"
-
 #include "VertexBuffer.h"
 #include "VertexArray.h"
 #include "IndexBuffer.h"
 #include "ShaderClass.h"
-
 #include "../Components/MeshComponent.h"
 
 class Renderer : public IRenderer
@@ -25,7 +17,7 @@ public:
     Renderer() {};
     virtual ~Renderer()
     {
-        std::cout << "Cleaning up Renderer!" << std::endl;
+        //std::cout << "Cleaning up Renderer!" << std::endl;
     }
 
     virtual void Render(IWorld& world) override;

@@ -1,3 +1,4 @@
+#include "../pch.h"
 #include "IInput.h"
 
 std::shared_ptr<IInput> IInput::defaultInput_ = std::make_shared<NullInput>();
@@ -35,8 +36,9 @@ void IInput::EvaluateKey(KeyInput::Key key, KeyInput::Action action, int mods)
 void IInput::BindAction(const std::string& name, ActionCallback func)
 {
 	auto it = actionMap.find(name);
-	if (it != actionMap.end()) {
-		std::cout << "WARNING! Overwriting alias for action function" << std::endl;
+	if (it != actionMap.end()) 
+	{
+		LOG_COLOR("Overwriting alias for action function", COLOR::YELLOW, COLOR::BLACK);
 	};
 	actionMap[name] = func;
 }

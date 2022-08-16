@@ -1,8 +1,8 @@
 #pragma once
-#include <functional>
+#include "../pch.h"
+
 #include "../System.h"
 #include "Context.h"
-#include "ConsoleLogger.h"
 
 class IInput : public System
 {

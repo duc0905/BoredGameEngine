@@ -1,6 +1,5 @@
 #pragma once
 
-
 namespace KeyInput
 {
 	enum Key

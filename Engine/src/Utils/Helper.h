@@ -1,11 +1,5 @@
 #pragma once
-
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <sstream>
-#include <vector>
-#include <glm/glm.hpp>
+#include "../pch.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>

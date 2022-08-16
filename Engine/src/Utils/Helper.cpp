@@ -1,3 +1,4 @@
+#include "../pch.h"
 #include "Helper.h"
 
 bool Helper::ReadOBJModel(const std::string& file, std::vector<glm::vec3>& positions, std::vector<glm::vec3>& uvs, std::vector<glm::vec3>& normals, std::vector<unsigned int>& indices)
@@ -12,7 +13,7 @@ bool Helper::ReadOBJModel(const std::string& file, std::vector<glm::vec3>& posit
 
 	if (nullptr == scene)
 	{
-		std::cout << "Error: Cannot read model '" << file << "'" << std::endl;
+		//std::cout << "Error: Cannot read model '" << file << "'" << std::endl;
 		return false;
 	}
 
