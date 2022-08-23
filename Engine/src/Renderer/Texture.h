@@ -1,14 +1,9 @@
-#ifndef _TEXTURE_CLASS_H_
-#define _TEXTURE_CLASS_H_
-
-
-#include <glad/glad.h>
-#include <string>
-#include "General.h"
+#pragma once
+#include "../pch.h"
 
 class Texture {
 private:
-	GLuint RendererID;
+	GLuint ID;
 	std::string filepath;
 	unsigned char* LocalBuffer;
 	int Width, Height, BPP;
@@ -22,5 +17,3 @@ public:
 	inline int getWidth() const { return Width; }
 	inline int getHeight() const { return Height; }
 };
-
-#endif // !_TEXTURE_CLASS_H_

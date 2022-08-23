@@ -32,7 +32,6 @@ public:
 
 	virtual ~GLFWInput() override
 	{
-		//std::cout << "Cleaning up Input!" << std::endl;
 		instance_.reset();
 	}
 };

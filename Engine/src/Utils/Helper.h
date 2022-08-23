@@ -19,5 +19,11 @@ public:
 		std::vector<glm::vec3>& uvs,
 		std::vector<glm::vec3>& normals,
 		std::vector<unsigned int>& indices);
+
+	//static bool ReadModel(
+	//	const std::string& file,
+	//	Mesh& mesh,
+	//	Texture& tex
+	//);
 };
 

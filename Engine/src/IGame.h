@@ -22,19 +22,19 @@ public:
 	static void Run();
 
 	static IWorld& GetWorld();
-	static void SetWorld(IWorld* world);
+	static std::shared_ptr<IWorld> GetWorldPtr() { return worldSystem_; };
 	static void SetWorld(std::shared_ptr<IWorld> world);
 
 	static IWindow& GetWindow();
-	static void SetWindow(IWindow* window);
+	static std::shared_ptr<IWindow> GetWindowPtr() { return windowSystem_; };
 	static void SetWindow(std::shared_ptr<IWindow> window);
 
 	static IInput& GetInput();
-	static void SetInput(IInput* input);
+	static std::shared_ptr<IInput> GetInputPtr() { return inputSystem_; };
 	static void SetInput(std::shared_ptr<IInput> input);
 
 	static IRenderer& GetRenderer();
-	static void SetRenderer(IRenderer* renderer);
+	static std::shared_ptr<IRenderer> GetRendererPtr() { return rendererSystem_; };
 	static void SetRenderer(std::shared_ptr<IRenderer> renderer);
 };
 

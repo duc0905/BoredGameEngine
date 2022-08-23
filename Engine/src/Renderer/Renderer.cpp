@@ -35,7 +35,7 @@ void Renderer::Draw(const Mesh& mesh)
 {
 	if (!mesh.IsInit())
 	{
-		std::cout << "Mesh not initialized" << std::endl;
+		LOG_COLOR("Mesh not initialized", COLOR::YELLOW, COLOR::BLACK);
 		return;
 	}
 	mesh.Bind();
@@ -50,6 +50,8 @@ void Renderer::Draw(const Actor& actor)
 {
 	try
 	{
+		if (!activeCam_)
+			throw std::exception("Renderer have not been provided a camera");
 		auto meshComp = actor.FindComponent<MeshComponent>();
 		Mesh& mesh = meshComp->GetMesh();
 		auto transformComp = actor.FindComponent<TransformComponent>();
@@ -67,8 +69,8 @@ void Renderer::Draw(const Actor& actor)
 
 		Draw(mesh);
 	}
-	catch (const std::exception&)
+	catch (const std::exception& e)
 	{
-		std::cout << "Cannot draw actor" << std::endl;
+		//LOG_COLOR(e.what(), COLOR::YELLOW, COLOR::BLACK);
 	}
 }

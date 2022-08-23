@@ -11,6 +11,8 @@ void World::Init()
 
 void World::OnTick(float dt)
 {
+	if (gm_)
+		gm_->OnTick(dt);
 	for (auto actor : actors_) {
 		actor->OnUpdate(dt);
 	}

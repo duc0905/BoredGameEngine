@@ -5,7 +5,7 @@ bool Helper::ReadOBJModel(const std::string& file, std::vector<glm::vec3>& posit
 {
 	Assimp::Importer imp;
 
-	const aiScene* scene = imp.ReadFile("./res/3d_models/" + file,
+	const aiScene* scene = imp.ReadFile("./res/" + file,
 		aiProcess_CalcTangentSpace |
 		aiProcess_Triangulate |
 		aiProcess_JoinIdenticalVertices |

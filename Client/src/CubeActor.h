@@ -1,16 +1,17 @@
 #pragma once
 #include "Actor/Actor.h"
 #include "Components/InputComponent.h"
+#include "Components/MeshComponent.h"
 
-class CubeActor :
-    public Actor
+class CubeActor : public Actor
 {
 public:
+    CubeActor();
  
     virtual void OnAttach() override {
         std::cout << "DUk" << std::endl;
         auto inputComp = CreateComponent<InputComponent>();
-//        inputComp->BindAction("yeet", std::bind(&CubeActor::Yell, this, std::placeholders::_1));
+        inputComp->BindAction("yeet", std::bind(&CubeActor::Yell, this, std::placeholders::_1));
         inputComp->BindRange("yeet_RANGE", std::bind(&CubeActor::YellRange, this, std::placeholders::_1, std::placeholders::_2));
         inputComp->BindRange("rX", std::bind(&CubeActor::RotateX, this, std::placeholders::_1, std::placeholders::_2));
         inputComp->BindRange("rY", std::bind(&CubeActor::RotateY, this, std::placeholders::_1, std::placeholders::_2));

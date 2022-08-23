@@ -6,7 +6,7 @@ std::shared_ptr<GLFWInput> GLFWInput::instance_ = nullptr;
 GLFWInput::GLFWInput()
 	: window_(IGame::GetWindow())
 {
-	if (dynamic_cast<GLFWWindow*>(&window_))
+	if (auto w = std::dynamic_pointer_cast<GLFWWindow>(IGame::GetWindowPtr()))
 		SetupCallbacks();
 	else
 	{
@@ -21,7 +21,7 @@ GLFWInput::GLFWInput()
 		ss << "GLFWWindow* window = new GLFWWindow(800, 600, \"My game\");" << std::endl;
 		ss << "IGame::SetWindow(window);" << std::endl;
 		ss << "..." << std::endl;
-		ss << "GLFWInput* input = new GLFWInput(window);" << std::endl;
+
 		ss << "IGame::SetInput(input);" << std::endl << std::endl;
 
 		LOG_COLOR(ss.str(), COLOR::BRIGHT_BLUE, COLOR::BLACK);
@@ -39,6 +39,8 @@ GLFWInput& GLFWInput::GetInstance() {
 
 std::shared_ptr<GLFWInput> GLFWInput::GetInstancePtr()
 {
+	if (!instance_)
+		GetInstance();
 	return instance_;
 }
 

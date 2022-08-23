@@ -13,8 +13,8 @@ public:
 
 	// Called when added to World
 	virtual void OnAttach() {};
-
 	virtual void OnDetach() {};
+	virtual void OnTick(float dt) {};
 
 	virtual void OnUpdate(float dt){};
 
