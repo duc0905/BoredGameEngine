@@ -1,7 +1,7 @@
 #ifndef IndexBuffer_CLASS_H
 #define IndexBuffer_CLASS_H
 
-#include "../pch.h"
+#include "../../pch.h"
 
 class IndexBuffer {
 private:

@@ -1,4 +1,4 @@
-#include "../pch.h"
+#include "pch.h"
 #include "Renderer.h"
 
 /* ========== Renderer =========== */
@@ -43,7 +43,7 @@ void Renderer::Draw(const Mesh& mesh)
 
 	glDrawElements(GL_TRIANGLES, mesh.GetNumIndices(), GL_UNSIGNED_INT, 0);
 
-	mesh.UnBind();
+	mesh.Unbind();
 }
 
 void Renderer::Draw(const Actor& actor)
@@ -69,7 +69,7 @@ void Renderer::Draw(const Actor& actor)
 
 		Draw(mesh);
 	}
-	catch (const std::exception& e)
+	catch (const std::exception&)
 	{
 		//LOG_COLOR(e.what(), COLOR::YELLOW, COLOR::BLACK);
 	}

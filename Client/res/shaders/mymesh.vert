@@ -8,12 +8,11 @@ uniform mat4 u_ModelMat;
 uniform mat4 u_ViewMat;
 uniform mat4 u_ProjectionMat;
 
-out vec4 v_Color;
+out vec2 v_TexCoords;
 
 void main()
 {
 	gl_Position = u_ProjectionMat * u_ViewMat * u_ModelMat * vec4(a_Position, 1.0f);
 
-	vec4 temp = u_ProjectionMat * u_ViewMat * u_ModelMat * vec4(a_Position, 1.0f);
-	v_Color = vec4(a_UV, 1.0f);
+	v_TexCoords = a_UV.xy;
 }

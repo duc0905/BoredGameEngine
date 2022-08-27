@@ -3,9 +3,9 @@
 
 #include <GLFW/glfw3.h>
 #include "IRenderer.h"
-#include "VertexBuffer.h"
-#include "VertexArray.h"
-#include "IndexBuffer.h"
+#include "Buffers/VertexBuffer.h"
+#include "Buffers/VertexArray.h"
+#include "Buffers/IndexBuffer.h"
 #include "ShaderClass.h"
 #include "../Components/MeshComponent.h"
 

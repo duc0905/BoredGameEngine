@@ -1,62 +1,89 @@
-#include "../pch.h"
+#include "pch.h"
 #include "Mesh.h"
+
+/* ======= Mesh ======== */
+
+Mesh::Mesh(Mesh&& other)
+{
+    isInit_ = other.isInit_;
+
+    buffers_.swap(other.buffers_);
+}
+
+Mesh::Mesh(std::shared_ptr<MeshBuffers> mb, std::shared_ptr<ITexture> tex)
+{
+    buffers_ = mb;
+    texture_ = tex;
+}
 
 bool Mesh::LoadModel(const std::string& file)
 {
-    std::cout << "Loading model: " << file << std::endl;
-    std::vector<glm::vec3> pos, uvs, nos;
-    std::vector<unsigned int> indices;
-    if (!Helper::ReadOBJModel(file, pos, uvs, nos, indices))
-        return false;
-
-    va_ = std::make_unique<VertexArray>();
-
-    positions_ = std::make_unique<VertexBuffer>(&pos[0], pos.size() * sizeof(pos[0]), GL_STATIC_DRAW);
-    BufferLayout posBl{ { "Position", Float3, false} };
-    positions_->SetLayout(posBl);
-
-    uvs_ = std::make_unique<VertexBuffer>(&uvs[0], uvs.size() * sizeof(uvs[0]), GL_STATIC_DRAW);
-    BufferLayout uvBl{ { "UV", Float3, false} };
-    uvs_->SetLayout(uvBl);
-
-    normals_ = std::make_unique<VertexBuffer>(&nos[0], nos.size() * sizeof(nos[0]), GL_STATIC_DRAW);
-    BufferLayout normalBl{ { "Normal", Float3, false} };
-    normals_->SetLayout(normalBl);
-
-    ib_ = std::make_unique<IndexBuffer>(&indices[0], indices.size() * sizeof(indices[0]), GL_STATIC_DRAW);
-    numIndices_ = indices.size();
-
-    va_->AddVertexBuffer(*positions_);
-    va_->AddVertexBuffer(*uvs_);
-    va_->AddVertexBuffer(*normals_);
-
-    UnBind();
+    auto data = Helper::ReadModel(file);
+    auto [buffers, texture] = data.at(0);
     isInit_ = true;
+
+    buffers_ = buffers;
+    texture_ = texture;
+
     return true;
 }
 
-bool Mesh::Bind() const
+bool Mesh::Bind(int texSlot) const
 {
-    va_->Bind();
-    ib_->Bind();
+    buffers_->Bind();
+    texture_->Bind(texSlot);
     return true;
 }
 
-bool Mesh::UnBind() const
+bool Mesh::Unbind() const
 {
-    va_->Unbind();
-    ib_->Unbind();
-    positions_->Unbind();
-    uvs_->Unbind();
-    normals_->Unbind();
+    buffers_->Unbind();
+    texture_->Unbind();
+
     return true;
 }
 
 void Mesh::Delete()
 {
-    va_->Delete();
-    positions_->Delete();
-    uvs_->Delete();
-    normals_->Delete();
-    ib_->Delete();
+    buffers_.reset();
+    texture_.reset();
+}
+
+/* ========== MeshBuffers =========== */
+
+MeshBuffers::MeshBuffers()
+{
+    va_ = std::make_shared<VertexArray>();
+}
+
+//MeshBuffers::MeshBuffers(MeshBuffers&& other)
+//{
+//    numIndices_ = other.numIndices_;
+//    va_.swap(other.va_);
+//    positions_.swap(other.positions_);
+//    uvs_.swap(other.uvs_);
+//    normals_.swap(other.normals_);
+//    ib_.swap(other.ib_);
+//}
+
+bool MeshBuffers::Bind()
+{
+    va_->Bind();
+    positions_->Bind();
+    uvs_->Bind();
+    normals_->Bind();
+    ib_->Bind();
+
+    return true;
+}
+
+bool MeshBuffers::Unbind()
+{
+    va_->Unbind();
+    positions_->Unbind();
+    uvs_->Unbind();
+    normals_->Unbind();
+    ib_->Unbind();
+
+    return true;
 }

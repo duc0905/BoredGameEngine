@@ -17,6 +17,7 @@
 #include <unordered_map>
 #include <cerrno>
 #include <fstream>
+#include <tuple>
 
 /** GLM */
 #include <glm/glm.hpp>

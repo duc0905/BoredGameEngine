@@ -18,7 +18,7 @@ int main()
 	IGame::SetWindow(window);
 	IGame::SetRenderer(renderer);
 
-	// My design sucks so this happens
+	//// My design sucks so this happens
 	auto input = GLFWInput::GetInstancePtr();
 	IGame::SetInput(input);
 
