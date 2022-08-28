@@ -7,6 +7,7 @@
 
 #include "MyRenderer.h"
 #include "CubeActor.h"
+#include "ChessGameMode.h"
 
 int main()
 {
@@ -17,6 +18,8 @@ int main()
 	IGame::SetWorld(world);
 	IGame::SetWindow(window);
 	IGame::SetRenderer(renderer);
+
+	world->UseGameMode<ChessGameMode>(*world);
 
 	//// My design sucks so this happens
 	auto input = GLFWInput::GetInstancePtr();

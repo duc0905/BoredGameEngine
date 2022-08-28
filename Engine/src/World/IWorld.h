@@ -1,8 +1,8 @@
 #pragma once
 #include "../pch.h"
-#include "../GameMode/IGameMode.h"
-#include "../Actor/Actor.h"
 #include "../System.h"
+#include "GameMode/IGameMode.h"
+#include "../Actor/Actor.h"
 
 class IWorld : public System
 {
@@ -26,7 +26,7 @@ public:
 	template <class GM, class ...Args,
 		std::enable_if_t<std::is_base_of_v<IGameMode, GM>, int> = 0,
 		std::enable_if_t<std::is_constructible_v<GM, Args...>, int> = 0>
-	GM& UseGameMode(Args&&... args)
+	inline IGameMode& UseGameMode(Args&&... args)
 	{
 		if (gm_)
 		{
@@ -37,7 +37,7 @@ public:
 			}
 			else
 			{
-				LOG_COLOR("Switching game mode!", COLOR::GREEN, COLOR::BLACK);
+				LOG_COLOR("Switching game mode to " + std::string(typeid(GM).name()), COLOR::GREEN, COLOR::BLACK);
 				gm_->OnDetach();
 				gm_.reset();
 			}
@@ -66,6 +66,8 @@ public:
 
 class NullWorld : public IWorld
 {
+public:
+	~NullWorld() {}
 	// Inherited via IWorld
 	virtual std::vector<std::shared_ptr<Actor>> GetActors() override { return std::vector<std::shared_ptr<Actor>>(); };
 	virtual void AddActor(std::shared_ptr<Actor> actor) override {};

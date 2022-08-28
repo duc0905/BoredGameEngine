@@ -1,12 +1,11 @@
 #pragma once
-#include "../pch.h"
+#include "../../pch.h"
 //#include "../World/IWorld.h"
-#include "../System.h"
+#include "../../System.h"
 
 class IWorld;
 
 /**
-*	class IGameMode
 * Base class of all GameMode. This is just an abstract class.
 * Defines most of the logics for the game on the level scale
 * Even if your game only has 1 level, still create a GameMode
