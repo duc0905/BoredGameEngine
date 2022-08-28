@@ -25,6 +25,8 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">../pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">../pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="src\Audio\IAudio.cpp" />
+    <ClCompile Include="src\Audio\OpenALAudio.cpp" />
     <ClCompile Include="src\Components\CameraComponent.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../pch.h</PrecompiledHeaderFile>
@@ -191,6 +193,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Audio\IAudio.h" />
+    <ClInclude Include="src\Audio\OpenALAudio.h" />
     <ClInclude Include="src\Components\TextureComponent.h" />
     <ClInclude Include="src\GameMode\IGameMode.h" />
     <ClInclude Include="src\Input\IInput.h" />
