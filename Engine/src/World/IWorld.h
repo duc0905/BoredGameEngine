@@ -48,16 +48,12 @@ public:
 		return *gm_;
 	}
 
-	virtual void OnTick(float dt) override
-	{
-		// Tick the gamemode
-		if (gm_)
-			gm_->OnTick(dt);
+	virtual void OnTick(float dt) override {}
 
-		// Tick the actors
-		for (auto actor : GetActors())
-			actor->OnTick(dt);
-	}
+	virtual bool Start() final;
+	virtual bool Pause() final;
+	virtual bool Resume() final;
+	virtual bool End() final;
 
 	virtual std::vector<std::shared_ptr<Actor>> GetActors() = 0;
 	virtual void AddActor(std::shared_ptr<Actor> actor) = 0;

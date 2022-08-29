@@ -17,6 +17,7 @@ class IGameMode : public System
 private:
 	bool isPlaying_ = false;
 	bool isEnded_ = false;
+	bool isStarted_ = false;
 
 	// This cannot be null
 	IWorld& world_;
@@ -26,6 +27,7 @@ public:
 
 	bool IsPlaying() const { return isPlaying_; }
 	bool IsEnded() const { return isEnded_; }
+	bool IsStarted() const { return isStarted_; }
 
 protected:
 	virtual void OnLevelStart() = 0;
@@ -37,16 +39,71 @@ private:
 	virtual void OnAttach(IWorld& world) {};
 	virtual void OnDetach() {};
 
-	void StartLevel() { 
+	bool StartLevel() { 
 		// TODO: Add log in this if statement
-		if (isEnded_) return;
+		if (isEnded_) 
+		{
+			LOG_COLOR("Cannot start: game is already ended!", COLOR::YELLOW, COLOR::BLACK);
+			return false;
+		}
+
+		if (isStarted_)
+		{
+			LOG_COLOR("Cannot start: game is already started!", COLOR::YELLOW, COLOR::BLACK);
+			return false;
+		}
+
+		LOG_COLOR("LEVEL STARTED!", COLOR::BLUE, COLOR::BLACK);
 		isPlaying_ = true;
+		isStarted_ = true;
+		return true;
 	};
-	void ResumeLevel() { 
-		// TODO: Add log in this if statement
-		if (isEnded_) return;
-		isPlaying_ = true; 
+
+	bool ResumeLevel() { 
+		if (isPlaying_)
+		{
+			LOG_COLOR("Cannot resume: game is already being played!", COLOR::YELLOW, COLOR::BLACK);
+			return false;
+		}
+
+		if (isEnded_)
+		{
+			LOG_COLOR("Cannot resume: game is already end!", COLOR::YELLOW, COLOR::BLACK);
+			return false;
+		}
+
+		LOG_COLOR("LEVEL RESUMED!", COLOR::BLUE, COLOR::BLACK);
+		isPlaying_ = true;
+		return true;
 	};
-	void PauseLevel() { isPlaying_ = false; };
-	void EndLevel() { isPlaying_ = false; isEnded_ = true; };
+	bool PauseLevel() 
+	{
+		if (isEnded_)
+		{
+			LOG_COLOR("Cannot pause: game is already end!", COLOR::YELLOW, COLOR::BLACK);
+			return false;
+		}
+
+		if (!isPlaying_)
+		{
+			LOG_COLOR("Cannot pause: game is already paused!", COLOR::YELLOW, COLOR::BLACK);
+			return false;
+		}
+
+		LOG_COLOR("LEVEL PAUSED!", COLOR::BLUE, COLOR::BLACK);
+		isPlaying_ = false; 
+		return true;
+	};
+	bool EndLevel() 
+	{ 
+		if (isEnded_)
+		{
+			LOG_COLOR("Cannot end: game is already ended!", COLOR::YELLOW, COLOR::BLACK);
+			return false;
+		}
+
+		LOG_COLOR("LEVEL ENDED!", COLOR::BLUE, COLOR::BLACK);
+		isPlaying_ = false; isEnded_ = true;
+		return true;
+	};
 };
