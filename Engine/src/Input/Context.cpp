@@ -74,7 +74,9 @@ void Context::RemoveRangeMapping(KeyInput::Key key, int mods)
 std::string Context::MapKeyAction(KeyInput::Key key, int mods)
 {
     if (!isActive_) {
-        return next_->MapKeyAction(key, mods);
+        if (next_)
+            return next_->MapKeyAction(key, mods);
+        return "";
     }
     auto it = actionMap_.find({ key, mods });
     if (it != actionMap_.end())
@@ -87,7 +89,9 @@ std::string Context::MapKeyAction(KeyInput::Key key, int mods)
 std::pair<std::string,float> Context::MapKeyRange(KeyInput::Key key, int mods)
 {
     if (!isActive_) {
-        return next_->MapKeyRange(key, mods);
+        if (next_)
+            return next_->MapKeyRange(key, mods);
+        return { "", 0.0f };
     }
     auto it = rangeMap_.find({ key, mods });
     if (it != rangeMap_.end())

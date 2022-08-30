@@ -96,7 +96,7 @@
     <ClCompile Include="src\Actor\BaseCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\GameMode\IGameMode.cpp">
+    <ClCompile Include="src\World\GameMode\IGameMode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Renderer\Texture\OpenGLTexture.cpp">
@@ -203,7 +203,7 @@
     <ClInclude Include="src\pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\GameMode\IGameMode.h">
+    <ClInclude Include="src\World\GameMode\IGameMode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\Texture\OpenGLTexture.h">
