@@ -1,5 +1,5 @@
 #pragma once
-#include "GameMode\IGameMode.h"
+#include "World/GameMode/IGameMode.h"
 
 class ChessGameMode : public IGameMode
 {
@@ -12,5 +12,9 @@ private:
 
 	virtual void OnAttach(IWorld& world) override;
 	virtual void OnDetach() override;
+
+	virtual void OnTick(float) override;
+public:
+	ChessGameMode(IWorld& world);
 };
 

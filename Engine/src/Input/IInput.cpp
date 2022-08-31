@@ -14,20 +14,15 @@ void IInput::EvaluateKey(KeyInput::Key key, KeyInput::Action action, int mods)
 	std::pair<std::string, float> rangePack = headContext->MapKeyRange(key, mods);
 
 	if (!(actionName == "")) {
-//		std::cout << "Calling Action: " << actionName << std::endl;
 		auto it = actionMap.find(actionName);
 		if (it != actionMap.end())
 			it->second(action);
 	}
 	
 	if (!(rangePack.first == "")) {
-		std::cout << "Calling Range: " << rangePack.first << "Mod" << mods << std::endl;
 		auto it = rangeMap.find(rangePack.first);
 		if (it != rangeMap.end())
-		{
 			it->second.first(action, rangePack.second);
-			std::cout << it->second.second << std::endl;
-		}
 	}
 }
 
@@ -47,10 +42,9 @@ void IInput::BindRange(const std::string& name, RangeCallback func, float weight
 {
 	auto it = rangeMap.find(name);
 	if (it != rangeMap.end()) {
-		std::cout << "WARNING! Overwriting alias for range function" << std::endl;
+		LOG_COLOR("WARNING! Overwriting alias for range function", COLOR::YELLOW, COLOR::BLACK);
 	};
 	rangeMap[name] = { func, weight };
-	std::cout << "name" << name << weight << std::endl;
 }
 
 void IInput::AddContext(Context* con)

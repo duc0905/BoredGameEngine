@@ -1,5 +1,5 @@
 #pragma once
-#include "./pch.h"
+#include "pch.h"
 #include "World/IWorld.h"
 #include "Window/IWindow.h"
 #include "Input/IInput.h"

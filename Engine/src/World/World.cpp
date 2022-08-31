@@ -1,4 +1,4 @@
-#include "../pch.h"
+#include "pch.h"
 #include "World.h"
 
 World::World()
@@ -11,11 +11,13 @@ void World::Init()
 
 void World::OnTick(float dt)
 {
+	// Tick the gamemode
 	if (gm_)
 		gm_->OnTick(dt);
-	for (auto actor : actors_) {
-		actor->OnUpdate(dt);
-	}
+
+	// Tick the actors
+	for (auto actor : GetActors())
+		actor->OnTick(dt);
 }
 
 void World::AddActor(std::shared_ptr<Actor> actor)

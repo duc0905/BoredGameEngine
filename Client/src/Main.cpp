@@ -7,20 +7,25 @@
 
 #include "MyRenderer.h"
 #include "CubeActor.h"
+#include "ChessGameMode.h"
 
 int main()
 {
-	auto world = std::make_shared<World>();
 	auto window = std::make_shared<GLFWWindow>(800, 800, "Bored Chess");
 	auto renderer = std::make_shared<MyRenderer>();
 
-	IGame::SetWorld(world);
 	IGame::SetWindow(window);
 	IGame::SetRenderer(renderer);
+
 
 	//// My design sucks so this happens
 	auto input = GLFWInput::GetInstancePtr();
 	IGame::SetInput(input);
+
+	auto world = std::make_shared<World>();
+	IGame::SetWorld(world);
+
+	world->UseGameMode<ChessGameMode>(*world);
 
 	std::shared_ptr<Actor> cube = std::make_shared<CubeActor>();
 	world->AddActor(cube);
