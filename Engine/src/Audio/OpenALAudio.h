@@ -1,15 +1,18 @@
 #pragma once
+#include <AL/al.h>
+#include <AL/alc.h>
 #include "IAudio.h"
 #include "OpenALSource.h"
 #include "OpenALBuffer.h"
 #include <AudioFile.h>
-#include <AL/al.h>
-#include <AL/alc.h>
+
+class IGame;
 
 class OpenALAudio : public IAudio
 {
 public:
 	OpenALAudio();
+
 	// Inherited via IAudio
 	virtual bool SetListenerPosition(const glm::vec3&) override;
 	virtual bool SetListenerVelocity(const glm::vec3&) override;

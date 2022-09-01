@@ -13,6 +13,7 @@ void IGame::Loop()
 	auto& input_ = IGame::GetInput();
 	auto& world_ = IGame::GetWorld();
 	auto& renderer_ = IGame::GetRenderer();
+	auto& audio_ = IGame::GetAudio();
 
 	std::cout << "Start running" << std::endl;
 
@@ -27,12 +28,15 @@ void IGame::Loop()
 		// Render
 		renderer_.Render(world_);
 
+		audio_.OnTick(0.01f);
+
 		window_.OnTick(0.01f);
 	}
 }
 
 void IGame::Stop()
 {
+	// TODO add cleanup methods here
 }
 
 void IGame::Run()

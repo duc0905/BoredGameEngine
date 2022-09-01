@@ -62,9 +62,12 @@ void IInput::AddContext(std::shared_ptr<Context> con)
 		cur->next_ = con;
 		con->ResetPriority(cur->priority_ + 1);
 	}
+
 	else {
 		headContext = con;
 	}
+
+	con->Activate();
 }
 
 void IInput::RemoveContext(Context* con)

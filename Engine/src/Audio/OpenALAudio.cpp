@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "OpenALAudio.h"
+#include "../IGame.h"
 
 OpenALAudio::OpenALAudio()
 {
@@ -7,6 +8,7 @@ OpenALAudio::OpenALAudio()
 	if (Device) {
 		ALCcontext* Context = alcCreateContext(Device, NULL);
 		alcMakeContextCurrent(Context);
+		LOG_COLOR("Initialized OpenAL", COLOR::BLUE, COLOR::BLACK);
 	}
 
 	ALenum error = alGetError();
@@ -14,8 +16,9 @@ OpenALAudio::OpenALAudio()
 	{
 		LOG_COLOR("alGenBuffers :" + error, COLOR::RED, COLOR::BLACK);
 	}
-	LOG_COLOR("Initialized OpenAL", COLOR::BLUE, COLOR::BLACK);
+
 }
+
 
 bool OpenALAudio::Play(int sourceId)
 {

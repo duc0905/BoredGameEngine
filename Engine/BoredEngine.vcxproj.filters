@@ -96,9 +96,6 @@
     <ClCompile Include="src\Actor\BaseCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\World\GameMode\IGameMode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Renderer\Texture\OpenGLTexture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
