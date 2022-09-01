@@ -2,6 +2,7 @@
 #include "Window/GLFWWindow.h"
 #include "World/World.h"
 #include "Input/GLFWInput.h"
+#include "Audio/OpenALAudio.h"
 
 #include "Actor/OrthoCamera.h"
 
@@ -24,6 +25,22 @@ int main()
 
 	auto world = std::make_shared<World>();
 	IGame::SetWorld(world);
+
+	auto audio = std::make_shared<OpenALAudio>();
+	IGame::SetAudio(audio);
+	OpenALBuffer buffer;
+	if (!buffer.LoadWav("sounds/bensound-sunny.wav"))
+	{
+		LOG_COLOR("Fuck", COLOR::RED, COLOR::BLACK);
+	}
+	OpenALSource source;
+	source.BindBuffer(buffer.GetId());
+	source.SetGain(1.0f);
+	source.SetPosition({ 0.0f, 0.0f, 0.0f });
+	source.SetVelocity({ 0.0f, 0.0f, 0.0f });
+	audio->SetListenerPosition({ 0.0f, 0.0f, 0.0f });
+	audio->SetListenerVelocity({ 0.0f, 0.0f, 0.0f });
+	source.Play();
 
 	world->UseGameMode<ChessGameMode>(*world);
 

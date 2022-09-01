@@ -4,6 +4,7 @@
 #include "Window/IWindow.h"
 #include "Input/IInput.h"
 #include "Renderer/IRenderer.h"
+#include "Audio/IAudio.h"
 
 class IGame
 {
@@ -15,6 +16,7 @@ private:
 	static std::shared_ptr<IWindow> windowSystem_;
 	static std::shared_ptr<IInput> inputSystem_;
 	static std::shared_ptr<IRenderer> rendererSystem_;
+	static std::shared_ptr<IAudio> audioSystem_;
 
 	// Not allowing anyone to create instance
 	IGame() = default;
@@ -36,5 +38,9 @@ public:
 	static IRenderer& GetRenderer();
 	static std::shared_ptr<IRenderer> GetRendererPtr() { return rendererSystem_; };
 	static void SetRenderer(std::shared_ptr<IRenderer> renderer);
+
+	static IAudio& GetAudio();
+	static std::shared_ptr<IAudio> GetAudioPtr() { return audioSystem_; };
+	static void SetAudio(std::shared_ptr<IAudio> audio);
 };
 

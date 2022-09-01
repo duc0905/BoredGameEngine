@@ -5,6 +5,7 @@ std::shared_ptr<IInput> IGame::inputSystem_ = IInput::GetDefault();
 std::shared_ptr<IWorld> IGame::worldSystem_ = IWorld::GetDefault();
 std::shared_ptr<IWindow> IGame::windowSystem_ = IWindow::GetDefault();
 std::shared_ptr<IRenderer> IGame::rendererSystem_ = IRenderer::GetDefault();
+std::shared_ptr<IAudio> IGame::audioSystem_ = IAudio::GetDefault();
 
 void IGame::Loop()
 {
@@ -90,4 +91,17 @@ void IGame::SetRenderer(std::shared_ptr<IRenderer> renderer)
 {
 	rendererSystem_ = renderer;
 	rendererSystem_->Init();
+}
+
+IAudio& IGame::GetAudio()
+{
+	if (!audioSystem_)
+		audioSystem_ = IAudio::GetDefault();
+	return *audioSystem_;
+}
+
+void IGame::SetAudio(std::shared_ptr<IAudio> audio)
+{
+	audioSystem_ = audio;
+	audioSystem_->Init();
 }

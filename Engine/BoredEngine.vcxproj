@@ -27,6 +27,8 @@
     </ClCompile>
     <ClCompile Include="src\Audio\IAudio.cpp" />
     <ClCompile Include="src\Audio\OpenALAudio.cpp" />
+    <ClCompile Include="src\Audio\OpenALBuffer.cpp" />
+    <ClCompile Include="src\Audio\OpenALSource.cpp" />
     <ClCompile Include="src\Components\CameraComponent.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../pch.h</PrecompiledHeaderFile>
@@ -193,8 +195,12 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Audio\ISoundBuffer.h" />
+    <ClInclude Include="src\Audio\ISource.h" />
     <ClInclude Include="src\Audio\IAudio.h" />
     <ClInclude Include="src\Audio\OpenALAudio.h" />
+    <ClInclude Include="src\Audio\OpenALBuffer.h" />
+    <ClInclude Include="src\Audio\OpenALSource.h" />
     <ClInclude Include="src\Components\TextureComponent.h" />
     <ClInclude Include="src\World\GameMode\IGameMode.h" />
     <ClInclude Include="src\Input\IInput.h" />
