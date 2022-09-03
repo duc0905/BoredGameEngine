@@ -48,7 +48,10 @@
     <ClCompile Include="src\BoredFileSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\IComponent.cpp">
+    <ClCompile Include="src\Component\IComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Actor\IActor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -83,7 +86,10 @@
     <ClInclude Include="src\BoredType\BoredType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\IComponent.h">
+    <ClInclude Include="src\Component\IComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Actor\IActor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -17,8 +17,7 @@ public:
 
     glm::vec3 const GetRotation() const { return rotation_; };
     void Rotate(const glm::vec3& rotation) { rotation_ = rotation; }
-    void SetRotation(const glm::vec3& rotation) { rotation_ = rotation; }
-
+    void SetRotation(const glm::vec3& rotation) { rotation_ = rotation; 
     glm::vec3 const GetScale() const { return scale_; };
     void Scale(const glm::vec3& scale) { scale_ = scale; }
     void SetScale(const glm::vec3& scale) { scale_ = scale; }

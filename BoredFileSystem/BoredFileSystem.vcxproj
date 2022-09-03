@@ -134,7 +134,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\IComponent.cpp" />
+    <ClCompile Include="src\Actor\IActor.cpp" />
+    <ClCompile Include="src\Component\IComponent.cpp" />
     <ClCompile Include="src\BoredType\BoredArray.cpp" />
     <ClCompile Include="src\BoredType\BoredBool.cpp" />
     <ClCompile Include="src\BoredType\BoredFloat.cpp" />
@@ -147,7 +148,8 @@
     <ClCompile Include="src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\IComponent.h" />
+    <ClInclude Include="src\Actor\IActor.h" />
+    <ClInclude Include="src\Component\IComponent.h" />
     <ClInclude Include="src\BoredFileSystem.h" />
     <ClInclude Include="src\BoredType\BoredArray.h" />
     <ClInclude Include="src\BoredType\BoredBool.h" />
