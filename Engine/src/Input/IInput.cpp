@@ -3,7 +3,7 @@
 
 std::shared_ptr<IInput> IInput::defaultInput_ = std::make_shared<NullInput>();
 
-void IInput::EvaluateKey(KeyInput::Key key, KeyInput::Action action, int mods)
+void IInput::EvaluateKey(KeyInput::Key key, KeyInput::Action action, int mods, double val)
 {
 	if (!headContext)
 	{
@@ -22,9 +22,32 @@ void IInput::EvaluateKey(KeyInput::Key key, KeyInput::Action action, int mods)
 	if (!(rangePack.first == "")) {
 		auto it = rangeMap.find(rangePack.first);
 		if (it != rangeMap.end())
-			it->second.first(action, rangePack.second);
+			it->second.first(action, rangePack.second * val);
 	}
 }
+
+//void IInput::EvaluateKey(KeyInput::Key key, int mods, double val)
+//{
+//	if (!headContext)
+//	{
+//		LOG_COLOR("Did not registed any Context.", COLOR::YELLOW, COLOR::BLACK);
+//		return;
+//	}
+//	std::string actionName = headContext->MapKeyAction(key, mods);
+//	std::pair<std::string, float> rangePack = headContext->MapKeyRange(key, mods);
+//	
+//	if (!(actionName == "")) {
+//		auto it = actionMap.find(actionName);
+//		if (it != actionMap.end())
+//			it->second(KeyInput::PRESS);
+//	}
+//
+//	if (!(rangePack.first == "")) {
+//		auto it = rangeMap.find(rangePack.first);
+//		if (it != rangeMap.end())
+//			it->second.first(KeyInput::PRESS, rangePack.second * val);
+//	}
+//}
 
 
 

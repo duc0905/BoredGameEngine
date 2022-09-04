@@ -40,6 +40,25 @@ namespace KeyInput
 		KEY_B,
 		KEY_N,
 		KEY_M,
+
+		// Mouse butts
+		KEY_MB_1,
+		KEY_MB_2,
+		KEY_MB_3,
+		KEY_MB_4,
+		KEY_MB_5,
+		KEY_MB_6,
+		KEY_MB_7,
+		KEY_MB_8,
+
+		MOUSE_POS_X,
+		MOUSE_POS_Y,
+		MOUSE_SCROLL_X,
+		MOUSE_SCROLL_Y,
+		MOUSE_ENTER,
+		MOUSE_LEAVE,
+
+		//default
 		KEY_UNKNOWN
 	};
 
@@ -50,6 +69,7 @@ namespace KeyInput
 		ALT = 1 << 2,
 		MOD_UNKNOWN = 1 << 8
 	};
+
 
 	enum Action
 	{

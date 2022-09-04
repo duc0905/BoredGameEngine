@@ -39,6 +39,8 @@ int main()
 	cameraContext->AddRangeMapping(KeyInput::KEY_D, 0, "MOVE_CAMERA_X", 1.0f);
 	cameraContext->AddRangeMapping(KeyInput::KEY_W, 0, "MOVE_CAMERA_Y", 1.0f);
 	cameraContext->AddRangeMapping(KeyInput::KEY_S, 0, "MOVE_CAMERA_Y", -1.0f);
+	cameraContext->AddActionMapping(KeyInput::KEY_MB_2, 0, "DIT COME");
+	cameraContext->AddRangeMapping(KeyInput::MOUSE_SCROLL_X, 0, "DIT SCROLL", 1.0f);
 
 	input->AddContext(cameraContext);
 	input->ActivateContext(cameraContext);
@@ -57,6 +59,13 @@ int main()
 			trans->Translate(glm::vec3(0.0f, 0.0f, weight));
 			LOG(trans->GetTranslation().z);
 		}
+		});
+
+	input->BindAction("DIT COME", [](KeyInput::Action action) -> void {
+		LOG("DIT COME");
+		});
+	input->BindRange("DIT SCROLL", [](KeyInput::Action action, float val) -> void {
+		LOG(val);
 		});
 
 	cam->FindComponent<TransformComponent>()->Translate(glm::vec3(-3.0f, 0.0f, 0.0f));
