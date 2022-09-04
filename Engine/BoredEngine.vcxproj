@@ -197,6 +197,7 @@
     <ClInclude Include="src\Components\TextureComponent.h" />
     <ClInclude Include="src\HUD\HUDComponents\IHUDElement.h" />
     <ClInclude Include="src\HUD\HUDComponents\IHUDWindow.h" />
+    <ClInclude Include="src\HUD\HUDComponents\ImGuiButtonEl.h" />
     <ClInclude Include="src\HUD\HUDComponents\ImGuiTextEl.h" />
     <ClInclude Include="src\HUD\HUDComponents\ImGuiWindow.h" />
     <ClInclude Include="src\HUD\IHUD.h" />

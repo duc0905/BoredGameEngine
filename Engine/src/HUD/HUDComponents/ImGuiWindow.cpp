@@ -3,7 +3,7 @@
 
 bool ImGuiHUDWindow::Render()
 {
-	ImGui::Begin(title_.c_str());
+	ImGui::Begin(title_.c_str(), &isOpen_);
 
 	for (std::unique_ptr<IHUDElement>& el : els_)
 	{

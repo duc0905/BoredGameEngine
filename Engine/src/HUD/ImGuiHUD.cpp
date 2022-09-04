@@ -47,6 +47,8 @@ void ImGuiHUD::OnTick(float dt)
 
 	//ImGui::End();
 
+	ImGui::ShowDemoWindow();
+
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }

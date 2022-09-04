@@ -3,6 +3,7 @@
 #include "IGame.h"
 #include "HUD/ImGuiHUD.h"
 #include "HUD/HUDComponents/ImGuiTextEl.h"
+#include "HUD/HUDComponents/ImGuiButtonEl.h"
 
 void ImGuiHUDDemo()
 {
@@ -13,8 +14,15 @@ void ImGuiHUDDemo()
 	auto& wi = dynamic_cast<ImGuiHUDWindow&>(hud->AddWindow());
 
 	wi.SetTitle("abcd");
+
 	auto* textEl = new ImGuiTextEl("I am %s", "duc0905");
-	wi.AddElement(textEl);
+	auto* buttonEl = new ImGuiButtonEl("My butt", []() -> void {
+		LOG_COLOR("CLICK MY BUTT", COLOR::GREEN, COLOR::BLACK);
+		});
+
+	wi.AddElement(textEl)
+		.AddElement(buttonEl);
+
 
 	std::shared_ptr<Context> con = std::make_shared<Context>();
 	con->AddActionMapping(KeyInput::KEY_T, 0, "CHANGE_NAME");

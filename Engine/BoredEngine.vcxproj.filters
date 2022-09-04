@@ -239,5 +239,8 @@
     <ClInclude Include="src\HUD\HUDComponents\ImGuiTextEl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\HUD\HUDComponents\ImGuiButtonEl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

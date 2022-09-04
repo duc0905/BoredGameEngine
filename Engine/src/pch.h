@@ -28,4 +28,7 @@
 /** GLAD */
 #include <glad/glad.h>
 
+/** ImGui */
+#include <imgui.h>
+
 #endif //PCH_H
