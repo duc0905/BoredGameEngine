@@ -4,6 +4,7 @@
 #include "Window/IWindow.h"
 #include "Input/IInput.h"
 #include "Renderer/IRenderer.h"
+#include "HUD/IHUD.h"
 
 class IGame
 {
@@ -15,6 +16,7 @@ private:
 	static std::shared_ptr<IWindow> windowSystem_;
 	static std::shared_ptr<IInput> inputSystem_;
 	static std::shared_ptr<IRenderer> rendererSystem_;
+	static std::shared_ptr<IHUD> hudSystem_;
 
 	// Not allowing anyone to create instance
 	IGame() = default;
@@ -36,5 +38,9 @@ public:
 	static IRenderer& GetRenderer();
 	static std::shared_ptr<IRenderer> GetRendererPtr() { return rendererSystem_; };
 	static void SetRenderer(std::shared_ptr<IRenderer> renderer);
+
+	static IHUD& GetHUD();
+	static std::shared_ptr<IHUD> GetHUDPtr() { return hudSystem_; };
+	static void SetHUD(std::shared_ptr<IHUD>);
 };
 

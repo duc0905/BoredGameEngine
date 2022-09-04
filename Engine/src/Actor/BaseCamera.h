@@ -9,4 +9,3 @@ public:
 	virtual glm::mat4 GetProjectionMat() const = 0;
 	virtual ~BaseCamera() {};
 };
-
