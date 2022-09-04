@@ -5,28 +5,33 @@ std::shared_ptr<IInput> IGame::inputSystem_ = IInput::GetDefault();
 std::shared_ptr<IWorld> IGame::worldSystem_ = IWorld::GetDefault();
 std::shared_ptr<IWindow> IGame::windowSystem_ = IWindow::GetDefault();
 std::shared_ptr<IRenderer> IGame::rendererSystem_ = IRenderer::GetDefault();
+std::shared_ptr<IHUD> IGame::hudSystem_ = IHUD::GetDefault();
 
 void IGame::Loop()
 {
-	auto& window_ = IGame::GetWindow();
-	auto& input_ = IGame::GetInput();
-	auto& world_ = IGame::GetWorld();
-	auto& renderer_ = IGame::GetRenderer();
+	auto& window = GetWindow();
+	auto& input = GetInput();
+	auto& world = GetWorld();
+	auto& renderer = GetRenderer();
+	auto& hud = GetHUD();
 
-	std::cout << "Start running" << std::endl;
+	// TODO use the real dt
+	float dt = 0.01f;
 
-	while (!window_.ShouldClose())
+	while (!window.ShouldClose())
 	{
 		// Poll input
-		input_.OnTick(0.01f);
+		input.OnTick(dt);
 
 		// Update world
-		world_.OnTick(0.01f);
+		world.OnTick(dt);
 
 		// Render
-		renderer_.Render(world_);
+		renderer.Render(world);
 
-		window_.OnTick(0.01f);
+		hud.OnTick(dt);
+
+		window.OnTick(dt);
 	}
 }
 
@@ -90,4 +95,17 @@ void IGame::SetRenderer(std::shared_ptr<IRenderer> renderer)
 {
 	rendererSystem_ = renderer;
 	rendererSystem_->Init();
+}
+
+IHUD& IGame::GetHUD()
+{
+	if (!hudSystem_)
+		return *IHUD::GetDefault();
+	return *hudSystem_;
+}
+
+void IGame::SetHUD(std::shared_ptr<IHUD> hud)
+{
+	hudSystem_ = hud;
+	hudSystem_->Init();
 }

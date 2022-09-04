@@ -38,6 +38,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">../pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="src\Components\TextureComponent.cpp" />
+    <ClCompile Include="src\HUD\HUDComponents\ImGuiWindow.cpp" />
     <ClCompile Include="src\HUD\IHUD.cpp" />
     <ClCompile Include="src\HUD\ImGuiHUD.cpp" />
     <ClCompile Include="src\World\GameMode\IGameMode.cpp">
@@ -194,6 +195,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Components\TextureComponent.h" />
+    <ClInclude Include="src\HUD\HUDComponents\IHUDElement.h" />
+    <ClInclude Include="src\HUD\HUDComponents\IHUDWindow.h" />
+    <ClInclude Include="src\HUD\HUDComponents\ImGuiTextEl.h" />
+    <ClInclude Include="src\HUD\HUDComponents\ImGuiWindow.h" />
     <ClInclude Include="src\HUD\IHUD.h" />
     <ClInclude Include="src\HUD\ImGuiHUD.h" />
     <ClInclude Include="src\World\GameMode\IGameMode.h" />

@@ -148,6 +148,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\demos\ImGuiHUD.h" />
     <ClInclude Include="src\MyRenderer.h" />
     <ClInclude Include="src\ChessGameMode.h" />
     <ClInclude Include="src\CubeActor.h" />
