@@ -2,6 +2,7 @@
 #include "Actor/Actor.h"
 #include "Components/InputComponent.h"
 #include "Components/MeshComponent.h"
+#include "Components/AudioComponent.h"
 
 class CubeActor : public Actor
 {
@@ -9,8 +10,17 @@ public:
     CubeActor();
  
     virtual void OnAttach() override {
-        //auto inputComp = CreateComponent<InputComponent>();
-        //inputComp->BindAction("yeet", std::bind(&CubeActor::Yell, this, std::placeholders::_1))/*;
+        auto inputComp = CreateComponent<InputComponent>();
+        inputComp->BindAction("yeet", std::bind(&CubeActor::Yell, this, std::placeholders::_1));
+        inputComp->BindAction("buonce", [this](KeyInput::Action action) -> void {
+                auto audioComp = FindComponent<AudioComponent>();
+                if (action == KeyInput::PRESS)
+                {
+                    audioComp->PlayCompSound();
+                    LOG_COLOR("PRESS B", COLOR::GREEN, COLOR::BLACK);
+                }
+                audioComp->PlayCompSound();
+            });
         //inputComp->BindRange("yeet_RANGE", std::bind(&CubeActor::YellRange, this, std::placeholders::_1, std::placeholders::_2));
         //inputComp->BindRange("rX", std::bind(&CubeActor::RotateX, this, std::placeholders::_1, std::placeholders::_2));
         //inputComp->BindRange("rY", std::bind(&CubeActor::RotateY, this, std::placeholders::_1, std::placeholders::_2));
@@ -48,6 +58,11 @@ public:
         auto transcomp = FindComponent<TransformComponent>();
         auto rotation = transcomp->GetRotation();
         transcomp->SetRotation(rotation + glm::vec3(glm::pi<float>() / 100 * weight, glm::pi<float>() / 70 * weight, glm::pi<float>() / 50 * weight));
+    }
+
+    void PlaySoundS(KeyInput::Action action) {
+        auto audioComp = FindComponent<AudioComponent>();
+        audioComp->PlayCompSound();
     }
 };
 

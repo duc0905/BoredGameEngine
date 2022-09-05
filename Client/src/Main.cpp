@@ -38,7 +38,14 @@ int main()
 	world->AddActor(cam);
 	renderer->UseCamera(cam);
 
+	std::string actionKey = "buonce";
+
+	std::shared_ptr<Context> myContext = std::make_shared<Context>();
+	myContext->AddActionMapping(KeyInput::KEY_B, 0, actionKey);
+	input->AddContext(myContext);
+
 	cam->FindComponent<TransformComponent>()->Translate(glm::vec3(-3.0f, 0.0f, 0.0f));
+
 
 	IGame::Run();
 
