@@ -61,7 +61,7 @@ public:
 	// TODO: research this design more
 	void SetPosition(const glm::vec3& pos);
 
-	const std::string& GetComponentName();
-	void Update(double dt) {};
+	const std::string& GetComponentName() override;
+	void Update(double dt) override {};
 };
 
