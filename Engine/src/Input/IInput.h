@@ -19,7 +19,6 @@ private:
 
 protected:
 	void EvaluateKey(KeyInput::Key key, KeyInput::Action action, int mods, double val);
-	//void EvaluateKey(KeyInput::Key key, int mods, double val);
 	
 public:
 	virtual ~IInput() { };
