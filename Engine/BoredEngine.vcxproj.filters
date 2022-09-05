@@ -115,6 +115,13 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Components\AudioComponent.cpp">
+    <ClCompile Include="src\HUD\IHUD.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HUD\ImGuiHUD.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HUD\HUDComponents\ImGuiWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -243,6 +250,25 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Components\AudioComponent.h">
+    <ClInclude Include="src\HUD\IHUD.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HUD\ImGuiHUD.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HUD\HUDComponents\IHUDWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HUD\HUDComponents\IHUDElement.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HUD\HUDComponents\ImGuiWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HUD\HUDComponents\ImGuiTextEl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HUD\HUDComponents\ImGuiButtonEl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -18,21 +18,27 @@ private:
 	std::map<std::string, std::pair<RangeCallback, float>> rangeMap;
 
 protected:
-	void EvaluateKey(KeyInput::Key key, KeyInput::Action action, int mods);
+	void EvaluateKey(KeyInput::Key key, KeyInput::Action action, int mods, double val);
+	
 public:
 	virtual ~IInput() { };
 	static std::shared_ptr<IInput> GetDefault() { return defaultInput_; }
 
 	void BindAction(const std::string& name, ActionCallback func);
-	void BindRange(const std::string& name, RangeCallback func, float weight = 1.0f);
+	void BindRange(const std::string& name, RangeCallback func, float val = 1.0f);
+
 	void AddContext(Context* con);
 	void AddContext(std::shared_ptr<Context> con);
+
 	void RemoveContext(Context* con);
 	void RemoveContext(std::shared_ptr<Context> con);
+
 	void ActivateContext(Context* con);
 	void ActivateContext(std::shared_ptr<Context> con);
+
 	void DeactivateContext(Context* con);
 	void DeactivateContext(std::shared_ptr<Context> con);
+
 	void ResetPriority(Context* con, int priorityLevel);
 	void ResetPriority(std::shared_ptr<Context> con, int priorityLevel);
 

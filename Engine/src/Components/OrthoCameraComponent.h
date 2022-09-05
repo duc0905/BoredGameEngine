@@ -13,7 +13,6 @@ public:
     virtual const glm::mat4& GetProjectionMat() override;
 private:
     glm::vec3 up_;
-    glm::vec3 center_; // where the cam is pointing
     glm::mat4 projMat;
 };
 

@@ -42,6 +42,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\MyAudio.h">
+    <ClInclude Include="src\demos\ImGuiHUD.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

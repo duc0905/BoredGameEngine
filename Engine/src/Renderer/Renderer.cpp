@@ -25,6 +25,16 @@ void Renderer::Render(IWorld& world)
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	if (!activeCam_)
+		throw std::exception("Renderer have not been provided a camera");
+
+	auto viewMat = activeCam_->GetViewMat();
+	auto projMat = activeCam_->GetProjectionMat();
+
+	meshShader_.Activate();
+	meshShader_.SetUniformMatrix4fv("u_ViewMat", glm::value_ptr(viewMat));
+	meshShader_.SetUniformMatrix4fv("u_ProjectionMat", glm::value_ptr(projMat));
+
 	for (auto& actor : world.GetActors())
 	{
 		Draw(*actor);
@@ -50,22 +60,12 @@ void Renderer::Draw(const Actor& actor)
 {
 	try
 	{
-		if (!activeCam_)
-			throw std::exception("Renderer have not been provided a camera");
-		auto meshComp = actor.FindComponent<MeshComponent>();
-		Mesh& mesh = meshComp->GetMesh();
 		auto transformComp = actor.FindComponent<TransformComponent>();
 		auto modelMat = transformComp->GetModelMatrix();
-
-		auto viewMat = activeCam_->GetViewMat();
-		auto projMat = activeCam_->GetProjectionMat();
-
-		auto mvp = projMat * viewMat * modelMat;
-
-		meshShader_.Activate();
 		meshShader_.SetUniformMatrix4fv("u_ModelMat", glm::value_ptr(modelMat));
-		meshShader_.SetUniformMatrix4fv("u_ViewMat", glm::value_ptr(viewMat));
-		meshShader_.SetUniformMatrix4fv("u_ProjectionMat", glm::value_ptr(projMat));
+
+		auto meshComp = actor.FindComponent<MeshComponent>();
+		Mesh& mesh = meshComp->GetMesh();
 
 		Draw(mesh);
 	}

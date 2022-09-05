@@ -4,6 +4,7 @@
 #include "Input/GLFWInput.h"
 #include "MyRenderer.h"
 #include "MyAudio.h"
+#include "demos/ImGuiHUD.h"
 
 #include "Actor/OrthoCamera.h"
 
@@ -13,11 +14,10 @@
 int main()
 {
 	auto window = std::make_shared<GLFWWindow>(800, 800, "Bored Chess");
-	auto renderer = std::make_shared<MyRenderer>();
-
 	IGame::SetWindow(window);
-	IGame::SetRenderer(renderer);
 
+	auto renderer = std::make_shared<MyRenderer>();
+	IGame::SetRenderer(renderer);
 
 	//// My design sucks so this happens
 	auto input = GLFWInput::GetInstancePtr();
@@ -45,7 +45,6 @@ int main()
 	input->AddContext(myContext);
 
 	cam->FindComponent<TransformComponent>()->Translate(glm::vec3(-3.0f, 0.0f, 0.0f));
-
 
 	IGame::Run();
 
