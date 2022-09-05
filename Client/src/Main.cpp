@@ -39,6 +39,12 @@ int main()
 	cameraContext->AddRangeMapping(KeyInput::KEY_D, 0, "MOVE_CAMERA_X", 1.0f);
 	cameraContext->AddRangeMapping(KeyInput::KEY_W, 0, "MOVE_CAMERA_Y", 1.0f);
 	cameraContext->AddRangeMapping(KeyInput::KEY_S, 0, "MOVE_CAMERA_Y", -1.0f);
+	cameraContext->AddActionMapping(KeyInput::KEY_MB_2, 0, "DIT COME");
+	cameraContext->AddActionMapping(KeyInput::MOUSE_ENTER, 0, "DIT ENTER");
+	cameraContext->AddRangeMapping(KeyInput::MOUSE_SCROLL_X, 0, "DIT SCROLL X", 1.0f);
+	cameraContext->AddRangeMapping(KeyInput::MOUSE_SCROLL_Y, 0, "DIT SCROLL Y", 1.0f);
+	cameraContext->AddRangeMapping(KeyInput::MOUSE_POS_X, 0, "DIT POS X", 1.0f);
+	cameraContext->AddRangeMapping(KeyInput::MOUSE_POS_Y, 0, "DIT POS Y", 1.0f);
 
 	input->AddContext(cameraContext);
 	input->ActivateContext(cameraContext);
@@ -58,6 +64,30 @@ int main()
 			LOG(trans->GetTranslation().z);
 		}
 		});
+
+	input->BindAction("DIT COME", [](KeyInput::Action action) -> void {
+		LOG("DIT COME");
+		});
+	input->BindRange("DIT SCROLL X", [](KeyInput::Action action, float val) -> void {
+		LOG(val);
+		LOG("XS");
+		});
+	input->BindRange("DIT SCROLL Y", [](KeyInput::Action action, float val) -> void {
+		LOG(val);
+		LOG("YS");
+		});
+	input->BindRange("DIT POS X", [](KeyInput::Action action, float val) -> void {
+		LOG(val);
+		LOG("XSsss");
+		});
+	input->BindRange("DIT POS Y", [](KeyInput::Action action, float val) -> void {
+		LOG(val);
+		LOG("YSsss");
+		});
+	input->BindAction("DIT ENTER", [](KeyInput::Action action) -> void {
+		LOG("entered");
+		});
+
 
 	cam->FindComponent<TransformComponent>()->Translate(glm::vec3(-3.0f, 0.0f, 0.0f));
 

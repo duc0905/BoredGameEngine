@@ -3,7 +3,7 @@
 
 std::shared_ptr<IInput> IInput::defaultInput_ = std::make_shared<NullInput>();
 
-void IInput::EvaluateKey(KeyInput::Key key, KeyInput::Action action, int mods)
+void IInput::EvaluateKey(KeyInput::Key key, KeyInput::Action action, int mods, double val)
 {
 	if (!headContext)
 	{
@@ -22,10 +22,9 @@ void IInput::EvaluateKey(KeyInput::Key key, KeyInput::Action action, int mods)
 	if (!(rangePack.first == "")) {
 		auto it = rangeMap.find(rangePack.first);
 		if (it != rangeMap.end())
-			it->second.first(action, rangePack.second);
+			it->second.first(action, rangePack.second * val);
 	}
 }
-
 
 
 void IInput::BindAction(const std::string& name, ActionCallback func)
