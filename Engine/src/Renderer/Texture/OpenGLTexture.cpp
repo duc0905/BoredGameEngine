@@ -24,6 +24,17 @@ OpenGLTexture::OpenGLTexture(OpenGLTexture& other) noexcept
 	BPP = other.BPP;
 }
 
+std::shared_ptr<OpenGLTexture> OpenGLTexture::CreateColorBuffer(GLuint width, GLuint height)
+{
+	std::shared_ptr<OpenGLTexture> tex = std::make_shared<OpenGLTexture>();
+	glBindTexture(GL_TEXTURE_2D, tex->GetId());
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	return tex;
+}
+
 OpenGLTexture::~OpenGLTexture()
 {
 	glDeleteTextures(1, &ID);
