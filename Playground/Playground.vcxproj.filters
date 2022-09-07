@@ -28,11 +28,13 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\shaders\normal.vert">
+    <None Include="res\shaders\screen.vert">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="res\shaders\normal.frag">
+    <None Include="res\shaders\screen.frag">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="res\shaders\normal.frag" />
+    <None Include="res\shaders\normal.vert" />
   </ItemGroup>
 </Project>
