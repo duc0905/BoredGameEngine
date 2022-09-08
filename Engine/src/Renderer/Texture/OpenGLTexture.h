@@ -14,7 +14,7 @@ public:
 	~OpenGLTexture();
 
 	// Helper function to create Colorbuffer for Framebuffer
-	static std::shared_ptr<OpenGLTexture> CreateColorBuffer(GLuint width, GLuint height);
+	static std::shared_ptr<OpenGLTexture> CreateColorBuffer(GLuint width, GLuint height, GLenum internalFormat, GLenum format);
 
 	inline GLuint GetId() { return ID; };
 

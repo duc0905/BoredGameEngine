@@ -28,6 +28,11 @@ void IInput::EvaluateKey(KeyInput::Key key, KeyInput::Action action, int mods)
 
 
 
+unsigned int IInput::GetCusorHoveringActor()
+{
+	return 0;
+}
+
 void IInput::BindAction(const std::string& name, ActionCallback func)
 {
 	auto it = actionMap.find(name);

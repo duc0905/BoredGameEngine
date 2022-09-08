@@ -1,8 +1,8 @@
 #pragma once
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "../pch.h"
-#include "Renderer/Texture/OpenGLTexture.h"
+#include "../../pch.h"
+#include "../Texture/OpenGLTexture.h"
 
 class RenderBuffer
 {

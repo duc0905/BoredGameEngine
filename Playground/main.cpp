@@ -11,9 +11,16 @@ const int HEIGHT = 600;
 FrameBuffer* fbo;
 
 float positions[] = {
-	-0.5f, -0.5f,
-	0.5f, -0.5f,
-	0.0f, 0.5f
+	// Position   // Color
+	-0.5f, -0.5f, 1.0f, 0.5f, 1.0f,
+	0.5f, -0.5f, 0.0f, 0.1f, 1.0f,
+	0.0f, 0.5f, 0.0f, 0.0f, 1.0f,
+	0.0f, 1.0f, 0.7f, 0.1f, 1.0f,
+	1.0f, 1.0f, 0.2f, 0.1f, 1.0f,
+	1.0f, 0.0f, 0.5f, 0.1f, 1.0f,
+	-1.0f, 0.0f, 0.0f, 0.1f, 1.0f,
+	-1.0f, -1.0f, 0.5f, 0.1f, 1.0f,
+	0.0f, -1.0f, 0.5f, 1.0f, 1.0f
 };
 
 unsigned int indices[] = { 0, 1, 2 };
@@ -37,130 +44,13 @@ void cursorPosCallback(GLFWwindow* window, double x, double y)
 	LOG_COLOR(ss.str(), COLOR::BLUE, COLOR::BLACK);
 
 	fbo->Bind();
-	glReadBuffer(GL_COLOR_ATTACHMENT0);
+	glReadBuffer(GL_COLOR_ATTACHMENT1);
 
-	float data;
-	glReadPixels((int)x, HEIGHT - (int)y, 1, 1, GL_RED, GL_FLOAT, &data);
+	int data;
+	glReadPixels((int)x, HEIGHT - (int)y, 1, 1, GL_RED_INTEGER, GL_INT, &data);
 	LOG_COLOR(data, COLOR::YELLOW, COLOR::BLACK);
+	fbo->Unbind();
 }
-
-// int mainfake()
-// {
-// 	if (!glfwInit())
-// 		return -1;
-
-// 	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Playground", NULL, NULL);
-// 	if (!window)
-// 	{
-// 		glfwTerminate();
-// 		return -1;
-// 	}
-// 	glfwMakeContextCurrent(window);
-
-// 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-// 		LOG_COLOR("Failed to initialize OpenGL context", COLOR::RED, COLOR::BLACK);
-// 		return -1;
-// 	}
-
-// 	glViewport(0, 0, WIDTH, HEIGHT);
-
-// 	// Triangle
-// 	VertexArray vao;
-// 	VertexBuffer vbo(positions, sizeof(positions));
-// 	IndexBuffer ibo(indices, sizeof(indices));
-// 	vbo.SetLayout({ { "Position", Float2, GL_FALSE} });
-// 	vao.AddVertexBuffer(vbo);
-// 	vao.Unbind();
-// 	vbo.Unbind();
-// 	ibo.Unbind();
-// 	// End triangle
-
-// 	// Screen
-// 	VertexArray screenVao;
-// 	VertexBuffer screenVbo(screenVerts, sizeof(screenVerts));
-// 	IndexBuffer screenIbo(screenIndices, sizeof(screenIndices));
-// 	screenVbo.SetLayout({ {"Position", Float2, GL_FALSE }, { "UV", Float2, GL_FALSE} });
-// 	screenVao.AddVertexBuffer(screenVbo);
-// 	screenVao.Unbind();
-// 	screenVbo.Unbind();
-// 	screenIbo.Unbind();
-// 	// End screen
-
-// 	glGenFramebuffers(1, &fbo);
-// 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-
-// 	unsigned int colorBuffer;
-// 	glGenTextures(1, &colorBuffer);
-// 	glBindTexture(GL_TEXTURE_2D, colorBuffer);
-// 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, WIDTH, HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-// 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-// 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-// 	// Attach texture to framebuffer as COLOR ATTACHMENT
-// 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBuffer, 0);
-// 	glActiveTexture(GL_TEXTURE0);
-// 	if (GLenum e = glGetError())
-// 		LOG_COLOR(e, COLOR::RED, COLOR::BLACK);
-
-// 	// Initial render buffer
-// 	unsigned int rbo;
-// 	glGenRenderbuffers(1, &rbo);
-// 	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-// 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, WIDTH, HEIGHT);
-
-// 	// Attach renderbuffer to framebuffer as Depth and Stencil buffers
-// 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
-// 	if (GLenum e = glGetError())
-// 		LOG_COLOR(e, COLOR::RED, COLOR::BLACK);
-
-// 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-// 		LOG_COLOR("DUCK", COLOR::RED, COLOR::BLACK);
-// 	else
-// 		LOG_COLOR("YAY", COLOR::GREEN, COLOR::WHITE);
-
-// 	Shader normalShader("normal.vert", "normal.frag");
-// 	Shader screenShader("screen.vert", "screen.frag");
-
-// 	screenShader.Activate();
-// 	screenShader.SetUniform1i("screenTexture", 0);
-
-// 	while (!glfwWindowShouldClose(window))
-//     {
-// 		if (GLenum e = glGetError())
-// 			LOG_COLOR(e, COLOR::RED, COLOR::BLACK);
-
-// 		/* Render here */
-// 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-// 		glEnable(GL_DEPTH_TEST);
-// 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-// 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-// 		normalShader.Activate();
-// 		vao.Bind();
-// 		ibo.Bind();
-// 		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)0);
-
-// 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-// 		glDisable(GL_DEPTH_TEST);
-// 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-//         glClear(GL_COLOR_BUFFER_BIT);
-// 		screenShader.Activate();
-// 		screenVao.Bind();
-// 		screenIbo.Bind();
-// 		glBindTexture(GL_TEXTURE_2D, colorBuffer);
-// 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
-
-//         /* Swap front and back buffers */
-//         glfwSwapBuffers(window);
-
-//         /* Poll for and process events */
-//         glfwPollEvents();
-// 	}
-
-//     glfwTerminate();
-// 	glDeleteFramebuffers(1, &fbo);
-
-//     return 0;
-// }
 
 int main()
 {
@@ -187,7 +77,7 @@ int main()
 	VertexArray vao;
 	VertexBuffer vbo(positions, sizeof(positions));
 	IndexBuffer ibo(indices, sizeof(indices));
-	vbo.SetLayout({ { "Position", Float2, GL_FALSE} });
+	vbo.SetLayout({ { "Position", Float2, GL_FALSE}, {"Color", Float3, GL_FALSE} });
 	vao.AddVertexBuffer(vbo);
 	vao.Unbind();
 	vbo.Unbind();
@@ -204,14 +94,20 @@ int main()
 	screenVbo.Unbind();
 	screenIbo.Unbind();
 
-
-
-	auto colorbuffer = OpenGLTexture::CreateColorBuffer(WIDTH, HEIGHT);
-	std::shared_ptr<RenderBuffer> rbo = std::make_shared<RenderBuffer>(WIDTH, HEIGHT);
-
 	fbo = new FrameBuffer();
-	fbo->AttachColorBuffer(colorbuffer);
+	fbo->Bind();
+
+	// Define number of Color Attachment to render
+	GLenum buffers[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+	glDrawBuffers(2, buffers);
+
+	std::shared_ptr<RenderBuffer> rbo = std::make_shared<RenderBuffer>(WIDTH, HEIGHT);
 	fbo->AttachRenderBuffer(rbo);
+	auto colorbuffer = OpenGLTexture::CreateColorBuffer(WIDTH, HEIGHT, GL_RGB, GL_RGB);
+	fbo->AttachColorBuffer(colorbuffer, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	auto idbuffer = OpenGLTexture::CreateColorBuffer(WIDTH, HEIGHT, GL_R32I, GL_RED_INTEGER);
+	fbo->AttachColorBuffer(idbuffer, 1);
 
 	glfwSetCursorPosCallback(window, cursorPosCallback);
 
@@ -239,14 +135,22 @@ int main()
 			LOG_COLOR(e, COLOR::RED, COLOR::BLACK);
 			
 		/* Render here */
+
 		fbo->Bind();
 		//glEnable(GL_DEPTH_TEST);
 		fbo->ClearBuffer();
 		fbo->Bind();
+
 		normalShader.Activate();
 		vao.Bind();
 		ibo.Bind();
-		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)0);
+
+		normalShader.SetUniform1i("id", 6);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+		normalShader.SetUniform1i("id", 9);
+		glDrawArrays(GL_TRIANGLES, 3, 3);
+		normalShader.SetUniform1i("id", 69);
+		glDrawArrays(GL_TRIANGLES, 6, 3);
 
 		fbo->Unbind();
 		//glDisable(GL_DEPTH_TEST);
