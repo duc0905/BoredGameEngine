@@ -1,5 +1,6 @@
 #include "../pch.h"
 #include "IInput.h"
+#include "../IGame.h"
 
 std::shared_ptr<IInput> IInput::defaultInput_ = std::make_shared<NullInput>();
 
@@ -30,7 +31,9 @@ void IInput::EvaluateKey(KeyInput::Key key, KeyInput::Action action, int mods)
 
 unsigned int IInput::GetCusorHoveringActor()
 {
-	return 0;
+	int x, y = 0;
+	unsigned int ID = IGame::GetRenderer().GetMouseHoverEntityID(x, y);
+	return ID;
 }
 
 void IInput::BindAction(const std::string& name, ActionCallback func)

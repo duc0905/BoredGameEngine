@@ -15,7 +15,7 @@ public:
 	Actor();
 	Actor(unsigned int assignID);
 
-	inline unsigned int GetID() { return ID; };
+	inline unsigned int GetID() const { return ID; };
 
 	// Called when added to World
 	virtual void OnAttach() {};

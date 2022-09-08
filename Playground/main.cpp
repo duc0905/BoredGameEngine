@@ -105,7 +105,6 @@ int main()
 	fbo->AttachRenderBuffer(rbo);
 	auto colorbuffer = OpenGLTexture::CreateColorBuffer(WIDTH, HEIGHT, GL_RGB, GL_RGB);
 	fbo->AttachColorBuffer(colorbuffer, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);
 	auto idbuffer = OpenGLTexture::CreateColorBuffer(WIDTH, HEIGHT, GL_R32I, GL_RED_INTEGER);
 	fbo->AttachColorBuffer(idbuffer, 1);
 
