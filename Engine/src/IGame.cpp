@@ -5,6 +5,7 @@ std::shared_ptr<IInput> IGame::inputSystem_ = IInput::GetDefault();
 std::shared_ptr<IWorld> IGame::worldSystem_ = IWorld::GetDefault();
 std::shared_ptr<IWindow> IGame::windowSystem_ = IWindow::GetDefault();
 std::shared_ptr<IRenderer> IGame::rendererSystem_ = IRenderer::GetDefault();
+std::shared_ptr<IAudio> IGame::audioSystem_ = IAudio::GetDefault();
 std::shared_ptr<IHUD> IGame::hudSystem_ = IHUD::GetDefault();
 
 void IGame::Loop()
@@ -14,6 +15,7 @@ void IGame::Loop()
 	auto& world = GetWorld();
 	auto& renderer = GetRenderer();
 	auto& hud = GetHUD();
+	auto& audio_ = IGame::GetAudio();
 
 	// TODO use the real dt
 	float dt = 0.01f;
@@ -29,6 +31,8 @@ void IGame::Loop()
 		// Render
 		renderer.Render(world);
 
+		audio_.OnTick(0.01f);
+
 		hud.OnTick(dt);
 
 		window.OnTick(dt);
@@ -37,6 +41,7 @@ void IGame::Loop()
 
 void IGame::Stop()
 {
+	// TODO add cleanup methods here
 }
 
 void IGame::Run()
@@ -95,6 +100,19 @@ void IGame::SetRenderer(std::shared_ptr<IRenderer> renderer)
 {
 	rendererSystem_ = renderer;
 	rendererSystem_->Init();
+}
+
+IAudio& IGame::GetAudio()
+{
+	if (!audioSystem_)
+		audioSystem_ = IAudio::GetDefault();
+	return *audioSystem_;
+}
+
+void IGame::SetAudio(std::shared_ptr<IAudio> audio)
+{
+	audioSystem_ = audio;
+	audioSystem_->Init();
 }
 
 IHUD& IGame::GetHUD()

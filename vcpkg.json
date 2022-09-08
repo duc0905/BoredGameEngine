@@ -1,20 +1,23 @@
 {
-    "name": "bored-game-engine",
-    "version": "0.0.0",
-    "description": "A simple game engine to build board games",
-    "dependencies": [
-        "glfw3",
-        {
-            "name": "glad",
-            "default-features": false,
-            "features": [ "gl-api-latest" ]
-        },
-        "glm",
-        "assimp",
-        {
-            "name": "imgui",
-            "features":  ["glfw-binding", "opengl3-binding"]
-        },
-        "stb"
-    ]
+  "name": "bored-game-engine",
+  "version": "0.0.0",
+  "description": "A simple game engine to build board games",
+  "dependencies": [
+    "glfw3",
+    {
+      "name": "glad",
+      "default-features": false,
+      "features": [ "gl-api-latest" ]
+    },
+    "glm",
+    "assimp",
+    "imgui",
+    "stb",
+    {
+      "name": "imgui",
+      "features":  ["glfw-binding", "opengl3-binding"]
+    },
+    "openal-soft",
+    "audiofile"
+  ]
 }

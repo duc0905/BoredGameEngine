@@ -137,6 +137,7 @@
     <ClCompile Include="src\ChessGameMode.cpp" />
     <ClCompile Include="src\CubeActor.cpp" />
     <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\MyAudio.cpp" />
     <ClCompile Include="src\MyRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -148,6 +149,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\MyAudio.h" />
     <ClInclude Include="src\demos\ImGuiHUD.h" />
     <ClInclude Include="src\MyRenderer.h" />
     <ClInclude Include="src\ChessGameMode.h" />

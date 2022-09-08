@@ -89,6 +89,17 @@ KeyInput::Key GLFWInput::GetKey(int keyCode)
 		case GLFW_KEY_B: return KeyInput::KEY_B;
 		case GLFW_KEY_N: return KeyInput::KEY_N;
 		case GLFW_KEY_M: return KeyInput::KEY_M;
+		// mouse
+		case GLFW_MOUSE_BUTTON_1: return KeyInput::KEY_MB_1;
+		case GLFW_MOUSE_BUTTON_2: return KeyInput::KEY_MB_2;
+		case GLFW_MOUSE_BUTTON_3: return KeyInput::KEY_MB_3;
+		case GLFW_MOUSE_BUTTON_4: return KeyInput::KEY_MB_4;
+		case GLFW_MOUSE_BUTTON_5: return KeyInput::KEY_MB_5;
+		case GLFW_MOUSE_BUTTON_6: return KeyInput::KEY_MB_6;
+		case GLFW_MOUSE_BUTTON_7: return KeyInput::KEY_MB_7;
+		case GLFW_MOUSE_BUTTON_8: return KeyInput::KEY_MB_8;
+		
+		// default
 		default: return KeyInput::KEY_UNKNOWN;
 	}
 }
@@ -130,21 +141,36 @@ void GLFWInput::SetupCallbacks()
 void GLFWInput::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	auto& input = GetInstance();
-	input.EvaluateKey(input.GetKey(key), input.GetAction(action), input.GetMods(mods));
+	input.EvaluateKey(input.GetKey(key), input.GetAction(action), input.GetMods(mods), 1.0f);
 }
 
 void GLFWInput::MousePosCallback(GLFWwindow* window, double x, double y)
 {
+	auto& input = GetInstance();
+	input.EvaluateKey(KeyInput::MOUSE_POS_X, KeyInput::PRESS, 0, x);
+	input.EvaluateKey(KeyInput::MOUSE_POS_Y, KeyInput::PRESS, 0, y);
 }
 
 void GLFWInput::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
+	auto& input = GetInstance();
+	input.EvaluateKey(input.GetKey(button), input.GetAction(action), input.GetMods(mods), 1.0f);
 }
 
 void GLFWInput::MouseEnterCallback(GLFWwindow* window, int entered)
 {
+	auto& input = GetInstance();
+	if (entered) {
+		input.EvaluateKey(KeyInput::MOUSE_ENTER, KeyInput::PRESS, 0, 1.0f);
+	}
+	else {
+		input.EvaluateKey(KeyInput::MOUSE_LEAVE, KeyInput::PRESS, 0, 1.0f);
+	}
 }
 
 void GLFWInput::MouseScrollCallback(GLFWwindow* window, double x, double y)
 {
+	auto& input = GetInstance();
+	input.EvaluateKey(KeyInput::MOUSE_SCROLL_X, KeyInput::PRESS, 0, x);
+	input.EvaluateKey(KeyInput::MOUSE_SCROLL_Y, KeyInput::PRESS, 0, y);
 }
