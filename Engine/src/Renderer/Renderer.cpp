@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Renderer.h"
-#include "Buffers/FrameBuffer.h"
 #include "../IGame.h"
 
 /* ========== Renderer =========== */
@@ -52,7 +51,7 @@ void Renderer::Render(IWorld& world)
 	}
 }
 
-void Renderer::Draw(const Mesh& mesh, unsigned int ID)
+void Renderer::Draw(const Mesh& mesh)
 {
 	if (!mesh.IsInit())
 	{
@@ -61,9 +60,7 @@ void Renderer::Draw(const Mesh& mesh, unsigned int ID)
 	}
 	mesh.Bind();
 	meshShader_.Activate();
-	meshShader_.SetUniform1i("u_ActorID", (int) ID);
 	glDrawElements(GL_TRIANGLES, mesh.GetNumIndices(), GL_UNSIGNED_INT, 0);
-
 	mesh.Unbind();
 }
 
@@ -90,7 +87,8 @@ void Renderer::Draw(const Actor& actor)
 		auto meshComp = actor.FindComponent<MeshComponent>();
 		Mesh& mesh = meshComp->GetMesh();
 
-		Draw(mesh, actor.GetID());
+		meshShader_.SetUniform1i("u_ActorID", (int)actor.GetID());
+		Draw(mesh);
 	}
 	catch (const std::exception&)
 	{

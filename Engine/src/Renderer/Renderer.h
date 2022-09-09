@@ -7,6 +7,7 @@
 #include "Buffers/VertexArray.h"
 #include "Buffers/IndexBuffer.h"
 #include "Texture/OpenGLTexture.h"
+#include "Buffers/FrameBuffer.h"
 #include "ShaderClass.h"
 #include "../Components/MeshComponent.h"
 
@@ -26,7 +27,7 @@ public:
 
     virtual void Render(IWorld& world) override;
 
-    void Draw(const Mesh& mesh, unsigned int ID);
+    void Draw(const Mesh& mesh);
     virtual unsigned int GetMouseHoverEntityID(int x, int y) override;
     virtual void Draw(const Actor& actor) override;
 

@@ -31,9 +31,7 @@ void IInput::EvaluateKey(KeyInput::Key key, KeyInput::Action action, int mods, d
 
 unsigned int IInput::GetCusorHoveringActor()
 {
-  int x, y = 0;
-  unsigned int ID = IGame::GetRenderer().GetMouseHoverEntityID(x, y);
-  return ID;
+  return IGame::GetRenderer().GetMouseHoverEntityID((int) mouseInfo.posX, (int) mouseInfo.posY);
 }
 
 void IInput::BindAction(const std::string &name, ActionCallback func)

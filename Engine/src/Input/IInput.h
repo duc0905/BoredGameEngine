@@ -11,12 +11,29 @@ public:
   typedef std::function<void(KeyInput::Action, float)> RangeCallback;
 
 private:
+	struct MouseInformation {
+		double posX;
+		double posY;
+		double scrollX;
+		double scrollY;
+		bool isHidden;
+		bool isEntered;
+		bool btn1;
+		bool btn2;
+		bool btn3;
+		bool btn4;
+		bool btn5;
+		bool btn6;
+		bool btn7;
+		bool btn8;
+	};
   static std::shared_ptr<IInput> defaultInput_;
-
   std::shared_ptr<Context> headContext;
-
   std::map<std::string, ActionCallback> actionMap;
   std::map<std::string, std::pair<RangeCallback, float>> rangeMap;
+
+protected:
+	MouseInformation mouseInfo;
 
 protected:
   void EvaluateKey(KeyInput::Key key, KeyInput::Action action, int mods, double val);
@@ -25,7 +42,6 @@ public:
   virtual ~IInput(){};
   static std::shared_ptr<IInput> GetDefault() { return defaultInput_; }
 
-  // TODO: implement this
   unsigned int GetCusorHoveringActor();
 
   void BindAction(const std::string &name, ActionCallback func);
