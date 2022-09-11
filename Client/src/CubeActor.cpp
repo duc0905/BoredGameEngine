@@ -2,7 +2,7 @@
 #include "CubeActor.h"
 #include "Components/AudioComponent.h"
 
-CubeActor::CubeActor()
+CubeActor::CubeActor():Actor()
 {
 	//LOG_COLOR("Begin CubeActor constractur", COLOR::BLUE, COLOR::BLACK);
 	auto meshComp = CreateComponent<MeshComponent>();

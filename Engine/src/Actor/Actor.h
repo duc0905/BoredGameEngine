@@ -6,10 +6,16 @@
 
 class Actor
 {
+public: 
+	static Actor NullActor;
+
 private:
 	std::map<std::type_index, std::shared_ptr<Component>> components_;
+	static unsigned int IDCounter_;
+	unsigned int ID;
 public:
 	Actor();
+	inline unsigned int GetID() const { return ID; };
 
 	// Called when added to World
 	virtual void OnAttach() {};

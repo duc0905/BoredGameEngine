@@ -16,7 +16,7 @@ int main()
 	auto window = std::make_shared<GLFWWindow>(800, 800, "Bored Chess");
 	IGame::SetWindow(window);
 
-	auto renderer = std::make_shared<MyRenderer>();
+	auto renderer = std::make_shared<Renderer>();
 	IGame::SetRenderer(renderer);
 
 	//// My design sucks so this happens

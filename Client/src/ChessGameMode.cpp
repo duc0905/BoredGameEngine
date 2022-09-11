@@ -1,8 +1,11 @@
 #include "ChessGameMode.h"
+#include "IGame.h"
 
 void ChessGameMode::OnTick(float)
 {
 	//LOG_COLOR("Chess on tick", COLOR::BLUE, COLOR::BLACK);
+	auto& input = IGame::GetInput();
+	LOG(input.GetCusorHoveringActor().GetID());
 }
 
 void ChessGameMode::OnLevelStart()
