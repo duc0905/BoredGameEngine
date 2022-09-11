@@ -13,11 +13,6 @@ public:
 	OpenGLTexture(OpenGLTexture& other) noexcept;
 	~OpenGLTexture();
 
-	// Helper function to create Colorbuffer for Framebuffer
-	static std::shared_ptr<OpenGLTexture> CreateColorBuffer(GLuint width, GLuint height, GLenum internalFormat, GLenum format);
-
-	inline GLuint GetId() { return ID; };
-
 	virtual bool Load(const std::string& filepath) override;
 	virtual bool Load(int width, int height, int bbp, void* data) override;
 

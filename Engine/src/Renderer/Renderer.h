@@ -6,8 +6,6 @@
 #include "Buffers/VertexBuffer.h"
 #include "Buffers/VertexArray.h"
 #include "Buffers/IndexBuffer.h"
-#include "Texture/OpenGLTexture.h"
-#include "Buffers/FrameBuffer.h"
 #include "ShaderClass.h"
 #include "../Components/MeshComponent.h"
 
@@ -15,9 +13,6 @@ class Renderer : public IRenderer
 {
 private:
     Shader meshShader_;
-    FrameBuffer* fbo;
-    std::shared_ptr<OpenGLTexture> colorBuffer;
-    std::shared_ptr<OpenGLTexture> idBuffer;
 public:
     Renderer() {};
     virtual ~Renderer()
@@ -28,7 +23,6 @@ public:
     virtual void Render(IWorld& world) override;
 
     void Draw(const Mesh& mesh);
-    virtual unsigned int GetMouseHoverEntityID(int x, int y) override;
     virtual void Draw(const Actor& actor) override;
 
     // Inherited via System

@@ -9,8 +9,6 @@ class GLFWInput : public IInput
 {
 private:
 	IWindow& window_;
-	static double mouse_X;
-	static double mouse_Y;
 	static std::shared_ptr<GLFWInput> instance_;
 
 	GLFWInput();
