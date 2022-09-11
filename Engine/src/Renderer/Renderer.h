@@ -15,6 +15,10 @@ class Renderer : public IRenderer
 {
 private:
     Shader meshShader_;
+    Shader screenShader_;
+    VertexArray* screenVao;
+    VertexBuffer* screenVbo;
+    IndexBuffer* screenIbo;
     FrameBuffer* fbo;
     std::shared_ptr<OpenGLTexture> colorBuffer;
     std::shared_ptr<OpenGLTexture> idBuffer;
@@ -23,6 +27,10 @@ public:
     virtual ~Renderer()
     {
         //std::cout << "Cleaning up Renderer!" << std::endl;
+        delete fbo;
+        delete screenVao;
+        delete screenVbo;
+        delete screenIbo;
     }
 
     virtual void Render(IWorld& world) override;

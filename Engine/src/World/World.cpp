@@ -20,6 +20,14 @@ void World::OnTick(float dt)
 		actor->OnTick(dt);
 }
 
+Actor& World::GetActor(unsigned int actorID)
+{
+	for (auto actor : actors_) 
+		if (actor->GetID() == actorID)
+			return *actor;
+	return Actor::NullActor;
+}
+
 void World::AddActor(std::shared_ptr<Actor> actor)
 {
 	// Actor already been added

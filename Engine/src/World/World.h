@@ -26,6 +26,7 @@ public:
 	{
 		return std::vector<std::shared_ptr<Actor>>(actors_.begin(), actors_.end());
 	}
+	virtual Actor& GetActor(unsigned int actorID) override;
 	virtual void AddActor(std::shared_ptr<Actor> actor) override;
 	virtual void RemoveActor(std::shared_ptr<Actor> actor) override;
 };

@@ -2,6 +2,7 @@
 #include "../pch.h"
 
 #include "../System.h"
+#include "../Actor/Actor.h"
 #include "Context.h"
 
 class IInput : public System
@@ -40,9 +41,9 @@ protected:
 
 public:
   virtual ~IInput(){};
-  static std::shared_ptr<IInput> GetDefault() { return defaultInput_; }
+  static std::shared_ptr<IInput> GetDefault() { return defaultInput_; };
 
-  unsigned int GetCusorHoveringActor();
+  Actor& GetCusorHoveringActor();
 
   void BindAction(const std::string &name, ActionCallback func);
   void BindRange(const std::string &name, RangeCallback func, float val = 1.0f);

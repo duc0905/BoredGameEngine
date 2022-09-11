@@ -25,6 +25,30 @@ void Renderer::Init()
 	glEnable(GL_DEPTH_TEST);
 
 	meshShader_ = Shader("mymesh.vert", "mymesh.frag");
+	screenShader_ = Shader("screen.vert", "screen.frag");
+
+	float screenVerts[] = {
+	-1.0f,  1.0f, 0.0f, 1.0f,
+	 1.0f,  1.0f, 1.0f, 1.0f,
+	 1.0f, -1.0f, 1.0f, 0.0f,
+	-1.0f, -1.0f, 0.0f, 0.0f
+	};
+
+	unsigned int screenIndices[] = {
+		0, 1, 2,
+		0, 2, 3
+	};
+
+
+	screenVao = new VertexArray();
+	screenVbo = new VertexBuffer(screenVerts, sizeof(screenVerts));
+	screenIbo = new IndexBuffer(screenIndices, sizeof(screenIndices));
+
+	screenVbo->SetLayout({ {"Position", Float2, GL_FALSE }, { "UV", Float2, GL_FALSE} });
+	screenVao->AddVertexBuffer(*screenVbo);
+	screenVao->Unbind();
+	screenVbo->Unbind();
+	screenIbo->Unbind();
 }
 
 void Renderer::Render(IWorld& world)
@@ -44,11 +68,24 @@ void Renderer::Render(IWorld& world)
 
 	fbo->AttachColorBuffer(colorBuffer, 0);
 	fbo->AttachColorBuffer(idBuffer, 1);
+	fbo->Bind();
 
 	for (auto& actor : world.GetActors())
 	{
 		Draw(*actor);
 	}
+
+	fbo->Unbind();
+
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	screenShader_.Activate();
+	screenVao->Bind();
+	screenIbo->Bind();
+	colorBuffer->Bind();
+
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
+
 }
 
 void Renderer::Draw(const Mesh& mesh)

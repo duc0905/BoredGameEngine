@@ -1,10 +1,9 @@
 #include "../pch.h"
 #include "Actor.h"
 
-std::shared_ptr<Actor> Actor::NullActor = std::make_shared<Actor>(0);
+unsigned int Actor::IDCounter_ = 0;
 
-unsigned int Actor::IDCounter_ = 1;
-
+Actor Actor::NullActor = Actor();
 Actor::Actor()
 {
 	ID = IDCounter_;
@@ -12,7 +11,3 @@ Actor::Actor()
 	CreateComponent<TransformComponent>();
 }
 
-Actor::Actor(unsigned int assignID)
-{
-	ID = assignID;
-}

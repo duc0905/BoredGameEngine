@@ -8,7 +8,9 @@ class CubeActor : public Actor
 {
 public:
     CubeActor();
- 
+    virtual void OnTick(float dt) override {
+        //LOG(GetID());
+    }
     virtual void OnAttach() override {
         auto inputComp = CreateComponent<InputComponent>();
         inputComp->BindAction("yeet", std::bind(&CubeActor::Yell, this, std::placeholders::_1));
