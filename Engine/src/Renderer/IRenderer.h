@@ -21,7 +21,7 @@ public:
     virtual void Render(IWorld& world) = 0;
 
     virtual void Draw(const Actor& actor) = 0;
-    virtual unsigned int GetMouseHoverEntityID(int x, int y) = 0;
+
     virtual void UseCamera(std::shared_ptr<BaseCamera> cam) = 0;
 };
 
@@ -31,7 +31,4 @@ class NullRenderer : public IRenderer
 	inline virtual void Render(IWorld& world) override {};
 	inline virtual void Draw(const Actor& actor) override {};
 	inline virtual void UseCamera(std::shared_ptr<BaseCamera> cam) override {};
-
-    // Inherited via IRenderer
-    virtual unsigned int GetMouseHoverEntityID(int x, int y) override;
 };

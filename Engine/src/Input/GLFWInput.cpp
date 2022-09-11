@@ -147,8 +147,6 @@ void GLFWInput::KeyCallback(GLFWwindow* window, int key, int scancode, int actio
 void GLFWInput::MousePosCallback(GLFWwindow* window, double x, double y)
 {
 	auto& input = GetInstance();
-	input.mouseInfo.posX = x;
-	input.mouseInfo.posY = y;
 	input.EvaluateKey(KeyInput::MOUSE_POS_X, KeyInput::PRESS, 0, x);
 	input.EvaluateKey(KeyInput::MOUSE_POS_Y, KeyInput::PRESS, 0, y);
 }
@@ -164,11 +162,9 @@ void GLFWInput::MouseEnterCallback(GLFWwindow* window, int entered)
 	auto& input = GetInstance();
 	if (entered) {
 		input.EvaluateKey(KeyInput::MOUSE_ENTER, KeyInput::PRESS, 0, 1.0f);
-		input.mouseInfo.isEntered = true;
 	}
 	else {
 		input.EvaluateKey(KeyInput::MOUSE_LEAVE, KeyInput::PRESS, 0, 1.0f);
-		input.mouseInfo.isEntered = false;
 	}
 }
 
@@ -177,6 +173,4 @@ void GLFWInput::MouseScrollCallback(GLFWwindow* window, double x, double y)
 	auto& input = GetInstance();
 	input.EvaluateKey(KeyInput::MOUSE_SCROLL_X, KeyInput::PRESS, 0, x);
 	input.EvaluateKey(KeyInput::MOUSE_SCROLL_Y, KeyInput::PRESS, 0, y);
-	input.mouseInfo.scrollX = x;
-	input.mouseInfo.scrollY = y;
 }
