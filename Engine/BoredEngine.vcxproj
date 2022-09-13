@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Renderer\Material\OpenGLMaterial.cpp" />
     <ClCompile Include="src\Components\AudioComponent.cpp" />
     <ClCompile Include="src\Actor\BaseCamera.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../pch.h</PrecompiledHeaderFile>
@@ -194,6 +195,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Renderer\Material\OpenGLMaterial.h" />
     <ClInclude Include="src\Components\AudioComponent.h" />
     <ClInclude Include="src\Audio\ISoundBuffer.h" />
     <ClInclude Include="src\Audio\ISource.h" />

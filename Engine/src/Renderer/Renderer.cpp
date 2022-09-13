@@ -24,6 +24,9 @@ void Renderer::Init()
 	idBuffer = OpenGLTexture::CreateColorBuffer(window.GetWidth(), window.GetHeight(), GL_R32I, GL_RED_INTEGER);
 	glEnable(GL_DEPTH_TEST);
 
+	fbo->AttachColorBuffer(colorBuffer, 0);
+	fbo->AttachColorBuffer(idBuffer, 1);
+
 	meshShader_ = Shader("mymesh.vert", "mymesh.frag");
 	screenShader_ = Shader("screen.vert", "screen.frag");
 
@@ -53,8 +56,7 @@ void Renderer::Init()
 
 void Renderer::Render(IWorld& world)
 {
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	fbo->ClearBuffer();
 
 	if (!activeCam_)
 		throw std::exception("Renderer have not been provided a camera");
@@ -66,8 +68,6 @@ void Renderer::Render(IWorld& world)
 	meshShader_.SetUniformMatrix4fv("u_ViewMat", glm::value_ptr(viewMat));
 	meshShader_.SetUniformMatrix4fv("u_ProjectionMat", glm::value_ptr(projMat));
 
-	fbo->AttachColorBuffer(colorBuffer, 0);
-	fbo->AttachColorBuffer(idBuffer, 1);
 	fbo->Bind();
 
 	for (auto& actor : world.GetActors())
@@ -76,16 +76,21 @@ void Renderer::Render(IWorld& world)
 	}
 
 	fbo->Unbind();
-
+	//glDisable(GL_DEPTH_TEST);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	screenShader_.Activate();
 	screenVao->Bind();
 	screenIbo->Bind();
 	colorBuffer->Bind();
 
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
-
+	//fbo->Bind();
+	//glClear(GL_COLOR_BUFFER_BIT);
+	//colorBuffer->Unbind();
+	//screenVao->Unbind();
+	//screenVbo->Unbind();
+	//screenIbo->Unbind();
 }
 
 void Renderer::Draw(const Mesh& mesh)
@@ -97,7 +102,18 @@ void Renderer::Draw(const Mesh& mesh)
 	}
 	mesh.Bind();
 	meshShader_.Activate();
-	glDrawElements(GL_TRIANGLES, mesh.GetNumIndices(), GL_UNSIGNED_INT, 0);
+	for (unsigned int i = 0; i < mesh.m_Meshes.size(); i++) {
+		unsigned int materialIndex = mesh.m_Meshes[i].MaterialIndex;
+		assert(materialIndex < mesh.m_Material.size());
+		if (mesh.m_Material[materialIndex]) {
+			mesh.m_Material[materialIndex]->Bind();
+		}
+		glDrawElementsBaseVertex(GL_TRIANGLES,
+			mesh.m_Meshes[i].NumIndices,
+			GL_UNSIGNED_INT, (void*)(sizeof(unsigned int) * mesh.m_Meshes[i].BaseIndex),
+			mesh.m_Meshes[i].BaseVertex);
+	}
+	//glDrawElements(GL_TRIANGLES, mesh.GetNumIndices(), GL_UNSIGNED_INT, 0);
 	mesh.Unbind();
 }
 

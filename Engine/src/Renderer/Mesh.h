@@ -6,6 +6,9 @@
 #include "Buffers/VertexBuffer.h"
 #include "Buffers/IndexBuffer.h"
 #include "Texture/ITexture.h"
+#include "Material/OpenGLMaterial.h"
+
+#define INVALID_MATERIAL 0xFFFFFFFF;
 
 class MeshBuffers
 {
@@ -27,6 +30,20 @@ public:
 	bool Unbind();
 };
 
+struct SubMesh {
+	SubMesh()
+	{
+		NumIndices  = 0;
+		BaseVertex = 0;
+		BaseIndex  = 0;
+		MaterialIndex = INVALID_MATERIAL;
+	}
+	unsigned int NumIndices;
+	unsigned int BaseVertex;
+	unsigned int BaseIndex;
+	unsigned int MaterialIndex;
+};
+
 class Mesh
 {
 private:
@@ -34,6 +51,11 @@ private:
 	std::shared_ptr<ITexture> texture_;
 
 	bool isInit_ = false;
+
+public: 
+	std::vector<std::shared_ptr<ITexture>> m_Material;
+	std::vector<SubMesh> m_Meshes;
+
 public:
 	Mesh() = default;
 	Mesh(Mesh&& other);

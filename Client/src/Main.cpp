@@ -42,9 +42,17 @@ int main()
 
 	std::shared_ptr<Context> myContext = std::make_shared<Context>();
 	myContext->AddActionMapping(KeyInput::KEY_B, 0, actionKey);
+	myContext->AddRangeMapping(KeyInput::KEY_P, 0, "yeet_RANGE", 1);
+	myContext->AddRangeMapping(KeyInput::KEY_X ,0, "rX", 1);
+	myContext->AddRangeMapping(KeyInput::KEY_Y ,0, "rY", 1);
+	myContext->AddRangeMapping(KeyInput::KEY_Z ,0,"rZ", 1);
+	myContext->AddRangeMapping(KeyInput::KEY_X ,0, "-rX", 1);
+	myContext->AddRangeMapping(KeyInput::KEY_Y ,0, "-rY", 1);
+	myContext->AddRangeMapping(KeyInput::KEY_Z, 0,"-rZ", 1);
 	input->AddContext(myContext);
 
-	cam->FindComponent<TransformComponent>()->Translate(glm::vec3(-3.0f, 0.0f, 0.0f));
+	cam->FindComponent<TransformComponent>()->Translate(glm::vec3(-10.0f, 0.0f, 0.0f));
+	//cam->FindComponent<TransformComponent>()->Rotate(glm::vec3(glm::pi<float>() / 2.f, 0.0f, 0.0f));
 
 	IGame::Run();
 
