@@ -10,7 +10,6 @@ std::tuple<std::shared_ptr<MeshBuffers>, std::vector<SubMesh>, std::vector<std::
 	std::vector<std::shared_ptr<ITexture>> m_Material;
 	std::vector<SubMesh> m_Mesh;
 	std::vector<std::tuple<std::shared_ptr<MeshBuffers>, std::shared_ptr<ITexture>>> ret;
-	unsigned int indexOffset = 0;
 
 	const aiScene* scene = imp.ReadFile("./res/" + file,
 		aiProcess_CalcTangentSpace |
@@ -52,7 +51,6 @@ std::tuple<std::shared_ptr<MeshBuffers>, std::vector<SubMesh>, std::vector<std::
 			auto& vert = mesh->mVertices[k];
 			glm::vec3 v { vert.x, vert.y, vert.z };
 			positions.push_back(v);
-
 
 			if (mesh->HasTextureCoords(0))
 			{
@@ -122,8 +120,14 @@ std::tuple<std::shared_ptr<MeshBuffers>, std::vector<SubMesh>, std::vector<std::
 			aiString path;
 			if (pMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 			{
-				std::string fullpath = "./res/" + std::string(path.data);
+				std::string fullpath = "./res/3d_models/" + std::string(path.data);
+				LOG(fullpath);
 				m_Material[i]->Load(fullpath);
+				/*aiColor3D color(0.f, 0.f, 0.f);
+				pMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+
+				char colorData[4] = { 255, 255, 255, 255 };
+				m_Material[i]->Load(1, 1, 4, (void*)colorData);*/
 			}
 			else {
 				aiColor3D color(0.f, 0.f, 0.f);

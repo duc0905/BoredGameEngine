@@ -22,10 +22,13 @@ void Renderer::Init()
 
 	colorBuffer = OpenGLTexture::CreateColorBuffer(window.GetWidth(), window.GetHeight(), GL_RGB, GL_RGB);
 	idBuffer = OpenGLTexture::CreateColorBuffer(window.GetWidth(), window.GetHeight(), GL_R32I, GL_RED_INTEGER);
-	glEnable(GL_DEPTH_TEST);
+
+	std::shared_ptr<RenderBuffer> depthBuffer = std::make_shared<RenderBuffer>(window.GetWidth(), window.GetHeight());
 
 	fbo->AttachColorBuffer(colorBuffer, 0);
 	fbo->AttachColorBuffer(idBuffer, 1);
+	fbo->AttachRenderBuffer(depthBuffer);
+	glEnable(GL_DEPTH_TEST);
 
 	meshShader_ = Shader("mymesh.vert", "mymesh.frag");
 	screenShader_ = Shader("screen.vert", "screen.frag");
@@ -56,8 +59,8 @@ void Renderer::Init()
 
 void Renderer::Render(IWorld& world)
 {
+	//glEnable(GL_DEPTH_TEST);
 	fbo->ClearBuffer();
-
 	if (!activeCam_)
 		throw std::exception("Renderer have not been provided a camera");
 
@@ -76,7 +79,6 @@ void Renderer::Render(IWorld& world)
 	}
 
 	fbo->Unbind();
-	//glDisable(GL_DEPTH_TEST);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	screenShader_.Activate();
@@ -85,6 +87,7 @@ void Renderer::Render(IWorld& world)
 	colorBuffer->Bind();
 
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
+	//glDisable(GL_DEPTH_TEST);
 	//fbo->Bind();
 	//glClear(GL_COLOR_BUFFER_BIT);
 	//colorBuffer->Unbind();
