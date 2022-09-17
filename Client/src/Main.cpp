@@ -57,6 +57,8 @@ int main()
 	cameraContext->AddRangeMapping(KeyInput::KEY_A, 0, "AD", -1.f);
 	cameraContext->AddRangeMapping(KeyInput::KEY_E, 0, "EQ", 1.f);
 	cameraContext->AddRangeMapping(KeyInput::KEY_Q, 0, "EQ", -1.f);
+	cameraContext->AddRangeMapping(KeyInput::KEY_1, 0, "12", 1.f);
+	cameraContext->AddRangeMapping(KeyInput::KEY_2, 0, "12", -1.f);
 	cameraContext->AddRangeMapping(KeyInput::KEY_SPACE, 0, "Space_Ctrl", 1.f);
 	cameraContext->AddRangeMapping(KeyInput::KEY_SPACE, KeyInput::CTRL, "Space_Ctrl", -1.f);
 
@@ -86,13 +88,21 @@ int main()
 		});
 
 	input->BindRange("EQ", [&](KeyInput::Action action, float val) -> void {
-		auto up = cam->FindComponent<OrthoCameraComponent>()->GetUp();
+		auto dir = cam->FindComponent<OrthoCameraComponent>()->GetDir();
 		glm::mat4 rotationMat(1);
-		rotationMat = glm::rotate(rotationMat, glm::pi<float>() / 100 * val, glm::vec3(1.f, 0.f, 0.f));
+		rotationMat = glm::rotate(rotationMat, glm::pi<float>() / 100 * val, glm::vec3(0.f, 0.f, 1.f));
+		auto newUp = glm::vec3(rotationMat * glm::vec4(dir, 1.f));
+		cam->FindComponent<OrthoCameraComponent>()->SetDir(newUp);
+		});
+
+	input->BindRange("12", [&](KeyInput::Action action, float val) -> void {
+		auto up = cam->FindComponent<OrthoCameraComponent>()->GetUp();
+		auto dir = cam->FindComponent<OrthoCameraComponent>()->GetDir();
+		glm::mat4 rotationMat(1);
+		rotationMat = glm::rotate(rotationMat, glm::pi<float>() / 100 * val, glm::vec3(0.f, 1.f, 1.f));
+		auto newDir = glm::vec3(rotationMat * glm::vec4(dir, 1.f));
 		auto newUp = glm::vec3(rotationMat * glm::vec4(up, 1.f));
-		std::cout << "X: " << (newUp.x);
-		std::cout << " Y: " << (newUp.y);
-		std::cout << " Z: " << (newUp.z) << "\n";
+		cam->FindComponent<OrthoCameraComponent>()->SetDir(newDir);
 		cam->FindComponent<OrthoCameraComponent>()->SetUp(newUp);
 		});
 
@@ -102,4 +112,12 @@ int main()
 	IGame::Run();
 
 	return 0;
+}
+
+void rotateHorizontal(KeyInput::Action action, float val) {
+
+}
+
+void rotateVericle() {
+
 }
