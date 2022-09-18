@@ -19,6 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Components\PerspectiveCameraComponent.cpp" />
+    <ClCompile Include="src\Actor\PerspectiveCamera.cpp" />
+    <ClCompile Include="src\Renderer\Material\OpenGLMaterial.cpp" />
     <ClCompile Include="src\Components\AudioComponent.cpp" />
     <ClCompile Include="src\Actor\BaseCamera.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../pch.h</PrecompiledHeaderFile>
@@ -194,6 +197,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Components\PerspectiveCameraComponent.h" />
+    <ClInclude Include="src\Actor\PerspectiveCamera.h" />
+    <ClInclude Include="src\Renderer\Material\OpenGLMaterial.h" />
     <ClInclude Include="src\Components\AudioComponent.h" />
     <ClInclude Include="src\Audio\ISoundBuffer.h" />
     <ClInclude Include="src\Audio\ISource.h" />
@@ -233,7 +239,7 @@
     <ClInclude Include="src\Renderer\IRenderer.h" />
     <ClInclude Include="src\Renderer\Mesh.h" />
     <ClInclude Include="src\Renderer\Renderer.h" />
-    <ClInclude Include="src\Renderer\ShaderClass.h" />
+    <ClInclude Include="src\Actor\ShaderClass.h" />
     <ClInclude Include="src\Renderer\Buffers\VertexArray.h" />
     <ClInclude Include="src\Renderer\Buffers\VertexBuffer.h" />
     <ClInclude Include="src\System.h" />

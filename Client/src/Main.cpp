@@ -7,6 +7,7 @@
 #include "demos/ImGuiHUD.h"
 
 #include "Actor/OrthoCamera.h"
+#include "Actor/PerspectiveCamera.h"
 
 #include "CubeActor.h"
 #include "ChessGameMode.h"
@@ -34,7 +35,8 @@ int main()
 	std::shared_ptr<Actor> cube = std::make_shared<CubeActor>();
 	world->AddActor(cube);
 
-	std::shared_ptr<OrthoCamera> cam = std::make_shared<OrthoCamera>(glm::vec4(800, -800, 800, -800));
+	//std::shared_ptr<OrthoCamera> cam = std::make_shared<OrthoCamera>(glm::vec4(800, -800, 800, -800));
+	std::shared_ptr<PerspectiveCamera> cam = std::make_shared<PerspectiveCamera>(glm::vec4(70.f, 1.f, 0.01f, 1000.f));
 	world->AddActor(cam);
 	renderer->UseCamera(cam);
 
