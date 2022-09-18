@@ -83,7 +83,6 @@
     <ClInclude Include="src\Renderer\IRenderer.h" />
     <ClInclude Include="src\Renderer\Mesh.h" />
     <ClInclude Include="src\Renderer\Renderer.h" />
-    <ClInclude Include="src\Renderer\ShaderClass.h" />
     <ClInclude Include="src\Renderer\Buffers\VertexArray.h" />
     <ClInclude Include="src\Renderer\Buffers\VertexBuffer.h" />
     <ClInclude Include="src\System.h" />
@@ -97,5 +96,6 @@
     <ClInclude Include="src\Renderer\Material\OpenGLMaterial.h" />
     <ClInclude Include="src\Actor\PerspectiveCamera.h" />
     <ClInclude Include="src\Components\PerspectiveCameraComponent.h" />
+    <ClInclude Include="src\Renderer\ShaderClass.h" />
   </ItemGroup>
 </Project>

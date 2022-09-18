@@ -1,7 +1,7 @@
 #pragma once
 #include "../pch.h"
 
-#include "../Components/OrthoCameraComponent.h"
+#include "../Components/PerspectiveCameraComponent.h"
 #include "BaseCamera.h"
 
 class PerspectiveCamera :
@@ -14,7 +14,7 @@ public:
     virtual glm::mat4 GetProjectionMat() const override;
     virtual ~PerspectiveCamera() override {}
 private:
-    std::shared_ptr<OrthoCameraComponent> camComp;
+    std::shared_ptr<PerspectiveCameraComponent> camComp;
     std::shared_ptr<TransformComponent> transComp;
 };
 
