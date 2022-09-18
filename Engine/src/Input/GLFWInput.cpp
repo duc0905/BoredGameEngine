@@ -89,6 +89,7 @@ KeyInput::Key GLFWInput::GetKey(int keyCode)
 		case GLFW_KEY_B: return KeyInput::KEY_B;
 		case GLFW_KEY_N: return KeyInput::KEY_N;
 		case GLFW_KEY_M: return KeyInput::KEY_M;
+		case GLFW_KEY_SPACE: return KeyInput::KEY_SPACE;
 		// mouse
 		case GLFW_MOUSE_BUTTON_1: return KeyInput::KEY_MB_1;
 		case GLFW_MOUSE_BUTTON_2: return KeyInput::KEY_MB_2;

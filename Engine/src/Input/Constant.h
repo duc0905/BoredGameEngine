@@ -41,6 +41,9 @@ namespace KeyInput
 		KEY_N,
 		KEY_M,
 
+		KEY_SPACE,
+		KEY_TAB,
+
 		// Mouse butts
 		KEY_MB_1,
 		KEY_MB_2,
@@ -64,7 +67,7 @@ namespace KeyInput
 
 	enum Mod
 	{	
-		CTRL = 0 << 0,
+		CTRL = 1 << 0,
 		SHIFT = 1 << 1,
 		ALT = 1 << 2,
 		MOD_UNKNOWN = 1 << 8

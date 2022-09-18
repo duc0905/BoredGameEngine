@@ -18,12 +18,15 @@ Mesh::Mesh(std::shared_ptr<MeshBuffers> mb, std::shared_ptr<ITexture> tex)
 
 bool Mesh::LoadModel(const std::string& file)
 {
-    auto data = Helper::ReadModel(file);
-    auto [buffers, texture] = data.at(0);
+    //auto data = Helper::ReadModel(file);
+    auto [buffers, subMeshes, materials] = Helper::ReadModel(file);
+    //auto [buffers, texture] = data.at(0);
     isInit_ = true;
 
     buffers_ = buffers;
-    texture_ = texture;
+    m_Meshes = subMeshes;
+    m_Material = materials;
+    texture_ = materials[0];
 
     return true;
 }

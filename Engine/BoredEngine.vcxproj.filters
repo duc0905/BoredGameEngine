@@ -1,281 +1,97 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
+    <ClCompile Include="src\Components\AudioComponent.cpp" />
+    <ClCompile Include="src\Actor\BaseCamera.cpp" />
+    <ClCompile Include="src\Audio\IAudio.cpp" />
+    <ClCompile Include="src\Audio\OpenALAudio.cpp" />
+    <ClCompile Include="src\Audio\OpenALBuffer.cpp" />
+    <ClCompile Include="src\Audio\OpenALSource.cpp" />
+    <ClCompile Include="src\Components\CameraComponent.cpp" />
+    <ClCompile Include="src\Components\Component.cpp" />
+    <ClCompile Include="src\Components\TextureComponent.cpp" />
+    <ClCompile Include="src\HUD\HUDComponents\ImGuiWindow.cpp" />
+    <ClCompile Include="src\HUD\IHUD.cpp" />
+    <ClCompile Include="src\HUD\ImGuiHUD.cpp" />
+    <ClCompile Include="src\Renderer\Buffers\FrameBuffer.cpp" />
+    <ClCompile Include="src\Input\IInput.cpp" />
+    <ClCompile Include="src\pch.cpp" />
+    <ClCompile Include="src\Renderer\Texture\OpenGLTexture.cpp" />
+    <ClCompile Include="src\World\IWorld.cpp" />
+    <ClCompile Include="src\Actor\Actor.cpp" />
+    <ClCompile Include="src\Actor\OrthoCamera.cpp" />
+    <ClCompile Include="src\Components\InputComponent.cpp" />
+    <ClCompile Include="src\Components\MeshComponent.cpp" />
+    <ClCompile Include="src\Components\OrthoCameraComponent.cpp" />
+    <ClCompile Include="src\Components\TransformComponent.cpp" />
+    <ClCompile Include="src\IGame.cpp" />
+    <ClCompile Include="src\Input\Context.cpp" />
+    <ClCompile Include="src\Input\GLFWInput.cpp" />
+    <ClCompile Include="src\Renderer\Buffers\IndexBuffer.cpp" />
+    <ClCompile Include="src\Renderer\IRenderer.cpp" />
+    <ClCompile Include="src\Renderer\Mesh.cpp" />
+    <ClCompile Include="src\Renderer\Renderer.cpp" />
+    <ClCompile Include="src\Renderer\ShaderClass.cpp" />
+    <ClCompile Include="src\Renderer\Buffers\VertexArray.cpp" />
+    <ClCompile Include="src\Renderer\Buffers\VertexBuffer.cpp" />
+    <ClCompile Include="src\Utils\Helper.cpp" />
+    <ClCompile Include="src\Window\GLFWWindow.cpp" />
+    <ClCompile Include="src\Window\IWindow.cpp" />
+    <ClCompile Include="src\World\World.cpp" />
+    <ClCompile Include="vendors\glad.c" />
+    <ClCompile Include="src\Renderer\Material\OpenGLMaterial.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Actor\Actor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Actor\OrthoCamera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Components\InputComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Components\MeshComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Components\OrthoCameraComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Components\TransformComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Input\Context.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Input\GLFWInput.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Renderer\Buffers\IndexBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Renderer\Mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Renderer\Renderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Renderer\ShaderClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Renderer\Buffers\VertexArray.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Renderer\Buffers\VertexBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Utils\Helper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Window\GLFWWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\World\World.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\IGame.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="vendors\glad.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Renderer\IRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Window\IWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\World\IWorld.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Input\IInput.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\pch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Components\Component.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Components\CameraComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Actor\BaseCamera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Renderer\Texture\OpenGLTexture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Components\TextureComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Audio\IAudio.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Audio\OpenALAudio.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Audio\OpenALSource.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Audio\OpenALBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Components\AudioComponent.cpp">
-    <ClCompile Include="src\HUD\IHUD.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\HUD\ImGuiHUD.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\HUD\HUDComponents\ImGuiWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Renderer\Buffers\FrameBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\Actor\Actor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Actor\BaseCamera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Actor\OrthoCamera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Components\CameraComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Components\Component.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Components\InputComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Components\MeshComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Components\OrthoCameraComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Components\TransformComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Input\Context.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Input\GLFWInput.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Renderer\Buffers\IndexBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Renderer\Mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Renderer\Renderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Renderer\ShaderClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Renderer\Buffers\VertexArray.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Renderer\Buffers\VertexBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Utils\Helper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Utils\LinkedList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Utils\Locator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Window\GLFWWindow.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\World\World.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\IGame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\System.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Input\Constant.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Renderer\IRenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Window\IWindow.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\World\IWorld.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Input\IInput.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\pch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\World\GameMode\IGameMode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Renderer\Texture\OpenGLTexture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="vendors\stb_image\stb_image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Components\TextureComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Renderer\Texture\ITexture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Audio\IAudio.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Audio\OpenALAudio.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Audio\ISource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Audio\ISoundBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Audio\OpenALSource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Audio\OpenALBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Components\AudioComponent.h">
-    <ClInclude Include="src\HUD\IHUD.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\HUD\ImGuiHUD.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\HUD\HUDComponents\IHUDWindow.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\HUD\HUDComponents\IHUDElement.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\HUD\HUDComponents\ImGuiWindow.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\HUD\HUDComponents\ImGuiTextEl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\HUD\HUDComponents\ImGuiButtonEl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Renderer\Buffers\FrameBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <ClInclude Include="src\Components\AudioComponent.h" />
+    <ClInclude Include="src\Audio\ISoundBuffer.h" />
+    <ClInclude Include="src\Audio\ISource.h" />
+    <ClInclude Include="src\Audio\IAudio.h" />
+    <ClInclude Include="src\Audio\OpenALAudio.h" />
+    <ClInclude Include="src\Audio\OpenALBuffer.h" />
+    <ClInclude Include="src\Audio\OpenALSource.h" />
+    <ClInclude Include="src\Components\TextureComponent.h" />
+    <ClInclude Include="src\HUD\HUDComponents\IHUDElement.h" />
+    <ClInclude Include="src\HUD\HUDComponents\IHUDWindow.h" />
+    <ClInclude Include="src\HUD\HUDComponents\ImGuiButtonEl.h" />
+    <ClInclude Include="src\HUD\HUDComponents\ImGuiTextEl.h" />
+    <ClInclude Include="src\HUD\HUDComponents\ImGuiWindow.h" />
+    <ClInclude Include="src\HUD\IHUD.h" />
+    <ClInclude Include="src\HUD\ImGuiHUD.h" />
+    <ClInclude Include="src\Renderer\Buffers\FrameBuffer.h" />
+    <ClInclude Include="src\World\GameMode\IGameMode.h" />
+    <ClInclude Include="src\Input\IInput.h" />
+    <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\Renderer\Texture\ITexture.h" />
+    <ClInclude Include="src\Renderer\Texture\OpenGLTexture.h" />
+    <ClInclude Include="src\World\IWorld.h" />
+    <ClInclude Include="src\Actor\Actor.h" />
+    <ClInclude Include="src\Actor\BaseCamera.h" />
+    <ClInclude Include="src\Actor\OrthoCamera.h" />
+    <ClInclude Include="src\Components\CameraComponent.h" />
+    <ClInclude Include="src\Components\Component.h" />
+    <ClInclude Include="src\Components\InputComponent.h" />
+    <ClInclude Include="src\Components\MeshComponent.h" />
+    <ClInclude Include="src\Components\OrthoCameraComponent.h" />
+    <ClInclude Include="src\Components\TransformComponent.h" />
+    <ClInclude Include="src\IGame.h" />
+    <ClInclude Include="src\Input\Constant.h" />
+    <ClInclude Include="src\Input\Context.h" />
+    <ClInclude Include="src\Input\GLFWInput.h" />
+    <ClInclude Include="src\Renderer\Buffers\IndexBuffer.h" />
+    <ClInclude Include="src\Renderer\IRenderer.h" />
+    <ClInclude Include="src\Renderer\Mesh.h" />
+    <ClInclude Include="src\Renderer\Renderer.h" />
+    <ClInclude Include="src\Renderer\ShaderClass.h" />
+    <ClInclude Include="src\Renderer\Buffers\VertexArray.h" />
+    <ClInclude Include="src\Renderer\Buffers\VertexBuffer.h" />
+    <ClInclude Include="src\System.h" />
+    <ClInclude Include="src\Utils\Helper.h" />
+    <ClInclude Include="src\Utils\LinkedList.h" />
+    <ClInclude Include="src\Utils\Locator.h" />
+    <ClInclude Include="src\Window\IWindow.h" />
+    <ClInclude Include="src\Window\GLFWWindow.h" />
+    <ClInclude Include="src\World\World.h" />
+    <ClInclude Include="vendors\stb_image\stb_image.h" />
+    <ClInclude Include="src\Renderer\Material\OpenGLMaterial.h" />
   </ItemGroup>
 </Project>
