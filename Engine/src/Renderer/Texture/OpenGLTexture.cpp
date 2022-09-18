@@ -47,7 +47,7 @@ bool OpenGLTexture::Load(const std::string& filepath)
 {
 	try
 	{
-		stbi_set_flip_vertically_on_load(0);
+		stbi_set_flip_vertically_on_load(1);
 		LocalBuffer = stbi_load(filepath.c_str(), &Width, &Height, &BPP, 4);
 
 		Load(Width, Height, BPP, LocalBuffer);

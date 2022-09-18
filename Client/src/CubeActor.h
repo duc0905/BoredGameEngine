@@ -23,13 +23,13 @@ public:
                 }
                 audioComp->PlayCompSound();
             });
-        //inputComp->BindRange("yeet_RANGE", std::bind(&CubeActor::YellRange, this, std::placeholders::_1, std::placeholders::_2));
-        //inputComp->BindRange("rX", std::bind(&CubeActor::RotateX, this, std::placeholders::_1, std::placeholders::_2));
-        //inputComp->BindRange("rY", std::bind(&CubeActor::RotateY, this, std::placeholders::_1, std::placeholders::_2));
-        //inputComp->BindRange("rZ", std::bind(&CubeActor::RotateZ, this, std::placeholders::_1, std::placeholders::_2));
-        //inputComp->BindRange("-rX", std::bind(&CubeActor::RotateX, this, std::placeholders::_1, std::placeholders::_2));
-        //inputComp->BindRange("-rY", std::bind(&CubeActor::RotateY, this, std::placeholders::_1, std::placeholders::_2));
-        //inputComp->BindRange("-rZ", std::bind(&CubeActor::RotateZ, this, std::placeholders::_1, std::placeholders::_2));*/
+        inputComp->BindRange("yeet_RANGE", std::bind(&CubeActor::YellRange, this, std::placeholders::_1, std::placeholders::_2));
+        inputComp->BindRange("rX", std::bind(&CubeActor::RotateX, this, std::placeholders::_1, std::placeholders::_2));
+        inputComp->BindRange("rY", std::bind(&CubeActor::RotateY, this, std::placeholders::_1, std::placeholders::_2));
+        inputComp->BindRange("rZ", std::bind(&CubeActor::RotateZ, this, std::placeholders::_1, std::placeholders::_2));
+        inputComp->BindRange("-rX", std::bind(&CubeActor::RotateX, this, std::placeholders::_1, std::placeholders::_2));
+        inputComp->BindRange("-rY", std::bind(&CubeActor::RotateY, this, std::placeholders::_1, std::placeholders::_2));
+        inputComp->BindRange("-rZ", std::bind(&CubeActor::RotateZ, this, std::placeholders::_1, std::placeholders::_2));
     }
 
     void RotateY(KeyInput::Action action, float weight) {
@@ -59,7 +59,10 @@ public:
     void YellRange(KeyInput::Action action, float weight) {
         auto transcomp = FindComponent<TransformComponent>();
         auto rotation = transcomp->GetRotation();
-        transcomp->SetRotation(rotation + glm::vec3(glm::pi<float>() / 100 * weight, glm::pi<float>() / 70 * weight, glm::pi<float>() / 50 * weight));
+        //transcomp->SetRotation(rotation + glm::vec3(glm::pi<float>() / 100 * weight, glm::pi<float>() / 70 * weight, glm::pi<float>() / 50 * weight));
+        //transcomp->SetRotation(rotation + glm::vec3(glm::pi<float>() / 100 * weight, glm::pi<float>() / 70 * weight, glm::pi<float>() / 50 * weight));
+        //transcomp->SetRotation(rotation + glm::vec3(glm::pi<float>() / 100 * weight, glm::pi<float>() / 70 * weight, glm::pi<float>() / 50 * weight));
+        transcomp->SetRotation(rotation + glm::vec3(glm::pi<float>() / 100 * weight, 0.0f, 0.0f));
     }
 
     void PlaySoundS(KeyInput::Action action) {
