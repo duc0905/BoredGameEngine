@@ -69,9 +69,6 @@ int main()
 
   /*input->BindRange("WS", [&](KeyInput::Action action, float val) -> void {
 			auto direction = cam->FindComponent<OrthoCameraComponent>()->GetDir();
-			std::cout << "X: " << (direction.x);
-			std::cout << "Y: " << (direction.y);
-			std::cout << "Z: " << (direction.z);
 			auto up = cam->FindComponent<OrthoCameraComponent>()->GetUp();
 			cam->FindComponent<TransformComponent>()->Translate(glm::normalize(direction) * val); });
 
@@ -106,9 +103,6 @@ int main()
 
   input->BindRange("WS", [&](KeyInput::Action action, float val) -> void {
 	  auto direction = cam->FindComponent<PerspectiveCameraComponent>()->GetDir();
-	  std::cout << "X: " << (direction.x);
-	  std::cout << "Y: " << (direction.y);
-	  std::cout << "Z: " << (direction.z);
 	  auto up = cam->FindComponent<PerspectiveCameraComponent>()->GetUp();
 	  cam->FindComponent<TransformComponent>()->Translate(glm::normalize(direction) * val); });
 
