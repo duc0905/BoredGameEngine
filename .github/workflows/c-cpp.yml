@@ -14,7 +14,7 @@ on:
 jobs:
   Windows:
     name: build-windows
-    runs-on: windows-2022
+    runs-on: windows-latests
 
     steps:
     - name: Checkout
@@ -34,24 +34,23 @@ jobs:
 #     # The preferred processor architecture of MSBuild. Can be either "x86" or "x64". "x64" is only available from Visual Studio version 17.0 and later.
 #     msbuild-architecture: # optional, default is x86
 
-    - name: Installing vcpkg (windows)
-      run: |
-        cd ..
-        git clone https://github.com/Microsoft/vcpkg.git
-        cd vcpkg
-        git checkout --force 2020.01
-        .\bootstrap-vcpkg.bat
-        .\vcpkg.exe install cppzmq:x64-windows
+#     - name: Installing vcpkg (windows)
+#       run: |
+#         cd ..
+#         git clone https://github.com/Microsoft/vcpkg.git
+#         cd vcpkg
+#         git checkout --force 2020.01
+#         .\bootstrap-vcpkg.bat
+#         .\vcpkg.exe install cppzmq:x64-windows
 
-    - name: Running cmake (windows)
-      run: |
-        cd ${{ github.workspace }}
-        mkdir build
-        cd build
-        cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}
-                  /../vcpkg/scripts/buildsystems/vcpkg.cmake
-
+#     - name: Running cmake (windows)
+#       run: |
+#         cd ${{ github.workspace }}
+#         mkdir build
+#         cd build
+#         cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}
+#                   /../vcpkg/scripts/buildsystems/vcpkg.cmake    cd build
+#   
     - name: Build Solution (windows)
       run: |
-        cd build
         MSBuild.exe BoredEngine.sln
