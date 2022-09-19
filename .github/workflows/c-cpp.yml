@@ -1,0 +1,73 @@
+name: C++
+
+on:
+  push:
+    branches:
+    - master
+    - staging
+    - dev/*
+  pull_request:
+    branches: 
+    - master
+    - staging
+    
+jobs:
+  Windows:
+    name: build-windows
+    runs-on: windows-2022
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+      with:
+          submodules: recursive
+    
+    - name: setup-msbuild
+      uses: microsoft/setup-msbuild@v1.1
+    
+    - name: checking dir
+      run: ls
+      shell: powershell
+      
+#     - name: run-vcpkg
+#       uses: lukka/run-vcpkg@v10.4
+#       with:
+#         runVcpkgInstall: true
+        
+    - name: Restore vcpkg packages
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: vcpkg integrate install
+      
+#     - name: Build
+#       working-directory: ${{env.GITHUB_WORKSPACE}}
+#       run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=${{env.BUILD_PLATFORM}} ${{env.PROJECT_FILE_PATH}}
+#       with:
+#     # Folder location of where vswhere.exe is located if a self-hosted agent
+#        vswhere-path: # optional
+#     # Version of Visual Studio to search; defaults to latest if not specified
+#     vs-version: # optional
+#     # Enable searching for pre-release versions of Visual Studio/MSBuild
+#     vs-prerelease: # optional
+#     # The preferred processor architecture of MSBuild. Can be either "x86" or "x64". "x64" is only available from Visual Studio version 17.0 and later.
+#     msbuild-architecture: # optional, default is x86
+
+#     - name: Installing vcpkg (windows)
+#       run: |
+#         cd ..
+#         git clone https://github.com/Microsoft/vcpkg.git
+#         cd vcpkg
+#         git checkout --force 2020.01
+#         .\bootstrap-vcpkg.bat
+#         .\vcpkg.exe install cppzmq:x64-windows
+
+#     - name: Running cmake (windows)
+#       run: |
+#         cd ${{ github.workspace }}
+#         mkdir build
+#         cd build
+#         cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}
+#                   /../vcpkg/scripts/buildsystems/vcpkg.cmake    cd build
+#   
+    - name: Build Solution (windows)
+      run: |
+        MSBuild.exe BoredEngine.sln
