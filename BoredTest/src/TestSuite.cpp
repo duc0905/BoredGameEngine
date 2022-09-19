@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "TestSuite.h"
 
 void TestSuite::Assert(bool& val, const char* func, const char* file, const int& line)
