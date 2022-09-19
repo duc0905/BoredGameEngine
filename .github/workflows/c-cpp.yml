@@ -28,6 +28,11 @@ jobs:
     - name: checking dir
       run: ls
       shell: powershell
+      
+    - name: run-vcpkg
+      uses: lukka/run-vcpkg@v10.4
+      with:
+        runVcpkgInstall: true
 #       with:
 #     # Folder location of where vswhere.exe is located if a self-hosted agent
 #        vswhere-path: # optional
