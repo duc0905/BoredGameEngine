@@ -116,6 +116,7 @@ std::tuple<std::shared_ptr<MeshBuffers>, std::vector<SubMesh>, std::vector<std::
 	for (unsigned int i = 0; i < scene->mNumMaterials; i++) {
 		const auto* pMaterial = scene->mMaterials[i];
 		m_Material[i] = std::make_shared<OpenGLTexture>();
+		// TODO: Add shininess property to our material
 		if (pMaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
 			aiString path;
 			if (pMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
@@ -155,7 +156,7 @@ std::tuple<std::shared_ptr<MeshBuffers>, std::vector<SubMesh>, std::vector<std::
 	buffers->uvs_->SetLayout({ { "UV", Float3, false} });
 
 	buffers->normals_ = std::make_unique<VertexBuffer>(&normals[0], normals.size() * sizeof(normals[0]), GL_STATIC_DRAW);
-	buffers->normals_->SetLayout({ { "Normal", Float3, false} });
+	buffers->normals_->SetLayout({ { "Normal", Float3, true } });
 
 	buffers->ib_ = std::make_unique<IndexBuffer>(&indices[0], indices.size() * sizeof(indices[0]), GL_STATIC_DRAW);
 	buffers->numIndices_ = indices.size();

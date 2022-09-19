@@ -55,6 +55,8 @@ void Renderer::Init()
 	screenVao->Unbind();
 	screenVbo->Unbind();
 	screenIbo->Unbind();
+
+	meshShader_.SetUniform3f("u_lightPos", 0.0f, 5.0f, 0.0f);
 }
 
 void Renderer::Render(IWorld& world)
@@ -66,10 +68,12 @@ void Renderer::Render(IWorld& world)
 
 	auto viewMat = activeCam_->GetViewMat();
 	auto projMat = activeCam_->GetProjectionMat();
+	auto viewPos = activeCam_->FindComponent<TransformComponent>()->GetTranslation();
 
 	meshShader_.Activate();
 	meshShader_.SetUniformMatrix4fv("u_ViewMat", glm::value_ptr(viewMat));
 	meshShader_.SetUniformMatrix4fv("u_ProjectionMat", glm::value_ptr(projMat));
+	meshShader_.SetUniform3f("u_viewPos", viewPos.x, viewPos.y, viewPos.z);
 
 	fbo->Bind();
 
