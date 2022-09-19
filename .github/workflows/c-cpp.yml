@@ -14,7 +14,7 @@ on:
 jobs:
   Windows:
     name: build-windows
-    runs-on: [self-hosted, windows]
+    runs-on: windows-2022
 
     steps:
     - name: Checkout
