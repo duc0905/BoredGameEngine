@@ -14,7 +14,7 @@ on:
 jobs:
   Windows:
     name: build-windows
-    runs-on: windows-latests
+    runs-on: windows-2022
 
     steps:
     - name: Checkout
@@ -24,6 +24,10 @@ jobs:
     
     - name: setup-msbuild
       uses: microsoft/setup-msbuild@v1.1
+    
+    - name: checking dir
+      run: ls
+      shell: powershell
 #       with:
 #     # Folder location of where vswhere.exe is located if a self-hosted agent
 #        vswhere-path: # optional
