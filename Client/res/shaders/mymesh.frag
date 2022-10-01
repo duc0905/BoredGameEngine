@@ -12,7 +12,7 @@ uniform sampler2D sampler;
 
 // Ambient light
 uniform vec3 u_ambientColor = vec3(1.0, 1.0, 1.0);
-uniform float u_ambientStrength = 0.2;
+uniform float u_ambientStrength = 1.0;
 
 // Diffuse light
 uniform vec3 u_diffuseColor = vec3(0.0, 0.0, 0.0);

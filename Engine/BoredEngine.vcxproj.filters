@@ -97,5 +97,9 @@
     <ClInclude Include="src\Actor\PerspectiveCamera.h" />
     <ClInclude Include="src\Components\PerspectiveCameraComponent.h" />
     <ClInclude Include="src\Renderer\ShaderClass.h" />
+    <ClInclude Include="src\Components\LightComponent.h" />
+    <ClInclude Include="src\Components\AmbientLightComponent.h" />
+    <ClInclude Include="src\Components\DiffuseLightComponent.h" />
+    <ClInclude Include="src\Components\SpecularLightComponent.h" />
   </ItemGroup>
 </Project>

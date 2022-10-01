@@ -33,7 +33,12 @@ int main()
   world->UseGameMode<ChessGameMode>(*world);
 
   std::shared_ptr<Actor> cube = std::make_shared<CubeActor>();
+  std::shared_ptr<Actor> ambientLight = std::make_shared<Actor>();
   world->AddActor(cube);
+  world->AddActor(ambientLight);
+  auto ligit = ambientLight->CreateComponent<AmbientLightComponent>();
+  ligit->color_ = { 0.f, 1.f, 0.f };
+  ligit->strength_ = 0.5f;
 
    //std::shared_ptr<OrthoCamera> cam = std::make_shared<OrthoCamera>(glm::vec4(800, -800, 800, -800));
   std::shared_ptr<PerspectiveCamera> cam = std::make_shared<PerspectiveCamera>(glm::vec4(70.f, 1.f, 0.01f, 1000.f));
