@@ -4,16 +4,16 @@
 #include "Components/MeshComponent.h"
 #include "Components/AudioComponent.h"
 
-class CubeActor : public Actor
+class ChessBoardActor : public Actor
 {
 public:
-    CubeActor();
+    ChessBoardActor();
     virtual void OnTick(float dt) override {
         //LOG(GetID());
     }
     virtual void OnAttach() override {
         auto inputComp = CreateComponent<InputComponent>();
-        inputComp->BindAction("yeet", std::bind(&CubeActor::Yell, this, std::placeholders::_1));
+        inputComp->BindAction("yeet", std::bind(&ChessBoardActor::Yell, this, std::placeholders::_1));
         inputComp->BindAction("buonce", [this](KeyInput::Action action) -> void {
                 auto audioComp = FindComponent<AudioComponent>();
                 if (action == KeyInput::PRESS)
@@ -23,13 +23,13 @@ public:
                 }
                 audioComp->PlayCompSound();
             });
-        inputComp->BindRange("yeet_RANGE", std::bind(&CubeActor::YellRange, this, std::placeholders::_1, std::placeholders::_2));
-        inputComp->BindRange("rX", std::bind(&CubeActor::RotateX, this, std::placeholders::_1, std::placeholders::_2));
-        inputComp->BindRange("rY", std::bind(&CubeActor::RotateY, this, std::placeholders::_1, std::placeholders::_2));
-        inputComp->BindRange("rZ", std::bind(&CubeActor::RotateZ, this, std::placeholders::_1, std::placeholders::_2));
-        inputComp->BindRange("-rX", std::bind(&CubeActor::RotateX, this, std::placeholders::_1, std::placeholders::_2));
-        inputComp->BindRange("-rY", std::bind(&CubeActor::RotateY, this, std::placeholders::_1, std::placeholders::_2));
-        inputComp->BindRange("-rZ", std::bind(&CubeActor::RotateZ, this, std::placeholders::_1, std::placeholders::_2));
+        inputComp->BindRange("yeet_RANGE", std::bind(&ChessBoardActor::YellRange, this, std::placeholders::_1, std::placeholders::_2));
+        inputComp->BindRange("rX", std::bind(&ChessBoardActor::RotateX, this, std::placeholders::_1, std::placeholders::_2));
+        inputComp->BindRange("rY", std::bind(&ChessBoardActor::RotateY, this, std::placeholders::_1, std::placeholders::_2));
+        inputComp->BindRange("rZ", std::bind(&ChessBoardActor::RotateZ, this, std::placeholders::_1, std::placeholders::_2));
+        inputComp->BindRange("-rX", std::bind(&ChessBoardActor::RotateX, this, std::placeholders::_1, std::placeholders::_2));
+        inputComp->BindRange("-rY", std::bind(&ChessBoardActor::RotateY, this, std::placeholders::_1, std::placeholders::_2));
+        inputComp->BindRange("-rZ", std::bind(&ChessBoardActor::RotateZ, this, std::placeholders::_1, std::placeholders::_2));
     }
 
     void RotateY(KeyInput::Action action, float weight) {

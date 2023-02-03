@@ -134,8 +134,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Pawn.cpp" />
     <ClCompile Include="src\ChessGameMode.cpp" />
-    <ClCompile Include="src\CubeActor.cpp" />
+    <ClCompile Include="src\ChessBoardActor.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\MyAudio.cpp" />
     <ClCompile Include="src\MyRenderer.cpp" />
@@ -149,11 +150,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\PissActor.h" />
+    <ClInclude Include="src\Pawn.h" />
     <ClInclude Include="src\MyAudio.h" />
     <ClInclude Include="src\demos\ImGuiHUD.h" />
     <ClInclude Include="src\MyRenderer.h" />
     <ClInclude Include="src\ChessGameMode.h" />
-    <ClInclude Include="src\CubeActor.h" />
+    <ClInclude Include="src\ChessBoardActor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

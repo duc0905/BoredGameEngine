@@ -9,7 +9,8 @@
 #include "Actor/OrthoCamera.h"
 #include "Actor/PerspectiveCamera.h"
 
-#include "CubeActor.h"
+#include "Pawn.h"
+#include "ChessBoardActor.h"
 #include "ChessGameMode.h"
 
 int main()
@@ -32,14 +33,17 @@ int main()
 
   world->UseGameMode<ChessGameMode>(*world);
 
-  std::shared_ptr<Actor> cube = std::make_shared<CubeActor>();
+  std::shared_ptr<Actor> cube = std::make_shared<ChessBoardActor>();
+  std::shared_ptr<Actor> pawn = std::make_shared<Pawn>();
   std::shared_ptr<Actor> ambientLight = std::make_shared<Actor>();
   world->AddActor(cube);
+  //world->AddActor(pawn);
   world->AddActor(ambientLight);
   auto ligit = ambientLight->CreateComponent<AmbientLightComponent>();
-  ligit->color_ = { 0.f, 1.f, 0.f };
-  ligit->strength_ = 0.5f;
+  ligit->color_ = { 1.f, 1.f, 1.f };
+  ligit->strength_ = 0.4f;
 
+  //vector<string> 
    //std::shared_ptr<OrthoCamera> cam = std::make_shared<OrthoCamera>(glm::vec4(800, -800, 800, -800));
   std::shared_ptr<PerspectiveCamera> cam = std::make_shared<PerspectiveCamera>(glm::vec4(70.f, 1.f, 0.01f, 1000.f));
   world->AddActor(cam);
@@ -53,7 +57,7 @@ int main()
   myContext->AddRangeMapping(KeyInput::KEY_X, 0, "rX", 1);
   myContext->AddRangeMapping(KeyInput::KEY_Y, 0, "rY", 1);
   myContext->AddRangeMapping(KeyInput::KEY_Z, 0, "rZ", 1);
-  myContext->AddRangeMapping(KeyInput::KEY_X, KeyInput::CTRL, "-rX", 1);
+  myContext->AddRangeMapping(KeyInput::KEY_X, KeyInput::CTRL, "rX", -1);
   myContext->AddRangeMapping(KeyInput::KEY_Y, 0, "-rY", 1);
   myContext->AddRangeMapping(KeyInput::KEY_Z, 0, "-rZ", 1);
 
