@@ -1,7 +1,5 @@
 #pragma once
 #include "../../pch.h"
-#include <imgui.h>
-#include <stdarg.h>
 #include "IHUDElement.h"
 
 class ImGuiTextEl : public IHUDElement
