@@ -25,6 +25,10 @@ int main()
   auto input = GLFWInput::GetInstancePtr();
   IGame::SetInput(input);
 
+  // HUD
+  auto hud = std::make_shared<ImGuiHUD>();
+  IGame::SetHUD(hud);
+
   auto world = std::make_shared<World>();
   IGame::SetWorld(world);
 
@@ -34,14 +38,22 @@ int main()
   world->UseGameMode<ChessGameMode>(*world);
 
   std::shared_ptr<Actor> cube = std::make_shared<ChessBoardActor>();
-  std::shared_ptr<Actor> pawn = std::make_shared<Pawn>();
+  std::vector<std::shared_ptr<Actor>> pawnStorage;
+  for (int i = 0; i < 8; i++) {
+	  std::shared_ptr<Actor> pawn = std::make_shared<Pawn>();
+	  pawnStorage.push_back(pawn);
+	  auto transComp = pawn->FindComponent<TransformComponent>();
+	  transComp->Translate({ -1.2f, -10.5f + i * 3.0f, -7.5f });
+  }
   std::shared_ptr<Actor> ambientLight = std::make_shared<Actor>();
   world->AddActor(cube);
-  //world->AddActor(pawn);
+  for (auto p : pawnStorage) {
+	  world->AddActor(p);
+  }
   world->AddActor(ambientLight);
   auto ligit = ambientLight->CreateComponent<AmbientLightComponent>();
   ligit->color_ = { 1.f, 1.f, 1.f };
-  ligit->strength_ = 0.4f;
+  ligit->strength_ = 0.7f;
 
   //vector<string> 
    //std::shared_ptr<OrthoCamera> cam = std::make_shared<OrthoCamera>(glm::vec4(800, -800, 800, -800));

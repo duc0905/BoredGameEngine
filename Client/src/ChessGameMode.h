@@ -1,6 +1,7 @@
 #pragma once
 #include "World/GameMode/IGameMode.h"
 #include "PissActor.h"
+#include "demos/ImGuiHUD.h"
 
 class ChessGameMode : public IGameMode
 {
@@ -35,6 +36,7 @@ private:
 
 	virtual void OnTick(float) override;
 public:
+	std::unique_ptr<ImGuiTextEl> text;
 	ChessGameMode(IWorld& world);
 };
 
