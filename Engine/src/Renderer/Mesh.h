@@ -62,7 +62,6 @@ public:
 	Mesh(std::shared_ptr<MeshBuffers> mb, std::shared_ptr<ITexture> tex);
 
 	bool LoadModel(const std::string& file);
-	bool Load();
 	bool Bind(int texSlot = 0) const;
 	bool Unbind() const;
 

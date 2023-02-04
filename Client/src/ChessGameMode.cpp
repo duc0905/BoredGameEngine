@@ -9,17 +9,28 @@ ChessGameMode::ChessGameMode(IWorld& world)
 	ImGuiHUDWindow& debug = static_cast<ImGuiHUDWindow&>(debugWindow);
 	debug.SetTitle("Debug Window");
 
-	text = std::make_unique<ImGuiTextEl>("ID: %d", 0);
-	debug.AddElement(text.get());
+	text = new ImGuiTextEl("0");
+	debug.AddElement(text);
+
+	for (int x = 0; x < 8; x++) {
+		for (int y = 0; y < 8; y++) {
+			ChessBoardState state;
+			if (y == 1) {
+				state.team = 0;
+				state.type = PissActor::Type::PAWN;
+				currentChessBoardState.insert(currentChessBoardState.begin() + x + y * 8, state);
+			}
+		}
+	}
 }
 
 void ChessGameMode::OnTick(float)
 {
 	//LOG_COLOR("Chess on tick", COLOR::BLUE, COLOR::BLACK);
 	auto& input = IGame::GetInput();
-	unsigned int actorID = 1;
-		//input.GetCusorHoveringActor().GetID();
-	text->ChangeParams(actorID);
+	int actorID = input.GetCursorHoveringActor().GetID();
+	auto stringID = std::to_string(actorID);
+	text->updateString("Current actor by ID: " + stringID);
 	//LOG(input.GetCusorHoveringActor().GetID());
 }
 

@@ -14,7 +14,8 @@ public:
 		KNIGHT,
 		ROOK,
 		KING,
-		QUEEN
+		QUEEN,
+		EMPTY
 	};
 
 	PissActor() {
@@ -25,7 +26,7 @@ public:
 
 	virtual Type getId() = 0;
 
-	virtual std::vector<std::pair<int, int>> getPossileMoves() = 0;
+	//virtual std::vector<std::pair<int, int>> getPossileMoves() = 0;
 
 	bool updatePosition(int x, int y) {
 		_x = x;

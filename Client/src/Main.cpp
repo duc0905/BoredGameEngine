@@ -4,11 +4,13 @@
 #include "Input/GLFWInput.h"
 #include "MyRenderer.h"
 #include "MyAudio.h"
-#include "demos/ImGuiHUD.h"
+#include "HUD/ImGuiHUD.h"
+//#include "demos/ImGuiHUD.h"
 
 #include "Actor/OrthoCamera.h"
 #include "Actor/PerspectiveCamera.h"
 
+#include "TileActor.h"
 #include "Pawn.h"
 #include "ChessBoardActor.h"
 #include "ChessGameMode.h"
@@ -37,18 +39,53 @@ int main()
 
   world->UseGameMode<ChessGameMode>(*world);
 
-  std::shared_ptr<Actor> cube = std::make_shared<ChessBoardActor>();
+  //std::shared_ptr<Actor> cube = std::make_shared<ChessBoardActor>();
   std::vector<std::shared_ptr<Actor>> pawnStorage;
+  std::vector<std::shared_ptr<Actor>> tileStorage;
+
+  for (int x = 0; x < 8; x++) {
+	  for (int y = 0; y < 8; y++) {
+		  std::shared_ptr<Actor> tile;
+		  if (x % 2 == 0) {
+			  if (y % 2 == 0) {
+				  tile = std::make_shared<TileActor>(true);
+				  tileStorage.push_back(tile);
+			  }
+			  else {
+				  tile = std::make_shared<TileActor>(false);
+				  tileStorage.push_back(tile);
+			  }
+		  }
+		  else {
+			  if (y % 2 == 0) {
+				  tile = std::make_shared<TileActor>(false);
+				  tileStorage.push_back(tile);
+			  }
+			  else {
+				  tile = std::make_shared<TileActor>(true);
+				  tileStorage.push_back(tile);
+			  }
+		  }
+		  auto transComp = tile->FindComponent<TransformComponent>();
+		  transComp->Translate({ y * 2.0f, 0.5f, x * 2.0f });
+	  }
+  }
+
   for (int i = 0; i < 8; i++) {
 	  std::shared_ptr<Actor> pawn = std::make_shared<Pawn>();
 	  pawnStorage.push_back(pawn);
 	  auto transComp = pawn->FindComponent<TransformComponent>();
-	  transComp->Translate({ -1.2f, -10.5f + i * 3.0f, -7.5f });
+	  transComp->Translate({ -0.5f, i * 3.0f, 3.0f });
   }
+
   std::shared_ptr<Actor> ambientLight = std::make_shared<Actor>();
-  world->AddActor(cube);
+  //world->AddActor(cube);
   for (auto p : pawnStorage) {
 	  world->AddActor(p);
+  }
+
+  for (auto t : tileStorage) {
+	  world->AddActor(t);
   }
   world->AddActor(ambientLight);
   auto ligit = ambientLight->CreateComponent<AmbientLightComponent>();
@@ -155,7 +192,7 @@ int main()
 	  cam->FindComponent<PerspectiveCameraComponent>()->SetDir(newDir);
 	  cam->FindComponent<PerspectiveCameraComponent>()->SetUp(newUp); });
 
-  cam->FindComponent<TransformComponent>()->Translate(glm::vec3(-10.0f, 0.0f, 0.0f));
+  cam->FindComponent<TransformComponent>()->Translate(glm::vec3(-10.0f, 4.0f, 4.0f));
   // cam->FindComponent<TransformComponent>()->Rotate(glm::vec3(glm::pi<float>() / 2.f, 0.0f, 0.0f));
 
   IGame::Run();

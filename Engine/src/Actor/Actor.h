@@ -24,6 +24,8 @@ public:
 
 	virtual void OnUpdate(float dt){};
 
+	virtual void OnClick(){};
+
 	template <class SubCom, class ...Args,
 		std::enable_if_t<std::is_base_of_v<Component, SubCom>, int> = 0,
 		std::enable_if_t<std::is_constructible_v<SubCom, Args...>, int> = 0>

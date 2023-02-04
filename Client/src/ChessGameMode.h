@@ -1,29 +1,31 @@
 #pragma once
 #include "World/GameMode/IGameMode.h"
+#include "HUD/HUDComponents/ImGuiTextEl.h"
+#include "HUD/HUDComponents/ImGuiWindow.h"
 #include "PissActor.h"
-#include "demos/ImGuiHUD.h"
 
 class ChessGameMode : public IGameMode
 {
 	struct ChessBoardState {
-		std::pair<int, int> pos;
-		bool team;
+		bool teamBlack;
 		PissActor::Type type;
 	};
 private:
 
-	 std::vector<ChessBoardState> currentChessBoardState;
+	 std::map<std::pair<int, int>, ChessBoardState> currentChessBoardState;
 	// Inherited via IGameMode
-	std::vector<std::pair<int,int>> getPossibleMove(PissActor& actor) {
-		/*switch (actor.getId()) {
-		case PissActor::Type::ROOK:
+	 std::vector<std::pair<int,int>> getPossibleMove(PissActor& actor) {
+		switch (actor.getId()) {
+		//case PissActor::Type::ROOK:
 		case PissActor::Type::PAWN:
-		case PissActor::Type::BISHOP:
-		case PissActor::Type::KNIGHT:
-		case PissActor::Type::QUEEN:
-		case PissActor::Type::KING:
+			std::cout << "This is a pawm";
+		//case PissActor::Type::BISHOP:
+		//case PissActor::Type::KNIGHT:
+		//case PissActor::Type::QUEEN:
+		//case PissActor::Type::KING:
 		default:
-		}*/
+			std::cout << "This is empty";
+		}
 		return std::vector<std::pair<int, int>>();
 	}
 	virtual void OnLevelStart() override;
@@ -36,7 +38,7 @@ private:
 
 	virtual void OnTick(float) override;
 public:
-	std::unique_ptr<ImGuiTextEl> text;
+	ImGuiTextEl* text;
 	ChessGameMode(IWorld& world);
 };
 
