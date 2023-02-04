@@ -7,6 +7,7 @@
 class Pawn: public PissActor
 {   
 public:
+    static std::shared_ptr<Mesh> mesh_;
 
     Pawn();
     virtual void OnTick(float dt) override {
@@ -17,8 +18,11 @@ public:
 
     }
 
+    void OnClick() override {
+        std::cout << "DJT ME MAY";
+    }
+
     // Inherited via PissActor
     virtual Type getId() override;
-    virtual std::vector<std::pair<int, int>> getPossileMoves() override;
 };
 

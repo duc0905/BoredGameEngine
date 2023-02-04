@@ -5,26 +5,16 @@
 class ImGuiTextEl : public IHUDElement
 {
 private:
-	std::function<void()> f;
+	//std::function<void()> f;
 	std::string text_;
 	bool hide_ = false;
 public:
-	template <typename ...Params>
-	ImGuiTextEl(const std::string& text, Params&&... args)
-		: text_(text) {
-		f = [this, args...]() -> void {
-			if (!hide_)
-				ImGui::Text(text_.c_str(), std::forward<Params>(args)...);
-		};
+	ImGuiTextEl(std::string content) {
+		text_ = content;
 	}
 
-	template <typename ...Params>
-	void ChangeParams(Params&&... args)
-	{
-		f = [this, args...]() -> void {
-			if (!hide_)
-				ImGui::Text(text_.c_str(), std::forward<Params>(args)...);
-		};
+	void updateString(std::string text) {
+		text_ = text;
 	}
 
 	void Hide() { hide_ = true; }
@@ -33,6 +23,7 @@ public:
 	// Inherited via IHUDElement
 	virtual void Render() override
 	{
-		f();
+		//f();
+		ImGui::Text(text_.c_str());
 	}
 };

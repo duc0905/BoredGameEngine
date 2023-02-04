@@ -38,7 +38,7 @@ void IInput::EvaluateKey(KeyInput::Key key, KeyInput::Action action, int mods, d
 //
 //}
 
-Actor& IInput::GetCusorHoveringActor()
+Actor& IInput::GetCursorHoveringActor()
 {
   unsigned int ID = IGame::GetRenderer().GetMouseHoverEntityID((int) mouseInfo.posX, (int) mouseInfo.posY);
   auto& world = IGame::GetWorld();
