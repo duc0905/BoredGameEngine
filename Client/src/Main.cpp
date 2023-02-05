@@ -100,6 +100,8 @@ int main()
 
   std::string actionKey = "buonce";
 
+  // TODO Convert model to another format
+
   std::shared_ptr<Context> myContext = std::make_shared<Context>();
   myContext->AddActionMapping(KeyInput::KEY_B, 0, actionKey);
   myContext->AddRangeMapping(KeyInput::KEY_P, 0, "yeet_RANGE", 1);

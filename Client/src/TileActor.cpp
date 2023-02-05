@@ -7,10 +7,10 @@ TileActor::TileActor(bool isBlack)
 {
 	auto meshComp = CreateComponent<MeshComponent>();
 	if (!whiteMesh_->IsInit()) {
-		whiteMesh_->LoadModel("3d_models/chessBoardWhite.obj");
+		whiteMesh_->LoadModel("3d_models/whiteTile.gltf");
 	}
 	if (!blackMesh_->IsInit()) {
-		blackMesh_->LoadModel("3d_models/chessBoardBlack.obj");
+		blackMesh_->LoadModel("3d_models/blackTile.gltf");
 	}
 	if (isBlack) {
 		meshComp->UseMesh(blackMesh_);

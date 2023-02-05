@@ -8,7 +8,7 @@ Pawn::Pawn():PissActor()
 	//LOG_COLOR("Begin ChessBoardActor constractur", COLOR::BLUE, COLOR::BLACK);
 	auto meshComp = CreateComponent<MeshComponent>();
 	if (!mesh_->IsInit()) {
-		mesh_->LoadModel("3d_models/pawnCube.obj");
+		mesh_->LoadModel("3d_models/pawn.gltf");
 	}
 	meshComp->UseMesh(mesh_);
 
