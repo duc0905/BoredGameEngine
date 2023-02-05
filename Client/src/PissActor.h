@@ -4,7 +4,7 @@
 
 class PissActor : public Actor {
 private:
-	int _x, _y, id; // position of a chess piss on the board
+	int _x, _y, id, team; // position of a chess piss on the board
 	bool dead = false;
 
 public:
