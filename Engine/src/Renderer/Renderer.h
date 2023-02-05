@@ -10,6 +10,9 @@
 #include "Buffers/FrameBuffer.h"
 #include "ShaderClass.h"
 #include "../Components/MeshComponent.h"
+#include "../Components/AmbientLightComponent.h"
+#include "../Components/DiffuseLightComponent.h"
+#include "../Components/SpecularLightComponent.h"
 
 class Renderer : public IRenderer
 {

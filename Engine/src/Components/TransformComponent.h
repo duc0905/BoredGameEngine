@@ -2,12 +2,10 @@
 #include "../pch.h"
 #include "Component.h"
 
-class TransformComponent :
+struct TransformComponent :
     public Component
 {
-private:
     glm::vec3 translation_ = glm::vec3(0.0f), rotation_ = glm::vec3(0.0f), scale_ = glm::vec3(1.0f);
-public:
     glm::vec3 const GetTranslation() const { return translation_; };
     void Translate(const glm::vec3& translation) { translation_ += translation; }
     void SetTranslation(const glm::vec3& translation) { translation_ = translation; }

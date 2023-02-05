@@ -138,6 +138,29 @@ unsigned int Renderer::GetMouseHoverEntityID(int x, int y)
 
 void Renderer::Draw(const Actor& actor)
 {
+	try {
+		auto ambient = actor.FindComponent<AmbientLightComponent>();
+		meshShader_.SetUniform3f("u_ambientColor", ambient->color_.r, ambient->color_.g, ambient->color_.b);
+		meshShader_.SetUniform1f("u_ambientStrength", ambient->strength_);
+	}catch (const std::exception&){}
+
+	try {
+		auto diffuse = actor.FindComponent<DiffuseLightComponent>();
+		auto transformComp = actor.FindComponent<TransformComponent>();
+		meshShader_.SetUniform3f("u_diffuseColor", diffuse->color_.r, diffuse->color_.g, diffuse->color_.b);
+		meshShader_.SetUniform3f("u_lightPos", transformComp->translation_.x, transformComp->translation_.y, transformComp->translation_.z);
+	}
+	catch (const std::exception&) {}
+
+	try {
+		auto specular = actor.FindComponent<SpecularLightComponent>();
+		auto transformComp = activeCam_->FindComponent<TransformComponent>();
+		meshShader_.SetUniform3f("u_specularColor", specular->color_.r, specular->color_.g, specular->color_.b);
+		meshShader_.SetUniform3f("u_viewPos", transformComp->translation_.x, transformComp->translation_.y, transformComp->translation_.z);
+		meshShader_.SetUniform1f("u_specularStrength", specular->strength_);
+	}
+	catch (const std::exception&) {}
+
 	try
 	{
 		auto transformComp = actor.FindComponent<TransformComponent>();

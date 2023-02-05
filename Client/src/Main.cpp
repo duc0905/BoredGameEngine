@@ -4,12 +4,15 @@
 #include "Input/GLFWInput.h"
 #include "MyRenderer.h"
 #include "MyAudio.h"
-#include "demos/ImGuiHUD.h"
+#include "HUD/ImGuiHUD.h"
+//#include "demos/ImGuiHUD.h"
 
 #include "Actor/OrthoCamera.h"
 #include "Actor/PerspectiveCamera.h"
 
-#include "CubeActor.h"
+#include "TileActor.h"
+#include "Pawn.h"
+#include "ChessBoardActor.h"
 #include "ChessGameMode.h"
 
 int main()
@@ -24,6 +27,10 @@ int main()
   auto input = GLFWInput::GetInstancePtr();
   IGame::SetInput(input);
 
+  // HUD
+  auto hud = std::make_shared<ImGuiHUD>();
+  IGame::SetHUD(hud);
+
   auto world = std::make_shared<World>();
   IGame::SetWorld(world);
 
@@ -32,9 +39,60 @@ int main()
 
   world->UseGameMode<ChessGameMode>(*world);
 
-  std::shared_ptr<Actor> cube = std::make_shared<CubeActor>();
-  world->AddActor(cube);
+  //std::shared_ptr<Actor> cube = std::make_shared<ChessBoardActor>();
+  std::vector<std::shared_ptr<Actor>> pawnStorage;
+  std::vector<std::shared_ptr<Actor>> tileStorage;
 
+  for (int x = 0; x < 8; x++) {
+	  for (int y = 0; y < 8; y++) {
+		  std::shared_ptr<Actor> tile;
+		  if (x % 2 == 0) {
+			  if (y % 2 == 0) {
+				  tile = std::make_shared<TileActor>(true);
+				  tileStorage.push_back(tile);
+			  }
+			  else {
+				  tile = std::make_shared<TileActor>(false);
+				  tileStorage.push_back(tile);
+			  }
+		  }
+		  else {
+			  if (y % 2 == 0) {
+				  tile = std::make_shared<TileActor>(false);
+				  tileStorage.push_back(tile);
+			  }
+			  else {
+				  tile = std::make_shared<TileActor>(true);
+				  tileStorage.push_back(tile);
+			  }
+		  }
+		  auto transComp = tile->FindComponent<TransformComponent>();
+		  transComp->Translate({ y * 2.0f, 0.5f, x * 2.0f });
+	  }
+  }
+
+  for (int i = 0; i < 8; i++) {
+	  std::shared_ptr<Actor> pawn = std::make_shared<Pawn>();
+	  pawnStorage.push_back(pawn);
+	  auto transComp = pawn->FindComponent<TransformComponent>();
+	  transComp->Translate({ -0.5f, i * 3.0f, 3.0f });
+  }
+
+  std::shared_ptr<Actor> ambientLight = std::make_shared<Actor>();
+  //world->AddActor(cube);
+  for (auto p : pawnStorage) {
+	  world->AddActor(p);
+  }
+
+  for (auto t : tileStorage) {
+	  world->AddActor(t);
+  }
+  world->AddActor(ambientLight);
+  auto ligit = ambientLight->CreateComponent<AmbientLightComponent>();
+  ligit->color_ = { 1.f, 1.f, 1.f };
+  ligit->strength_ = 0.7f;
+
+  //vector<string> 
    //std::shared_ptr<OrthoCamera> cam = std::make_shared<OrthoCamera>(glm::vec4(800, -800, 800, -800));
   std::shared_ptr<PerspectiveCamera> cam = std::make_shared<PerspectiveCamera>(glm::vec4(70.f, 1.f, 0.01f, 1000.f));
   world->AddActor(cam);
@@ -48,7 +106,7 @@ int main()
   myContext->AddRangeMapping(KeyInput::KEY_X, 0, "rX", 1);
   myContext->AddRangeMapping(KeyInput::KEY_Y, 0, "rY", 1);
   myContext->AddRangeMapping(KeyInput::KEY_Z, 0, "rZ", 1);
-  myContext->AddRangeMapping(KeyInput::KEY_X, KeyInput::CTRL, "-rX", 1);
+  myContext->AddRangeMapping(KeyInput::KEY_X, KeyInput::CTRL, "rX", -1);
   myContext->AddRangeMapping(KeyInput::KEY_Y, 0, "-rY", 1);
   myContext->AddRangeMapping(KeyInput::KEY_Z, 0, "-rZ", 1);
 
@@ -134,7 +192,7 @@ int main()
 	  cam->FindComponent<PerspectiveCameraComponent>()->SetDir(newDir);
 	  cam->FindComponent<PerspectiveCameraComponent>()->SetUp(newUp); });
 
-  cam->FindComponent<TransformComponent>()->Translate(glm::vec3(-10.0f, 0.0f, 0.0f));
+  cam->FindComponent<TransformComponent>()->Translate(glm::vec3(-10.0f, 4.0f, 4.0f));
   // cam->FindComponent<TransformComponent>()->Rotate(glm::vec3(glm::pi<float>() / 2.f, 0.0f, 0.0f));
 
   IGame::Run();
