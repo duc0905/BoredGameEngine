@@ -67,7 +67,7 @@ int main()
 			  }
 		  }
 		  auto transComp = tile->FindComponent<TransformComponent>();
-		  transComp->Translate({ y * 2.0f, 0.5f, x * 2.0f });
+		  transComp->Translate({ -0.5f, x , y});
 	  }
   }
 
@@ -75,7 +75,7 @@ int main()
 	  std::shared_ptr<Actor> pawn = std::make_shared<Pawn>();
 	  pawnStorage.push_back(pawn);
 	  auto transComp = pawn->FindComponent<TransformComponent>();
-	  transComp->Translate({ -0.5f, i * 3.0f, 3.0f });
+	  transComp->Translate({ -0.5f, i, 3.0f });
   }
 
   std::shared_ptr<Actor> ambientLight = std::make_shared<Actor>();

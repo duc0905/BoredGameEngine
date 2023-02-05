@@ -29,7 +29,7 @@ public:
 
     std::pair<int, int> GetBoardPosition() {
         auto transComp = FindComponent<TransformComponent>();
-        return { transComp->GetTranslation()[0] / 2, transComp->GetTranslation()[2] / 2 };
+        return { transComp->GetTranslation()[1], transComp->GetTranslation()[2]};
     }
 
 };

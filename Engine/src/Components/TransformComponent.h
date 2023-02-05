@@ -22,14 +22,15 @@ struct TransformComponent :
     {
         glm::mat4 Model(1.0f);
 
-        Model = glm::scale(Model, scale_);
+        Model = glm::translate(Model, translation_);
+
         //Model = glm::rotate(Model, 2.0f * glm::pi<float>(), rotation_);
 
         Model = glm::rotate(Model, rotation_.x, glm::vec3(0.0f, 0.0f, 1.0f));
         Model = glm::rotate(Model, rotation_.y, glm::vec3(1.0f, 0.0f, 0.0f));
         Model = glm::rotate(Model, rotation_.z, glm::vec3(0.0f, 1.0f, 0.0f));
 
-        Model = glm::translate(Model, translation_);
+        Model = glm::scale(Model, scale_);
 
         return Model;
     }

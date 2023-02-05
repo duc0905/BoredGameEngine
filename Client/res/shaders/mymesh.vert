@@ -15,6 +15,7 @@ out vec3 v_FragPos;
 void main()
 {
 	gl_Position = u_ProjectionMat * u_ViewMat * u_ModelMat * vec4(a_Position, 1.0f);
+//	gl_Position = u_ModelMat * u_ViewMat * u_ProjectionMat * vec4(a_Position, 1.0f);
 
 	v_TexCoords = a_UV.xy;
 	v_normal = a_Normal;
