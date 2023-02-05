@@ -25,9 +25,9 @@ public:
 	bool Unbind();
 	bool AttachColorBuffer(std::shared_ptr<OpenGLTexture> colorbuf, int id);
 	bool AttachRenderBuffer(std::shared_ptr<RenderBuffer> renderBuf);
-	bool HasColorBuffer();
-	bool HasDepthBuffer();
-	bool HasStencilBuffer();
+	//bool HasColorBuffer();
+	//bool HasDepthBuffer();
+	//bool HasStencilBuffer();
 	bool ClearBuffer();
 };
 

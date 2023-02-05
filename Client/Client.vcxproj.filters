@@ -1,22 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="src\ChessGameMode.cpp" />
-    <ClCompile Include="src\ChessBoardActor.cpp" />
+    <ClCompile Include="src\demos\Chess\ChessGameMode.cpp" />
+    <ClCompile Include="src\demos\Chess\ChessBoardActor.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\MyAudio.cpp" />
     <ClCompile Include="src\MyRenderer.cpp" />
-    <ClCompile Include="src\Pawn.cpp" />
-    <ClCompile Include="src\TileActor.cpp" />
+    <ClCompile Include="src\demos\Chess\Pawn.cpp" />
+    <ClCompile Include="src\demos\Chess\TileActor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MyAudio.h" />
     <ClInclude Include="src\MyRenderer.h" />
-    <ClInclude Include="src\ChessGameMode.h" />
-    <ClInclude Include="src\ChessBoardActor.h" />
-    <ClInclude Include="src\Pawn.h" />
-    <ClInclude Include="src\PissActor.h" />
+    <ClInclude Include="src\demos\Chess\ChessGameMode.h" />
+    <ClInclude Include="src\demos\Chess\ChessBoardActor.h" />
+    <ClInclude Include="src\demos\Chess\Pawn.h" />
+    <ClInclude Include="src\demos\Chess\PissActor.h" />
     <ClInclude Include="src\demos\ImGuiHUD.h" />
-    <ClInclude Include="src\TileActor.h" />
+    <ClInclude Include="src\demos\Chess\TileActor.h" />
+    <ClInclude Include="src\demos\DemoUtils.h" />
+    <ClInclude Include="src\demos\BasicCamera.h" />
+    <ClInclude Include="src\demos\Chess\Chess.h" />
+    <ClInclude Include="src\demos\Lighting.h" />
   </ItemGroup>
 </Project>

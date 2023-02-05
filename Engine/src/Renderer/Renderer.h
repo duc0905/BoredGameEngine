@@ -3,11 +3,11 @@
 
 #include <GLFW/glfw3.h>
 #include "IRenderer.h"
+#include "Buffers/FrameBuffer.h"
 #include "Buffers/VertexBuffer.h"
 #include "Buffers/VertexArray.h"
 #include "Buffers/IndexBuffer.h"
 #include "Texture/OpenGLTexture.h"
-#include "Buffers/FrameBuffer.h"
 #include "ShaderClass.h"
 #include "../Components/MeshComponent.h"
 #include "../Components/AmbientLightComponent.h"
@@ -26,7 +26,7 @@ private:
     std::shared_ptr<OpenGLTexture> colorBuffer;
     std::shared_ptr<OpenGLTexture> idBuffer;
 public:
-    Renderer() {};
+    Renderer(): fbo(nullptr), screenVao(nullptr), screenVbo(nullptr), screenIbo(nullptr) {};
     virtual ~Renderer()
     {
         //std::cout << "Cleaning up Renderer!" << std::endl;
@@ -41,6 +41,7 @@ public:
     void Draw(const Mesh& mesh);
     virtual unsigned int GetMouseHoverEntityID(int x, int y) override;
     virtual void Draw(const Actor& actor) override;
+    virtual void DrawLine(const glm::vec3& from, const glm::vec3& to, const glm::vec4& color) override;
 
     // Inherited via System
     virtual void Init() override;

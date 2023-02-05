@@ -59,6 +59,11 @@ void Renderer::Init()
 	meshShader_.SetUniform3f("u_lightPos", 0.0f, 5.0f, 0.0f);
 }
 
+void Renderer::DrawLine(const glm::vec3& from, const glm::vec3& to, const glm::vec4& color)
+{
+	
+}
+
 void Renderer::Render(IWorld& world)
 {
 	//glEnable(GL_DEPTH_TEST);

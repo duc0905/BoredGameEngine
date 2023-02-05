@@ -19,7 +19,6 @@ public:
 
     }
 
-
     void OnClick() override {
         std::cout << "This is a chess piece";
         auto transComp = FindComponent<TransformComponent>();
