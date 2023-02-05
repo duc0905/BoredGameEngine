@@ -7,12 +7,16 @@
 class ChessGameMode : public IGameMode
 {
 	struct ChessBoardState {
-		bool teamBlack;
+		int team;
 		PissActor::Type type;
+		ChessBoardState() {
+			team = 0;
+			type = PissActor::EMPTY;
+		}
 	};
 private:
 
-	 std::map<std::pair<int, int>, ChessBoardState> currentChessBoardState;
+	 std::vector<ChessBoardState> currentChessBoardState;
 	// Inherited via IGameMode
 	 std::vector<std::pair<int,int>> getPossibleMove(PissActor& actor) {
 		switch (actor.getId()) {

@@ -12,14 +12,16 @@ ChessGameMode::ChessGameMode(IWorld& world)
 	text = new ImGuiTextEl("0");
 	debug.AddElement(text);
 
+	currentChessBoardState.assign(64, ChessBoardState());
+
 	for (int x = 0; x < 8; x++) {
 		for (int y = 0; y < 8; y++) {
 			ChessBoardState state;
 			if (y == 1) {
-				state.team = 0;
+			/*	state.team = 0;
 				state.type = PissActor::Type::PAWN;
 				currentChessBoardState.insert(currentChessBoardState.begin() + x + y * 8, state);
-			}
+		*/	}
 		}
 	}
 }
