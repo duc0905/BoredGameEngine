@@ -4,7 +4,7 @@
 
 class PissActor : public Actor {
 private:
-	int _x, _y, id, team; // position of a chess piss on the board
+	int _x, _y, team; // position of a chess piss on the board
 	bool dead = false;
 
 public:
@@ -21,10 +21,11 @@ public:
 	PissActor() {
 		_x = -1;
 		_y = -1;
+		team = 1;
 		CreateComponent<MeshComponent>();
 	}
 
-	virtual Type getId() = 0;
+	virtual Type getType() = 0;
 
 	//virtual std::vector<std::pair<int, int>> getPossileMoves() = 0;
 

@@ -17,9 +17,3 @@ Pawn::Pawn():PissActor()
 	transComp->Translate({ -1.2f, 0.0f, 0.0f });
 	//LOG_COLOR("End ChessBoardActor constractur", COLOR::BLUE, COLOR::BLACK);
 }
-
-
-PissActor::Type Pawn::getId()
-{
-	return PissActor::Type::PAWN;
-}

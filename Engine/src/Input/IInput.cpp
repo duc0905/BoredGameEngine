@@ -38,11 +38,11 @@ void IInput::EvaluateKey(KeyInput::Key key, KeyInput::Action action, int mods, d
 //
 //}
 
-Actor& IInput::GetCursorHoveringActor()
+std::shared_ptr<Actor> IInput::GetCursorHoveringActor()
 {
   unsigned int ID = IGame::GetRenderer().GetMouseHoverEntityID((int) mouseInfo.posX, (int) mouseInfo.posY);
   auto& world = IGame::GetWorld();
-  auto& target = world.GetActor(ID);
+  auto target = std::make_shared<Actor>(world.GetActor(ID));
   return target;
 }
 

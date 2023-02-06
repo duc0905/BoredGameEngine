@@ -5,6 +5,7 @@ ChessGameMode::ChessGameMode(IWorld& world)
 	: IGameMode(world)
 {	
 	auto& hud = IGame::GetHUD();
+	auto& input = IGame::GetInput();
 	IHUDWindow& debugWindow = hud.AddWindow();
 	ImGuiHUDWindow& debug = static_cast<ImGuiHUDWindow&>(debugWindow);
 	debug.SetTitle("Debug Window");
@@ -24,55 +25,98 @@ ChessGameMode::ChessGameMode(IWorld& world)
 			}
 		}
 	}
+	std::shared_ptr<Context> chessContext = std::make_shared<Context>();
+	chessContext->AddActionMapping(KeyInput::KEY_K, 0, "Select Actor");
+
+
+	input.BindAction("Select Actor", [&](KeyInput::Action action) -> void {
+		if (currentSelectedActor == nullptr) {
+			auto actor = input.GetCursorHoveringActor();
+			auto bruh = std::dynamic_pointer_cast<PissActor>(actor);
+			if (actor == nullptr) {
+				LOG("NULL");
+			}
+			else {
+				LOG(actor->GetID());
+				if (std::dynamic_pointer_cast<PissActor>(actor) == nullptr) {
+					LOG("NORMAL");
+					return;
+				}
+				else {
+					PissActor* ptr = (PissActor*)&actor;
+					std::shared_ptr<PissActor> pissActor(ptr);
+					std::vector<std::pair<int, int>> moves = getPossibleMove(pissActor);
+					for (auto& el : moves) {
+						std::cout << "(" << el.first << " " << el.second << ")" << std::endl;
+					}
+				}
+			}
+		}
+		LOG("Clicked");
+		});
+
+	input.AddContext(chessContext);
 }
 
 
-std::vector<std::pair<int, int>> ChessGameMode::getPossibleMove(PissActor& actor) {
-	switch (actor.getId()) {
-		//case PissActor::Type::ROOK:
-	case PissActor::Type::PAWN: {
-		std::pair<int, int> pos = actor.getPosition();
-		int x = pos.first;
-		int y = pos.second;
-		int team = boardState.at(x + 8 * y).team;
-		std::vector<std::pair<int, int>> moves;
-		if (team == 1) { // white pawn
-			if (y == 1 && boardState.at(x + 8 * (y + 2)).type == PissActor::EMPTY) {
-				moves.push_back({ x, y + 2 });
-			}
-			if (y < 7 && boardState.at(x + 8 * (y + 1)).type == PissActor::EMPTY) {
-				moves.push_back({ x, y + 1 });
-			}
-			if (x > 0 && boardState.at(x - 1 + 8 * (y + 1)).type != PissActor::EMPTY && boardState.at(x - 1 + 8 * (y + 1)).type != team) {
-				moves.push_back({ x - 1, y + 1 });
-			}
-			if (x < 7 && boardState.at(x + 1 + 8 * (y + 1)).type != PissActor::EMPTY && boardState.at(x + 1 + 8 * (y + 1)).type != team) {
-				moves.push_back({ x + 1, y + 1 });
-			}
-		}
-		else { // black pawn
-			if (y == 6 && boardState.at(x + 8 * (y - 2)).type == PissActor::EMPTY) {
-				moves.push_back({ x, y - 2 });
-			}
-			if (y > 0 && boardState.at(x + 8 * (y - 1)).type == PissActor::EMPTY) {
-				moves.push_back({ x, y - 1 });
-			}
-			if (x > 0 && boardState.at(x - 1 + 8 * (y - 1)).type != PissActor::EMPTY && boardState.at(x - 1 + 8 * (y - 1)).type != team) {
-				moves.push_back({ x - 1, y - 1 });
-			}
-			if (x < 7 && boardState.at(x + 1 + 8 * (y + 1)).type != PissActor::EMPTY && boardState.at(x + 1 + 8 * (y + 1)).type != team) {
-				moves.push_back({ x + 1, y - 1 });
-			}
-		}
-		return moves;
-		break;
+std::vector<std::pair<int, int>> ChessGameMode::getPossibleMove(std::shared_ptr<PissActor> actor) {
+	if (actor == nullptr) {
+		return std::vector<std::pair<int, int>>();
 	}
-							  //case PissActor::Type::BISHOP:
-							  //case PissActor::Type::KNIGHT:
-							  //case PissActor::Type::QUEEN:
-							  //case PissActor::Type::KING:
-	default:
-		std::cout << "This is empty";
+	else {
+		PissActor::Type t = actor->getType();
+		if (t == NULL) {
+			return std::vector<std::pair<int, int>>();;
+		}
+		switch (t) {
+			//case PissActor::Type::ROOK:
+		case PissActor::Type::EMPTY:
+			std::cout << "What";
+			break;
+		case PissActor::Type::PAWN: {
+			std::pair<int, int> pos = actor->getPosition();
+			int x = pos.first;
+			int y = pos.second;
+			int team = boardState.at(x + 8 * y).team;
+			std::vector<std::pair<int, int>> moves;
+			if (team == 1) { // white pawn
+				if (y == 1 && boardState.at(x + 8 * (y + 2)).type == PissActor::EMPTY) {
+					moves.push_back({ x, y + 2 });
+				}
+				if (y < 7 && boardState.at(x + 8 * (y + 1)).type == PissActor::EMPTY) {
+					moves.push_back({ x, y + 1 });
+				}
+				if (x > 0 && boardState.at(x - 1 + 8 * (y + 1)).type != PissActor::EMPTY && boardState.at(x - 1 + 8 * (y + 1)).type != team) {
+					moves.push_back({ x - 1, y + 1 });
+				}
+				if (x < 7 && boardState.at(x + 1 + 8 * (y + 1)).type != PissActor::EMPTY && boardState.at(x + 1 + 8 * (y + 1)).type != team) {
+					moves.push_back({ x + 1, y + 1 });
+				}
+			}
+			else { // black pawn
+				if (y == 6 && boardState.at(x + 8 * (y - 2)).type == PissActor::EMPTY) {
+					moves.push_back({ x, y - 2 });
+				}
+				if (y > 0 && boardState.at(x + 8 * (y - 1)).type == PissActor::EMPTY) {
+					moves.push_back({ x, y - 1 });
+				}
+				if (x > 0 && boardState.at(x - 1 + 8 * (y - 1)).type != PissActor::EMPTY && boardState.at(x - 1 + 8 * (y - 1)).type != team) {
+					moves.push_back({ x - 1, y - 1 });
+				}
+				if (x < 7 && boardState.at(x + 1 + 8 * (y + 1)).type != PissActor::EMPTY && boardState.at(x + 1 + 8 * (y + 1)).type != team) {
+					moves.push_back({ x + 1, y - 1 });
+				}
+			}
+			return moves;
+			break;
+		}
+								  //case PissActor::Type::BISHOP:
+								  //case PissActor::Type::KNIGHT:
+								  //case PissActor::Type::QUEEN:
+								  //case PissActor::Type::KING:
+		default:
+			std::cout << "This is empty";
+		}
 	}
 	return std::vector<std::pair<int, int>>();
 }
@@ -81,11 +125,11 @@ void ChessGameMode::OnTick(float)
 {
 	//LOG_COLOR("Chess on tick", COLOR::BLUE, COLOR::BLACK);
 	auto& input = IGame::GetInput();
-	int actorID = input.GetCursorHoveringActor().GetID();
+	int actorID = input.GetCursorHoveringActor()->GetID();
 	auto stringID = std::to_string(actorID);
 	text->updateString("Current actor by ID: " + stringID);
-	auto& actor = input.GetCursorHoveringActor();
-	input.BindAction("Select Piss", )
+	//auto& actor = input.GetCursorHoveringActor();
+	//input.BindAction("Select Piss", )
 	//LOG(input.GetCusorHoveringActor().GetID());
 }
 

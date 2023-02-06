@@ -19,7 +19,7 @@ private:
 	std::vector<ChessBoardState> boardState;
 	// Inherited via IGameMode
 	
-	std::vector<std::pair<int, int>> getPossibleMove(PissActor& actor);
+	std::vector<std::pair<int, int>> getPossibleMove(std::shared_ptr<PissActor> actor);
 
 	virtual void OnLevelStart() override;
 	virtual void OnLevelPause() override;

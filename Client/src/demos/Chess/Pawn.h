@@ -23,6 +23,8 @@ public:
     }
 
     // Inherited via PissActor
-    virtual Type getId() override;
+    virtual Type getType() override {
+        return PissActor::Type::PAWN;
+    };
 };
 
