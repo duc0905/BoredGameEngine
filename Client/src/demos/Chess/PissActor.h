@@ -29,7 +29,7 @@ public:
 
 	//virtual std::vector<std::pair<int, int>> getPossileMoves() = 0;
 
-	bool updatePosition(int x, int y) {
+	void updatePosition(int x, int y) {
 		_x = x;
 		_y = y;
 	};

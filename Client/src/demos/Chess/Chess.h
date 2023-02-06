@@ -46,10 +46,10 @@ void ChessDemo()
 	}
 
 	for (int i = 0; i < 8; i++) {
-		std::shared_ptr<Pawn> pawn = std::make_shared<Pawn>(i, 1, 0);
+		std::shared_ptr<Pawn> pawn = std::make_shared<Pawn>(i, 1, 1);
 		pawnStorage.push_back(pawn);
 		auto transComp = pawn->FindComponent<TransformComponent>();
-		transComp->Translate({ -0.5f, i, 3.0f });
+		transComp->Translate({ -0.5f, i, 1.0f });
 	}
 
 	//world->AddActor(cube);

@@ -26,31 +26,44 @@ ChessGameMode::ChessGameMode(IWorld& world)
 		}
 	}
 	std::shared_ptr<Context> chessContext = std::make_shared<Context>();
-	chessContext->AddActionMapping(KeyInput::KEY_K, 0, "Select Actor");
+	chessContext->AddActionMapping(KeyInput::KEY_MB_2, 0, "Select Actor");
 
 
 	input.BindAction("Select Actor", [&](KeyInput::Action action) -> void {
-		if (currentSelectedActor == nullptr) {
-			auto actor = input.GetCursorHoveringActor();
-			auto bruh = std::dynamic_pointer_cast<PissActor>(actor);
-			if (actor == nullptr) {
-				LOG("NULL");
-			}
-			else {
-				auto a = std::dynamic_pointer_cast<PissActor>(actor);
-				if (a == nullptr) { // Not a PissActor
-					LOG("NOT NORMAL");
-					return;
-				}
-				else {
-					std::vector<std::pair<int, int>> moves = getPossibleMove(a);
-					for (auto& el : moves) {
-						std::cout << "(" << el.first << " " << el.second << ")" << std::endl;
-					}
-				}
-			}
+		if (action != KeyInput::PRESS) return;
+
+		auto actor = input.GetCursorHoveringActor();
+		auto selectingTile = std::dynamic_pointer_cast<TileActor>(actor);
+		auto selectingActor = std::dynamic_pointer_cast<PissActor>(actor);
+		if (selectingActor != nullptr) {
+			currentSelectedActor = selectingActor;
+			nextMove = getPossibleMove(selectingActor);
+			/*for (auto& el : nextMove) {
+				std::cout << el.first << " " << el.second << std::endl;
+			}*/
 		}
-		LOG("Clicked");
+		if (selectingTile != nullptr) {
+			if (currentSelectedActor != nullptr) {
+				auto pos = selectingTile->GetBoardPosition();
+				auto it = std::find(nextMove.begin(), nextMove.end(), pos);
+				if (it != nextMove.end()) {
+					auto transComp = currentSelectedActor->FindComponent<TransformComponent>();
+					auto oldPos = currentSelectedActor->getPosition();
+					currentSelectedActor->updatePosition(pos.first, pos.second);
+					ChessBoardState newObj;
+					newObj.team = -1;
+					newObj.type = PissActor::EMPTY;
+					boardState.at(oldPos.first + oldPos.second * 8) = newObj;
+					transComp->Translate({ 0, pos.first - oldPos.first, pos.second - oldPos.second });
+					newObj.type = PissActor::PAWN;
+					newObj.team = 1;
+					boardState.at(pos.first + pos.second * 8) = newObj;
+				}
+			}
+			currentSelectedActor = nullptr;
+			nextMove = std::vector<std::pair<int, int>>();
+		}
+		//LOG("Clicked");
 		});
 
 	input.AddContext(chessContext);
@@ -81,24 +94,28 @@ std::vector<std::pair<int, int>> ChessGameMode::getPossibleMove(std::shared_ptr<
 				if (y < 7 && boardState.at(x + 8 * (y + 1)).type == PissActor::EMPTY) {
 					moves.push_back({ x, y + 1 });
 				}
-				if (x > 0 && boardState.at(x - 1 + 8 * (y + 1)).type != PissActor::EMPTY && boardState.at(x - 1 + 8 * (y + 1)).type != team) {
+				if (x > 0 && boardState.at(x - 1 + 8 * (y + 1)).type != PissActor::EMPTY &&
+					boardState.at(x - 1 + 8 * (y + 1)).team == 0) {
 					moves.push_back({ x - 1, y + 1 });
 				}
-				if (x < 7 && boardState.at(x + 1 + 8 * (y + 1)).type != PissActor::EMPTY && boardState.at(x + 1 + 8 * (y + 1)).type != team) {
+				if (x < 7 && boardState.at(x + 1 + 8 * (y + 1)).type != PissActor::EMPTY &&
+					boardState.at(x + 1 + 8 * (y + 1)).team == 0) {
 					moves.push_back({ x + 1, y + 1 });
 				}
 			}
-			else { // black pawn
+			else if (team == 0) { // black pawn
 				if (y == 6 && boardState.at(x + 8 * (y - 2)).type == PissActor::EMPTY) {
 					moves.push_back({ x, y - 2 });
 				}
 				if (y > 0 && boardState.at(x + 8 * (y - 1)).type == PissActor::EMPTY) {
 					moves.push_back({ x, y - 1 });
 				}
-				if (x > 0 && boardState.at(x - 1 + 8 * (y - 1)).type != PissActor::EMPTY && boardState.at(x - 1 + 8 * (y - 1)).type != team) {
+				if (x > 0 && boardState.at(x - 1 + 8 * (y - 1)).type != PissActor::EMPTY &&
+					boardState.at(x - 1 + 8 * (y - 1)).team == 1) {
 					moves.push_back({ x - 1, y - 1 });
 				}
-				if (x < 7 && boardState.at(x + 1 + 8 * (y + 1)).type != PissActor::EMPTY && boardState.at(x + 1 + 8 * (y + 1)).type != team) {
+				if (x < 7 && boardState.at(x + 1 + 8 * (y - 1)).type != PissActor::EMPTY &&
+					boardState.at(x + 1 + 8 * (y - 1)).team == 1) {
 					moves.push_back({ x + 1, y - 1 });
 				}
 			}

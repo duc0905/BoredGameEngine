@@ -3,6 +3,7 @@
 #include "HUD/HUDComponents/ImGuiTextEl.h"
 #include "HUD/HUDComponents/ImGuiWindow.h"
 #include "PissActor.h"
+#include "TileActor.h"
 
 class ChessGameMode : public IGameMode
 {
@@ -10,12 +11,13 @@ class ChessGameMode : public IGameMode
 		int team;
 		PissActor::Type type;
 		ChessBoardState() {
-			team = 0;
+			team = -1; // Not occupied
 			type = PissActor::EMPTY;
 		}
 	};
 private:
 	std::shared_ptr<PissActor> currentSelectedActor;
+	std::vector<std::pair<int, int>> nextMove;
 	std::vector<ChessBoardState> boardState;
 	// Inherited via IGameMode
 	
