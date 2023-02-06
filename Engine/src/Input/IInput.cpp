@@ -42,8 +42,7 @@ std::shared_ptr<Actor> IInput::GetCursorHoveringActor()
 {
   unsigned int ID = IGame::GetRenderer().GetMouseHoverEntityID((int) mouseInfo.posX, (int) mouseInfo.posY);
   auto& world = IGame::GetWorld();
-  auto target = std::make_shared<Actor>(world.GetActor(ID));
-  return target;
+  return world.GetActor(ID);
 }
 
 void IInput::BindAction(const std::string &name, ActionCallback func)

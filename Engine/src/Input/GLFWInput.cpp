@@ -159,7 +159,8 @@ void GLFWInput::MouseButtonCallback(GLFWwindow* window, int button, int action, 
 	auto& input = GetInstance();
 	input.EvaluateKey(input.GetKey(button), input.GetAction(action), input.GetMods(mods), 1.0f);
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
-		input.GetCursorHoveringActor()->OnClick();
+		auto a = input.GetCursorHoveringActor();
+		a->OnClick();
 	}
 }
 
