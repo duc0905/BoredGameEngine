@@ -37,15 +37,13 @@ ChessGameMode::ChessGameMode(IWorld& world)
 				LOG("NULL");
 			}
 			else {
-				LOG(actor->GetID());
-				if (std::dynamic_pointer_cast<PissActor>(actor) == nullptr) {
-					LOG("NORMAL");
+				auto a = std::dynamic_pointer_cast<PissActor>(actor);
+				if (a == nullptr) { // Not a PissActor
+					LOG("NOT NORMAL");
 					return;
 				}
 				else {
-					PissActor* ptr = (PissActor*)&actor;
-					std::shared_ptr<PissActor> pissActor(ptr);
-					std::vector<std::pair<int, int>> moves = getPossibleMove(pissActor);
+					std::vector<std::pair<int, int>> moves = getPossibleMove(a);
 					for (auto& el : moves) {
 						std::cout << "(" << el.first << " " << el.second << ")" << std::endl;
 					}
@@ -65,9 +63,6 @@ std::vector<std::pair<int, int>> ChessGameMode::getPossibleMove(std::shared_ptr<
 	}
 	else {
 		PissActor::Type t = actor->getType();
-		if (t == NULL) {
-			return std::vector<std::pair<int, int>>();;
-		}
 		switch (t) {
 			//case PissActor::Type::ROOK:
 		case PissActor::Type::EMPTY:
@@ -125,9 +120,12 @@ void ChessGameMode::OnTick(float)
 {
 	//LOG_COLOR("Chess on tick", COLOR::BLUE, COLOR::BLACK);
 	auto& input = IGame::GetInput();
-	int actorID = input.GetCursorHoveringActor()->GetID();
-	auto stringID = std::to_string(actorID);
-	text->updateString("Current actor by ID: " + stringID);
+	auto a = input.GetCursorHoveringActor();
+	if (a != nullptr)
+	{
+		auto stringID = (a != nullptr) ? std::to_string(a->GetID()) : 0;
+		text->updateString("Current actor by ID: " + stringID);
+	}
 	//auto& actor = input.GetCursorHoveringActor();
 	//input.BindAction("Select Piss", )
 	//LOG(input.GetCusorHoveringActor().GetID());

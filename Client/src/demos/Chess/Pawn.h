@@ -9,7 +9,7 @@ class Pawn: public PissActor
 public:
     static std::shared_ptr<Mesh> mesh_;
 
-    Pawn();
+    Pawn(int x, int y, int team);
     virtual void OnTick(float dt) override {
         //LOG(GetID());
     }
@@ -23,7 +23,7 @@ public:
     }
 
     // Inherited via PissActor
-    virtual Type getType() override {
+    inline virtual Type getType() override {
         return PissActor::Type::PAWN;
     };
 };

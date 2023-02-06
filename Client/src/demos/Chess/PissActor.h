@@ -3,9 +3,9 @@
 #include "Components/MeshComponent.h"
 
 class PissActor : public Actor {
-private:
-	int _x, _y, team; // position of a chess piss on the board
-	bool dead = false;
+protected:
+	int _x, _y, _team; // position of a chess piss on the board
+	bool _dead = false;
 
 public:
 	enum Type {
@@ -18,10 +18,10 @@ public:
 		EMPTY
 	};
 
-	PissActor() {
-		_x = -1;
-		_y = -1;
-		team = 1;
+
+	PissActor(int x = -1, int y = -1, int team = 1, bool dead = false)
+		: _x(x), _y(y), _team(team), _dead(dead)
+	{
 		CreateComponent<MeshComponent>();
 	}
 
@@ -39,6 +39,6 @@ public:
 	}
 
 	void removeChessPiss() {
-		dead = true;
+		_dead = true;
 	};
 };

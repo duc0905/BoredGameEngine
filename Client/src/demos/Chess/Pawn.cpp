@@ -3,7 +3,7 @@
 
 std::shared_ptr<Mesh> Pawn::mesh_ = std::make_shared<Mesh>();
 
-Pawn::Pawn():PissActor()
+Pawn::Pawn(int x, int y, int team):PissActor(x,y,team)
 {
 	//LOG_COLOR("Begin ChessBoardActor constractur", COLOR::BLUE, COLOR::BLACK);
 	auto meshComp = CreateComponent<MeshComponent>();
