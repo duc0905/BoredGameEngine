@@ -6,7 +6,7 @@ std::shared_ptr<GLFWInput> GLFWInput::instance_ = nullptr;
 GLFWInput::GLFWInput()
 	: window_(IGame::GetWindow())
 {
-	if (auto w = std::dynamic_pointer_cast<GLFWWindow>(IGame::GetWindowPtr()))
+	if (dynamic_cast<GLFWWindow*>(&IGame::GetWindow()) != nullptr)
 		SetupCallbacks();
 	else
 	{

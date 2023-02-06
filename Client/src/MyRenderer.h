@@ -3,6 +3,11 @@
 
 class MyRenderer : public Renderer
 {
-    virtual void Render(IWorld& world) override;
+	GLuint VAO, VBO;
+    VertexArray va;
+    VertexBuffer vb;
+
+    Shader lineShader_;
+    virtual void Init() override;
 };
 

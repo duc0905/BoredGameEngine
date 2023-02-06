@@ -22,5 +22,6 @@
     <ClInclude Include="src\demos\BasicCamera.h" />
     <ClInclude Include="src\demos\Chess\Chess.h" />
     <ClInclude Include="src\demos\Lighting.h" />
+    <ClInclude Include="src\demos\DebugCoordinates.h" />
   </ItemGroup>
 </Project>

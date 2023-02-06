@@ -5,9 +5,9 @@
 
 ImGuiHUD::ImGuiHUD()
 {
-	std::shared_ptr<IWindow> iwindow = IGame::GetWindowPtr();
-	std::shared_ptr<GLFWWindow> window = std::dynamic_pointer_cast<GLFWWindow>(iwindow);
-	if (!window)
+	IWindow& iwindow = IGame::GetWindow();
+	GLFWWindow* window = dynamic_cast<GLFWWindow*>(&iwindow);
+	if (window == nullptr)
 	{
 		LOG_COLOR("You are trying to use ImGuiHUD system. It is currently only support GLFW and OpenGL3.", COLOR::RED, COLOR::BLACK);
 		LOG_COLOR("You must use GLFWWindow in order to use the ImGuiHUD system.", COLOR::BRIGHT_BLUE, COLOR::BLACK);
