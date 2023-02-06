@@ -6,7 +6,7 @@ std::shared_ptr<GLFWInput> GLFWInput::instance_ = nullptr;
 GLFWInput::GLFWInput()
 	: window_(IGame::GetWindow())
 {
-	if (auto w = std::dynamic_pointer_cast<GLFWWindow>(IGame::GetWindowPtr()))
+	if (dynamic_cast<GLFWWindow*>(&IGame::GetWindow()) != nullptr)
 		SetupCallbacks();
 	else
 	{
@@ -160,7 +160,8 @@ void GLFWInput::MouseButtonCallback(GLFWwindow* window, int button, int action, 
 	input.EvaluateKey(input.GetKey(button), input.GetAction(action), input.GetMods(mods), 1.0f);
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
 		auto a = input.GetCursorHoveringActor();
-		a->OnClick();
+		if (a != nullptr)
+			a->OnClick();
 	}
 }
 

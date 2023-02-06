@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "IGame.h"
 
+std::map<std::type_index, std::shared_ptr<System>> IGame::systems_ = std::map<std::type_index, std::shared_ptr<System>>();
 std::shared_ptr<IInput> IGame::inputSystem_ = IInput::GetDefault();
 std::shared_ptr<IWorld> IGame::worldSystem_ = IWorld::GetDefault();
 std::shared_ptr<IWindow> IGame::windowSystem_ = IWindow::GetDefault();
@@ -31,7 +32,10 @@ void IGame::Loop()
 		// Render
 		renderer.Render(world);
 
-		audio_.OnTick(0.01f);
+		audio_.OnTick(dt);
+
+		for (auto& sys : systems_)
+			sys.second->OnTick(dt);
 
 		hud.OnTick(dt);
 
