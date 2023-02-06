@@ -32,6 +32,7 @@ void Renderer::Init()
 
 	meshShader_ = Shader("mymesh.vert", "mymesh.frag");
 	screenShader_ = Shader("screen.vert", "screen.frag");
+	lineShader_ = Shader("line.vert", "line.frag");
 
 	float screenVerts[] = {
 	-1.0f,  1.0f, 0.0f, 1.0f,
@@ -45,7 +46,6 @@ void Renderer::Init()
 		0, 2, 3
 	};
 
-
 	screenVao = new VertexArray();
 	screenVbo = new VertexBuffer(screenVerts, sizeof(screenVerts));
 	screenIbo = new IndexBuffer(screenIndices, sizeof(screenIndices));
@@ -56,7 +56,38 @@ void Renderer::Init()
 	screenVbo->Unbind();
 	screenIbo->Unbind();
 
+	lineVao = new VertexArray();
+	lineVbo = new VertexBuffer(nullptr, 14 * sizeof(float), GL_DYNAMIC_DRAW);
+	lineVbo->SetLayout({ { "Pos", Float3, GL_FALSE }, { "Color", Float4, GL_FALSE } });
+	lineVao->AddVertexBuffer(*lineVbo);
+
 	meshShader_.SetUniform3f("u_lightPos", 0.0f, 5.0f, 0.0f);
+}
+
+void Renderer::DrawLine(Line& line)
+{
+	lines_.push_back(&line);
+}
+
+void Renderer::DrawLine(const Line& line)
+{
+	lines_.push_back(new Line(line));
+}
+
+void Renderer::Draw(const Line& line)
+{
+	if (line.hide) return;
+	float pos[] = {
+		line.from.x, line.from.y, line.from.z, 
+		line.colorFrom.r, line.colorFrom.g, line.colorFrom.b, line.colorFrom.a,
+		line.to.x, line.to.y, line.to.z,
+		line.colorTo.r, line.colorTo.g, line.colorTo.b, line.colorTo.a
+	};
+
+	lineShader_.Activate();
+	lineVbo->SubData(sizeof(pos), pos);
+	lineVao->Bind();
+	glDrawArrays(GL_LINES, 0, 2);
 }
 
 void Renderer::Render(IWorld& world)
@@ -68,6 +99,7 @@ void Renderer::Render(IWorld& world)
 
 	auto viewMat = activeCam_->GetViewMat();
 	auto projMat = activeCam_->GetProjectionMat();
+	auto modelMat = glm::mat4(1.0f);
 	auto viewPos = activeCam_->FindComponent<TransformComponent>()->GetTranslation();
 
 	meshShader_.Activate();
@@ -78,9 +110,15 @@ void Renderer::Render(IWorld& world)
 	fbo->Bind();
 
 	for (auto& actor : world.GetActors())
-	{
 		Draw(*actor);
-	}
+
+	lineShader_.Activate();
+	lineShader_.SetUniformMatrix4fv("u_ViewMat", glm::value_ptr(viewMat));
+	lineShader_.SetUniformMatrix4fv("u_ProjectionMat", glm::value_ptr(projMat));
+	lineShader_.SetUniformMatrix4fv("u_ModelMat", glm::value_ptr(modelMat));
+
+	for (Line* line : lines_)
+		Draw(*line);
 
 	fbo->Unbind();
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -91,6 +129,10 @@ void Renderer::Render(IWorld& world)
 	colorBuffer->Bind();
 
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
+
+
+
+
 	//glDisable(GL_DEPTH_TEST);
 	//fbo->Bind();
 	//glClear(GL_COLOR_BUFFER_BIT);
