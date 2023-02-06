@@ -10,9 +10,10 @@
 #include "Actor/OrthoCamera.h"
 #include "Actor/PerspectiveCamera.h"
 
-#include "./demos/BasicCamera.h"
-#include "./demos/Lighting.h"
-#include "./demos/Chess/Chess.h"
+#include "demos/BasicCamera.h"
+#include "demos/Lighting.h"
+#include "demos/Chess/Chess.h"
+#include "demos/DebugCoordinates.h"
 
 void SetupSystems();
 
@@ -25,6 +26,11 @@ int main()
 	LightingDemo();
 
 	ChessDemo();
+
+	//std::shared_ptr<MyRenderer> r = std::make_shared<MyRenderer>();
+	//IGame::SetRenderer(r);
+
+	DebugCoordDemo();
 
 	IGame::Run();
 

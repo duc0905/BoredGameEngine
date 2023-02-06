@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClInclude Include="src\demos\BasicCamera.h" />
     <ClInclude Include="src\demos\Chess\Chess.h" />
+    <ClInclude Include="src\demos\DebugCoordinates.h" />
     <ClInclude Include="src\demos\DemoUtils.h" />
     <ClInclude Include="src\demos\Chess\TileActor.h" />
     <ClInclude Include="src\demos\ImGuiHUD.h" />
