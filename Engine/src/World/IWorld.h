@@ -56,7 +56,7 @@ public:
 	virtual bool End() final;
 
 	virtual std::vector<std::shared_ptr<Actor>> GetActors() = 0;
-	virtual Actor& GetActor(unsigned int getID) = 0;
+	virtual std::shared_ptr<Actor> GetActor(unsigned int getID) = 0;
 	virtual void AddActor(std::shared_ptr<Actor> actor) = 0;
 	virtual void RemoveActor(std::shared_ptr<Actor> actor) = 0;
 };
@@ -67,8 +67,8 @@ public:
 	~NullWorld() {}
 	// Inherited via IWorld
 	virtual std::vector<std::shared_ptr<Actor>> GetActors() override { return std::vector<std::shared_ptr<Actor>>(); };
-	virtual Actor& GetActor(unsigned int getID) override {
-		return Actor::NullActor;
+	virtual std::shared_ptr<Actor> GetActor(unsigned int getID) override {
+		return nullptr;
 	}
 	virtual void AddActor(std::shared_ptr<Actor> actor) override {};
 	virtual void RemoveActor(std::shared_ptr<Actor> actor) override {};

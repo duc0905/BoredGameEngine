@@ -3,9 +3,9 @@
 #include "Components/MeshComponent.h"
 
 class PissActor : public Actor {
-private:
-	int _x, _y, id; // position of a chess piss on the board
-	bool dead = false;
+protected:
+	int _x, _y, _team; // position of a chess piss on the board
+	bool _dead = false;
 
 public:
 	enum Type {
@@ -18,17 +18,18 @@ public:
 		EMPTY
 	};
 
-	PissActor() {
-		_x = -1;
-		_y = -1;
+
+	PissActor(int x = -1, int y = -1, int team = 1, bool dead = false)
+		: _x(x), _y(y), _team(team), _dead(dead)
+	{
 		CreateComponent<MeshComponent>();
 	}
 
-	virtual Type getId() = 0;
+	virtual Type getType() = 0;
 
 	//virtual std::vector<std::pair<int, int>> getPossileMoves() = 0;
 
-	bool updatePosition(int x, int y) {
+	void updatePosition(int x, int y) {
 		_x = x;
 		_y = y;
 	};
@@ -38,6 +39,6 @@ public:
 	}
 
 	void removeChessPiss() {
-		dead = true;
+		_dead = true;
 	};
 };

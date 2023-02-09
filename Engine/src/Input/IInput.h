@@ -43,7 +43,7 @@ public:
   virtual ~IInput(){};
   static std::shared_ptr<IInput> GetDefault() { return defaultInput_; };
 
-  Actor& GetCursorHoveringActor();
+  std::shared_ptr<Actor> GetCursorHoveringActor();
 
   void BindAction(const std::string &name, ActionCallback func);
   void BindRange(const std::string &name, RangeCallback func, float val = 1.0f);

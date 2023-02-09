@@ -3,6 +3,7 @@
 #include "HUD/HUDComponents/ImGuiTextEl.h"
 #include "HUD/HUDComponents/ImGuiWindow.h"
 #include "PissActor.h"
+#include "TileActor.h"
 
 class ChessGameMode : public IGameMode
 {
@@ -10,28 +11,18 @@ class ChessGameMode : public IGameMode
 		int team;
 		PissActor::Type type;
 		ChessBoardState() {
-			team = 0;
+			team = -1; // Not occupied
 			type = PissActor::EMPTY;
 		}
 	};
 private:
-
-	 std::vector<ChessBoardState> currentChessBoardState;
+	std::shared_ptr<PissActor> currentSelectedActor;
+	std::vector<std::pair<int, int>> nextMove;
+	std::vector<ChessBoardState> boardState;
 	// Inherited via IGameMode
-	 std::vector<std::pair<int,int>> getPossibleMove(PissActor& actor) {
-		switch (actor.getId()) {
-		//case PissActor::Type::ROOK:
-		case PissActor::Type::PAWN:
-			std::cout << "This is a pawm";
-		//case PissActor::Type::BISHOP:
-		//case PissActor::Type::KNIGHT:
-		//case PissActor::Type::QUEEN:
-		//case PissActor::Type::KING:
-		default:
-			std::cout << "This is empty";
-		}
-		return std::vector<std::pair<int, int>>();
-	}
+	
+	std::vector<std::pair<int, int>> getPossibleMove(std::shared_ptr<PissActor> actor);
+
 	virtual void OnLevelStart() override;
 	virtual void OnLevelPause() override;
 	virtual void OnLevelResume() override;

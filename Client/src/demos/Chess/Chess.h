@@ -5,6 +5,10 @@
 #include "Pawn.h"
 #include "ChessGameMode.h"
 
+
+	std::vector<std::shared_ptr<PissActor>> pawnStorage;
+	std::vector<std::shared_ptr<TileActor>> tileStorage;
+
 void ChessDemo()
 {
 	SYSTEM_ACCESS;
@@ -12,12 +16,10 @@ void ChessDemo()
 	world.UseGameMode<ChessGameMode>(world);
 
 	//std::shared_ptr<Actor> cube = std::make_shared<ChessBoardActor>();
-	std::vector<std::shared_ptr<Actor>> pawnStorage;
-	std::vector<std::shared_ptr<Actor>> tileStorage;
 
 	for (int x = 0; x < 8; x++) {
 		for (int y = 0; y < 8; y++) {
-			std::shared_ptr<Actor> tile;
+			std::shared_ptr<TileActor> tile;
 			if (x % 2 == 0) {
 				if (y % 2 == 0) {
 					tile = std::make_shared<TileActor>(true);
@@ -44,18 +46,18 @@ void ChessDemo()
 	}
 
 	for (int i = 0; i < 8; i++) {
-		std::shared_ptr<Actor> pawn = std::make_shared<Pawn>();
+		std::shared_ptr<Pawn> pawn = std::make_shared<Pawn>(i, 1, 1);
 		pawnStorage.push_back(pawn);
 		auto transComp = pawn->FindComponent<TransformComponent>();
-		transComp->Translate({ -0.5f, i, 3.0f });
+		transComp->Translate({ -0.5f, i, 1.0f });
 	}
 
 	//world->AddActor(cube);
-	for (auto p : pawnStorage) {
+	for (auto& p : pawnStorage) {
 		world.AddActor(p);
 	}
 
-	for (auto t : tileStorage) {
+	for (auto& t : tileStorage) {
 		world.AddActor(t);
 	}
-}
+}	

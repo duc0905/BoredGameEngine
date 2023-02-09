@@ -20,10 +20,11 @@ public:
     }
 
     void OnClick() override {
-        std::cout << "This is a chess piece";
+        std::cout << "This is a chess piece: (";
         auto transComp = FindComponent<TransformComponent>();
         std::cout << GetBoardPosition().first;
         std::cout << GetBoardPosition().second;
+        std::cout << ")" << std::endl;
     }
 
     std::pair<int, int> GetBoardPosition() {
