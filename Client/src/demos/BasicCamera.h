@@ -1,110 +1,116 @@
 #pragma once
-#include "IGame.h"
 #include "DemoUtils.h"
+#include "HUD/HUDComponents/ImGuiTextEl.h"
+#include "IGame.h"
 
 std::shared_ptr<PerspectiveCamera> cam;
+std::shared_ptr<Context> cameraContext = std::make_shared<Context>();
+std::shared_ptr<Context> controlContext = std::make_shared<Context>();
+float prevX = 0.0f, prevY = 0.0f;
 
-void BasicCameraDemo()
-{
-	SYSTEM_ACCESS
+void BasicCameraDemo() {
+  SYSTEM_ACCESS
 
-	cam = std::make_shared<PerspectiveCamera>(glm::vec4(70.f, 1.f, 0.01f, 1000.f));
-	world.AddActor(cam);
-	renderer.UseCamera(cam);
+  GLFWWindow* w = dynamic_cast<GLFWWindow*>(&IGame::GetWindow());
 
-	std::string actionKey = "buonce";
+  unsigned char pixels[16 * 16 * 4];
+  memset(pixels, 0xff, sizeof(pixels));
 
-	std::shared_ptr<Context> myContext = std::make_shared<Context>();
-	myContext->AddActionMapping(KeyInput::KEY_B, 0, actionKey);
-	myContext->AddRangeMapping(KeyInput::KEY_P, 0, "yeet_RANGE", 1);
-	myContext->AddRangeMapping(KeyInput::KEY_X, 0, "rX", 1);
-	myContext->AddRangeMapping(KeyInput::KEY_Y, 0, "rY", 1);
-	myContext->AddRangeMapping(KeyInput::KEY_Z, 0, "rZ", 1);
-	myContext->AddRangeMapping(KeyInput::KEY_X, KeyInput::CTRL, "rX", -1);
-	myContext->AddRangeMapping(KeyInput::KEY_Y, 0, "-rY", 1);
-	myContext->AddRangeMapping(KeyInput::KEY_Z, 0, "-rZ", 1);
+  GLFWimage image;
+  image.width = 16;
+  image.height = 16;
+  image.pixels = pixels;
 
-	std::shared_ptr<Context> cameraContext = std::make_shared<Context>();
-	cameraContext->AddRangeMapping(KeyInput::KEY_W, 0, "WS", 1.f);
-	cameraContext->AddRangeMapping(KeyInput::KEY_S, 0, "WS", -1.f);
-	cameraContext->AddRangeMapping(KeyInput::KEY_D, 0, "AD", -1.f);
-	cameraContext->AddRangeMapping(KeyInput::KEY_A, 0, "AD", 1.f);
-	cameraContext->AddRangeMapping(KeyInput::KEY_E, 0, "EQ", 1.f);
-	cameraContext->AddRangeMapping(KeyInput::KEY_Q, 0, "EQ", -1.f);
-	cameraContext->AddRangeMapping(KeyInput::KEY_1, 0, "12", 1.f);
-	cameraContext->AddRangeMapping(KeyInput::KEY_2, 0, "12", -1.f);
-	cameraContext->AddRangeMapping(KeyInput::KEY_SPACE, 0, "Space_Ctrl", 1.f);
-	cameraContext->AddRangeMapping(KeyInput::KEY_SPACE, KeyInput::CTRL, "Space_Ctrl", -1.f);
+  GLFWcursor* cursor = glfwCreateCursor(&image, 0, 0);
+  glfwSetCursor(w->GetGLFWWindow(), cursor);
+  glfwSetInputMode(w->GetGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	input.AddContext(cameraContext);
-	input.AddContext(myContext);
+  cam = std::make_shared<PerspectiveCamera>(glm::vec4{70.0f, 1.0f, 0.5f, 700.0f},
+                                            glm::vec3{1.0f, 0.0f, 0.0f}, glm::vec3{0.0f, 0.0f, 1.0f});
+  world.AddActor(cam);
+  renderer.UseCamera(cam);
 
-	/*input.BindRange("WS", [&](KeyInput::Action action, float val) . void {
-			  auto direction = cam.FindComponent<OrthoCameraComponent>().GetDir();
-			  auto up = cam.FindComponent<OrthoCameraComponent>().GetUp();
-			  cam.FindComponent<TransformComponent>().Translate(glm::normalize(direction) * val); });
+  cameraContext->AddRangeMapping(KeyInput::KEY_W, 0, "WS", 1.f);
+  cameraContext->AddRangeMapping(KeyInput::KEY_S, 0, "WS", -1.f);
+  cameraContext->AddRangeMapping(KeyInput::KEY_D, 0, "AD", -1.f);
+  cameraContext->AddRangeMapping(KeyInput::KEY_A, 0, "AD", 1.f);
+  cameraContext->AddRangeMapping(KeyInput::KEY_LEFT_SHIFT, 0, "Space_Ctrl",
+                                 -1.f);
+  cameraContext->AddRangeMapping(KeyInput::KEY_SPACE, 0, "Space_Ctrl", 1.f);
+  cameraContext->AddRangeMapping(KeyInput::MOUSE_POS_X, 0, "CAM_HOR", 1.0f);
+  cameraContext->AddRangeMapping(KeyInput::MOUSE_POS_Y, 0, "CAM_VERT", 1.0f);
 
-	input.BindRange("AD", [&](KeyInput::Action action, float val) . void {
-		  auto direction = cam.FindComponent<OrthoCameraComponent>().GetDir();
-		  auto up = cam.FindComponent<OrthoCameraComponent>().GetUp();
-		  auto cross = glm::cross(up, direction);
-		  cam.FindComponent<TransformComponent>().Translate(glm::normalize(cross) * val); });
+  controlContext->AddActionMapping(KeyInput::KEY_LEFT_CONTROL, 0,
+                                   "TOGGLE_CURSOR");
+  controlContext->AddActionMapping(KeyInput::KEY_LEFT_CONTROL, KeyInput::CTRL,
+                                   "TOGGLE_CURSOR");
 
-	input.BindRange("Space_Ctrl", [&](KeyInput::Action action, float val) . void {
-			  auto direction = cam.FindComponent<OrthoCameraComponent>().GetDir();
-			  auto up = cam.FindComponent<OrthoCameraComponent>().GetUp();
-			  cam.FindComponent<TransformComponent>().Translate(glm::normalize(up)* val); });
+  input.AddContext(controlContext);
+  input.AddContext(cameraContext);
 
-	input.BindRange("EQ", [&](KeyInput::Action action, float val) . void {
-		  auto dir = cam.FindComponent<OrthoCameraComponent>().GetDir();
-		  glm::mat4 rotationMat(1);
-		  rotationMat = glm::rotate(rotationMat, glm::pi<float>() / 100 * val, glm::vec3(0.f, 0.f, 1.f));
-		  auto newUp = glm::vec3(rotationMat * glm::vec4(dir, 1.f));
-		  cam.FindComponent<OrthoCameraComponent>().SetDir(newUp); });
+  input.BindRange("WS", [&](KeyInput::Action action, float val) -> void {
+    auto direction = cam->FindComponent<PerspectiveCameraComponent>()->GetDir();
+    auto up = cam->FindComponent<PerspectiveCameraComponent>()->GetUp();
+    cam->FindComponent<TransformComponent>()->Translate(
+        glm::normalize(direction) * val);
+  });
 
-	input.BindRange("12", [&](KeyInput::Action action, float val) . void {
-		  auto up = cam.FindComponent<OrthoCameraComponent>().GetUp();
-		  auto dir = cam.FindComponent<OrthoCameraComponent>().GetDir();
-		  glm::mat4 rotationMat(1);
-		  rotationMat = glm::rotate(rotationMat, glm::pi<float>() / 100 * val, glm::vec3(0.f, 1.f, 1.f));
-		  auto newDir = glm::vec3(rotationMat * glm::vec4(dir, 1.f));
-		  auto newUp = glm::vec3(rotationMat * glm::vec4(up, 1.f));
-		  cam.FindComponent<OrthoCameraComponent>().SetDir(newDir);
-		  cam.FindComponent<OrthoCameraComponent>().SetUp(newUp); });*/
+  input.BindRange("AD", [&](KeyInput::Action action, float val) -> void {
+    auto direction = cam->FindComponent<PerspectiveCameraComponent>()->GetDir();
+    auto up = cam->FindComponent<PerspectiveCameraComponent>()->GetUp();
+    auto cross = glm::cross(up, direction);
+    cam->FindComponent<TransformComponent>()->Translate(glm::normalize(cross) *
+                                                        val);
+  });
+  input.BindRange(
+      "Space_Ctrl", [&](KeyInput::Action action, float val) -> void {
+        auto direction =
+            cam->FindComponent<PerspectiveCameraComponent>()->GetDir();
+        auto up = cam->FindComponent<PerspectiveCameraComponent>()->GetUp();
+        cam->FindComponent<TransformComponent>()->Translate(glm::normalize(up) *
+                                                            val);
+      });
+  input.BindRange("CAM_HOR", [&](KeyInput::Action a, float val) -> void {
+    if (prevX == 0.0f) {
+      prevX = val;
+      return;
+    }
+    auto camComp = cam->FindComponent<PerspectiveCameraComponent>();
+    float dx = (val - prevX) * 0.01f;
+    prevX = val;
+    camComp->AddPitch(-dx);
+    if (camComp->pitch > 2*glm::pi<float>()) camComp->pitch -= 2*glm::pi<float>();
+    if (camComp->pitch < -2*glm::pi<float>()) camComp->pitch += 2*glm::pi<float>();
+  });
 
+  input.BindRange("CAM_VERT", [&](KeyInput::Action a, float val) -> void {
+    if (prevY == 0.0f) {
+      prevY = val;
+      return;
+    }
+    auto camComp = cam->FindComponent<PerspectiveCameraComponent>();
+    float dy = (val - prevY) * 0.01f;
+    prevY = val;
 
-	input.BindRange("WS", [&](KeyInput::Action action, float val) -> void {
-		auto direction = cam->FindComponent<PerspectiveCameraComponent>()->GetDir();
-	auto up = cam->FindComponent<PerspectiveCameraComponent>()->GetUp();
-	cam->FindComponent<TransformComponent>()->Translate(glm::normalize(direction) * val); });
+    if (camComp->yaw - dy >= glm::pi<float>() / 2 - 0.01f) return;
+    if (camComp->yaw - dy <= -glm::pi<float>() / 2 + 0.01f) return;
+    camComp->AddYaw(-dy);
+  });
 
-	input.BindRange("AD", [&](KeyInput::Action action, float val) -> void {
-		auto direction = cam->FindComponent<PerspectiveCameraComponent>()->GetDir();
-	auto up = cam->FindComponent<PerspectiveCameraComponent>()->GetUp();
-	auto cross = glm::cross(up, direction);
-	cam->FindComponent<TransformComponent>()->Translate(glm::normalize(cross) * val); });
+  input.BindAction("TOGGLE_CURSOR", [&](KeyInput::Action a) -> void {
+    input.DeactivateContext(cameraContext);
+    if (a == KeyInput::REPEAT) return;
+    if (a == KeyInput::PRESS)
+      input.EnableCursor();
+    else if (a == KeyInput::RELEASE) {
+      auto pos = input.GetMousePosition();
+      prevX = pos.first;
+      prevY = pos.second;
+      input.DisableCursor();
+      input.ActivateContext(cameraContext);
+    }
+  });
 
-	input.BindRange("Space_Ctrl", [&](KeyInput::Action action, float val) -> void {
-		auto direction = cam->FindComponent<PerspectiveCameraComponent>()->GetDir();
-	auto up = cam->FindComponent<PerspectiveCameraComponent>()->GetUp();
-	cam->FindComponent<TransformComponent>()->Translate(glm::normalize(up) * val); });
-
-	input.BindRange("EQ", [&](KeyInput::Action action, float val) -> void {
-		auto dir = cam->FindComponent<PerspectiveCameraComponent>()->GetDir();
-	glm::mat4 rotationMat(1);
-	rotationMat = glm::rotate(rotationMat, glm::pi<float>() / 100 * val, glm::vec3(0.f, 0.f, 1.f));
-	auto newUp = glm::vec3(rotationMat * glm::vec4(dir, 1.f));
-	cam->FindComponent<PerspectiveCameraComponent>()->SetDir(newUp); });
-
-	input.BindRange("12", [&](KeyInput::Action action, float val) -> void {
-		auto up = cam->FindComponent<PerspectiveCameraComponent>()->GetUp();
-	auto dir = cam->FindComponent<PerspectiveCameraComponent>()->GetDir();
-	glm::mat4 rotationMat(1);
-	rotationMat = glm::rotate(rotationMat, glm::pi<float>() / 100 * val, glm::vec3(0.f, 1.f, 0.f));
-	auto newDir = glm::vec3(rotationMat * glm::vec4(dir, 1.f));
-	auto newUp = glm::vec3(rotationMat * glm::vec4(up, 1.f));
-	cam->FindComponent<PerspectiveCameraComponent>()->SetDir(newDir);
-	cam->FindComponent<PerspectiveCameraComponent>()->SetUp(newUp); });
-
-	cam->FindComponent<TransformComponent>()->Translate(glm::vec3(-10.0f, 4.0f, 4.0f));
+  cam->FindComponent<TransformComponent>()->Translate(
+      glm::vec3(-10.0f, 0.0f, 2.0f));
 }

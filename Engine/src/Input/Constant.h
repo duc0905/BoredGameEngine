@@ -41,6 +41,8 @@ namespace KeyInput
 		KEY_N,
 		KEY_M,
 
+		KEY_LEFT_SHIFT,
+		KEY_LEFT_CONTROL,
 		KEY_SPACE,
 		KEY_TAB,
 

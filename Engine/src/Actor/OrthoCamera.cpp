@@ -9,7 +9,7 @@ OrthoCamera::OrthoCamera(const glm::vec4& viewDim, const glm::vec3& lookAt, cons
 
 glm::mat4 OrthoCamera::GetViewMat() const
 {
-    return camComp->GetViewMat(transComp->GetTranslation());
+    return camComp->GetViewMat(transComp->GetTranslation(), transComp->GetRotation());
 }
 
 glm::mat4 OrthoCamera::GetProjectionMat() const

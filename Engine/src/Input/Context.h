@@ -14,8 +14,8 @@ class Context
 	friend class IInput;
 private:
 	std::shared_ptr<Context> next_;
-	int priority_;
-	bool isActive_;
+	int priority_ = 1;
+	bool isActive_ = false;
 
 	std::map<std::pair<KeyInput::Key, int>, std::string> actionMap_;
 	std::map<std::pair<KeyInput::Key, int>, std::pair<std::string, float>> rangeMap_;
