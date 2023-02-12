@@ -6,7 +6,7 @@ std::shared_ptr<GLFWInput> GLFWInput::instance_ = nullptr;
 GLFWInput::GLFWInput()
 	: window_(IGame::GetWindow())
 {
-	if (dynamic_cast<GLFWWindow*>(&IGame::GetWindow()) != nullptr)
+	if (dynamic_cast<GLFWWindow*>(&window_) != nullptr)
 		SetupCallbacks();
 	else
 	{
@@ -49,6 +49,33 @@ void GLFWInput::OnTick(float)
 	glfwPollEvents();
 }
 
+void GLFWInput::SetCursorImage(unsigned char* image, unsigned int width, unsigned int height)
+{
+	GLFWimage im;
+	im.pixels = image;
+	im.width = width;
+	im.height = height;
+	GLFWcursor* c = glfwCreateCursor(&im, 0, 0);
+	if (c == NULL)
+		LOG_COLOR("Oops, something went wrong when setting cursor image.", COLOR::YELLOW, COLOR::BLACK);
+	
+	if (auto w = dynamic_cast<GLFWWindow*>(&window_))
+		glfwSetCursor(w->GetGLFWWindow(), c);
+	else
+		LOG_COLOR("Fatal error: GLFWInput is not being used with GLFWWindow.", COLOR::RED, COLOR::BLACK);
+}
+
+void GLFWInput::EnableCursor()
+{
+	if (auto w = dynamic_cast<GLFWWindow*>(&window_))
+		glfwSetInputMode(w->GetGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+}
+
+void GLFWInput::DisableCursor()
+{
+	if (auto w = dynamic_cast<GLFWWindow*>(&window_))
+		glfwSetInputMode(w->GetGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
 
 KeyInput::Key GLFWInput::GetKey(int keyCode)
 {
@@ -90,6 +117,8 @@ KeyInput::Key GLFWInput::GetKey(int keyCode)
 		case GLFW_KEY_N: return KeyInput::KEY_N;
 		case GLFW_KEY_M: return KeyInput::KEY_M;
 		case GLFW_KEY_SPACE: return KeyInput::KEY_SPACE;
+		case GLFW_KEY_LEFT_SHIFT: return KeyInput::KEY_LEFT_SHIFT;
+		case GLFW_KEY_LEFT_CONTROL: return KeyInput::KEY_LEFT_CONTROL;
 		// mouse
 		case GLFW_MOUSE_BUTTON_1: return KeyInput::KEY_MB_1;
 		case GLFW_MOUSE_BUTTON_2: return KeyInput::KEY_MB_2;

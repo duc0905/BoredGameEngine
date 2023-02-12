@@ -20,15 +20,11 @@ void SetupSystems();
 int main()
 {
 	SetupSystems();
-
 	BasicCameraDemo();
 
 	LightingDemo();
 
 	ChessDemo();
-
-	//std::shared_ptr<MyRenderer> r = std::make_shared<MyRenderer>();
-	//IGame::SetRenderer(r);
 
 	DebugCoordDemo();
 

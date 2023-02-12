@@ -24,7 +24,13 @@ const glm::mat4& OrthoCameraComponent::GetViewMat(const glm::vec3& position_)
     return glm::lookAt(position_, position_ + dir_, up_);
 }
 
+const glm::mat4& OrthoCameraComponent::GetViewMat(const glm::vec3& position_,
+                                                  const glm::vec3& rotation_) {
+    dir_ = glm::vec3({1.0f, 0.0f, 0.0f}) * rotation_;
+    return GetViewMat(position_);
+}
+
 const glm::mat4& OrthoCameraComponent::GetProjectionMat()
 {
-    return projMat;
-}
+    return projMat; }
+

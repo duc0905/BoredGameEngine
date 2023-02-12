@@ -28,6 +28,9 @@ public:
 	static GLFWInput& GetInstance();
 	static std::shared_ptr<GLFWInput> GetInstancePtr();
 
+	virtual void SetCursorImage(unsigned char* image, unsigned int width, unsigned int height);
+	virtual void EnableCursor();
+	virtual void DisableCursor();
 	virtual KeyInput::Key GetKey(int keyCode) override;
 	virtual int GetMods(int modBits) override;
 	virtual KeyInput::Action GetAction(int actionCode) override;

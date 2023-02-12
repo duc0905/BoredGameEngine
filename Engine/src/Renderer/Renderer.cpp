@@ -15,6 +15,7 @@ void Renderer::Init()
 	}
 	const auto& window = IGame::GetWindow();
 	std::cout << "OpenGL version: " << (char*)glGetString(GL_VERSION) << std::endl;
+
 	fbo = new FrameBuffer();
 	fbo->Bind();
 	GLenum buffers[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
@@ -95,12 +96,22 @@ void Renderer::Render(IWorld& world)
 	//glEnable(GL_DEPTH_TEST);
 	fbo->ClearBuffer();
 	if (!activeCam_)
-		throw std::exception("Renderer have not been provided a camera");
+	{
+		LOG_COLOR("Renderer does not have an active camera! What will be rendered is not what you wanted!", COLOR::YELLOW, COLOR::BLACK);
+	}
 
-	auto viewMat = activeCam_->GetViewMat();
-	auto projMat = activeCam_->GetProjectionMat();
+	auto viewMat = glm::mat4(1.0f);
+	auto projMat = glm::mat4(1.0f);
 	auto modelMat = glm::mat4(1.0f);
-	auto viewPos = activeCam_->FindComponent<TransformComponent>()->GetTranslation();
+	glm::vec3 viewPos = glm::vec3(0.0f);
+
+	if (activeCam_)
+	{
+		viewPos = activeCam_->FindComponent<TransformComponent>()->GetTranslation();
+		viewMat = activeCam_->GetViewMat();
+		projMat = activeCam_->GetProjectionMat();
+		modelMat = glm::mat4(1.0f);
+	}
 
 	meshShader_.Activate();
 	meshShader_.SetUniformMatrix4fv("u_ViewMat", glm::value_ptr(viewMat));

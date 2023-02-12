@@ -12,7 +12,10 @@ public:
     virtual const std::string& GetComponentName() override;
     virtual const glm::mat4& GetViewMat(const glm::vec3& position_) override;
     virtual const glm::mat4& GetProjectionMat() override;
+    virtual const glm::mat4& GetViewMat(const glm::vec3& position_,
+                                     const glm::vec3& rotation_) override;
 private:
     glm::mat4 projMat;
+
 };
 
