@@ -1,0 +1,12 @@
+
+# vim
+**/*~
+
+# VS
+/.vs
+# vcpkg
+/vcpkg_installed
+# generated
+**/x64
+**/x86
+/lib
