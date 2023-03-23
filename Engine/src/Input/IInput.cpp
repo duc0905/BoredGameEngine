@@ -91,6 +91,16 @@ void IInput::AddContext(std::shared_ptr<Context> con)
   con->Activate();
 }
 
+boolean IInput::isContextActivate(Context* con)
+{
+    return isContextActivate(std::shared_ptr<Context>(con));
+}
+
+boolean IInput::isContextActivate(std::shared_ptr<Context> con)
+{
+    return con->isActive_;
+}
+
 void IInput::RemoveContext(Context *con)
 {
   RemoveContext(std::shared_ptr<Context>(con));

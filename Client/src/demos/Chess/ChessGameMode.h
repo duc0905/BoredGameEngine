@@ -14,11 +14,15 @@ class ChessGameMode : public IGameMode
 			team = -1; // Not occupied
 			type = PissActor::EMPTY;
 		}
+		ChessBoardState(int t, PissActor::Type ty) {
+			team = t; // Not occupied
+			type = ty;
+		}
 	};
 private:
 	std::shared_ptr<PissActor> currentSelectedActor;
 	std::vector<std::pair<int, int>> nextMove;
-	std::vector<ChessBoardState> boardState;
+	ChessBoardState boardState[8][8];
 	// Inherited via IGameMode
 	
 	std::vector<std::pair<int, int>> getPossibleMove(std::shared_ptr<PissActor> actor);

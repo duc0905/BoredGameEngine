@@ -13,7 +13,7 @@ Pawn::Pawn(int x, int y, int team):PissActor(x,y,team)
 	meshComp->UseMesh(mesh_);
 
 	auto transComp = FindComponent<TransformComponent>();
-	transComp->Scale({ 0.33f, 0.33f, 0.33f });
+	transComp->Scale({ 0.3f, 0.3f, 0.3f });
 	transComp->Translate({ -1.2f, 0.0f, 0.0f });
 	//LOG_COLOR("End ChessBoardActor constractur", COLOR::BLUE, COLOR::BLACK);
 }

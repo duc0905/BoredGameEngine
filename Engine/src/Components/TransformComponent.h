@@ -15,7 +15,7 @@ struct TransformComponent :
     void SetRotation(const glm::vec3& rotation) { rotation_ = rotation; }
 
     glm::vec3 const GetScale() const { return scale_; };
-    void Scale(const glm::vec3& scale) { scale_ += scale; }
+    void Scale(const glm::vec3& scale) { scale_ *= scale; }
     void SetScale(const glm::vec3& scale) { scale_ = scale; }
 
     glm::mat4 const GetModelMatrix() const

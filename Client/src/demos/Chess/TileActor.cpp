@@ -20,5 +20,5 @@ TileActor::TileActor(bool isBlack)
 	}
 	auto transComp = FindComponent<TransformComponent>();
 	transComp->Scale({ 0.5f, 0.5f, 0.5f });
-	transComp->Rotate({ 0, 0, glm::pi<float>() / 2 });
+	transComp->Rotate({ 0, glm::pi<float>() / 2, 0 });
 }

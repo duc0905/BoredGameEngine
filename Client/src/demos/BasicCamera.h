@@ -98,9 +98,8 @@ void BasicCameraDemo() {
   });
 
   input.BindAction("TOGGLE_CURSOR", [&](KeyInput::Action a) -> void {
-    input.DeactivateContext(cameraContext);
     if (a == KeyInput::REPEAT) return;
-    if (a == KeyInput::PRESS)
+    /*if (a == KeyInput::PRESS)
       input.EnableCursor();
     else if (a == KeyInput::RELEASE) {
       auto pos = input.GetMousePosition();
@@ -108,7 +107,17 @@ void BasicCameraDemo() {
       prevY = pos.second;
       input.DisableCursor();
       input.ActivateContext(cameraContext);
-    }
+    }*/
+    if (a == KeyInput::PRESS) {
+        if (input.isContextActivate(cameraContext)) {
+            input.DeactivateContext(cameraContext);
+            input.EnableCursor();
+        }
+        else {
+            input.ActivateContext(cameraContext);
+            input.DisableCursor();
+        }
+    } 
   });
 
   cam->FindComponent<TransformComponent>()->Translate(

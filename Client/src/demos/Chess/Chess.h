@@ -52,6 +52,12 @@ void ChessDemo()
 		transComp->Translate({ -0.5f, i, 1.0f });
 	}
 
+	std::shared_ptr<Pawn> tpawn = std::make_shared<Pawn>(10, 10, 10);
+	auto ttransComp = tpawn->FindComponent<TransformComponent>();
+	ttransComp->Translate({ -10.f, 10.f, 10.0f });
+	//ttransComp->Scale({ 10.f,10.f,10.f });
+	world.AddActor(tpawn);
+
 	//world->AddActor(cube);
 	for (auto& p : pawnStorage) {
 		world.AddActor(p);

@@ -51,6 +51,9 @@ public:
 	void AddContext(Context* con);
 	void AddContext(std::shared_ptr<Context> con);
 
+	boolean isContextActivate(Context* con);
+	boolean isContextActivate(std::shared_ptr<Context> con);
+
 	void RemoveContext(Context* con);
 	void RemoveContext(std::shared_ptr<Context> con);
 
