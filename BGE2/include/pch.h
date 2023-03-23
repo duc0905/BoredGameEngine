@@ -36,7 +36,6 @@
 // assimp & stb
 #include <assimp/scene.h>
 #include <assimp/Importer.hpp>
-#define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
 #endif //PCH_H
