@@ -39,7 +39,7 @@
     <ClInclude Include="include\Render\Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Helpers.h">
+    <ClInclude Include="include\Render\Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -48,6 +48,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="include\ActorManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\Render\Utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

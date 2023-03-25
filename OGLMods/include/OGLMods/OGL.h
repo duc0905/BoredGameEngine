@@ -2,7 +2,6 @@
 #ifndef OGL_MODS_H
 
 #include "../../imports.h"
-// Remember to include glad before glfw
 #include "Buffers/IndexBuffer.h"
 #include "Buffers/VertexBuffer.h"
 #include "ShaderClass.h"

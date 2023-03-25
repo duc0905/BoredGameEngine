@@ -214,6 +214,7 @@
     <ClInclude Include="include\OGLMods\OGL.h" />
     <ClInclude Include="imports.h" />
     <ClInclude Include="include\OGLMods\ShaderClass.h" />
+    <ClInclude Include="include\Utiils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\OGLMods\Buffers\IndexBuffer.cpp" />
