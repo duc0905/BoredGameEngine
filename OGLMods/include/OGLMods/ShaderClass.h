@@ -1,6 +1,6 @@
 #ifndef SHADER_CLASS_H
 #define SHADER_CLASS_H
-#include "../../imports.h"
+#include "../../oglpch.h"
 
 std::string get_file_contents(const char* filename);
 

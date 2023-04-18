@@ -1,4 +1,4 @@
-//#include "pch.h"
+#include "oglpch.h"
 #include "VertexArray.h"
 
 VertexArray::VertexArray()

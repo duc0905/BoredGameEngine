@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\OALMods\OAL.h">
+    <ClInclude Include="include\OALMods\Modules.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

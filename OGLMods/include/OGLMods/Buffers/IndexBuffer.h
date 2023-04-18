@@ -1,7 +1,7 @@
 #ifndef IndexBuffer_CLASS_H
 #define IndexBuffer_CLASS_H
 
-#include "../../imports.h"
+#include "../../oglpch.h"
 
 class IndexBuffer {
 private:

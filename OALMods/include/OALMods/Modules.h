@@ -1,5 +1,4 @@
 #pragma once
-#ifndef OAL_MODS_H
 #include "Core.h"
 
 namespace Bored {
@@ -11,4 +10,3 @@ class Audio : public Bored::Audio {
 };
 };  // namespace OAL
 };  // namespace Bored
-#endif  // !OAL_MODS_H

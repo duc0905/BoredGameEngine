@@ -1,5 +1,5 @@
 #pragma once
-#include "../../imports.h"
+#include "../../oglpch.h"
 #include "VertexBuffer.h"
 
 class VertexBuffer;
