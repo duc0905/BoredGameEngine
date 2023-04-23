@@ -1,5 +1,6 @@
 #pragma once
 // #include "../pch.h"
+#include "./Constant.h"
 #ifdef _WIN32
 #include <Windows.h>
 #else
@@ -189,7 +190,106 @@ namespace Bored
 		void UseCamera(std::shared_ptr<Actor> cam);
 	};
 	class Audio : public Module {};
-	class Input : public Module {};
+	/** Context
+	* Define a set of actions/state/ranges those are available when this context is active
+	* Multiple contexts can be active at once
+	* Using Chain of responsibility pattern
+	*/
+	class Context
+	{
+	friend class Input;
+	private:
+		std::shared_ptr<Context> next_;
+		int priority_ = 1;
+		bool isActive_ = false;
+
+		std::map<std::pair<KeyInput::Key, int>, std::string> actionMap_;
+		std::map<std::pair<KeyInput::Key, int>, std::pair<std::string, float>> rangeMap_;
+
+		void ResetPriority(int priority);
+		void Activate();
+		void Deactivate();
+	public:
+		Context() = default;
+
+	void Debuggin();
+	
+	void AddActionMapping(KeyInput::Key key, int mods, const std::string& name);
+	void RemoveActionMapping(KeyInput::Key key, int mods);
+
+	void AddRangeMapping(KeyInput::Key key, int mods, const std::string& name, const float& weight);
+	void RemoveRangeMapping(KeyInput::Key key, int mods);
+
+	std::string MapKeyAction(KeyInput::Key key, int mods);
+	std::pair<std::string, float> MapKeyRange(KeyInput::Key key, int mods);
+	};
+
+	class Input : public Module {
+	public:
+		typedef std::function<void(KeyInput::Action)> ActionCallback;
+		typedef std::function<void(KeyInput::Action, float)> RangeCallback;
+
+	private:
+		struct MouseInformation {
+			double posX;
+			double posY;
+			double scrollX;
+			double scrollY;
+			bool isHidden;
+			bool isEntered;
+			bool btn1;
+			bool btn2;
+			bool btn3;
+			bool btn4;
+			bool btn5;
+			bool btn6;
+			bool btn7;
+			bool btn8;
+		};
+		std::shared_ptr<Context> headContext;
+		std::map<std::string, ActionCallback> actionMap;
+		std::map<std::string, std::pair<RangeCallback, float>> rangeMap;
+
+	public:
+		MouseInformation mouseInfo;
+
+	public:
+		void EvaluateKey(KeyInput::Key key, KeyInput::Action action, int mods, double val);
+
+		std::shared_ptr<Actor> GetCursorHoveringActor();
+
+		void BindAction(const std::string& name, ActionCallback func);
+		void BindRange(const std::string& name, RangeCallback func, float val = 1.0f);
+
+		void AddContext(Context* con);
+		void AddContext(std::shared_ptr<Context> con);
+
+		boolean isContextActivate(Context* con);
+		boolean isContextActivate(std::shared_ptr<Context> con);
+
+		void RemoveContext(Context* con);
+		void RemoveContext(std::shared_ptr<Context> con);
+
+		void ActivateContext(Context* con);
+		void ActivateContext(std::shared_ptr<Context> con);
+
+		void DeactivateContext(Context* con);
+		void DeactivateContext(std::shared_ptr<Context> con);
+
+		void ResetPriority(Context* con, int priorityLevel);
+		void ResetPriority(std::shared_ptr<Context> con, int priorityLevel);
+
+		inline std::pair<double, double> GetMousePosition() const {
+			return { mouseInfo.posX, mouseInfo.posY };
+		}
+
+		virtual void SetCursorImage(unsigned char* image, unsigned int width, unsigned int height) { };
+		virtual void EnableCursor() { }
+		virtual void DisableCursor() { };
+		virtual KeyInput::Key GetKey(int keyCode) { return KeyInput::KEY_UNKNOWN;  };
+		virtual int GetMods(int modBits) { return 0; };
+		virtual KeyInput::Action GetAction(int actionCode) { return KeyInput::Action::UNKNOWN; };
+	};
 
 	/* ===================== VARIABLES ==================== */
 	extern std::string title;

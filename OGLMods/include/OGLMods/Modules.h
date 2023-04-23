@@ -38,13 +38,32 @@ private:
 };
 
 class Input : public Bored::Input {
- public:
-  GLFWwindow* window;
+public:
+	GLFWwindow* window;
 
-  // Inherited via Input
-  virtual void OnSetup() override;
-  virtual bool OnTick(double dt) override;
+	// Inherited via Input
+	virtual void OnSetup() override;
+	virtual bool OnTick(double dt) override;
+
+private:
+	static double mouse_X;
+	static double mouse_Y;
+
+	static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	static void MousePosCallback(GLFWwindow* window, double x, double y);
+	static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+	static void MouseEnterCallback(GLFWwindow* window, int entered);
+	static void MouseScrollCallback(GLFWwindow* window, double x, double y);
+
+	void SetupCallbacks();
+public:
+
+	virtual void SetCursorImage(unsigned char* image, unsigned int width, unsigned int height);
+	virtual void EnableCursor();
+	virtual void DisableCursor();
+	virtual KeyInput::Key GetKey(int keyCode) override;
+	virtual int GetMods(int modBits) override;
+	virtual KeyInput::Action GetAction(int actionCode) override;
 };
-
 };  // namespace OGL
 }  // namespace Bored
