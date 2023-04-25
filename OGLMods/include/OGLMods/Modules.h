@@ -57,13 +57,15 @@ private:
 
 	void SetupCallbacks();
 public:
-
 	virtual void SetCursorImage(unsigned char* image, unsigned int width, unsigned int height);
 	virtual void EnableCursor();
 	virtual void DisableCursor();
-	virtual KeyInput::Key GetKey(int keyCode) override;
+	virtual Input::Key GetKey(int keyCode) override;
 	virtual int GetMods(int modBits) override;
-	virtual KeyInput::Action GetAction(int actionCode) override;
+	virtual Input::Action GetAction(int actionCode) override;
+
+  // Inherited via Input
+  virtual std::shared_ptr<Bored::Actor> GetCursorHoveringActor() override;
 };
 };  // namespace OGL
 }  // namespace Bored

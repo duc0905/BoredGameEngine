@@ -99,7 +99,7 @@ void Renderer::OnSetup() {
     GL_DYNAMIC_DRAW); glEnableVertexArrayAttrib(mVao, 2);
   glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
 
-  unsigned char d[] = { 
+  unsigned char d[] = {
     0xff, 0xff, 0xff, 0xff, // white
     0xff, 0x00, 0x00, 0xff // red
   };
@@ -110,7 +110,7 @@ void Renderer::OnSetup() {
     0x0f, 0x00, 0x00, 0xff,
     0xff, 0xff, 0xff, 0xff,
   };
-  std::shared_ptr<Bored::Render::Texture> t = 
+  std::shared_ptr<Bored::Render::Texture> t =
     Bored::Render::TextureFactory::Load("white", 1, 1, 4, d);
   white = Texture(t);
 
@@ -215,10 +215,10 @@ bool Renderer::OnTick(double dt) {
   Bored::Render::Mesh me;
   Bored::OGL::Material ma;
   std::vector<glm::vec3> pos = {
-    {0.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, 
+    {0.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f},
     {1.0f, 1.0f, 0.0}, {0.0f, 1.0f, 0.0f} };
-  std::vector<glm::vec2> uvs = 
-    { {0.0, 0.0}, {1.0, 0.0}, {1.0, 1.0}, {0.0, 1.0} };
+  std::vector<glm::vec2> uvs =
+  { {0.0, 0.0}, {1.0, 0.0}, {1.0, 1.0}, {0.0, 1.0} };
   std::vector<glm::vec3> norms = {
       {0.0, 0.0, 1.0}, {0.0, 0.0, 1.0}, {0.0, 0.0, 1.0}, {0.0, 0.0, 1.0} };
   std::vector<unsigned int> indices = { 0, 1, 2, 0, 2, 3 };
@@ -340,125 +340,49 @@ void Renderer::Render(Bored::Render::Mesh& me,
 
 void Input::SetCursorImage(unsigned char* image, unsigned int width, unsigned int height)
 {
-	GLFWimage im;
-	im.pixels = image;
-	im.width = width;
-	im.height = height;
-	GLFWcursor* c = glfwCreateCursor(&im, 0, 0);
-	if (c == NULL) {
-		std::cout << "Oops, something went wrong when setting cursor image." << std::endl;
-	}
-	if (window != nullptr)
-		glfwSetCursor(window, c);
-	else {
-		std::cout << "Fatal error: Input is not being used with GLFWWindow." << std::endl;
-	}
+  GLFWimage im;
+  im.pixels = image;
+  im.width = width;
+  im.height = height;
+  GLFWcursor* c = glfwCreateCursor(&im, 0, 0);
+  if (c == NULL) {
+    std::cout << "[Warning]: Something went wrong when setting cursor image." << std::endl;
+  }
+  if (window != nullptr)
+    glfwSetCursor(window, c);
+  else {
+    std::cout << "[Critical]: Input is not being used with OGL module." << std::endl;
+  }
 }
 
 void Input::EnableCursor()
 {
-	if (window) {
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-	}
+  if (window) {
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+  }
 }
 
 void Input::DisableCursor()
 {
-	if (window) {
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-	}
-}
-
-KeyInput::Key Input::GetKey(int keyCode)
-{
-	switch (keyCode) {
-		case GLFW_KEY_1: return KeyInput::KEY_1;
-		case GLFW_KEY_2: return KeyInput::KEY_2;
-		case GLFW_KEY_3: return KeyInput::KEY_3;
-		case GLFW_KEY_4: return KeyInput::KEY_4;
-		case GLFW_KEY_5: return KeyInput::KEY_5;
-		case GLFW_KEY_6: return KeyInput::KEY_6;
-		case GLFW_KEY_7: return KeyInput::KEY_7;
-		case GLFW_KEY_8: return KeyInput::KEY_8;
-		case GLFW_KEY_9: return KeyInput::KEY_9;
-		case GLFW_KEY_0: return KeyInput::KEY_0;
-		case GLFW_KEY_Q: return KeyInput::KEY_Q;
-		case GLFW_KEY_W: return KeyInput::KEY_W;
-		case GLFW_KEY_E: return KeyInput::KEY_E;
-		case GLFW_KEY_R: return KeyInput::KEY_R;
-		case GLFW_KEY_T: return KeyInput::KEY_T;
-		case GLFW_KEY_Y: return KeyInput::KEY_Y;
-		case GLFW_KEY_U: return KeyInput::KEY_U;
-		case GLFW_KEY_I: return KeyInput::KEY_I;
-		case GLFW_KEY_O: return KeyInput::KEY_O;
-		case GLFW_KEY_P: return KeyInput::KEY_P;
-		case GLFW_KEY_A: return KeyInput::KEY_A;
-		case GLFW_KEY_S: return KeyInput::KEY_S;
-		case GLFW_KEY_D: return KeyInput::KEY_D;
-		case GLFW_KEY_F: return KeyInput::KEY_F;
-		case GLFW_KEY_G: return KeyInput::KEY_G;
-		case GLFW_KEY_H: return KeyInput::KEY_H;
-		case GLFW_KEY_J: return KeyInput::KEY_J;
-		case GLFW_KEY_K: return KeyInput::KEY_K;
-		case GLFW_KEY_L: return KeyInput::KEY_L;
-		case GLFW_KEY_Z: return KeyInput::KEY_Z;
-		case GLFW_KEY_X: return KeyInput::KEY_X;
-		case GLFW_KEY_C: return KeyInput::KEY_C;
-		case GLFW_KEY_V: return KeyInput::KEY_V;
-		case GLFW_KEY_B: return KeyInput::KEY_B;
-		case GLFW_KEY_N: return KeyInput::KEY_N;
-		case GLFW_KEY_M: return KeyInput::KEY_M;
-		case GLFW_KEY_SPACE: return KeyInput::KEY_SPACE;
-		case GLFW_KEY_LEFT_SHIFT: return KeyInput::KEY_LEFT_SHIFT;
-		case GLFW_KEY_LEFT_CONTROL: return KeyInput::KEY_LEFT_CONTROL;
-		// mouse
-		case GLFW_MOUSE_BUTTON_1: return KeyInput::KEY_MB_1;
-		case GLFW_MOUSE_BUTTON_2: return KeyInput::KEY_MB_2;
-		case GLFW_MOUSE_BUTTON_3: return KeyInput::KEY_MB_3;
-		case GLFW_MOUSE_BUTTON_4: return KeyInput::KEY_MB_4;
-		case GLFW_MOUSE_BUTTON_5: return KeyInput::KEY_MB_5;
-		case GLFW_MOUSE_BUTTON_6: return KeyInput::KEY_MB_6;
-		case GLFW_MOUSE_BUTTON_7: return KeyInput::KEY_MB_7;
-		case GLFW_MOUSE_BUTTON_8: return KeyInput::KEY_MB_8;
-		
-		// default
-		default: return KeyInput::KEY_UNKNOWN;
-	}
-}
-
-int Input::GetMods(int modBits)
-{
-	int ans = 0;
-	if (modBits & GLFW_MOD_CONTROL) 
-		ans |= KeyInput::CTRL;
-	if (modBits & GLFW_MOD_SHIFT)
-		ans |= KeyInput::SHIFT;
-	if (modBits & GLFW_MOD_ALT)
-		ans |= KeyInput::ALT;
-	return ans;
-}
-
-KeyInput::Action Input::GetAction(int actionCode)
-{
-	switch (actionCode) {
-	case GLFW_PRESS: return KeyInput::PRESS;
-	case GLFW_REPEAT: return KeyInput::REPEAT;
-	case GLFW_RELEASE: return KeyInput::RELEASE;
-	default: return KeyInput::UNKNOWN;
-	}
+  if (window) {
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  }
 }
 
 void Input::SetupCallbacks()
 {
-
-	glfwSetKeyCallback(window, Input::KeyCallback);
-	glfwSetCursorPosCallback(window, Input::MousePosCallback);
-	glfwSetMouseButtonCallback(window, Input::MouseButtonCallback);
-	glfwSetCursorEnterCallback(window, Input::MouseEnterCallback);
-	glfwSetScrollCallback(window, Input::MouseScrollCallback);
+  glfwSetKeyCallback(window, Input::KeyCallback);
+  glfwSetCursorPosCallback(window, Input::MousePosCallback);
+  glfwSetMouseButtonCallback(window, Input::MouseButtonCallback);
+  glfwSetCursorEnterCallback(window, Input::MouseEnterCallback);
+  glfwSetScrollCallback(window, Input::MouseScrollCallback);
 }
 
+std::shared_ptr<Bored::Actor> Bored::OGL::Input::GetCursorHoveringActor()
+{
+  // TODO
+  return std::shared_ptr<Actor>();
+}
 
 void Input::OnSetup() {
   std::shared_ptr<OGL::Renderer> r =
@@ -468,6 +392,7 @@ void Input::OnSetup() {
       << std::endl;
   }
   window = r->window;
+  SetupCallbacks();
 }
 
 bool Input::OnTick(double dt) {
@@ -480,52 +405,49 @@ bool Input::OnTick(double dt) {
   return glfwWindowShouldClose(window);
 }
 
-
-
 void Input::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	
-	input->EvaluateKey(input->GetKey(key), input->GetAction(action), input->GetMods(mods), 1.0f);
+  input->EvaluateKey(input->GetKey(key), input->GetAction(action), input->GetMods(mods), 1.0f);
 }
 
 void Input::MousePosCallback(GLFWwindow* window, double x, double y)
 {
-	
-	input->mouseInfo.posX = x;
-	input->mouseInfo.posY = y;
-	input->EvaluateKey(KeyInput::MOUSE_POS_X, KeyInput::PRESS, 0, x);
-	input->EvaluateKey(KeyInput::MOUSE_POS_Y, KeyInput::PRESS, 0, y);
+
+  input->mouseInfo.posX = x;
+  input->mouseInfo.posY = y;
+  input->EvaluateKey(Input::MOUSE_POS_X, Input::PRESS, 0, x);
+  input->EvaluateKey(Input::MOUSE_POS_Y, Input::PRESS, 0, y);
 }
 
 void Input::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
-	
-	input->EvaluateKey(input->GetKey(button), input->GetAction(action), input->GetMods(mods), 1.0f);
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
-		//auto a = input->GetCursorHoveringActor();
-		//if (a != nullptr)
-		//	a->OnClick();
-	}
+  // TODO
+  input->EvaluateKey(input->GetKey(button), input->GetAction(action), input->GetMods(mods), 1.0f);
+  if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
+    //auto a = input->GetCursorHoveringActor();
+    //if (a != nullptr)
+    //	a->OnClick();
+  }
 }
 
 void Input::MouseEnterCallback(GLFWwindow* window, int entered)
 {
-	if (entered) {
-		input->EvaluateKey(KeyInput::MOUSE_ENTER, KeyInput::PRESS, 0, 1.0f);
-		input->mouseInfo.isEntered = true;
-	}
-	else {
-		input->EvaluateKey(KeyInput::MOUSE_LEAVE, KeyInput::PRESS, 0, 1.0f);
-		input->mouseInfo.isEntered = false;
-	}
+  if (entered) {
+    input->EvaluateKey(Input::MOUSE_ENTER, Input::PRESS, 0, 1.0f);
+    input->mouseInfo.isEntered = true;
+  }
+  else {
+    input->EvaluateKey(Input::MOUSE_LEAVE, Input::PRESS, 0, 1.0f);
+    input->mouseInfo.isEntered = false;
+  }
 }
 
 void Input::MouseScrollCallback(GLFWwindow* window, double x, double y)
 {
-	input->EvaluateKey(KeyInput::MOUSE_SCROLL_X, KeyInput::PRESS, 0, x);
-	input->EvaluateKey(KeyInput::MOUSE_SCROLL_Y, KeyInput::PRESS, 0, y);
-	input->mouseInfo.scrollX = x;
-	input->mouseInfo.scrollY = y;
+  input->EvaluateKey(Input::MOUSE_SCROLL_X, Input::PRESS, 0, x);
+  input->EvaluateKey(Input::MOUSE_SCROLL_Y, Input::PRESS, 0, y);
+  input->mouseInfo.scrollX = x;
+  input->mouseInfo.scrollY = y;
 }
 
 void Renderer::window_size_callback(GLFWwindow* window, int w, int h) {
@@ -536,6 +458,87 @@ void Renderer::window_size_callback(GLFWwindow* window, int w, int h) {
 void Renderer::framebuffer_size_callback(GLFWwindow* window, int w, int h) {
   glViewport(0, 0, w, h);
 }
+
+Bored::Input::Key Input::GetKey(int keyCode)
+{
+  switch (keyCode) {
+  case GLFW_KEY_1: return Input::KEY_1;
+  case GLFW_KEY_2: return Input::KEY_2;
+  case GLFW_KEY_3: return Input::KEY_3;
+  case GLFW_KEY_4: return Input::KEY_4;
+  case GLFW_KEY_5: return Input::KEY_5;
+  case GLFW_KEY_6: return Input::KEY_6;
+  case GLFW_KEY_7: return Input::KEY_7;
+  case GLFW_KEY_8: return Input::KEY_8;
+  case GLFW_KEY_9: return Input::KEY_9;
+  case GLFW_KEY_0: return Input::KEY_0;
+  case GLFW_KEY_Q: return Input::KEY_Q;
+  case GLFW_KEY_W: return Input::KEY_W;
+  case GLFW_KEY_E: return Input::KEY_E;
+  case GLFW_KEY_R: return Input::KEY_R;
+  case GLFW_KEY_T: return Input::KEY_T;
+  case GLFW_KEY_Y: return Input::KEY_Y;
+  case GLFW_KEY_U: return Input::KEY_U;
+  case GLFW_KEY_I: return Input::KEY_I;
+  case GLFW_KEY_O: return Input::KEY_O;
+  case GLFW_KEY_P: return Input::KEY_P;
+  case GLFW_KEY_A: return Input::KEY_A;
+  case GLFW_KEY_S: return Input::KEY_S;
+  case GLFW_KEY_D: return Input::KEY_D;
+  case GLFW_KEY_F: return Input::KEY_F;
+  case GLFW_KEY_G: return Input::KEY_G;
+  case GLFW_KEY_H: return Input::KEY_H;
+  case GLFW_KEY_J: return Input::KEY_J;
+  case GLFW_KEY_K: return Input::KEY_K;
+  case GLFW_KEY_L: return Input::KEY_L;
+  case GLFW_KEY_Z: return Input::KEY_Z;
+  case GLFW_KEY_X: return Input::KEY_X;
+  case GLFW_KEY_C: return Input::KEY_C;
+  case GLFW_KEY_V: return Input::KEY_V;
+  case GLFW_KEY_B: return Input::KEY_B;
+  case GLFW_KEY_N: return Input::KEY_N;
+  case GLFW_KEY_M: return Input::KEY_M;
+  case GLFW_KEY_SPACE: return Input::KEY_SPACE;
+  case GLFW_KEY_LEFT_SHIFT: return Input::KEY_LEFT_SHIFT;
+  case GLFW_KEY_LEFT_CONTROL: return Input::KEY_LEFT_CONTROL;
+    // mouse
+  case GLFW_MOUSE_BUTTON_1: return Input::KEY_MB_1;
+  case GLFW_MOUSE_BUTTON_2: return Input::KEY_MB_2;
+  case GLFW_MOUSE_BUTTON_3: return Input::KEY_MB_3;
+  case GLFW_MOUSE_BUTTON_4: return Input::KEY_MB_4;
+  case GLFW_MOUSE_BUTTON_5: return Input::KEY_MB_5;
+  case GLFW_MOUSE_BUTTON_6: return Input::KEY_MB_6;
+  case GLFW_MOUSE_BUTTON_7: return Input::KEY_MB_7;
+  case GLFW_MOUSE_BUTTON_8: return Input::KEY_MB_8;
+
+    // default
+  default: return Input::KEY_UNKNOWN;
+  }
+}
+
+int Input::GetMods(int modBits)
+{
+  int ans = 0;
+  if (modBits & GLFW_MOD_CONTROL)
+    ans |= Input::CTRL;
+  if (modBits & GLFW_MOD_SHIFT)
+    ans |= Input::SHIFT;
+  if (modBits & GLFW_MOD_ALT)
+    ans |= Input::ALT;
+  return ans;
+}
+
+Bored::Input::Action Input::GetAction(int actionCode)
+{
+  switch (actionCode) {
+  case GLFW_PRESS: return Input::PRESS;
+  case GLFW_REPEAT: return Input::REPEAT;
+  case GLFW_RELEASE: return Input::RELEASE;
+  default: return Input::UNKNOWN;
+  }
+}
+
+
 
 void APIENTRY glDebugOutput(GLenum source, GLenum type, unsigned int id,
   GLenum severity, GLsizei length,
@@ -616,8 +619,3 @@ void APIENTRY glDebugOutput(GLenum source, GLenum type, unsigned int id,
   }
   std::cout << std::endl;
 }
-
-
-
-
-

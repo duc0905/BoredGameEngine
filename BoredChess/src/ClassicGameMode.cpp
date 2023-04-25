@@ -17,13 +17,73 @@ void ClassicGamemode::SetupBoard() {
 
 void ClassicGamemode::SetupCamera()
 {
-    auto cam = actorManager->Create<Bored::Actor>();
-    auto& c = cam->AddComponent<Bored::Camera>();
-    auto& t = cam->Get<Bored::Transform>();
+    whiteCam = actorManager->Create<Bored::Actor>();
+    auto& c = whiteCam->AddComponent<Bored::Camera>();
+    auto& t = whiteCam->Get<Bored::Transform>();
     t.pos = { 3.5f, 3.5f, 20.0f };
     c.pitch = -89.9f;
     c.yaw = 90.0f;
-    renderer->UseCamera(cam);
+    renderer->UseCamera(whiteCam);
+
+    std::shared_ptr<Bored::Input::Context> con = std::make_shared<Bored::Input::Context>();
+    con->AddRangeMapping(Bored::Input::KEY_A, 0, "MOVE_CAM_HOR", -1.0f);
+    con->AddRangeMapping(Bored::Input::KEY_D, 0, "MOVE_CAM_HOR", 1.0f);
+    con->AddRangeMapping(Bored::Input::KEY_W, 0, "MOVE_CAM_VERT", 1.0f);
+    con->AddRangeMapping(Bored::Input::KEY_S, 0, "MOVE_CAM_VERT", -1.0f);
+    con->AddRangeMapping(Bored::Input::MOUSE_POS_X, 0, "MOVE_CAM_YAW", 0.1f);
+    // In GLFW, top-left corner is 0,0, so the weight is  negative
+    con->AddRangeMapping(Bored::Input::MOUSE_POS_Y, 0, "MOVE_CAM_PITCH", -0.1f);
+    input->AddContext(con);
+
+    input->BindRange("MOVE_CAM_HOR",
+      [this](Bored::Input::Action action, float val) {
+        auto& t = whiteCam->Get<Bored::Transform>();
+        t.pos.x += val;
+      }, 1.0f);
+
+    input->BindRange("MOVE_CAM_VERT",
+      [this](Bored::Input::Action action, float val) {
+        auto& t = whiteCam->Get<Bored::Transform>();
+        t.pos.y += val;
+      }, 1.0f);
+
+    input->BindRange("MOVE_CAM_YAW",
+      [this](Bored::Input::Action action, float val) {
+        float dx = val - mouse_x;
+        std::cout << dx << std::endl;
+    if (dx > 2.0f)
+      dx = 2.0f;
+    if (dx < -2.0f)
+      dx = -2.0f;
+
+    auto& c = whiteCam->Get<Bored::Camera>();
+    c.yaw += dx;
+
+    if (c.yaw >= 360.0f)
+      c.yaw = 0.0f;
+    if (c.yaw <= -360.f)
+      c.yaw = 0.0f;
+    mouse_x = val;
+      }, 1.0f);
+
+    input->BindRange("MOVE_CAM_PITCH",
+      [this](Bored::Input::Action action, float val) {
+        //std::cout << val << std::endl;
+        float dy = val - mouse_y;
+    if (dy > 2.0f)
+      dy = 2.0f;
+    if (dy < -2.0f)
+      dy = -2.0f;
+
+    auto& c = whiteCam->Get<Bored::Camera>();
+    c.pitch += dy;
+
+    if (c.pitch >= 89.0f)
+      c.pitch = 89.0f;
+    if (c.pitch <= -89.f)
+      c.pitch = -89.0f;
+        mouse_y = val;
+      }, 1.0f);
 }
 
 void ClassicGamemode::SetupPieces(Player &p, bool flip)

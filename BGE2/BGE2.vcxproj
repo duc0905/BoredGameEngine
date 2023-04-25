@@ -181,7 +181,7 @@
     <ClInclude Include="include\Camera.h" />
     <ClInclude Include="include\Core.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="include\Constant.h" />
+    <ClInclude Include="include\InputKey.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="include\Render\Utils.h" />
   </ItemGroup>

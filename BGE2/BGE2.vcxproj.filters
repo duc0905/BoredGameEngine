@@ -33,7 +33,7 @@
     <ClInclude Include="include\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Constant.h">
+    <ClInclude Include="include\InputKey.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

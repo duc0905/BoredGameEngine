@@ -19,7 +19,7 @@ class ClassicGamemode : public Bored::Gamemode {
   std::shared_ptr<Piece> selecting = nullptr;
 
   //std::array<std::array<Bored::Actor, 8>, 8> board;
-
+  float mouse_x = -1.0f, mouse_y = -1.0f;
   std::shared_ptr<Bored::Actor> whiteCam = nullptr;
   std::shared_ptr<Bored::Actor> blackCam = nullptr;
 

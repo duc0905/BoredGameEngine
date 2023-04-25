@@ -11,8 +11,6 @@ std::shared_ptr<ActorManager> actorManager = std::make_shared<ActorManager>();
 std::shared_ptr<Gamemode> gamemode;
 std::shared_ptr<Timer> timer = std::make_shared<Timer>();
 
-//std::shared_ptr
-
 std::vector<std::shared_ptr<Module>> addons;
 
 /**
@@ -20,11 +18,17 @@ std::vector<std::shared_ptr<Module>> addons;
  */
 void Run() {
   timer->OnSetup();
+  // Setup containers
   actorManager->OnSetup();
+  // Actors are created here
   gamemode->OnSetup();
-  renderer->OnSetup();
-  input->OnSetup();
+  // Populate audio materials
   audio->OnSetup();
+  // Populate render materials
+  renderer->OnSetup();
+  // Setup 
+  input->OnSetup();
+  
   for (auto mod : addons)
     mod->OnSetup();
 
@@ -101,7 +105,7 @@ void Renderer::UseCamera(std::shared_ptr<Actor> cam)
 }
 
 
-void Input::EvaluateKey(KeyInput::Key key, KeyInput::Action action, int mods, double val)
+void Input::EvaluateKey(Input::Key key, Input::Action action, int mods, double val)
 {
     if (!headContext)
     {
@@ -124,11 +128,6 @@ void Input::EvaluateKey(KeyInput::Key key, KeyInput::Action action, int mods, do
         if (it != rangeMap.end())
             it->second.first(action, rangePack.second * val);
     }
-}
-
-std::shared_ptr<Actor> Input::GetCursorHoveringActor()
-{
-    return nullptr;
 }
 
 void Input::BindAction(const std::string& name, ActionCallback func)
@@ -177,12 +176,12 @@ void Input::AddContext(std::shared_ptr<Context> con)
     con->Activate();
 }
 
-boolean Input::isContextActivate(Context* con)
+bool Input::IsContextActivate(Context* con)
 {
-    return isContextActivate(std::shared_ptr<Context>(con));
+    return IsContextActivate(std::shared_ptr<Context>(con));
 }
 
-boolean Input::isContextActivate(std::shared_ptr<Context> con)
+bool Input::IsContextActivate(std::shared_ptr<Context> con)
 {
     return con->isActive_;
 }
@@ -263,36 +262,22 @@ void Input::ResetPriority(std::shared_ptr<Context> con, int priorityLevel)
     }
 }
 
-void Context::ResetPriority(int priority)
+void Input::Context::ResetPriority(int priority)
 {
     priority_ = priority;
 }
 
-void Context::Activate()
+void Input::Context::Activate()
 {
     isActive_ = true;
 }
 
-void Context::Deactivate()
+void Input::Context::Deactivate()
 {
     isActive_ = false;
 }
 
-void Context::Debuggin()
-{
-    //std::cout << isActive_ << "AS ACTIVATION" << std::endl;
-    //std::cout << "Printing Action Map" << std::endl;
-    //for (const auto& elem : actionMap_) {
-    //    std::cout << elem.first.first << " " << elem.first.second << " " << elem.second << std::endl;
-    //};
-
-    //std::cout << "Printing Range Map" << std::endl;
-    //for (const auto& elem : rangeMap_) {
-    //    std::cout << elem.first.first << " " << elem.first.second << " " << elem.second.first << " " << elem.second.second << std::endl;
-    //}
-}
-
-void Context::AddActionMapping(KeyInput::Key key, int mods, const std::string& name)
+void Input::Context::AddActionMapping(Input::Key key, int mods, const std::string& name)
 {
     auto it = actionMap_.find({ key, mods });
 
@@ -303,7 +288,7 @@ void Context::AddActionMapping(KeyInput::Key key, int mods, const std::string& n
     actionMap_[{key, mods}] = name;
 }
 
-void Context::AddRangeMapping(KeyInput::Key key, int mods, const std::string& name, const float& weight)
+void Input::Context::AddRangeMapping(Input::Key key, int mods, const std::string& name, const float& weight)
 {
     auto it = rangeMap_.find({ key, mods });
 
@@ -314,7 +299,7 @@ void Context::AddRangeMapping(KeyInput::Key key, int mods, const std::string& na
     rangeMap_[{key, mods}] = { name, weight };
 }
 
-void Context::RemoveActionMapping(KeyInput::Key key, int mods)
+void Input::Context::RemoveActionMapping(Input::Key key, int mods)
 {
     auto it = actionMap_.find({ key, mods });
 
@@ -323,7 +308,7 @@ void Context::RemoveActionMapping(KeyInput::Key key, int mods)
         actionMap_.erase(it);
 }
 
-void Context::RemoveRangeMapping(KeyInput::Key key, int mods)
+void Input::Context::RemoveRangeMapping(Input::Key key, int mods)
 {
     auto it = rangeMap_.find({ key, mods });
 
@@ -332,7 +317,7 @@ void Context::RemoveRangeMapping(KeyInput::Key key, int mods)
         rangeMap_.erase(it);
 }
 
-std::string Context::MapKeyAction(KeyInput::Key key, int mods)
+std::string Input::Context::MapKeyAction(Input::Key key, int mods)
 {
     if (!isActive_) {
         if (next_)
@@ -347,7 +332,7 @@ std::string Context::MapKeyAction(KeyInput::Key key, int mods)
     return "";
 }
 
-std::pair<std::string, float> Context::MapKeyRange(KeyInput::Key key, int mods)
+std::pair<std::string, float> Input::Context::MapKeyRange(Input::Key key, int mods)
 {
     if (!isActive_) {
         if (next_)
