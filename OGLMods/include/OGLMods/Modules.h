@@ -44,6 +44,7 @@ class Input : public Bored::Input {
   // Inherited via Input
   virtual void OnSetup() override;
   virtual bool OnTick(double dt) override;
+  virtual void OnStop() override;
 };
 
 };  // namespace OGL

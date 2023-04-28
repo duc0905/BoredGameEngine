@@ -278,9 +278,25 @@ void Renderer::OnImGui() {
 }
 
 void Renderer::OnStop() {
+  // Clear Imgui stuff
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplGlfw_Shutdown();
   ImGui::DestroyContext();
+
+  // Clear member buffers of this class
+  glDeleteVertexArrays(1, &mVao);
+  glDeleteBuffers(1, &mPosVbo);
+  glDeleteBuffers(1, &mUVsVbo);
+  glDeleteBuffers(1, &mNormVbo);
+  glDeleteBuffers(1, &mIbo);
+  meshShader.Delete();
+  testShader.Delete();
+  white.Delete();
+  red.Delete();
+  mixed.Delete();
+  img.Delete();
+
+  glfwDestroyWindow(window);
   glfwTerminate();
 }
 
@@ -356,6 +372,10 @@ bool Input::OnTick(double dt) {
     return true;
   }
   return glfwWindowShouldClose(window);
+}
+
+void Bored::OGL::Input::OnStop()
+{
 }
 
 void Renderer::window_size_callback(GLFWwindow* window, int w, int h) {
