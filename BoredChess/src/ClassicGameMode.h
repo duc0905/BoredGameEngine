@@ -12,11 +12,9 @@ class ClassicGamemode : public Bored::Gamemode {
   // Just for render purpose
   std::shared_ptr<Bored::Actor> board;
 
-  Player white;
-  Player black;
-  
-  Player& turn = white;
-  std::shared_ptr<Piece> selecting = nullptr;
+  std::shared_ptr<Player> white, black, turn;
+  std::shared_ptr<Player> selecting = nullptr;
+  std::shared_ptr<Bored::Input::Context> inGame;
 
   //std::array<std::array<Bored::Actor, 8>, 8> board;
   float mouse_x = -1.0f, mouse_y = -1.0f;
@@ -28,7 +26,7 @@ class ClassicGamemode : public Bored::Gamemode {
 
   void SetupBoard();
   void SetupCamera();
-  void SetupPieces(Player &p, bool flip = false);
+  void SetupPieces(std::shared_ptr<Player> p, bool flip = false);
 
 public:
   virtual void OnSetup() override;

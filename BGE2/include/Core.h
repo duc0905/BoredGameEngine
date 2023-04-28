@@ -165,6 +165,16 @@ namespace Bored
   {
   public:
     unsigned int width = 1200, height = 800;
+  public:
+    void UseCamera(std::shared_ptr<Actor> cam);
+
+    /**
+     * @brief Get the actor using absolute position of the screen
+     * @param x 
+     * @param y 
+     * @return shared_ptr of the actor at that position, nullptr if none
+    */
+    virtual std::shared_ptr<Actor> GetActorAt(unsigned int x, unsigned y) { return nullptr; }
   protected:
     std::shared_ptr<Actor> active_cam;
     std::unique_ptr<Projector> projector =
@@ -173,8 +183,6 @@ namespace Bored
     std::vector<std::shared_ptr<Actor>> light_srcs;
 
     [[nodiscard]] const glm::mat4& GetProjMat() const;
-  public:
-    void UseCamera(std::shared_ptr<Actor> cam);
   };
   class Audio : public Module {};
 

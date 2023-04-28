@@ -57,6 +57,7 @@ void Renderer::OnSetup() {
     glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr,
       GL_TRUE);
   }
+  glClearColor(0.1f, 0.2f, 0.4f, 1.0f);
 
   /* Setup ImGui */
   IMGUI_CHECKVERSION();
@@ -67,7 +68,7 @@ void Renderer::OnSetup() {
   ImGui_ImplGlfw_InitForOpenGL(window, true);
   ImGui_ImplOpenGL3_Init("#version 330 core");
 
-  meshShader = Shader("mesh.vert", "mesh.frag");
+  screenShader = Shader("screen.vert", "screen.frag");
   testShader = Shader("test.vert", "test.frag");
 
   glGenVertexArrays(1, &mVao);
@@ -96,8 +97,65 @@ void Renderer::OnSetup() {
 
   glBindBuffer(GL_ARRAY_BUFFER, mNormVbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * OGL_MAX_VERTICES, nullptr,
-    GL_DYNAMIC_DRAW); glEnableVertexArrayAttrib(mVao, 2);
+    GL_DYNAMIC_DRAW);
+  glEnableVertexArrayAttrib(mVao, 2);
   glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
+
+  // Setup framebuffer
+  glGenFramebuffers(1, &mFbo);
+  glBindFramebuffer(GL_FRAMEBUFFER, mFbo);
+
+  // Setup frame texture and id texture
+  glGenTextures(1, &mFrameTex);
+  glBindTexture(GL_TEXTURE_2D, mFrameTex);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glBindTexture(GL_TEXTURE_2D, 0);
+
+  glGenTextures(1, &mIDTex);
+  glBindTexture(GL_TEXTURE_2D, mIDTex);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, nullptr);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glBindTexture(GL_TEXTURE_2D, 0);
+
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mFrameTex, 0);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, mIDTex, 0);
+  if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+  {
+    std::cout << "[Critical]: Error while creating framebuffer" << std::endl;
+  }
+  screenShader.SetUniform1i("tex", mFrameTex);
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+  float screenData[] = {
+    -0.5f, -0.5f,
+    0.5f, -0.5f,
+    0.0f, 0.5f,
+    -0.5f, 0.5f,
+  };
+
+  unsigned int indices[] = {
+    0, 1, 2,
+    0, 2, 3
+  };
+
+  glGenVertexArrays(1, &mScreenVao);
+  glBindVertexArray(mScreenVao);
+  glGenBuffers(1, &mScreenVbo);
+  glGenBuffers(1, &mScreenIbo);
+
+  glBindBuffer(GL_ARRAY_BUFFER, mScreenVbo);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 8, screenData, GL_STATIC_DRAW);
+  glEnableVertexArrayAttrib(mScreenVao, 0);
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  //glEnableVertexArrayAttrib(mScreenVao, 1);
+  //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void*)(sizeof(float) * 2));
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mScreenIbo);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 6, indices, GL_STATIC_DRAW);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
   unsigned char d[] = {
     0xff, 0xff, 0xff, 0xff, // white
@@ -135,10 +193,10 @@ void Renderer::OnSetup() {
   l.diffuse = 0.35f;
   l.specular = 0.1f;
 
-  img.Bind(testShader, "mat.diffuse", 0);
-  mixed.Bind(testShader, "mat.specular", 1);
-  testShader.SetUniform1f("mat.opacity", 1.0f);
-  testShader.SetUniform1i("mat.shiny", 32);
+  //img.Bind(testShader, "mat.diffuse", 0);
+  //mixed.Bind(testShader, "mat.specular", 1);
+  //testShader.SetUniform1f("mat.opacity", 1.0f);
+  //testShader.SetUniform1i("mat.shiny", 32);
 
   t.reset();
 
@@ -153,85 +211,74 @@ void Renderer::OnSetup() {
 }
 
 bool Renderer::OnTick(double dt) {
-  /* ========== Data preparation =========== */
-  // Get current camera
-  if (!active_cam)
-  {
-    std::cout << "[Warning]: No camera is set. Using default one." << std::endl;
-    active_cam = actorManager->Create<Bored::Actor>();
-    auto& c = active_cam->AddComponent<Bored::Camera>();
-    auto& t = active_cam->Get<Bored::Transform>();
-    t.pos = { -7.0f, 0.0f, 25.0f };
-    c.pitch = -75.0f;
-  }
-  // Set camera info
-  auto& camTrans = active_cam->Get<Bored::Transform>();
-  auto& camCam = active_cam->Get<Bored::Camera>();
-  auto dir = camCam.GetDir();
-  testShader.SetUniform3f("cam.pos", camTrans.pos.x, camTrans.pos.y, camTrans.pos.z);
-  testShader.SetUniform3f("cam.dir", dir.x, dir.y, dir.z);
-  testShader.SetUniform3f("cam.up", camCam.up.x, camCam.up.y, camCam.up.z);
+  /* ========== Render to our framebuffer =========== */
+  //glBindFramebuffer(GL_FRAMEBUFFER, mFbo);
+  //// Get current camera
+  //if (!active_cam)
+  //{
+  //  std::cout << "[Warning]: No camera is set. Using default one." << std::endl;
+  //  active_cam = actorManager->Create<Bored::Actor>();
+  //  auto& c = active_cam->AddComponent<Bored::Camera>();
+  //  auto& t = active_cam->Get<Bored::Transform>();
+  //  t.pos = { -7.0f, 0.0f, 25.0f };
+  //  c.pitch = -75.0f;
+  //}
+  //// Set camera info
+  //auto& camTrans = active_cam->Get<Bored::Transform>();
+  //auto& camCam = active_cam->Get<Bored::Camera>();
+  //auto dir = camCam.GetDir();
+  //testShader.SetUniform3f("cam.pos", camTrans.pos.x, camTrans.pos.y, camTrans.pos.z);
+  //testShader.SetUniform3f("cam.dir", dir.x, dir.y, dir.z);
+  //testShader.SetUniform3f("cam.up", camCam.up.x, camCam.up.y, camCam.up.z);
 
-  // Get all light sources
-  auto& l = light->Get<Bored::Render::Light>();
-  auto& lTrans = light->Get<Bored::Transform>();
-  // Set light sources
-  testShader.SetUniform3f("light.color", l.color.r, l.color.g, l.color.b);
-  testShader.SetUniform3f("light.pos", lTrans.pos.x, lTrans.pos.y, lTrans.pos.z);
-  testShader.SetUniform1f("light.ambient", l.ambient);
-  testShader.SetUniform1f("light.diffuse", l.diffuse);
-  testShader.SetUniform1f("light.specular", l.specular);
+  //// Get all light sources
+  //auto& l = light->Get<Bored::Render::Light>();
+  //auto& lTrans = light->Get<Bored::Transform>();
+  //// Set light sources
+  //testShader.SetUniform3f("light.color", l.color.r, l.color.g, l.color.b);
+  //testShader.SetUniform3f("light.pos", lTrans.pos.x, lTrans.pos.y, lTrans.pos.z);
+  //testShader.SetUniform1f("light.ambient", l.ambient);
+  //testShader.SetUniform1f("light.diffuse", l.diffuse);
+  //testShader.SetUniform1f("light.specular", l.specular);
 
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+  //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  // Get all models
-  auto v = actorManager->Get<Bored::OGL::Model, Bored::Transform>();
+  //// Get all models
+  //auto v = actorManager->Get<Bored::OGL::Model, Bored::Transform>();
 
-  /* ========= Render =========== */
-  auto view = active_cam->Get<Bored::Camera>().GetViewMat(camTrans.pos);
-  auto proj = GetProjMat();
+  ///* ========= Render =========== */
+  //auto view = active_cam->Get<Bored::Camera>().GetViewMat(camTrans.pos);
+  //auto proj = GetProjMat();
 
-  testShader.SetUniformMatrix4fv("mvp.View", glm::value_ptr(view));
-  testShader.SetUniformMatrix4fv("mvp.Proj", glm::value_ptr(proj));
+  //testShader.SetUniformMatrix4fv("mvp.View", glm::value_ptr(view));
+  //testShader.SetUniformMatrix4fv("mvp.Proj", glm::value_ptr(proj));
 
-  testShader.Activate();
-  for (auto& x : v)
-  {
-    auto& t = v.get<Bored::Transform>(x);
-    auto& m = v.get<Bored::OGL::Model>(x);
-    //auto model = t.GetMat();
-    auto model = glm::mat4(1.0f);
-    model = glm::translate(model, t.pos);
-    model = glm::rotate(model, glm::radians(t.rotation.x), { 1.0f, 0.0f, 0.0f });
-    model = glm::rotate(model, glm::radians(t.rotation.y), { 0.0f, 1.0f, 0.0f });
-    model = glm::rotate(model, glm::radians(t.rotation.z), { 0.0f, 0.0f, 1.0f });
-    model = glm::scale(model, t.scale);
-    testShader.SetUniformMatrix4fv("mvp.Model", glm::value_ptr(model));
-    Render(m, testShader);
-  }
+  //testShader.Activate();
+  //for (auto& x : v)
+  //{
+  //  auto& t = v.get<Bored::Transform>(x);
+  //  auto& m = v.get<Bored::OGL::Model>(x);
+  //  //auto model = t.GetMat();
+  //  auto model = glm::mat4(1.0f);
+  //  model = glm::translate(model, t.pos);
+  //  model = glm::rotate(model, glm::radians(t.rotation.x), { 1.0f, 0.0f, 0.0f });
+  //  model = glm::rotate(model, glm::radians(t.rotation.y), { 0.0f, 1.0f, 0.0f });
+  //  model = glm::rotate(model, glm::radians(t.rotation.z), { 0.0f, 0.0f, 1.0f });
+  //  model = glm::scale(model, t.scale);
+  //  testShader.SetUniformMatrix4fv("mvp.Model", glm::value_ptr(model));
+  //  Render(m, testShader);
+  //}
 
-  // Render a rectangle
-  Bored::Render::Mesh me;
-  Bored::OGL::Material ma;
-  std::vector<glm::vec3> pos = {
-    {0.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f},
-    {1.0f, 1.0f, 0.0}, {0.0f, 1.0f, 0.0f} };
-  std::vector<glm::vec2> uvs =
-  { {0.0, 0.0}, {1.0, 0.0}, {1.0, 1.0}, {0.0, 1.0} };
-  std::vector<glm::vec3> norms = {
-      {0.0, 0.0, 1.0}, {0.0, 0.0, 1.0}, {0.0, 0.0, 1.0}, {0.0, 0.0, 1.0} };
-  std::vector<unsigned int> indices = { 0, 1, 2, 0, 2, 3 };
+  /* ======== Render our frametex to the screen ========== */
+  //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glClear(GL_COLOR_BUFFER_BIT);
+  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+  screenShader.Activate();
 
-  me.pos = pos;
-  me.uvs = uvs;
-  me.norms = norms;
-  me.indices = indices;
-  auto model = glm::mat4(1.0f);
-  model = glm::translate(model, { -0.5f, -0.5f, -1.0f });
-  model = glm::scale(model, { 8.0f, 8.0f, 8.0f });
-  testShader.SetUniformMatrix4fv("mvp.Model", glm::value_ptr(model));
-  Render(me, ma, testShader);
+  //screenShader.SetUniform1i("tex", white.id);
+  glBindVertexArray(mScreenVao);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mScreenIbo);
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
   /* ========== ImGui =========== */
   ImGui_ImplOpenGL3_NewFrame();
@@ -284,6 +331,13 @@ void Renderer::OnStop() {
   glfwTerminate();
 }
 
+std::shared_ptr<Bored::Actor> Renderer::GetActorAt(unsigned int x, unsigned y)
+{
+  // TODO
+  return nullptr;
+}
+
+// =========== Private helper functions ============== //
 void Renderer::Render(const Bored::OGL::Model& m, Shader& shader) {
   for (auto& [mesh, mat] : m.renderables) {
     Render(*mesh, *mat, shader);

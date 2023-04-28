@@ -8,21 +8,16 @@ namespace OGL {
 class Renderer : public Bored::Renderer {
  public:
   GLFWwindow* window;
-
-  //std::unique_ptr<VertexArray> vao;
-  //std::unique_ptr<VertexBuffer> pos_vbo;
-  //std::unique_ptr<VertexBuffer> uv_vbo;
-  //std::unique_ptr<VertexBuffer> norm_vbo;
-  //std::unique_ptr<IndexBuffer> ibo;
-
   GLuint mVao, mPosVbo, mUVsVbo, mNormVbo, mIbo;
+  GLuint mFbo, mFrameTex, mIDTex;
+  GLuint mScreenVao, mScreenVbo, mScreenIbo;
 
-  Shader meshShader;
+  Shader screenShader;
   Shader testShader;
 
   Texture white, red, mixed, img;
   std::shared_ptr<Bored::Actor> light;
-
+public:
   Renderer();
 
   // Inherited via Renderer
@@ -30,6 +25,7 @@ class Renderer : public Bored::Renderer {
   virtual bool OnTick(double dt) override;
   virtual void OnImGui() override;
   virtual void OnStop() override;
+  virtual std::shared_ptr<Bored::Actor> GetActorAt(unsigned int x, unsigned y) override;
 private:
   void Render(const Bored::OGL::Model& m, Shader& shader);
   void Render(Bored::Render::Mesh&, Bored::OGL::Material&, Shader& shader);
