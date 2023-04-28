@@ -38,7 +38,7 @@ in MVPMats vMVPMats;
 uniform Material mat;
 uniform Light light;
 uniform Camera cam;
-uniform int actorID;
+uniform int actorID = -1;
 
 /* ===== Outputs ===== */
 layout(location = 0) out vec4 glColor;

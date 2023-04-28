@@ -123,14 +123,17 @@ void Renderer::OnSetup() {
   glGenRenderbuffers(1, &mRbo);
   glBindRenderbuffer(GL_RENDERBUFFER, mRbo);
   glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mRbo);
 
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mFrameTex, 0);
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, mIDTex, 0);
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mRbo);
   if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
   {
     std::cout << "[Critical]: Error while creating framebuffer" << std::endl;
   }
+  GLenum b[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+  glDrawBuffers(2, b);
+
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
   float screenData[] = {
@@ -217,7 +220,7 @@ void Renderer::OnSetup() {
 bool Renderer::OnTick(double dt) {
   /* ========== Render to our framebuffer =========== */
   glBindFramebuffer(GL_FRAMEBUFFER, mFbo);
-  glClearColor(0.1f, 0.2f, 0.4f, 1.0f);
+  glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   // Get current camera
   if (!active_cam)
@@ -276,12 +279,12 @@ bool Renderer::OnTick(double dt) {
   /* ======== Render our frametex to the screen ========== */
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glViewport(0, 0, width, height);
-  glClearColor(0.1f, 0.2f, 0.4f, 1.0f);
+  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   screenShader.Activate();
   glActiveTexture(GL_TEXTURE7);
-  glBindTexture(GL_TEXTURE_2D, mIDTex);
+  glBindTexture(GL_TEXTURE_2D, mFrameTex);
   screenShader.SetUniform1i("tex", 7);
 
   glBindVertexArray(mScreenVao);
@@ -344,9 +347,10 @@ std::shared_ptr<Bored::Actor> Renderer::GetActorAt(unsigned int x, unsigned y)
   // TODO
   glBindFramebuffer(GL_FRAMEBUFFER, mFbo);
   glReadBuffer(GL_COLOR_ATTACHMENT1);
-  int32_t data = 123;
-  glReadPixels(x, height-y, 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &data);
-  std::cout << "Data: " << data << std::endl;
+  entt::entity id = entt::null;
+  glReadPixels(x, height-y, 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &id);
+  if (actorManager->IsValidActor(id))
+    return actorManager->Get<IDToPtr>(id);
   return nullptr;
 }
 

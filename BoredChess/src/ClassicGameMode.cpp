@@ -14,7 +14,6 @@ void ClassicGamemode::OnSetup() {
 
 bool ClassicGamemode::OnTick(double dt)
 {
-  input->GetCursorHoveringActor();
   return false;
 }
 

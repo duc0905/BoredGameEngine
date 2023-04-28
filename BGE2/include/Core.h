@@ -61,6 +61,7 @@ namespace Bored
   struct IDToPtr
   {
     std::shared_ptr<Actor> ptr;
+    IDToPtr() = default;
     IDToPtr(const IDToPtr& o) { ptr = o.ptr; }
     IDToPtr(std::shared_ptr<Actor> p) : ptr(p) {}
     operator std::shared_ptr<Actor>() { return ptr; }
@@ -149,6 +150,8 @@ namespace Bored
       actor_registry.remove<T>(id);
       return;
     }
+
+    bool IsValidActor(entt::entity id) const { return actor_registry.valid(id); }
 
     void Delete(entt::entity id);
 
