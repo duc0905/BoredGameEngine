@@ -9,7 +9,7 @@ class Renderer : public Bored::Renderer {
  public:
   GLFWwindow* window;
   GLuint mVao, mPosVbo, mUVsVbo, mNormVbo, mIbo;
-  GLuint mFbo, mFrameTex, mIDTex;
+  GLuint mFbo, mFrameTex, mIDTex, mRbo;
   GLuint mScreenVao, mScreenVbo, mScreenIbo;
 
   Shader screenShader;
@@ -27,8 +27,8 @@ public:
   virtual void OnStop() override;
   virtual std::shared_ptr<Bored::Actor> GetActorAt(unsigned int x, unsigned y) override;
 private:
-  void Render(const Bored::OGL::Model& m, Shader& shader);
-  void Render(Bored::Render::Mesh&, Bored::OGL::Material&, Shader& shader);
+  void Render(entt::entity id, const Bored::OGL::Model& m, Shader& shader);
+  void Render(entt::entity id, Bored::Render::Mesh&, Bored::OGL::Material&, Shader& shader);
   static void window_size_callback(GLFWwindow* window, int w, int h);
   static void framebuffer_size_callback(GLFWwindow* window, int w, int h);
 };
@@ -59,9 +59,6 @@ public:
 	virtual Input::Key GetKey(int keyCode) override;
 	virtual int GetMods(int modBits) override;
 	virtual Input::Action GetAction(int actionCode) override;
-
-  // Inherited via Input
-  virtual std::shared_ptr<Bored::Actor> GetCursorHoveringActor() override;
 };
 };  // namespace OGL
 }  // namespace Bored

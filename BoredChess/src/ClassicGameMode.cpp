@@ -12,6 +12,12 @@ void ClassicGamemode::OnSetup() {
   SetupPieces(black, true);
 }
 
+bool ClassicGamemode::OnTick(double dt)
+{
+  input->GetCursorHoveringActor();
+  return false;
+}
+
 void ClassicGamemode::SetupBoard() {
   board = actorManager->Create<Bored::Actor>();
   // TODO find model for board

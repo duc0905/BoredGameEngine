@@ -11,8 +11,6 @@
 #include "Bases.h"
 #include "Render/Utils.h"
 #include "Camera.h"
-// #include "ActorManager.h"
-// #include "Render/Utils.h"
 
 // Just define the general interfaces here
 namespace Bored
@@ -288,7 +286,7 @@ namespace Bored
     virtual Input::Key GetKey(int keyCode) { return Key::KEY_UNKNOWN; };
     virtual int GetMods(int modBits) { return 0; };
     virtual Input::Action GetAction(int actionCode) { return Action::UNKNOWN; };
-    virtual std::shared_ptr<Actor> GetCursorHoveringActor() { return nullptr; };
+    std::shared_ptr<Actor> GetCursorHoveringActor();
   };
 
   /* ===================== VARIABLES ==================== */

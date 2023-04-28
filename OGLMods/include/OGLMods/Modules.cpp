@@ -54,8 +54,8 @@ void Renderer::OnSetup() {
     glEnable(GL_DEBUG_OUTPUT);
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
     glDebugMessageCallback(glDebugOutput, nullptr);
-    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr,
-      GL_TRUE);
+    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_LOW, 0, nullptr, GL_FALSE);
   }
   glClearColor(0.1f, 0.2f, 0.4f, 1.0f);
 
@@ -115,10 +115,15 @@ void Renderer::OnSetup() {
 
   glGenTextures(1, &mIDTex);
   glBindTexture(GL_TEXTURE_2D, mIDTex);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, nullptr);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_R32UI, width, height, 0, GL_RED_INTEGER, GL_UNSIGNED_BYTE, nullptr);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glBindTexture(GL_TEXTURE_2D, 0);
+
+  glGenRenderbuffers(1, &mRbo);
+  glBindRenderbuffer(GL_RENDERBUFFER, mRbo);
+  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mRbo);
 
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mFrameTex, 0);
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, mIDTex, 0);
@@ -126,14 +131,13 @@ void Renderer::OnSetup() {
   {
     std::cout << "[Critical]: Error while creating framebuffer" << std::endl;
   }
-  screenShader.SetUniform1i("tex", mFrameTex);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
   float screenData[] = {
-    -0.5f, -0.5f,
-    0.5f, -0.5f,
-    0.0f, 0.5f,
-    -0.5f, 0.5f,
+    -1.0f, -1.0f, 0.0f, 0.0f,
+    1.0f, -1.0f, 1.0f, 0.0f,
+    1.0f, 1.0f, 1.0f, 1.0f,
+    -1.0f, 1.0f, 0.0f, 1.0f
   };
 
   unsigned int indices[] = {
@@ -147,12 +151,12 @@ void Renderer::OnSetup() {
   glGenBuffers(1, &mScreenIbo);
 
   glBindBuffer(GL_ARRAY_BUFFER, mScreenVbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 8, screenData, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 16, screenData, GL_STATIC_DRAW);
   glEnableVertexArrayAttrib(mScreenVao, 0);
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, 0);
+  glEnableVertexArrayAttrib(mScreenVao, 1);
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void*)(sizeof(float) * 2));
   glBindBuffer(GL_ARRAY_BUFFER, 0);
-  //glEnableVertexArrayAttrib(mScreenVao, 1);
-  //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void*)(sizeof(float) * 2));
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mScreenIbo);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 6, indices, GL_STATIC_DRAW);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -212,70 +216,74 @@ void Renderer::OnSetup() {
 
 bool Renderer::OnTick(double dt) {
   /* ========== Render to our framebuffer =========== */
-  //glBindFramebuffer(GL_FRAMEBUFFER, mFbo);
-  //// Get current camera
-  //if (!active_cam)
-  //{
-  //  std::cout << "[Warning]: No camera is set. Using default one." << std::endl;
-  //  active_cam = actorManager->Create<Bored::Actor>();
-  //  auto& c = active_cam->AddComponent<Bored::Camera>();
-  //  auto& t = active_cam->Get<Bored::Transform>();
-  //  t.pos = { -7.0f, 0.0f, 25.0f };
-  //  c.pitch = -75.0f;
-  //}
-  //// Set camera info
-  //auto& camTrans = active_cam->Get<Bored::Transform>();
-  //auto& camCam = active_cam->Get<Bored::Camera>();
-  //auto dir = camCam.GetDir();
-  //testShader.SetUniform3f("cam.pos", camTrans.pos.x, camTrans.pos.y, camTrans.pos.z);
-  //testShader.SetUniform3f("cam.dir", dir.x, dir.y, dir.z);
-  //testShader.SetUniform3f("cam.up", camCam.up.x, camCam.up.y, camCam.up.z);
+  glBindFramebuffer(GL_FRAMEBUFFER, mFbo);
+  glClearColor(0.1f, 0.2f, 0.4f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  // Get current camera
+  if (!active_cam)
+  {
+    std::cout << "[Warning]: No camera is set. Using default one." << std::endl;
+    active_cam = actorManager->Create<Bored::Actor>();
+    auto& c = active_cam->AddComponent<Bored::Camera>();
+    auto& t = active_cam->Get<Bored::Transform>();
+    t.pos = { -7.0f, 0.0f, 25.0f };
+    c.pitch = -75.0f;
+  }
+  // Set camera info
+  auto& camTrans = active_cam->Get<Bored::Transform>();
+  auto& camCam = active_cam->Get<Bored::Camera>();
+  auto dir = camCam.GetDir();
+  testShader.SetUniform3f("cam.pos", camTrans.pos.x, camTrans.pos.y, camTrans.pos.z);
+  testShader.SetUniform3f("cam.dir", dir.x, dir.y, dir.z);
+  testShader.SetUniform3f("cam.up", camCam.up.x, camCam.up.y, camCam.up.z);
 
   //// Get all light sources
-  //auto& l = light->Get<Bored::Render::Light>();
-  //auto& lTrans = light->Get<Bored::Transform>();
-  //// Set light sources
-  //testShader.SetUniform3f("light.color", l.color.r, l.color.g, l.color.b);
-  //testShader.SetUniform3f("light.pos", lTrans.pos.x, lTrans.pos.y, lTrans.pos.z);
-  //testShader.SetUniform1f("light.ambient", l.ambient);
-  //testShader.SetUniform1f("light.diffuse", l.diffuse);
-  //testShader.SetUniform1f("light.specular", l.specular);
+  auto& l = light->Get<Bored::Render::Light>();
+  auto& lTrans = light->Get<Bored::Transform>();
+  // Set light sources
+  testShader.SetUniform3f("light.color", l.color.r, l.color.g, l.color.b);
+  testShader.SetUniform3f("light.pos", lTrans.pos.x, lTrans.pos.y, lTrans.pos.z);
+  testShader.SetUniform1f("light.ambient", l.ambient);
+  testShader.SetUniform1f("light.diffuse", l.diffuse);
+  testShader.SetUniform1f("light.specular", l.specular);
 
-  //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  // Get all models
+  auto v = actorManager->Get<Bored::OGL::Model, Bored::Transform>();
 
-  //// Get all models
-  //auto v = actorManager->Get<Bored::OGL::Model, Bored::Transform>();
+  /* ========= Render =========== */
+  auto view = active_cam->Get<Bored::Camera>().GetViewMat(camTrans.pos);
+  auto proj = GetProjMat();
 
-  ///* ========= Render =========== */
-  //auto view = active_cam->Get<Bored::Camera>().GetViewMat(camTrans.pos);
-  //auto proj = GetProjMat();
+  testShader.SetUniformMatrix4fv("mvp.View", glm::value_ptr(view));
+  testShader.SetUniformMatrix4fv("mvp.Proj", glm::value_ptr(proj));
 
-  //testShader.SetUniformMatrix4fv("mvp.View", glm::value_ptr(view));
-  //testShader.SetUniformMatrix4fv("mvp.Proj", glm::value_ptr(proj));
-
-  //testShader.Activate();
-  //for (auto& x : v)
-  //{
-  //  auto& t = v.get<Bored::Transform>(x);
-  //  auto& m = v.get<Bored::OGL::Model>(x);
-  //  //auto model = t.GetMat();
-  //  auto model = glm::mat4(1.0f);
-  //  model = glm::translate(model, t.pos);
-  //  model = glm::rotate(model, glm::radians(t.rotation.x), { 1.0f, 0.0f, 0.0f });
-  //  model = glm::rotate(model, glm::radians(t.rotation.y), { 0.0f, 1.0f, 0.0f });
-  //  model = glm::rotate(model, glm::radians(t.rotation.z), { 0.0f, 0.0f, 1.0f });
-  //  model = glm::scale(model, t.scale);
-  //  testShader.SetUniformMatrix4fv("mvp.Model", glm::value_ptr(model));
-  //  Render(m, testShader);
-  //}
+  testShader.Activate();
+  for (auto& x : v)
+  {
+    auto& t = v.get<Bored::Transform>(x);
+    auto& m = v.get<Bored::OGL::Model>(x);
+    //auto model = t.GetMat();
+    auto model = glm::mat4(1.0f);
+    model = glm::translate(model, t.pos);
+    model = glm::rotate(model, glm::radians(t.rotation.x), { 1.0f, 0.0f, 0.0f });
+    model = glm::rotate(model, glm::radians(t.rotation.y), { 0.0f, 1.0f, 0.0f });
+    model = glm::rotate(model, glm::radians(t.rotation.z), { 0.0f, 0.0f, 1.0f });
+    model = glm::scale(model, t.scale);
+    testShader.SetUniformMatrix4fv("mvp.Model", glm::value_ptr(model));
+    Render(x, m, testShader);
+  }
 
   /* ======== Render our frametex to the screen ========== */
-  //glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  glClear(GL_COLOR_BUFFER_BIT);
-  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-  screenShader.Activate();
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glViewport(0, 0, width, height);
+  glClearColor(0.1f, 0.2f, 0.4f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  //screenShader.SetUniform1i("tex", white.id);
+  screenShader.Activate();
+  glActiveTexture(GL_TEXTURE7);
+  glBindTexture(GL_TEXTURE_2D, mIDTex);
+  screenShader.SetUniform1i("tex", 7);
+
   glBindVertexArray(mScreenVao);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mScreenIbo);
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -334,17 +342,22 @@ void Renderer::OnStop() {
 std::shared_ptr<Bored::Actor> Renderer::GetActorAt(unsigned int x, unsigned y)
 {
   // TODO
+  glBindFramebuffer(GL_FRAMEBUFFER, mFbo);
+  glReadBuffer(GL_COLOR_ATTACHMENT1);
+  int32_t data = 123;
+  glReadPixels(x, height-y, 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &data);
+  std::cout << "Data: " << data << std::endl;
   return nullptr;
 }
 
 // =========== Private helper functions ============== //
-void Renderer::Render(const Bored::OGL::Model& m, Shader& shader) {
+void Renderer::Render(entt::entity id, const Bored::OGL::Model& m, Shader& shader) {
   for (auto& [mesh, mat] : m.renderables) {
-    Render(*mesh, *mat, shader);
+    Render(id, *mesh, *mat, shader);
   }
 }
 
-void Renderer::Render(Bored::Render::Mesh& me,
+void Renderer::Render(entt::entity id, Bored::Render::Mesh& me,
   Bored::OGL::Material& ma, Shader& shader) {
   // Shader is already activated, no need to activate here 
   if (me.indices.size() == 0) {
@@ -377,6 +390,8 @@ void Renderer::Render(Bored::Render::Mesh& me,
   glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0,
     sizeof(me.indices[0]) * me.indices.size(), &me.indices[0]);
 
+  shader.SetUniform1i("actorID", (int32_t)id);
+  //std::cout << "Rendering: " << (unsigned int)id << std::endl;
   // Push material data
   if (!ma.diffuse)
     ma.diffuse = std::make_shared<Bored::OGL::Texture>(
@@ -430,12 +445,6 @@ void Input::SetupCallbacks()
   glfwSetMouseButtonCallback(window, Input::MouseButtonCallback);
   glfwSetCursorEnterCallback(window, Input::MouseEnterCallback);
   glfwSetScrollCallback(window, Input::MouseScrollCallback);
-}
-
-std::shared_ptr<Bored::Actor> Bored::OGL::Input::GetCursorHoveringActor()
-{
-  // TODO
-  return std::shared_ptr<Actor>();
 }
 
 void Input::OnSetup() {

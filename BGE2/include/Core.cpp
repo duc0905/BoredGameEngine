@@ -262,6 +262,11 @@ void Input::ResetPriority(std::shared_ptr<Context> con, int priorityLevel)
     }
 }
 
+std::shared_ptr<Actor> Input::GetCursorHoveringActor()
+{
+    return renderer->GetActorAt(mouseInfo.posX, mouseInfo.posY);
+}
+
 void Input::Context::ResetPriority(int priority)
 {
     priority_ = priority;

@@ -30,6 +30,7 @@ class ClassicGamemode : public Bored::Gamemode {
 
 public:
   virtual void OnSetup() override;
+  virtual bool OnTick(double dt) override;
   virtual void OnImGui() override;
 };
 

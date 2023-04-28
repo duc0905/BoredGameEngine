@@ -38,9 +38,11 @@ in MVPMats vMVPMats;
 uniform Material mat;
 uniform Light light;
 uniform Camera cam;
+uniform int actorID;
 
 /* ===== Outputs ===== */
-out vec4 glColor;
+layout(location = 0) out vec4 glColor;
+layout(location = 1) out int ID;
 
 /* ===== Functions ===== */
 vec3 GetAmbient(Material m, Light l, vec2 uv)
@@ -87,4 +89,5 @@ void main()
   vec4 FragPos = vMVPMats.Model * vec4(vPos, 1.0);
   ans *= GetPhongModel(mat, cam, light, FragPos.xyz, vUV, vNorm);
   glColor = ans;
+  ID = actorID;
 }
