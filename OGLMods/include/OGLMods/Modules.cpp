@@ -54,9 +54,10 @@ void Renderer::OnSetup() {
     glEnable(GL_DEBUG_OUTPUT);
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
     glDebugMessageCallback(glDebugOutput, nullptr);
-    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr,
-      GL_TRUE);
+    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_LOW, 0, nullptr, GL_FALSE);
   }
+  glClearColor(0.1f, 0.2f, 0.4f, 1.0f);
 
   /* Setup ImGui */
   IMGUI_CHECKVERSION();
@@ -67,7 +68,7 @@ void Renderer::OnSetup() {
   ImGui_ImplGlfw_InitForOpenGL(window, true);
   ImGui_ImplOpenGL3_Init("#version 330 core");
 
-  meshShader = Shader("mesh.vert", "mesh.frag");
+  screenShader = Shader("screen.vert", "screen.frag");
   testShader = Shader("test.vert", "test.frag");
 
   glGenVertexArrays(1, &mVao);
@@ -96,10 +97,74 @@ void Renderer::OnSetup() {
 
   glBindBuffer(GL_ARRAY_BUFFER, mNormVbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * OGL_MAX_VERTICES, nullptr,
-    GL_DYNAMIC_DRAW); glEnableVertexArrayAttrib(mVao, 2);
+    GL_DYNAMIC_DRAW);
+  glEnableVertexArrayAttrib(mVao, 2);
   glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
 
-  unsigned char d[] = { 
+  // Setup framebuffer
+  glGenFramebuffers(1, &mFbo);
+  glBindFramebuffer(GL_FRAMEBUFFER, mFbo);
+
+  // Setup frame texture and id texture
+  glGenTextures(1, &mFrameTex);
+  glBindTexture(GL_TEXTURE_2D, mFrameTex);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glBindTexture(GL_TEXTURE_2D, 0);
+
+  glGenTextures(1, &mIDTex);
+  glBindTexture(GL_TEXTURE_2D, mIDTex);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_R32UI, width, height, 0, GL_RED_INTEGER, GL_UNSIGNED_BYTE, nullptr);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glBindTexture(GL_TEXTURE_2D, 0);
+
+  glGenRenderbuffers(1, &mRbo);
+  glBindRenderbuffer(GL_RENDERBUFFER, mRbo);
+  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mFrameTex, 0);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, mIDTex, 0);
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mRbo);
+  if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+  {
+    std::cout << "[Critical]: Error while creating framebuffer" << std::endl;
+  }
+  GLenum b[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+  glDrawBuffers(2, b);
+
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+  float screenData[] = {
+    -1.0f, -1.0f, 0.0f, 0.0f,
+    1.0f, -1.0f, 1.0f, 0.0f,
+    1.0f, 1.0f, 1.0f, 1.0f,
+    -1.0f, 1.0f, 0.0f, 1.0f
+  };
+
+  unsigned int indices[] = {
+    0, 1, 2,
+    0, 2, 3
+  };
+
+  glGenVertexArrays(1, &mScreenVao);
+  glBindVertexArray(mScreenVao);
+  glGenBuffers(1, &mScreenVbo);
+  glGenBuffers(1, &mScreenIbo);
+
+  glBindBuffer(GL_ARRAY_BUFFER, mScreenVbo);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 16, screenData, GL_STATIC_DRAW);
+  glEnableVertexArrayAttrib(mScreenVao, 0);
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, 0);
+  glEnableVertexArrayAttrib(mScreenVao, 1);
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void*)(sizeof(float) * 2));
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mScreenIbo);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 6, indices, GL_STATIC_DRAW);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+  unsigned char d[] = {
     0xff, 0xff, 0xff, 0xff, // white
     0xff, 0x00, 0x00, 0xff // red
   };
@@ -110,7 +175,7 @@ void Renderer::OnSetup() {
     0x0f, 0x00, 0x00, 0xff,
     0xff, 0xff, 0xff, 0xff,
   };
-  std::shared_ptr<Bored::Render::Texture> t = 
+  std::shared_ptr<Bored::Render::Texture> t =
     Bored::Render::TextureFactory::Load("white", 1, 1, 4, d);
   white = Texture(t);
 
@@ -135,10 +200,10 @@ void Renderer::OnSetup() {
   l.diffuse = 0.35f;
   l.specular = 0.1f;
 
-  img.Bind(testShader, "mat.diffuse", 0);
-  mixed.Bind(testShader, "mat.specular", 1);
-  testShader.SetUniform1f("mat.opacity", 1.0f);
-  testShader.SetUniform1i("mat.shiny", 32);
+  //img.Bind(testShader, "mat.diffuse", 0);
+  //mixed.Bind(testShader, "mat.specular", 1);
+  //testShader.SetUniform1f("mat.opacity", 1.0f);
+  //testShader.SetUniform1i("mat.shiny", 32);
 
   t.reset();
 
@@ -153,7 +218,10 @@ void Renderer::OnSetup() {
 }
 
 bool Renderer::OnTick(double dt) {
-  /* ========== Data preparation =========== */
+  /* ========== Render to our framebuffer =========== */
+  glBindFramebuffer(GL_FRAMEBUFFER, mFbo);
+  glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   // Get current camera
   if (!active_cam)
   {
@@ -172,7 +240,7 @@ bool Renderer::OnTick(double dt) {
   testShader.SetUniform3f("cam.dir", dir.x, dir.y, dir.z);
   testShader.SetUniform3f("cam.up", camCam.up.x, camCam.up.y, camCam.up.z);
 
-  // Get all light sources
+  //// Get all light sources
   auto& l = light->Get<Bored::Render::Light>();
   auto& lTrans = light->Get<Bored::Transform>();
   // Set light sources
@@ -181,9 +249,6 @@ bool Renderer::OnTick(double dt) {
   testShader.SetUniform1f("light.ambient", l.ambient);
   testShader.SetUniform1f("light.diffuse", l.diffuse);
   testShader.SetUniform1f("light.specular", l.specular);
-
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
   // Get all models
   auto v = actorManager->Get<Bored::OGL::Model, Bored::Transform>();
@@ -208,30 +273,23 @@ bool Renderer::OnTick(double dt) {
     model = glm::rotate(model, glm::radians(t.rotation.z), { 0.0f, 0.0f, 1.0f });
     model = glm::scale(model, t.scale);
     testShader.SetUniformMatrix4fv("mvp.Model", glm::value_ptr(model));
-    Render(m, testShader);
+    Render(x, m, testShader);
   }
 
-  // Render a rectangle
-  Bored::Render::Mesh me;
-  Bored::OGL::Material ma;
-  std::vector<glm::vec3> pos = {
-    {0.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, 
-    {1.0f, 1.0f, 0.0}, {0.0f, 1.0f, 0.0f} };
-  std::vector<glm::vec2> uvs = 
-    { {0.0, 0.0}, {1.0, 0.0}, {1.0, 1.0}, {0.0, 1.0} };
-  std::vector<glm::vec3> norms = {
-      {0.0, 0.0, 1.0}, {0.0, 0.0, 1.0}, {0.0, 0.0, 1.0}, {0.0, 0.0, 1.0} };
-  std::vector<unsigned int> indices = { 0, 1, 2, 0, 2, 3 };
+  /* ======== Render our frametex to the screen ========== */
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glViewport(0, 0, width, height);
+  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  me.pos = pos;
-  me.uvs = uvs;
-  me.norms = norms;
-  me.indices = indices;
-  auto model = glm::mat4(1.0f);
-  model = glm::translate(model, { -0.5f, -0.5f, -1.0f });
-  model = glm::scale(model, { 8.0f, 8.0f, 8.0f });
-  testShader.SetUniformMatrix4fv("mvp.Model", glm::value_ptr(model));
-  Render(me, ma, testShader);
+  screenShader.Activate();
+  glActiveTexture(GL_TEXTURE7);
+  glBindTexture(GL_TEXTURE_2D, mFrameTex);
+  screenShader.SetUniform1i("tex", 7);
+
+  glBindVertexArray(mScreenVao);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mScreenIbo);
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
   /* ========== ImGui =========== */
   ImGui_ImplOpenGL3_NewFrame();
@@ -300,13 +358,26 @@ void Renderer::OnStop() {
   glfwTerminate();
 }
 
-void Renderer::Render(const Bored::OGL::Model& m, Shader& shader) {
+std::shared_ptr<Bored::Actor> Renderer::GetActorAt(unsigned int x, unsigned y)
+{
+  // TODO
+  glBindFramebuffer(GL_FRAMEBUFFER, mFbo);
+  glReadBuffer(GL_COLOR_ATTACHMENT1);
+  entt::entity id = entt::null;
+  glReadPixels(x, height-y, 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &id);
+  if (actorManager->IsValidActor(id))
+    return actorManager->Get<IDToPtr>(id);
+  return nullptr;
+}
+
+// =========== Private helper functions ============== //
+void Renderer::Render(entt::entity id, const Bored::OGL::Model& m, Shader& shader) {
   for (auto& [mesh, mat] : m.renderables) {
-    Render(*mesh, *mat, shader);
+    Render(id, *mesh, *mat, shader);
   }
 }
 
-void Renderer::Render(Bored::Render::Mesh& me,
+void Renderer::Render(entt::entity id, Bored::Render::Mesh& me,
   Bored::OGL::Material& ma, Shader& shader) {
   // Shader is already activated, no need to activate here 
   if (me.indices.size() == 0) {
@@ -339,6 +410,8 @@ void Renderer::Render(Bored::Render::Mesh& me,
   glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0,
     sizeof(me.indices[0]) * me.indices.size(), &me.indices[0]);
 
+  shader.SetUniform1i("actorID", (int32_t)id);
+  //std::cout << "Rendering: " << (unsigned int)id << std::endl;
   // Push material data
   if (!ma.diffuse)
     ma.diffuse = std::make_shared<Bored::OGL::Texture>(
@@ -354,6 +427,46 @@ void Renderer::Render(Bored::Render::Mesh& me,
   glDrawElements(GL_TRIANGLES, me.indices.size(), GL_UNSIGNED_INT, 0);
 }
 
+void Input::SetCursorImage(unsigned char* image, unsigned int width, unsigned int height)
+{
+  GLFWimage im;
+  im.pixels = image;
+  im.width = width;
+  im.height = height;
+  GLFWcursor* c = glfwCreateCursor(&im, 0, 0);
+  if (c == NULL) {
+    std::cout << "[Warning]: Something went wrong when setting cursor image." << std::endl;
+  }
+  if (window != nullptr)
+    glfwSetCursor(window, c);
+  else {
+    std::cout << "[Critical]: Input is not being used with OGL module." << std::endl;
+  }
+}
+
+void Input::EnableCursor()
+{
+  if (window) {
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+  }
+}
+
+void Input::DisableCursor()
+{
+  if (window) {
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  }
+}
+
+void Input::SetupCallbacks()
+{
+  glfwSetKeyCallback(window, Input::KeyCallback);
+  glfwSetCursorPosCallback(window, Input::MousePosCallback);
+  glfwSetMouseButtonCallback(window, Input::MouseButtonCallback);
+  glfwSetCursorEnterCallback(window, Input::MouseEnterCallback);
+  glfwSetScrollCallback(window, Input::MouseScrollCallback);
+}
+
 void Input::OnSetup() {
   std::shared_ptr<OGL::Renderer> r =
     std::dynamic_pointer_cast<OGL::Renderer>(renderer);
@@ -362,6 +475,7 @@ void Input::OnSetup() {
       << std::endl;
   }
   window = r->window;
+  SetupCallbacks();
 }
 
 bool Input::OnTick(double dt) {
@@ -378,6 +492,51 @@ void Bored::OGL::Input::OnStop()
 {
 }
 
+void Input::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+  input->EvaluateKey(input->GetKey(key), input->GetAction(action), input->GetMods(mods), 1.0f);
+}
+
+void Input::MousePosCallback(GLFWwindow* window, double x, double y)
+{
+
+  input->mouseInfo.posX = x;
+  input->mouseInfo.posY = y;
+  input->EvaluateKey(Input::MOUSE_POS_X, Input::PRESS, 0, x);
+  input->EvaluateKey(Input::MOUSE_POS_Y, Input::PRESS, 0, y);
+}
+
+void Input::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+{
+  // TODO
+  input->EvaluateKey(input->GetKey(button), input->GetAction(action), input->GetMods(mods), 1.0f);
+  if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
+    //auto a = input->GetCursorHoveringActor();
+    //if (a != nullptr)
+    //	a->OnClick();
+  }
+}
+
+void Input::MouseEnterCallback(GLFWwindow* window, int entered)
+{
+  if (entered) {
+    input->EvaluateKey(Input::MOUSE_ENTER, Input::PRESS, 0, 1.0f);
+    input->mouseInfo.isEntered = true;
+  }
+  else {
+    input->EvaluateKey(Input::MOUSE_LEAVE, Input::PRESS, 0, 1.0f);
+    input->mouseInfo.isEntered = false;
+  }
+}
+
+void Input::MouseScrollCallback(GLFWwindow* window, double x, double y)
+{
+  input->EvaluateKey(Input::MOUSE_SCROLL_X, Input::PRESS, 0, x);
+  input->EvaluateKey(Input::MOUSE_SCROLL_Y, Input::PRESS, 0, y);
+  input->mouseInfo.scrollX = x;
+  input->mouseInfo.scrollY = y;
+}
+
 void Renderer::window_size_callback(GLFWwindow* window, int w, int h) {
   renderer->width = w;
   renderer->height = h;
@@ -386,6 +545,87 @@ void Renderer::window_size_callback(GLFWwindow* window, int w, int h) {
 void Renderer::framebuffer_size_callback(GLFWwindow* window, int w, int h) {
   glViewport(0, 0, w, h);
 }
+
+Bored::Input::Key Input::GetKey(int keyCode)
+{
+  switch (keyCode) {
+  case GLFW_KEY_1: return Input::KEY_1;
+  case GLFW_KEY_2: return Input::KEY_2;
+  case GLFW_KEY_3: return Input::KEY_3;
+  case GLFW_KEY_4: return Input::KEY_4;
+  case GLFW_KEY_5: return Input::KEY_5;
+  case GLFW_KEY_6: return Input::KEY_6;
+  case GLFW_KEY_7: return Input::KEY_7;
+  case GLFW_KEY_8: return Input::KEY_8;
+  case GLFW_KEY_9: return Input::KEY_9;
+  case GLFW_KEY_0: return Input::KEY_0;
+  case GLFW_KEY_Q: return Input::KEY_Q;
+  case GLFW_KEY_W: return Input::KEY_W;
+  case GLFW_KEY_E: return Input::KEY_E;
+  case GLFW_KEY_R: return Input::KEY_R;
+  case GLFW_KEY_T: return Input::KEY_T;
+  case GLFW_KEY_Y: return Input::KEY_Y;
+  case GLFW_KEY_U: return Input::KEY_U;
+  case GLFW_KEY_I: return Input::KEY_I;
+  case GLFW_KEY_O: return Input::KEY_O;
+  case GLFW_KEY_P: return Input::KEY_P;
+  case GLFW_KEY_A: return Input::KEY_A;
+  case GLFW_KEY_S: return Input::KEY_S;
+  case GLFW_KEY_D: return Input::KEY_D;
+  case GLFW_KEY_F: return Input::KEY_F;
+  case GLFW_KEY_G: return Input::KEY_G;
+  case GLFW_KEY_H: return Input::KEY_H;
+  case GLFW_KEY_J: return Input::KEY_J;
+  case GLFW_KEY_K: return Input::KEY_K;
+  case GLFW_KEY_L: return Input::KEY_L;
+  case GLFW_KEY_Z: return Input::KEY_Z;
+  case GLFW_KEY_X: return Input::KEY_X;
+  case GLFW_KEY_C: return Input::KEY_C;
+  case GLFW_KEY_V: return Input::KEY_V;
+  case GLFW_KEY_B: return Input::KEY_B;
+  case GLFW_KEY_N: return Input::KEY_N;
+  case GLFW_KEY_M: return Input::KEY_M;
+  case GLFW_KEY_SPACE: return Input::KEY_SPACE;
+  case GLFW_KEY_LEFT_SHIFT: return Input::KEY_LEFT_SHIFT;
+  case GLFW_KEY_LEFT_CONTROL: return Input::KEY_LEFT_CONTROL;
+    // mouse
+  case GLFW_MOUSE_BUTTON_1: return Input::KEY_MB_1;
+  case GLFW_MOUSE_BUTTON_2: return Input::KEY_MB_2;
+  case GLFW_MOUSE_BUTTON_3: return Input::KEY_MB_3;
+  case GLFW_MOUSE_BUTTON_4: return Input::KEY_MB_4;
+  case GLFW_MOUSE_BUTTON_5: return Input::KEY_MB_5;
+  case GLFW_MOUSE_BUTTON_6: return Input::KEY_MB_6;
+  case GLFW_MOUSE_BUTTON_7: return Input::KEY_MB_7;
+  case GLFW_MOUSE_BUTTON_8: return Input::KEY_MB_8;
+
+    // default
+  default: return Input::KEY_UNKNOWN;
+  }
+}
+
+int Input::GetMods(int modBits)
+{
+  int ans = 0;
+  if (modBits & GLFW_MOD_CONTROL)
+    ans |= Input::CTRL;
+  if (modBits & GLFW_MOD_SHIFT)
+    ans |= Input::SHIFT;
+  if (modBits & GLFW_MOD_ALT)
+    ans |= Input::ALT;
+  return ans;
+}
+
+Bored::Input::Action Input::GetAction(int actionCode)
+{
+  switch (actionCode) {
+  case GLFW_PRESS: return Input::PRESS;
+  case GLFW_REPEAT: return Input::REPEAT;
+  case GLFW_RELEASE: return Input::RELEASE;
+  default: return Input::UNKNOWN;
+  }
+}
+
+
 
 void APIENTRY glDebugOutput(GLenum source, GLenum type, unsigned int id,
   GLenum severity, GLsizei length,
@@ -464,6 +704,5 @@ void APIENTRY glDebugOutput(GLenum source, GLenum type, unsigned int id,
     std::cout << "Severity: notification";
     break;
   }
-  std::cout << std::endl;
   std::cout << std::endl;
 }
