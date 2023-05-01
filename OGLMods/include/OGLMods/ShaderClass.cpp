@@ -98,6 +98,13 @@ void Shader::SetUniform1i(const std::string& name, int v0)
 	glUniform1i(location, v0);
 }
 
+void Shader::SetUniform1ui(const std::string& name, unsigned int v0)
+{
+	Activate();
+	int location = GetUniformLocation(name);
+	glUniform1ui(location, v0);
+}
+
 void Shader::SetUniform1f(const std::string& name, float v0)
 {
 	Activate();

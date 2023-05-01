@@ -126,10 +126,10 @@ struct Piece {
   std::string name = "";
   bool isDead = false;
 
-  Player* side;
+  std::shared_ptr<Player> side;
   std::unique_ptr<MoveBehaviour> mb;
   Piece() = default;
-  Piece(Player* p, MoveBehaviour* m) : side(p), mb(m) {}
+  Piece(std::shared_ptr<Player> p, MoveBehaviour* m) : side(p), mb(m) {}
 
   std::vector<glm::vec2> GetRelativeMoves() const
   {
