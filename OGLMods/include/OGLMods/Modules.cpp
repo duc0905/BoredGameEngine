@@ -347,7 +347,7 @@ void Renderer::OnStop() {
   glDeleteBuffers(1, &mUVsVbo);
   glDeleteBuffers(1, &mNormVbo);
   glDeleteBuffers(1, &mIbo);
-  meshShader.Delete();
+  screenShader.Delete();
   testShader.Delete();
   white.Delete();
   red.Delete();
