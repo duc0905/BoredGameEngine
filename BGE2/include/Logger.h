@@ -27,6 +27,8 @@ public:
 
   // Inherited via Module
   virtual void OnSetup() override;
+  virtual bool OnTick(double dt) override;
+  virtual void OnStop() override;
 public:
   class Source {
     friend class Logger;
@@ -75,15 +77,15 @@ public:
   class Behaviour {
     friend class Logger;
     virtual void OnTick(double dt) = 0;
-    virtual void OnClose() = 0;
+    virtual void OnStop() = 0;
   };
   class InstantBehaviour : Behaviour {
     virtual void OnTick(double dt); // TODO
-    virtual void OnClose() {};
+    virtual void OnStop() {};
   };
   class FlushBehaviour : Behaviour {
     virtual void OnTick(double dt) {};
-    virtual void OnClose(); // TODO
+    virtual void OnStop(); // TODO
   };
 private:
   // TODO

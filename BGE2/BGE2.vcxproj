@@ -182,12 +182,14 @@
     <ClInclude Include="include\Core.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="include\InputKey.h" />
+    <ClInclude Include="include\Logger.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="include\Render\Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\Camera.cpp" />
     <ClCompile Include="include\Core.cpp" />
+    <ClCompile Include="include\Logger.cpp" />
     <ClCompile Include="include\Render\Utils.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
