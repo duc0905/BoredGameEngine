@@ -40,6 +40,7 @@ public:
 	// Inherited via Input
 	virtual void OnSetup() override;
 	virtual bool OnTick(double dt) override;
+  virtual void OnStop() override;
 
 private:
 	static double mouse_X;
