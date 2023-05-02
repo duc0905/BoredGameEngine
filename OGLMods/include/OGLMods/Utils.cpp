@@ -14,14 +14,14 @@ Bored::OGL::Texture::Texture(std::shared_ptr<Bored::Render::Texture> tex)
   GLenum format = GL_RGBA;
   GLenum inFormat = GL_RGBA;
   
-  if (tex->bpp != 4)
+  if (bpp != 4)
   {
     std::cout << "[Warning]: Bored has yet support bpp other than 4. Texture '"
-      << tex->name << "' might not display correctly!" << std::endl;
+      << name << "' might not display correctly!" << std::endl;
   }
  
-  glTexImage2D(GL_TEXTURE_2D, 0, inFormat, tex->width, tex->height, 0, 
-    format, GL_UNSIGNED_BYTE, tex->data);
+  glTexImage2D(GL_TEXTURE_2D, 0, inFormat, width, height, 0, 
+    format, GL_UNSIGNED_BYTE, data);
 
   glBindTexture(GL_TEXTURE_2D, 0);
   isInit = true;
@@ -38,7 +38,7 @@ void Bored::OGL::Texture::Bind(Shader& shader, const std::string& uniName, unsig
 void Bored::OGL::Texture::Delete()
 {
   glDeleteTextures(1, &id);
-  delete[] data;
+  isInit = false;
 }
 
 Bored::OGL::Material::Material(std::shared_ptr<Bored::Render::Material> mat)

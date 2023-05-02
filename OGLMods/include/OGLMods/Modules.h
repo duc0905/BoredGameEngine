@@ -43,6 +43,7 @@ public:
 	// Inherited via Input
 	virtual void OnSetup() override;
 	virtual bool OnTick(double dt) override;
+  virtual void OnStop() override;
 public:
 	virtual void SetCursorImage(unsigned char* image, unsigned int width, unsigned int height);
 	virtual void EnableCursor() override;
