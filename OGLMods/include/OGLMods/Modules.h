@@ -31,6 +31,9 @@ private:
   void Render(entt::entity id, Bored::Render::Mesh&, Bored::OGL::Material&, Shader& shader);
   static void window_size_callback(GLFWwindow* window, int w, int h);
   static void framebuffer_size_callback(GLFWwindow* window, int w, int h);
+public:
+  GLFWwindowsizefun prevWindowSizeCb{ nullptr };
+  GLFWframebuffersizefun prevFramebufferSizeCb{ nullptr };
 };
 
 class Input : public Bored::Input {
@@ -41,7 +44,13 @@ public:
 	virtual void OnSetup() override;
 	virtual bool OnTick(double dt) override;
   virtual void OnStop() override;
-
+public:
+	virtual void SetCursorImage(unsigned char* image, unsigned int width, unsigned int height);
+	virtual void EnableCursor() override;
+	virtual void DisableCursor() override;
+	virtual Input::Key GetKey(int keyCode) override;
+	virtual int GetMods(int modBits) override;
+	virtual Input::Action GetAction(int actionCode) override;
 private:
 	static double mouse_X;
 	static double mouse_Y;
@@ -54,12 +63,11 @@ private:
 
 	void SetupCallbacks();
 public:
-	virtual void SetCursorImage(unsigned char* image, unsigned int width, unsigned int height);
-	virtual void EnableCursor();
-	virtual void DisableCursor();
-	virtual Input::Key GetKey(int keyCode) override;
-	virtual int GetMods(int modBits) override;
-	virtual Input::Action GetAction(int actionCode) override;
+  GLFWkeyfun prevKeyCb{ nullptr };
+  GLFWmousebuttonfun prevMouseButtonCb{ nullptr };
+  GLFWcursorenterfun prevCursorEnterCb{ nullptr };
+  GLFWcursorposfun prevCursorPosCb{ nullptr };
+  GLFWscrollfun prevScrollCb{ nullptr };
 };
 };  // namespace OGL
 }  // namespace Bored

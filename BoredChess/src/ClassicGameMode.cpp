@@ -39,11 +39,11 @@ void ClassicGamemode::SetupCamera()
     inGame->AddRangeMapping(Bored::Input::KEY_D, 0, "MOVE_CAM_HOR", 1.0f);
     inGame->AddRangeMapping(Bored::Input::KEY_W, 0, "MOVE_CAM_VERT", 1.0f);
     inGame->AddRangeMapping(Bored::Input::KEY_S, 0, "MOVE_CAM_VERT", -1.0f);
-    inGame->AddRangeMapping(Bored::Input::MOUSE_POS_X, 0, "MOVE_CAM_YAW", -0.1f);
+    //inGame->AddRangeMapping(Bored::Input::MOUSE_POS_X, 0, "MOVE_CAM_YAW", -0.1f);
     // In GLFW, top-left corner is 0,0, so the weight is  negative
-    inGame->AddRangeMapping(Bored::Input::MOUSE_POS_Y, 0, "MOVE_CAM_PITCH", -0.1f);
+    //inGame->AddRangeMapping(Bored::Input::MOUSE_POS_Y, 0, "MOVE_CAM_PITCH", -0.1f);
     input->AddContext(inGame);
-    input->DeactivateContext(inGame);
+    //input->DeactivateContext(inGame);
 
     input->BindRange("MOVE_CAM_HOR",
       [this](Bored::Input::Action action, float val) {
