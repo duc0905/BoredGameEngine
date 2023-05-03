@@ -19,31 +19,42 @@ public:
     std::string message;
     std::time_t ts;
   };
+  class Source {
+    friend class Logger;
+  public:
+    Source() = default;
+    virtual ~Source() {}
+    virtual Source& log(const std::string const& msg) = 0;
+    virtual void OnSetup() = 0;
+    virtual void OnStop() = 0;
+  };
+  class Formatter {
+    friend class Logger;
+  public:
+    [[nodiscard]] virtual const std::string& format(Severity s, const std::string& msg, std::time_t ts) = 0;
+    virtual void OnSetup() = 0;
+    virtual void OnStop() = 0;
+  };
 public:
-  void log(Severity s, const std::string& msg) noexcept { doLog(s, msg); };
+  Logger(std::unique_ptr<Source> src, std::unique_ptr<Formatter> fmt)
+    : source{std::move(src)}, formatter{std::move(fmt)} {}
+
+  virtual Logger& log(Severity s, const std::string& msg) noexcept = 0;
   void info(const std::string& msg) noexcept { log(Severity::INFO, msg); }
   void warn(const std::string& msg) noexcept { log(Severity::WARNING, msg); }
   void error(const std::string& msg) noexcept { log(Severity::ERROR, msg); }
 
   // Inherited via Module
   virtual void OnSetup() override;
-  virtual bool OnTick(double dt) override;
   virtual void OnStop() override;
 public:
-  class Source {
-    friend class Logger;
-  public:
-    Source() = default;
-    virtual ~Source() {}
-
-    template <typename T>
-    Source& operator <<(T val) { return *this; }
-  };
   class ConsoleSource : Source {
     ConsoleSource() = default;
 
-    template <typename T>
-    ConsoleSource& operator <<(T val) { std::cout << val; return *this; }
+    // Inherited via Source
+    virtual Source& log(const std::string const& msg) override;
+    virtual void OnSetup() {};
+    virtual void OnStop() {};
   };
   class FileSource : Source {
   public:
@@ -51,53 +62,62 @@ public:
       : FileSource("./logs/" + GetDefaultFilename()) {}
     FileSource(const std::string& filename)
       : f(filename) {}
-    virtual ~FileSource() override; // TODO close file
+    virtual ~FileSource() override;
 
-    template <typename T>
-    FileSource& operator <<(T val) { }
+    virtual void OnSetup() {};
+    virtual void OnStop() {};
   private:
     std::ofstream f;
-    const std::string& GetDefaultFilename() const noexcept;
+    [[nodiscard]] const std::string& GetDefaultFilename() const noexcept;
+
+    // Inherited via Source
+    virtual Source& log(const std::string const& msg) override;
   };
 
-  class Formatter {
-    friend class Logger;
-    virtual const std::string& Format(Severity s, const std::string& msg, std::time_t ts) = 0;
-  };
   class StandardFormatter : Formatter {
-    virtual const std::string& Format(Severity s, const std::string& msg, std::time_t ts) override;
-  };
-  class JSONFormatter : Formatter {
-    virtual const std::string& Format(Severity s, const std::string& msg, std::time_t ts) override;
-  };
-  class YAMLFormatter : Formatter {
-    virtual const std::string& Format(Severity s, const std::string& msg, std::time_t ts) override;
-  };
-
-  class Behaviour {
-    friend class Logger;
-    virtual void OnTick(double dt) = 0;
-    virtual void OnStop() = 0;
-  };
-  class InstantBehaviour : Behaviour {
-    virtual void OnTick(double dt); // TODO
+    virtual const std::string& format(Severity s, const std::string& msg, std::time_t ts) override;
+    virtual void OnSetup() {};
     virtual void OnStop() {};
   };
-  class FlushBehaviour : Behaviour {
-    virtual void OnTick(double dt) {};
-    virtual void OnStop(); // TODO
+  class JSONFormatter : Formatter {
+    virtual const std::string& format(Severity s, const std::string& msg, std::time_t ts) = 0;
+    virtual void OnSetup() = 0;
+    virtual void OnStop() = 0;
   };
-private:
-  // TODO
+  class YAMLFormatter : Formatter {
+    virtual const std::string& format(Severity s, const std::string& msg, std::time_t ts) = 0;
+    virtual void OnSetup()  = 0;
+    virtual void OnStop() = 0;
+  };
+protected:
   // Source
-  std::unique_ptr<Source> s;
+  std::unique_ptr<Source> source;
   // Formatter
-  std::unique_ptr<Formatter> f;
-  // Behaviour: Flush / instant
-  std::unique_ptr<Behaviour> b;
-  std::vector<Log> logs;
+  std::unique_ptr<Formatter> formatter;
+
+};
+
+class InstantLogger : Logger
+{
+  InstantLogger(std::unique_ptr<Source> src, std::unique_ptr<Formatter> fmt)
+    : Logger(std::move(src), std::move(fmt)) {}
+
+  // Inherited via Logger
+  virtual Logger& log(Severity s, const std::string& msg) noexcept override;
+};
+
+class FlushLogger : Logger
+{
+public:
+  FlushLogger(std::unique_ptr<Source> src, std::unique_ptr<Formatter> fmt)
+    : Logger(std::move(src), std::move(fmt)) {}
+  virtual ~FlushLogger();
+
+  // Inherited via Logger
+  virtual Logger& log(Severity s, const std::string& msg) noexcept override;
 private:
-  void doLog(Severity s, const std::string& msg);
+  std::vector<Log> logs;
+
 };
 
 }
