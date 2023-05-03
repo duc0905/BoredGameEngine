@@ -99,7 +99,8 @@ namespace Bored
      * @return entt::view of those components
      */
     template <typename... Comps>
-    entt::basic_view<entt::entity, entt::exclude_t<>, Comps...> Get()
+    decltype(auto) Get()
+    //entt::basic_view<entt::entity, entt::exclude_t<>, Comps...> Get()
     {
       return actor_registry.view<Comps...>();
     }
@@ -119,7 +120,7 @@ namespace Bored
           << " for invalid actor: " << (int)id << std::endl;
       }
 
-      if (actor_registry.has<T>(id))
+      if (actor_registry.any_of<T>(id))
       {
         std::cout << "[Warning]: Component '" << typeid(T).name()
           << "' already exist for actor " << (uint64_t)id
@@ -140,7 +141,7 @@ namespace Bored
         return;
       }
 
-      if (!actor_registry.has<T>(id))
+      if (!actor_registry.any_of<T>(id))
       {
         std::cout << "[Warning]: Actor " << (uint64_t)id << " does not have Component '"
           << typeid(T).name() << "'. Not removing any component!" << std::endl;

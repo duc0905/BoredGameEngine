@@ -63,6 +63,9 @@ void Renderer::OnSetup() {
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
   ImGui::StyleColorsDark();
+  ImGuiIO& io = ImGui::GetIO();
+  io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+  io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
   // Setup Platform/Renderer backends
   ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -268,9 +271,9 @@ bool Renderer::OnTick(double dt) {
     //auto model = t.GetMat();
     auto model = glm::mat4(1.0f);
     model = glm::translate(model, t.pos);
-    model = glm::rotate(model, glm::radians(t.rotation.x), { 1.0f, 0.0f, 0.0f });
-    model = glm::rotate(model, glm::radians(t.rotation.y), { 0.0f, 1.0f, 0.0f });
-    model = glm::rotate(model, glm::radians(t.rotation.z), { 0.0f, 0.0f, 1.0f });
+    model = glm::rotate(model, glm::radians<float>(t.rotation.x), { 1.0f, 0.0f, 0.0f });
+    model = glm::rotate(model, glm::radians<float>(t.rotation.y), { 0.0f, 1.0f, 0.0f });
+    model = glm::rotate(model, glm::radians<float>(t.rotation.z), { 0.0f, 0.0f, 1.0f });
     model = glm::scale(model, t.scale);
     testShader.SetUniformMatrix4fv("mvp.Model", glm::value_ptr(model));
     Render(x, m, testShader);
@@ -305,6 +308,15 @@ bool Renderer::OnTick(double dt) {
   ImGui::Render();
   glViewport(0, 0, width, height);
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+  ImGuiIO& io = ImGui::GetIO();
+  if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+  {
+    //GLFWwindow* backup_current_context = glfwGetCurrentContext();
+    ImGui::UpdatePlatformWindows();
+    ImGui::RenderPlatformWindowsDefault();
+    glfwMakeContextCurrent(window);
+  }
 
   glfwSwapBuffers(window);
   return false;
@@ -460,11 +472,11 @@ void Input::DisableCursor()
 
 void Input::SetupCallbacks()
 {
-  glfwSetKeyCallback(window, Input::KeyCallback);
-  glfwSetCursorPosCallback(window, Input::MousePosCallback);
-  glfwSetMouseButtonCallback(window, Input::MouseButtonCallback);
-  glfwSetCursorEnterCallback(window, Input::MouseEnterCallback);
-  glfwSetScrollCallback(window, Input::MouseScrollCallback);
+  prevKeyCb = glfwSetKeyCallback(window, Input::KeyCallback);
+  prevCursorPosCb = glfwSetCursorPosCallback(window, Input::MousePosCallback);
+  prevMouseButtonCb = glfwSetMouseButtonCallback(window, Input::MouseButtonCallback);
+  prevCursorEnterCb = glfwSetCursorEnterCallback(window, Input::MouseEnterCallback);
+  prevScrollCb = glfwSetScrollCallback(window, Input::MouseScrollCallback);
 }
 
 void Input::OnSetup() {
@@ -494,11 +506,16 @@ void Bored::OGL::Input::OnStop()
 
 void Input::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+  if (auto prev = std::dynamic_pointer_cast<Bored::OGL::Input>(input)->prevKeyCb)
+    prev(window, key, scancode, action, mods);
+
   input->EvaluateKey(input->GetKey(key), input->GetAction(action), input->GetMods(mods), 1.0f);
 }
 
 void Input::MousePosCallback(GLFWwindow* window, double x, double y)
 {
+  if (auto prev = std::dynamic_pointer_cast<Bored::OGL::Input>(input)->prevCursorPosCb)
+    prev(window, x, y);
 
   input->mouseInfo.posX = x;
   input->mouseInfo.posY = y;
@@ -508,6 +525,9 @@ void Input::MousePosCallback(GLFWwindow* window, double x, double y)
 
 void Input::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
+  if (auto prev = std::dynamic_pointer_cast<Bored::OGL::Input>(input)->prevMouseButtonCb)
+    prev(window, button, action, mods);
+
   // TODO
   input->EvaluateKey(input->GetKey(button), input->GetAction(action), input->GetMods(mods), 1.0f);
   if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
@@ -519,6 +539,9 @@ void Input::MouseButtonCallback(GLFWwindow* window, int button, int action, int 
 
 void Input::MouseEnterCallback(GLFWwindow* window, int entered)
 {
+  if (auto prev = std::dynamic_pointer_cast<Bored::OGL::Input>(input)->prevCursorEnterCb)
+    prev(window, entered);
+
   if (entered) {
     input->EvaluateKey(Input::MOUSE_ENTER, Input::PRESS, 0, 1.0f);
     input->mouseInfo.isEntered = true;
@@ -531,6 +554,9 @@ void Input::MouseEnterCallback(GLFWwindow* window, int entered)
 
 void Input::MouseScrollCallback(GLFWwindow* window, double x, double y)
 {
+  if (auto prev = std::dynamic_pointer_cast<Bored::OGL::Input>(input)->prevScrollCb)
+    prev(window, x, y);
+
   input->EvaluateKey(Input::MOUSE_SCROLL_X, Input::PRESS, 0, x);
   input->EvaluateKey(Input::MOUSE_SCROLL_Y, Input::PRESS, 0, y);
   input->mouseInfo.scrollX = x;
@@ -538,11 +564,17 @@ void Input::MouseScrollCallback(GLFWwindow* window, double x, double y)
 }
 
 void Renderer::window_size_callback(GLFWwindow* window, int w, int h) {
+  if (auto prev = std::dynamic_pointer_cast<Bored::OGL::Renderer>(renderer)->prevWindowSizeCb)
+    prev(window, w, h);
+
   renderer->width = w;
   renderer->height = h;
 }
 
 void Renderer::framebuffer_size_callback(GLFWwindow* window, int w, int h) {
+  if (auto prev = std::dynamic_pointer_cast<Bored::OGL::Renderer>(renderer)->prevFramebufferSizeCb)
+    prev(window, w, h);
+
   glViewport(0, 0, w, h);
 }
 
