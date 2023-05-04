@@ -8,7 +8,7 @@ using namespace Bored::OGL;
 
 Renderer::Renderer() {
   if (!glfwInit()) {
-    std::cout << "Cannot initialize glfw" << std::endl;
+    logger->error("Cannot initialize glfw");
     glfwTerminate();
   }
 }
@@ -21,7 +21,7 @@ void Renderer::OnSetup() {
   window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
   /* Setup GLFW */
   if (!window) {
-    std::cout << "Cannot create window" << std::endl;
+    logger->error("Cannot create window");
     glfwTerminate();
   }
 
@@ -33,14 +33,16 @@ void Renderer::OnSetup() {
 
   /* Setup Glad */
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-    std::cout << "Failed to initialize GLAD" << std::endl;
+    logger->error("Failed to initialize GLAD");
     glfwTerminate();
   }
 
   int ma, mi;
   glGetIntegerv(GL_MAJOR_VERSION, &ma);
   glGetIntegerv(GL_MINOR_VERSION, &mi);
-  std::cout << "OpengGL version: " << ma << "." << mi << std::endl;
+  std::stringstream ss;
+  ss << "OpengGL version: " << ma << "." << mi;
+  logger->info(ss.str());
 
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);
@@ -132,7 +134,7 @@ void Renderer::OnSetup() {
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mRbo);
   if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
   {
-    std::cout << "[Critical]: Error while creating framebuffer" << std::endl;
+    logger->error("Error while creating framebuffer");
   }
   GLenum b[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
   glDrawBuffers(2, b);
@@ -228,7 +230,7 @@ bool Renderer::OnTick(double dt) {
   // Get current camera
   if (!active_cam)
   {
-    std::cout << "[Warning]: No camera is set. Using default one." << std::endl;
+    logger->warn("No camera is set. Using default one.");
     active_cam = actorManager->Create<Bored::Actor>();
     auto& c = active_cam->AddComponent<Bored::Camera>();
     auto& t = active_cam->Get<Bored::Transform>();
@@ -393,13 +395,12 @@ void Renderer::Render(entt::entity id, Bored::Render::Mesh& me,
   Bored::OGL::Material& ma, Shader& shader) {
   // Shader is already activated, no need to activate here 
   if (me.indices.size() == 0) {
-    std::cout << "[Wawrning]: Mesh '" << me.name
-      << "' does not have vertex indices" << std::endl;
+    logger->warn("Mesh '" + me.name
+      + "' does not have vertex indices");
   }
 
   if (me.pos.size() == 0) {
-    std::cout << "[Warning]: Mesh '" << me.name << "' missing vertex data"
-      << std::endl;
+    logger->warn("Mesh '" + me.name + "' missing vertex data");
   }
 
   glBindVertexArray(mVao);
@@ -423,7 +424,6 @@ void Renderer::Render(entt::entity id, Bored::Render::Mesh& me,
     sizeof(me.indices[0]) * me.indices.size(), &me.indices[0]);
 
   shader.SetUniform1i("actorID", (int32_t)id);
-  //std::cout << "Rendering: " << (unsigned int)id << std::endl;
   // Push material data
   if (!ma.diffuse)
     ma.diffuse = std::make_shared<Bored::OGL::Texture>(
@@ -447,12 +447,12 @@ void Input::SetCursorImage(unsigned char* image, unsigned int width, unsigned in
   im.height = height;
   GLFWcursor* c = glfwCreateCursor(&im, 0, 0);
   if (c == NULL) {
-    std::cout << "[Warning]: Something went wrong when setting cursor image." << std::endl;
+    logger->warn("Something went wrong when setting cursor image.");
   }
   if (window != nullptr)
     glfwSetCursor(window, c);
   else {
-    std::cout << "[Critical]: Input is not being used with OGL module." << std::endl;
+    logger->error("OGL::Input is not being used with OGL module.");
   }
 }
 
@@ -483,8 +483,7 @@ void Input::OnSetup() {
   std::shared_ptr<OGL::Renderer> r =
     std::dynamic_pointer_cast<OGL::Renderer>(renderer);
   if (!r) {
-    std::cout << "[Critical]: OGL input needs OGL renderer to function!"
-      << std::endl;
+    logger->error("OGL::Input needs OGL::Renderer to function!");
   }
   window = r->window;
   SetupCallbacks();
@@ -493,8 +492,7 @@ void Input::OnSetup() {
 bool Input::OnTick(double dt) {
   glfwWaitEvents();
   if (!window) {
-    std::cout << "[Critical]: OGL input does not have GLFW window!"
-      << std::endl;
+    logger->error("OGL::Input does not have GLFW window!");
     return true;
   }
   return glfwWindowShouldClose(window);
@@ -666,75 +664,75 @@ void APIENTRY glDebugOutput(GLenum source, GLenum type, unsigned int id,
   if (id == 131169 || id == 131185 || id == 131218 || id == 131204)
     return;
 
-  std::cout << "---------------" << std::endl;
-  std::cout << "Debug message (" << id << "): " << message << std::endl;
+  std::stringstream ss;
+
+  ss << "OpenGL debug message (" << id << "): " << message << std::endl;
 
   switch (source) {
   case GL_DEBUG_SOURCE_API:
-    std::cout << "Source: API";
+    ss << "Source: API";
     break;
   case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
-    std::cout << "Source: Window System";
+    ss << "Source: Window System";
     break;
   case GL_DEBUG_SOURCE_SHADER_COMPILER:
-    std::cout << "Source: Shader Compiler";
+    ss << "Source: Shader Compiler";
     break;
   case GL_DEBUG_SOURCE_THIRD_PARTY:
-    std::cout << "Source: Third Party";
+    ss << "Source: Third Party";
     break;
   case GL_DEBUG_SOURCE_APPLICATION:
-    std::cout << "Source: Application";
+    ss << "Source: Application";
     break;
   case GL_DEBUG_SOURCE_OTHER:
-    std::cout << "Source: Other";
+    ss << "Source: Other";
     break;
   }
-  std::cout << std::endl;
+  ss << std::endl;
 
   switch (type) {
   case GL_DEBUG_TYPE_ERROR:
-    std::cout << "Type: Error";
+    ss << "Type: Error";
     break;
   case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-    std::cout << "Type: Deprecated Behaviour";
+    ss << "Type: Deprecated Behaviour";
     break;
   case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-    std::cout << "Type: Undefined Behaviour";
+    ss << "Type: Undefined Behaviour";
     break;
   case GL_DEBUG_TYPE_PORTABILITY:
-    std::cout << "Type: Portability";
+    ss << "Type: Portability";
     break;
   case GL_DEBUG_TYPE_PERFORMANCE:
-    std::cout << "Type: Performance";
+    ss << "Type: Performance";
     break;
   case GL_DEBUG_TYPE_MARKER:
-    std::cout << "Type: Marker";
+    ss << "Type: Marker";
     break;
   case GL_DEBUG_TYPE_PUSH_GROUP:
-    std::cout << "Type: Push Group";
+    ss << "Type: Push Group";
     break;
   case GL_DEBUG_TYPE_POP_GROUP:
-    std::cout << "Type: Pop Group";
+    ss << "Type: Pop Group";
     break;
   case GL_DEBUG_TYPE_OTHER:
-    std::cout << "Type: Other";
+    ss << "Type: Other";
     break;
   }
-  std::cout << std::endl;
+  ss << std::endl;
 
   switch (severity) {
   case GL_DEBUG_SEVERITY_HIGH:
-    std::cout << "Severity: high";
+    ss << "Severity: high";
     break;
   case GL_DEBUG_SEVERITY_MEDIUM:
-    std::cout << "Severity: medium";
+    ss << "Severity: medium";
     break;
   case GL_DEBUG_SEVERITY_LOW:
-    std::cout << "Severity: low";
+    ss << "Severity: low";
     break;
   case GL_DEBUG_SEVERITY_NOTIFICATION:
-    std::cout << "Severity: notification";
+    ss << "Severity: notification";
     break;
   }
-  std::cout << std::endl;
 }

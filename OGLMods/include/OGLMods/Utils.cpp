@@ -16,8 +16,8 @@ Bored::OGL::Texture::Texture(std::shared_ptr<Bored::Render::Texture> tex)
   
   if (bpp != 4)
   {
-    std::cout << "[Warning]: Bored has yet support bpp other than 4. Texture '"
-      << name << "' might not display correctly!" << std::endl;
+    logger->warn("Bored has yet support bpp other than 4. Texture '"
+      + name + "' might not display correctly!");
   }
  
   glTexImage2D(GL_TEXTURE_2D, 0, inFormat, width, height, 0, 

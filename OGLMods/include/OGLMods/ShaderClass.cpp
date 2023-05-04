@@ -85,7 +85,7 @@ GLint Shader::GetUniformLocation(const std::string& name)
 
 	int location = glGetUniformLocation(ID, name.c_str());
 	if (location == -1)
-		//std::cout << "Warning: uniform '" << name << "' doesn't exist!" << std::endl;
+		Bored::logger->warn("Warning: uniform '" + name + "' doesn't exist!");
 
 	LocationCache.insert(std::pair<std::string, int>(name, location));
 	return location;
@@ -148,7 +148,9 @@ void Shader::compileErrors(unsigned int shader, const char* type)
 		if (hasCompiled == GL_FALSE)
 		{
 			glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-			std::cout << "SHADER_COMPILATION_ERROR for:" << type << "\n" << infoLog << std::endl;
+			std::stringstream ss;
+			ss << "SHADER_COMPILATION_ERROR for:" << type << "\n" << infoLog;
+			Bored::logger->error(ss.str());
 		}
 	}
 	else
@@ -157,7 +159,9 @@ void Shader::compileErrors(unsigned int shader, const char* type)
 		if (hasCompiled == GL_FALSE)
 		{
 			glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-			std::cout << "SHADER_LINKING_ERROR for:" << type << "\n" << infoLog << std::endl;
+			std::stringstream ss;
+			ss << "SHADER_LINKING_ERROR for:" << type << "\n" << infoLog << std::endl;
+			Bored::logger->error(ss.str());
 		}
 	}
 }

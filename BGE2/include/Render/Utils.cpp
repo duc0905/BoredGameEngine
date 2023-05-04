@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "../Core.h"
 #include "Utils.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include <assimp/Importer.hpp>
@@ -26,10 +27,10 @@ shared_ptr<Texture> TextureFactory::Load(const string& path) {
       tex = make_shared<Texture>(
         path, (unsigned int)w, (unsigned int)h, (unsigned int)bpp, data);
     } else {
-      std::cout << "[Warning]: Failed to load file: " << path << std::endl;
+      Bored::logger->warn("Failed to load file: " + path);
       unsigned char white[4] = { 0xff, 0xff, 0xff, 0xff };
       tex = Load(path, 1, 1, 4, white);
-      std::cout << "[Warning]: Using white texture for: " << path << std::endl;
+      logger->warn("Using white texture for: " + path);
     }
 
     storage.push_back(tex);
@@ -45,7 +46,7 @@ std::shared_ptr<Texture> TextureFactory::Load(const std::string& name,
   if (t == nullptr) {
     if (bpp > 4 || bpp <= 0)
     {
-      std::cout << "[Warning]: BPP cannot be other than 1, 2, 3, 4. Assuming BPP = 4." << std::endl;
+      logger->warn("BPP cannot be other than 1, 2, 3, 4. Assuming BPP = 4.");
       bpp = 4;
     }
 
@@ -250,9 +251,9 @@ Bored::Render::Model Bored::Helper::Load(const std::string& file) {
 
   // If the import failed, report it
   if (nullptr == scene) {
-    std::cout << "[Warning]: Cannot load model.\n"
-      << importer.GetErrorString() << std::endl;
-    return Model(); // empty model
+    logger->warn(std::string("Cannot load model.\n")
+      + importer.GetErrorString());
+    return Model(); // TODO return a cube
   }
 
   std::vector<Material> mats;
@@ -282,13 +283,6 @@ Bored::Render::Model Bored::Helper::Load(const std::string& file) {
     if (aiMat->GetTexture(aiTextureType_DIFFUSE, 0, &path, 0, 0, 0, 0, 0) ==
       AI_SUCCESS) {
       tex = TextureFactory::Load(path.C_Str());
-      if (!tex) {
-        // Seems like loading texture is not working properly
-        std::cout << "Seems like loading texture is not working properly"
-          << std::endl;
-        std::cout << "Model: " << file << std::endl;
-        tex = TextureFactory::Load(path.C_Str());
-      }
     }
     else {
       aiColor3D diff;
@@ -301,13 +295,6 @@ Bored::Render::Model Bored::Helper::Load(const std::string& file) {
     if (aiMat->GetTexture(aiTextureType_SPECULAR, 0, &path, 0, 0, 0, 0, 0) ==
       AI_SUCCESS) {
       tex = TextureFactory::Load(path.C_Str());
-      if (!tex) {
-        // Seems like loading texture is not working properly
-        std::cout << "Seems like loading texture is not working properly"
-          << std::endl;
-        std::cout << "Model: " << file << std::endl;
-        tex = TextureFactory::Load(path.C_Str());
-      }
     }
     else {
       aiColor3D spec;

@@ -5,16 +5,23 @@
   using Bored::input;                                                          \
   using Bored::actorManager;                                                   \
   using Bored::gamemode;                                                       \
-  using Bored::addons;
+  using Bored::addons;                                                         \
+  using Bored::logger;
 
 #include "../pch.h"
 #include "Bases.h"
+#include "Logger.h"
+#include "Timer.h"
+
 #include "Render/Utils.h"
 #include "Camera.h"
 
 // Just define the general interfaces here
 namespace Bored
 {
+  extern std::shared_ptr<Timer> timer;
+  extern std::unique_ptr<Logger> logger;
+
   // Input file
   struct Transform
   {
@@ -29,33 +36,6 @@ namespace Bored
    * @brief Holds the logics of the game
    */
   class Gamemode : public Module {};
-
-  /**
-   * @brief Provide chrono functionalities
-   */
-  class Timer : public Module
-  {
-    std::chrono::system_clock::time_point last_frame;
-
-  public:
-    virtual void OnSetup() override
-    {
-      last_frame = std::chrono::system_clock::now();
-    }
-
-    double GetDt() const
-    {
-      return std::chrono::duration<double>(std::chrono::system_clock::now() -
-        last_frame)
-        .count();
-    }
-
-    virtual bool OnTick(double) override
-    {
-      last_frame = std::chrono::system_clock::now();
-      return false;
-    }
-  };
 
   class Actor;
   struct IDToPtr
@@ -116,15 +96,19 @@ namespace Bored
     {
       if (!actor_registry.valid(id))
       {
-        std::cout << "[Warning]: Adding component " << typeid(T).name()
-          << " for invalid actor: " << (int)id << std::endl;
+        std::stringstream ss;
+        ss << "Adding component " << typeid(T).name()
+          << " for invalid actor: " << (int)id;
+        logger->warn(ss.str());
       }
 
       if (actor_registry.any_of<T>(id))
       {
-        std::cout << "[Warning]: Component '" << typeid(T).name()
+        std::stringstream ss;
+        ss << "Component '" << typeid(T).name()
           << "' already exist for actor " << (uint64_t)id
-          << ". Getting the existed component instead!" << std::endl;
+          << ". Getting the existed component instead!";
+        logger->warn(ss.str());
 
         return actor_registry.get<T>(id);
       }
@@ -137,14 +121,16 @@ namespace Bored
     {
       if (typeid(T) == typeid(Transform))
       {
-        std::cout << "[Warning]: Cannot remove Transform component." << std::endl;
+        logger->warn("Cannot remove Transform component.");
         return;
       }
 
       if (!actor_registry.any_of<T>(id))
       {
-        std::cout << "[Warning]: Actor " << (uint64_t)id << " does not have Component '"
-          << typeid(T).name() << "'. Not removing any component!" << std::endl;
+        std::stringstream ss;
+        ss << "Actor " << (uint64_t)id << " does not have Component '"
+          << typeid(T).name() << "'. Not removing any component!";
+        logger->warn(ss.str());
         return;
       }
 
@@ -301,7 +287,6 @@ namespace Bored
 
   extern std::shared_ptr<ActorManager> actorManager;
   extern std::shared_ptr<Gamemode> gamemode;
-  extern std::shared_ptr<Timer> timer;
 
   extern std::vector<std::shared_ptr<Module>> addons;
 

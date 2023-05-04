@@ -24,13 +24,6 @@ private:
   }
 };
 
-//int main() {
-//    Bored::Render::Model m = Bored::Helper::Load("./res/models/bishop.gltf");
-//    std::cout << m.renderables.size() << std::endl;
-//
-//    return 0;
-//}
-
 void GetDefaultAssets()
 {
   // Load meshes

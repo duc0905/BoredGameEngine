@@ -18,7 +18,8 @@ void Logger::OnStop()
 
 Logger& InstantLogger::log(Severity s, const std::string& msg) noexcept
 {
-  source->log(formatter->format(s, msg, std::time(nullptr)));
+  std::string str = formatter->format(s, msg, std::time(nullptr));
+  source->log(str);
   return *this;
 }
 
@@ -43,22 +44,24 @@ const std::string& Logger::FileSource::GetDefaultFilename() const noexcept
 {
   auto now = std::chrono::system_clock::now();
   std::time_t noww = std::chrono::system_clock::to_time_t(now);
-  return std::ctime(&noww);
+  char str[32];
+  ctime_s(str, sizeof str, &noww);
+  return str;
 }
 
-Logger::Source& Logger::FileSource::log(const std::string const& msg)
+Logger::Source& Logger::FileSource::log(const std::string& msg)
 {
   f << msg << std::endl;
   return *this;
 }
 
-Logger::Source& Logger::ConsoleSource::log(const std::string const& msg)
+Logger::Source& Logger::ConsoleSource::log(const std::string& msg)
 {
   std::cout << msg << std::endl;
   return *this;
 }
 
-const std::string& Logger::StandardFormatter::format(Severity s, const std::string& msg, std::time_t ts)
+std::string Logger::StandardFormatter::format(Severity s, const std::string& msg, std::time_t ts)
 {
   std::stringstream ss;
   unsigned int seconds = ts % (24 * 60 * 60);
@@ -73,9 +76,8 @@ const std::string& Logger::StandardFormatter::format(Severity s, const std::stri
   case Severity::ERROR: ss << "ERROR"; break;
   default: ss << "Info"; break;
   }
-  ss << "): " << msg << std::endl;
+  ss << "): " << msg;
   return ss.str();
-
 }
 
 };

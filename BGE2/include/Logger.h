@@ -24,14 +24,14 @@ public:
   public:
     Source() = default;
     virtual ~Source() {}
-    virtual Source& log(const std::string const& msg) = 0;
+    virtual Source& log(const std::string& msg) = 0;
     virtual void OnSetup() = 0;
     virtual void OnStop() = 0;
   };
   class Formatter {
     friend class Logger;
   public:
-    [[nodiscard]] virtual const std::string& format(Severity s, const std::string& msg, std::time_t ts) = 0;
+    [[nodiscard]] virtual std::string format(Severity s, const std::string& msg, std::time_t ts) = 0;
     virtual void OnSetup() = 0;
     virtual void OnStop() = 0;
   };
@@ -48,15 +48,16 @@ public:
   virtual void OnSetup() override;
   virtual void OnStop() override;
 public:
-  class ConsoleSource : Source {
+  class ConsoleSource : public Source {
+  public:
     ConsoleSource() = default;
 
     // Inherited via Source
-    virtual Source& log(const std::string const& msg) override;
+    virtual Source& log(const std::string& msg) override;
     virtual void OnSetup() {};
     virtual void OnStop() {};
   };
-  class FileSource : Source {
+  class FileSource : public Source {
   public:
     FileSource()
       : FileSource("./logs/" + GetDefaultFilename()) {}
@@ -71,21 +72,21 @@ public:
     [[nodiscard]] const std::string& GetDefaultFilename() const noexcept;
 
     // Inherited via Source
-    virtual Source& log(const std::string const& msg) override;
+    virtual Source& log(const std::string& msg) override;
   };
 
-  class StandardFormatter : Formatter {
-    virtual const std::string& format(Severity s, const std::string& msg, std::time_t ts) override;
+  class StandardFormatter : public Formatter {
+    virtual std::string format(Severity s, const std::string& msg, std::time_t ts) override;
     virtual void OnSetup() {};
     virtual void OnStop() {};
   };
-  class JSONFormatter : Formatter {
-    virtual const std::string& format(Severity s, const std::string& msg, std::time_t ts) = 0;
+  class JSONFormatter : public Formatter {
+    virtual std::string format(Severity s, const std::string& msg, std::time_t ts) = 0;
     virtual void OnSetup() = 0;
     virtual void OnStop() = 0;
   };
-  class YAMLFormatter : Formatter {
-    virtual const std::string& format(Severity s, const std::string& msg, std::time_t ts) = 0;
+  class YAMLFormatter : public Formatter {
+    virtual std::string format(Severity s, const std::string& msg, std::time_t ts) = 0;
     virtual void OnSetup()  = 0;
     virtual void OnStop() = 0;
   };
@@ -97,8 +98,9 @@ protected:
 
 };
 
-class InstantLogger : Logger
+class InstantLogger : public Logger
 {
+public:
   InstantLogger(std::unique_ptr<Source> src, std::unique_ptr<Formatter> fmt)
     : Logger(std::move(src), std::move(fmt)) {}
 
@@ -106,7 +108,7 @@ class InstantLogger : Logger
   virtual Logger& log(Severity s, const std::string& msg) noexcept override;
 };
 
-class FlushLogger : Logger
+class FlushLogger : public Logger
 {
 public:
   FlushLogger(std::unique_ptr<Source> src, std::unique_ptr<Formatter> fmt)
