@@ -1,0 +1,20 @@
+{
+	"$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+	"name": "bored-game-engine",
+	"description": "A simple game engine",
+	"version": "1.0.0",
+	"dependencies": [
+		"glfw3",
+		"glad",
+		"glm",
+		"assimp",
+		"stb",
+		{
+			"name": "imgui",
+			"features":  ["docking-experimental", "glfw-binding", "opengl3-binding"]
+		},
+		"openal-soft",
+		"audiofile",
+		"entt"
+	]
+}
