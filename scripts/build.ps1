@@ -19,13 +19,14 @@ if ($Build) {
   foreach ($folder in $pathFolders) {
     if ($folder -like "*vcpkg*") {
       $vcpkgPackageLink = $folder + "/scripts/buildsystems/vcpkg.cmake"
+      Write-Output "Vcpkg package link found: $vcpkgPackageLink"
     }
   }
   if ($vcpkgPackageLink = "") {
     Write-Output "[Error] Vcpkg package link not found. Please add Vcpkg to the PATH"
     exit
   }
-  cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=$vcpkgPackageLink
+  cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE="$vcpkgPackageLink"
   Write-Output "Generated successfully"
 }
 
