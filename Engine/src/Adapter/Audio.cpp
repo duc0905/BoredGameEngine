@@ -34,6 +34,8 @@ namespace Bored
 				return AL_FORMAT_STEREO8;
 			case STEREO16:
 				return AL_FORMAT_STEREO16;
+			default:
+				return AL_FORMAT_STEREO16;
 			}
 		}
 
