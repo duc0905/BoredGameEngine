@@ -14,4 +14,7 @@
 /lib
 
 # build
-/build
+/build 
+
+# imgui
+**/imgui.ini
