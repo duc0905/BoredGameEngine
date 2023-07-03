@@ -36,7 +36,7 @@ namespace Bored
         public:
             OALBuffer() = default;
             ~OALBuffer() = default;
-            OALBuffer::OALBuffer(const void *data, size_t size, Format format, size_t freq);
+            OALBuffer(const void *data, size_t size, Format format, size_t freq);
             virtual void BufferData(const void *data, size_t size, Format format, size_t freq) override;
             virtual void Delete() override;
 
