@@ -1,43 +1,96 @@
 param (
-  [Parameter(Position = 0, Mandatory = $false)]
-  [switch]$Build
+  [switch]$Config,
+  [switch]$C
 )
 
-Write-Output "Project Path: $Build"
+$BuildMode = $Config -or $C
 
-if ($Build) {
-  Write-Output "Generating the project CMakeList"
-  $envPath = [Environment]::GetEnvironmentVariable("PATH")
+if ($BuildMode) {
+  Write-Output "-------------------------------------------------------------------------------"
+  Write-Output "Generating the project CMake files [BuildMode: $BuildMode]"
+  Write-Output "-------------------------------------------------------------------------------"
+  if (Test-Path -Path build) {
 
-  # Split the path into individual folders
-  $pathFolders = $envPath -split ";"
+    Write-Output "-------------------------------------------------------------------------------"
+    Write-Output "Found existing build folder. Reusing it"
+    Write-Output "-------------------------------------------------------------------------------"
 
-  # Variable to store the vcpkg package link
-  $vcpkgPackageLink = ""
+    # Run the second cmake command
+    cmake -S . -B build
+    $exitCode = $LASTEXITCODE
 
-  # Loop through each folder in the path and check for the vcpkg package link
-  foreach ($folder in $pathFolders) {
-    if ($folder -like "*vcpkg*") {
-      $vcpkgPackageLink = $folder + "/scripts/buildsystems/vcpkg.cmake"
-      Write-Output "Vcpkg package link found: $vcpkgPackageLink"
+    if ($exitCode -eq 0) {
+      Write-Output "-------------------------------------------------------------------------------"
+      Write-Host "Generated successfully" -ForegroundColor Green
+      Write-Output "-------------------------------------------------------------------------------"
+    }
+    else {
+      Write-Output "-------------------------------------------------------------------------------"
+      Write-Host "Generation failed" -ForegroundColor Red
+      Write-Output "-------------------------------------------------------------------------------"
+      exit 1
     }
   }
-  if ($vcpkgPackageLink = "") {
-    Write-Output "[Error] Vcpkg package link not found. Please add Vcpkg to the PATH"
-    exit
+  else {
+    $envPath = [Environment]::GetEnvironmentVariable("PATH")
+
+    # Split the path into individual folders
+    $pathFolders = $envPath -split ";"
+
+    # Variable to store the vcpkg package link
+    $vcpkgPackageLink = ""
+
+    # Loop through each folder in the path and check for the vcpkg package link
+    foreach ($folder in $pathFolders) {
+      if ($folder -like "*vcpkg*") {
+        $vcpkgPackageLink = $folder + "\scripts\buildsystems\vcpkg.cmake"
+        Write-Output "-------------------------------------------------------------------------------"
+        Write-Host "Vcpkg package link found: $vcpkgPackageLink"  -ForegroundColor Green
+        Write-Output "-------------------------------------------------------------------------------"
+      }
+    }
+    if ($vcpkgPackageLink -eq "") {
+      Write-Output "-------------------------------------------------------------------------------"
+      Write-Host "[Error] Vcpkg package link not found. Please add Vcpkg to the PATH" -ForegroundColor Red
+      Write-Output "-------------------------------------------------------------------------------"
+      exit 1
+    }
+    # cmake -S ../ -B build -DCMAKE_TOOLCHAIN_FILE="$vcpkgPackageLink"
+    $CmakeGencommand = "cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=$vcpkgPackageLink"
+    Invoke-Expression -Command $CmakeGencommand
+    $exitCode = $LASTEXITCODE
+
+    if ($exitCode -eq 0) {
+      Write-Output "-------------------------------------------------------------------------------"
+      Write-Host "Generated successfully" -ForegroundColor Green
+      Write-Output "-------------------------------------------------------------------------------"
+    }
+    else {
+      Write-Output "-------------------------------------------------------------------------------"
+      Write-Host "Generation failed" -ForegroundColor Red
+      Write-Output "-------------------------------------------------------------------------------"
+      exit 1
+    }
   }
-  cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE="$vcpkgPackageLink"
-  Write-Output "Generated successfully"
 }
 
+Write-Output "-------------------------------------------------------------------------------"
 Write-Output "Building the project"
-
-# Run the second cmake command
-cmake -S . -B build
+Write-Output "-------------------------------------------------------------------------------"
 
 # Run the cmake build command
 cmake --build build
+$exitCode = $LASTEXITCODE
 
-Write-Output "Build completed successfully"
+if ($exitCode -eq 0) {
+  Write-Output "-------------------------------------------------------------------------------"
+  Write-Host "Build completed successfully"  -ForegroundColor Green
+  Write-Output "-------------------------------------------------------------------------------"
+}
+else {
+  Write-Output "-------------------------------------------------------------------------------"
+  Write-Host "Build failed" -ForegroundColor Red
+  Write-Output "-------------------------------------------------------------------------------"
+}
 
-exit
+exit 0

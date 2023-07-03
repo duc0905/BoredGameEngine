@@ -23,8 +23,9 @@ namespace Bored
             ~Buffer() = default;
             Buffer(const void *data, size_t size, Format format, size_t freq);
 
-            virtual void BufferData(const void* data, size_t size, Format format, size_t freq) = 0;
+            virtual void BufferData(const void *data, size_t size, Format format, size_t freq) = 0;
             virtual void Delete() = 0;
+
         private:
             size_t size, freq;
             Format format;
@@ -35,8 +36,8 @@ namespace Bored
         public:
             OALBuffer() = default;
             ~OALBuffer() = default;
-            OALBuffer::OALBuffer(const void *data, size_t size, Format format, size_t freq);
-            virtual void BufferData(const void* data, size_t size, Format format, size_t freq) override;
+            OALBuffer(const void *data, size_t size, Format format, size_t freq);
+            virtual void BufferData(const void *data, size_t size, Format format, size_t freq) override;
             virtual void Delete() override;
 
         private:
@@ -59,7 +60,7 @@ namespace Bored
 
         std::shared_ptr<Buffer> createBuffer(const void *data)
         {
-            return std::make_shared<Buffer>();
+            return std::make_shared<OALBuffer>();
         }
 
     }

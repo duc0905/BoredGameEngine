@@ -15,3 +15,6 @@
 
 # build
 /build*
+
+# imgui
+**/imgui.ini
