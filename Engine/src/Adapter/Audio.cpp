@@ -17,6 +17,10 @@ namespace Bored
 			alBufferData(id, getFormat(format), data, size, freq);
 		}
 
+    void OALBuffer::BufferData(const void *data, size_t size, Format format, size_t freq) {
+
+    }
+
 		void OALBuffer::Delete()
 		{
 			alDeleteBuffers(1, &id);
@@ -38,6 +42,12 @@ namespace Bored
 				return AL_FORMAT_STEREO16;
 			}
 		}
+
+    std::shared_ptr<Buffer> createBuffer(const void *data)
+    {
+        return std::make_shared<OALBuffer>();
+    }
+
 
 	} // namespace Audio
 } // namespace Bored

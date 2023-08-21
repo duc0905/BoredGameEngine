@@ -9,7 +9,6 @@ project (BGE3 VERSION 2.0)
 # add_executable (BGE3 "BGE3.cpp" "BGE3.h")
 
 # if (CMAKE_VERSION VERSION_GREATER 3.12)
-  # set_property(TARGET BGE3 PROPERTY CXX_STANDARD 20)
 # endif()
 
 # TODO: Add tests and install targets if needed.
