@@ -58,10 +58,6 @@ namespace Bored
         {
         };
 
-        std::shared_ptr<Buffer> createBuffer(const void *data)
-        {
-            return std::make_shared<OALBuffer>();
-        }
-
+        std::shared_ptr<Buffer> createBuffer(const void *data);
     }
 }

@@ -1,8 +1,5 @@
 #include "Bored.hpp"
-#include <iostream>
 
-int main()
-{
-  std::cout << "Hmmmm" << std::endl;
+int main() {
   return 0;
 }
