@@ -2,8 +2,6 @@
 #include <string>
 #include <memory>
 #include <vector>
-#include <AL/alc.h>
-#include <AL/al.h>
 #include <glm/glm.hpp>
 
 namespace Bored
@@ -23,7 +21,7 @@ namespace Bored
         public:
             Buffer() = default;
             Buffer(const void *data, size_t size, Format format, size_t freq);
-            virtual ~Buffer() {};
+            virtual ~Buffer(){};
 
             virtual bool IsValid() = 0;
             virtual void BufferData(const void *data, size_t size, Format format, size_t freq) = 0;
@@ -33,39 +31,21 @@ namespace Bored
             virtual int GetChannels() = 0;
             virtual int GetSize() = 0;
             virtual std::vector<int> GetData() = 0;
+
         private:
             size_t size, freq;
             Format format;
         };
 
-        class OALBuffer : public Buffer
-        {
-        public:
-            OALBuffer() = default;
-            virtual ~OALBuffer() override;
-            OALBuffer(const void *data, size_t size, Format format, size_t freq);
-
-            virtual int GetFreq() override;
-            virtual int GetBits() override;
-            virtual int GetChannels() override;
-            virtual int GetSize() override;
-            virtual std::vector<int> GetData() override;
-            virtual bool IsValid() override;
-            virtual void BufferData(const void *data, size_t size, Format format, size_t freq) override;
-        private:
-            ALenum getFormat(Format format);
-            ALuint id;
-        };
-
         class Source
         {
         public:
-            virtual ~Source() {};
+            virtual ~Source(){};
             virtual bool IsValid() = 0;
 
-            virtual void SetPosition(const glm::vec3&) = 0;
-            virtual void SetVelocit(const glm::vec3&) = 0;
-            virtual void SetDirection(const glm::vec3&) = 0;
+            virtual void SetPosition(const glm::vec3 &) = 0;
+            virtual void SetVelocity(const glm::vec3 &) = 0;
+            virtual void SetDirection(const glm::vec3 &) = 0;
 
             virtual void SetPitch(float) = 0;
             virtual void SetGain(float) = 0;
@@ -82,54 +62,43 @@ namespace Bored
             virtual void SetLooping(unsigned int) = 0;
             virtual void SetBuffer(unsigned int) = 0;
             virtual void SetSourceState(unsigned int) = 0;
-        };
 
-        class OALSource : public Source {
-        public:
-            OALSource();
-            virtual ~OALSource() override;
+            virtual void AddBuffer(std::shared_ptr<Buffer>) = 0;
+            virtual void Play() = 0;
+            virtual void Stop() = 0;
+            virtual void Rewind() = 0;
 
-            virtual bool IsValid() override;
-
-            virtual void SetPosition(const glm::vec3&) override;
-            virtual void SetVelocit(const glm::vec3&) override;
-            virtual void SetDirection(const glm::vec3&) override;
-
-            virtual void SetPitch(float) override;
-            virtual void SetGain(float) override;
-            virtual void SetMinGain(float) override;
-            virtual void SetMaxGain(float) override;
-            virtual void SetMaxDistance(float) override;
-            virtual void SetRolloffFactor(float) override;
-            virtual void SetConeOuterGain(float) override;
-            virtual void SetConeInnerAngle(float) override;
-            virtual void SetConeOuterAngle(float) override;
-            virtual void SetReferenceDistance(float) override;
-
-            virtual void SetSourceRelative(unsigned int) override;
-            virtual void SetLooping(unsigned int) override;
-            virtual void SetBuffer(unsigned int) override;
-            virtual void SetSourceState(unsigned int) override;
-        private:
-            ALuint source;
-            // @PTM thich de j vao day thi de
+            // TODO Add getters
         };
 
         class Listener
         {
         public:
             virtual ~Listener() {};
-        };
 
-        class OALListener : public Listener {
-        public:
-            virtual ~OALListener() override;
+            virtual void SetGain(float) = 0;
+            virtual void SetPosition(const glm::vec3&) = 0;
+            virtual void SetVelocity(const glm::vec3&) = 0;
+            virtual void SetUpDir(const glm::vec3&) = 0;
+            virtual void SetAtDir(const glm::vec3&) = 0;
+
+            virtual float GetGain() const = 0;
+            virtual glm::vec3 GetPosition() const = 0;
+            virtual glm::vec3 GetVelocity() const = 0;
+            virtual glm::vec3 GetUpDir() const = 0;
+            virtual glm::vec3 GetAtDir() const = 0;
         };
 
         class Context
         {
         public:
+            Context(std::shared_ptr<Listener> l) : listener(l) {};
             virtual ~Context() {};
+
+            virtual std::shared_ptr<Source> CreateSource() = 0;
+            std::shared_ptr<Listener> GetListener() { return listener; };
+        protected:
+            std::shared_ptr<Listener> listener;
         };
     }
 }
