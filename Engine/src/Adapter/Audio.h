@@ -1,8 +1,8 @@
 #pragma once
-#include <memory>
 #include <string>
-#include <AL/alc.h>
-#include <AL/al.h>
+#include <memory>
+#include <vector>
+#include <glm/glm.hpp>
 
 namespace Bored
 {
@@ -20,44 +20,85 @@ namespace Bored
         {
         public:
             Buffer() = default;
-            ~Buffer() = default;
             Buffer(const void *data, size_t size, Format format, size_t freq);
+            virtual ~Buffer(){};
 
+            virtual bool IsValid() = 0;
             virtual void BufferData(const void *data, size_t size, Format format, size_t freq) = 0;
-            virtual void Delete() = 0;
+
+            virtual int GetFreq() = 0;
+            virtual int GetBits() = 0;
+            virtual int GetChannels() = 0;
+            virtual int GetSize() = 0;
+            virtual std::vector<int> GetData() = 0;
 
         private:
             size_t size, freq;
             Format format;
         };
 
-        class OALBuffer : public Buffer
+        class Source
         {
         public:
-            OALBuffer() = default;
-            ~OALBuffer() = default;
-            OALBuffer(const void *data, size_t size, Format format, size_t freq);
-            virtual void BufferData(const void *data, size_t size, Format format, size_t freq) override;
-            virtual void Delete() override;
+            virtual ~Source(){};
+            virtual bool IsValid() = 0;
 
-        private:
-            ALenum getFormat(Format format);
+            virtual void SetPosition(const glm::vec3 &) = 0;
+            virtual void SetVelocity(const glm::vec3 &) = 0;
+            virtual void SetDirection(const glm::vec3 &) = 0;
 
-            ALuint id;
+            virtual void SetPitch(float) = 0;
+            virtual void SetGain(float) = 0;
+            virtual void SetMinGain(float) = 0;
+            virtual void SetMaxGain(float) = 0;
+            virtual void SetMaxDistance(float) = 0;
+            virtual void SetRolloffFactor(float) = 0;
+            virtual void SetConeOuterGain(float) = 0;
+            virtual void SetConeInnerAngle(float) = 0;
+            virtual void SetConeOuterAngle(float) = 0;
+            virtual void SetReferenceDistance(float) = 0;
+
+            virtual void SetSourceRelative(unsigned int) = 0;
+            virtual void SetLooping(unsigned int) = 0;
+            virtual void SetBuffer(unsigned int) = 0;
+            virtual void SetSourceState(unsigned int) = 0;
+
+            virtual void AddBuffer(std::shared_ptr<Buffer>) = 0;
+            virtual void Play() = 0;
+            virtual void Stop() = 0;
+            virtual void Rewind() = 0;
+
+            // TODO Add getters
         };
 
         class Listener
         {
-        };
+        public:
+            virtual ~Listener() {};
 
-        class Source
-        {
+            virtual void SetGain(float) = 0;
+            virtual void SetPosition(const glm::vec3&) = 0;
+            virtual void SetVelocity(const glm::vec3&) = 0;
+            virtual void SetUpDir(const glm::vec3&) = 0;
+            virtual void SetAtDir(const glm::vec3&) = 0;
+
+            virtual float GetGain() const = 0;
+            virtual glm::vec3 GetPosition() const = 0;
+            virtual glm::vec3 GetVelocity() const = 0;
+            virtual glm::vec3 GetUpDir() const = 0;
+            virtual glm::vec3 GetAtDir() const = 0;
         };
 
         class Context
         {
-        };
+        public:
+            Context(std::shared_ptr<Listener> l) : listener(l) {};
+            virtual ~Context() {};
 
-        std::shared_ptr<Buffer> createBuffer(const void *data);
+            virtual std::shared_ptr<Source> CreateSource() = 0;
+            std::shared_ptr<Listener> GetListener() { return listener; };
+        protected:
+            std::shared_ptr<Listener> listener;
+        };
     }
 }
