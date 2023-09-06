@@ -7,6 +7,8 @@ set(SOURCE_FILES
     "src/Adapter/FileSystem.cpp"
     )
 
+add_library(Engine ${SOURCE_FILES})
+
 set_property(TARGET Engine PROPERTY CXX_STANDARD 20)
 
 set(RES_SOURCE_DIR "${CMAKE_SOURCE_DIR}/examples/Chess/resource")
@@ -17,9 +19,15 @@ configure_file(${WAV_FILE} ${RES_DESTINATION_DIR}/sound.wav COPYONLY)
 
 find_package(OpenAL CONFIG REQUIRED)
 find_package(AudioFile CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
+find_package(glad CONFIG REQUIRED)
 
-target_link_libraries(Engine PUBLIC OpenAL::OpenAL)
-target_link_libraries(Engine PUBLIC AudioFile)
+target_link_libraries(Engine PRIVATE OpenAL::OpenAL)
+target_link_libraries(Engine PRIVATE AudioFile)
+target_link_libraries(Engine PRIVATE glfw)
+target_link_libraries(Engine PRIVATE glad::glad)
+target_link_libraries(Engine PUBLIC glm::glm)
 
 target_include_directories(Engine PRIVATE
           "${CMAKE_BINARY_DIR}"
