@@ -1,5 +1,6 @@
 # vim
 **/*~
+**/*.swp
 
 # VS
 /.vs
@@ -12,6 +13,8 @@
 **/x64
 **/x86
 /lib
+/CMakeFiles
+CMakeCache.txt
 
 # build
 /build*
