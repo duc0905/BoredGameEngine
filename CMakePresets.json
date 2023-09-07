@@ -4,13 +4,8 @@
         {
             "name": "windows-base",
             "hidden": true,
-            "generator": "Ninja",
             "binaryDir": "${sourceDir}/out/build/${presetName}",
             "installDir": "${sourceDir}/out/install/${presetName}",
-            "cacheVariables": {
-                "CMAKE_C_COMPILER": "cl.exe",
-                "CMAKE_CXX_COMPILER": "cl.exe"
-            },
             "condition": {
                 "type": "equals",
                 "lhs": "${hostSystemName}",
@@ -19,6 +14,7 @@
         },
         {
             "name": "x64-debug",
+            "toolchainFile": "C:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake",
             "displayName": "x64 Debug",
             "inherits": "windows-base",
             "architecture": {
@@ -31,6 +27,8 @@
         },
         {
             "name": "x64-release",
+            "toolchainFile": "C:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake",
+            "generator": "Ninja",
             "displayName": "x64 Release",
             "inherits": "x64-debug",
             "cacheVariables": {
@@ -39,6 +37,7 @@
         },
         {
             "name": "x86-debug",
+            "toolchainFile": "C:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake",
             "displayName": "x86 Debug",
             "inherits": "windows-base",
             "architecture": {
@@ -51,6 +50,7 @@
         },
         {
             "name": "x86-release",
+            "toolchainFile": "C:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake",
             "displayName": "x86 Release",
             "inherits": "x86-debug",
             "cacheVariables": {
@@ -60,12 +60,17 @@
         {
             "name": "linux-debug",
             "displayName": "Linux Debug",
+
             "generator": "Ninja",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
-            "installDir": "${sourceDir}/out/install/${presetName}",
             "cacheVariables": {
+                "CMAKE_C_COMPILER": "cl.exe",
+                "CMAKE_CXX_COMPILER": "cl.exe",
+                "CMAKE_MAKE_PROGRAM": "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/MSBuild.exe",
                 "CMAKE_BUILD_TYPE": "Debug"
             },
+
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "installDir": "${sourceDir}/out/install/${presetName}",
             "condition": {
                 "type": "equals",
                 "lhs": "${hostSystemName}",
