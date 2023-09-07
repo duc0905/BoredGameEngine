@@ -5,6 +5,7 @@ set(SOURCE_FILES
     "src/Adapter/Render.cpp"
     "src/Adapter/OGL.cpp"
     "src/Adapter/FileSystem.cpp"
+    "src/Adapter/STDFS.cpp"
     )
 
 add_library(Engine ${SOURCE_FILES})

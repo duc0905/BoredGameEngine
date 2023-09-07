@@ -1,39 +1,48 @@
 #pragma once
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
 
 namespace Bored {
-    namespace FileSystem {
+namespace FileSystem {
 
-    class File {
-      public:
-      std::string path;
-      std::string name;
-      std::vector<char> content;
+class File {
+ public:
+  std::string path;
+  std::string name;
+  std::vector<char> content;
+  File();
+  File(const std::string& p, const std::string& n,
+       std::vector<char>& c);
 
-      std::string GetName() const { return name; };
-      std::string GetPath() const { return path; };
-      void Rename(const std::string& newName);
-      void Delete();
-      bool OpenFile();
-      bool CloseFile();
+  std::string GetName() const { return name; };
+  std::string GetPath() const { return path; };
+  virtual void Rename(std::string const& newName) = 0;
+  virtual void Delete() = 0;
+  virtual void CloseFile() = 0;
 
-      void AppendData(const std::vector<char>&);
-      void WriteData(const std::vector<char>&);
+  virtual void AppendData(std::vector<char> const&) = 0;
+  virtual void WriteData(std::vector<char> const&) = 0;
 
-      bool CopyFile();
-      virtual std::size_t GetSize() const { return content.size(); };
-      std::vector<std::string> GetExtensions() const;
-    };
+  virtual void CopyFile() = 0;
+  std::size_t GetSize() const { return content.size(); };
+  std::vector<std::string> GetExtensions() const;
 
-    class Directory : public File {
-      public:
-        std::vector<std::shared_ptr<File>> files;
-        std::vector<std::shared_ptr<Directory>> directories;
+  protected:
+  void SetName(const std::string&);
+  void SetPath(const std::string&);
+  void SetContent(std::vector<char>&);
+};
 
-        std::vector<std::shared_ptr<File>> GetFiles() const { return files; }
-        std::vector<std::shared_ptr<Directory>> GetDirectories() const { return directories; }
-    };
-    } // namespace FileSystem
-} // namespace Bored
+class Directory : public File {
+ public:
+  std::vector<std::shared_ptr<File>> files;
+  std::vector<std::shared_ptr<Directory>> subDirectories;
+
+  std::vector<std::shared_ptr<File>> GetFiles() const { return files; }
+  std::vector<std::shared_ptr<Directory>> GetDirectories() const {
+    return subDirectories;
+  }
+};
+}  // namespace FileSystem
+}  // namespace Bored
