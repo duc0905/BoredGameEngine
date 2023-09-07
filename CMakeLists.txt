@@ -1,8 +1,8 @@
 ﻿# CMakeList.txt : CMake project for BGE3, include source and define
 # project specific logic here.
 #
-cmake_minimum_required (VERSION 3.20)
 
+cmake_minimum_required(VERSION 3.25)
 project (BGE3 VERSION 2.0)
 
 set(CXX_STANDARD 20)

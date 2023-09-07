@@ -15,9 +15,11 @@
 /lib
 /CMakeFiles
 CMakeCache.txt
+CMakeUserPresets.json
 
 # build
-/build*
+/build
+/out
 
 # imgui
 **/imgui.ini
