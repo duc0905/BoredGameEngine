@@ -1,11 +1,26 @@
 ﻿{
-    "version": 3,
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 25,
+        "patch": 0
+    },
     "configurePresets": [
+        {
+            "name": "base",
+            "hidden": true,
+            "toolchainFile": "$env{vcpkgPath}/scripts/buildsystems/vcpkg.cmake",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "installDir": "${sourceDir}/out/install/${presetName}",
+            "cacheVariables": {
+                "CXX_STANDARD": "20",
+                "CXX_STANDARD_REQUIRED": "20"
+            }
+        },
         {
             "name": "windows-base",
             "hidden": true,
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
-            "installDir": "${sourceDir}/out/install/${presetName}",
+            "inherits": "base",
             "condition": {
                 "type": "equals",
                 "lhs": "${hostSystemName}",
@@ -14,7 +29,6 @@
         },
         {
             "name": "x64-debug",
-            "toolchainFile": "C:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake",
             "displayName": "x64 Debug",
             "inherits": "windows-base",
             "architecture": {
@@ -26,18 +40,7 @@
             }
         },
         {
-            "name": "x64-release",
-            "toolchainFile": "C:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake",
-            "generator": "Ninja",
-            "displayName": "x64 Release",
-            "inherits": "x64-debug",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
-            }
-        },
-        {
             "name": "x86-debug",
-            "toolchainFile": "C:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake",
             "displayName": "x86 Debug",
             "inherits": "windows-base",
             "architecture": {
@@ -47,60 +50,93 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug"
             }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "debug-base",
+            "hidden": true,
+            "verbose": true
         },
         {
-            "name": "x86-release",
-            "toolchainFile": "C:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake",
-            "displayName": "x86 Release",
-            "inherits": "x86-debug",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
-            }
+            "name": "all-x64",
+            "displayName": "Build everything for x64",
+            "inherits": "debug-base",
+            "configurePreset": "x64-debug"
         },
         {
-            "name": "linux-debug",
-            "displayName": "Linux Debug",
-
-            "generator": "Ninja",
-            "cacheVariables": {
-                "CMAKE_C_COMPILER": "cl.exe",
-                "CMAKE_CXX_COMPILER": "cl.exe",
-                "CMAKE_MAKE_PROGRAM": "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/MSBuild.exe",
-                "CMAKE_BUILD_TYPE": "Debug"
-            },
-
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
-            "installDir": "${sourceDir}/out/install/${presetName}",
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Linux"
-            },
-            "vendor": {
-                "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
-                    "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
+            "name": "all-x86",
+            "displayName": "Build everything for x86",
+            "inherits": "debug-base",
+            "configurePreset": "x86-debug"
+        },
+        {
+            "name": "editor-x64",
+            "displayName": "Build editor for x64",
+            "inherits": "debug-base",
+            "configurePreset": "x64-debug",
+            "targets": [ "BoredEditor" ]
+        },
+        {
+            "name": "editor-x86",
+            "displayName": "Build editor for x86",
+            "inherits": "debug-base",
+            "configurePreset": "x86-debug",
+            "targets": [ "BoredEditor" ]
+        }
+    ],
+    "workflowPresets": [
+        {
+            "name": "all-x64",
+            "displayName": "Build everything for x64",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "x64-debug"
+                },
+                {
+                    "type": "build",
+                    "name": "all-x64"
                 }
-            }
+            ]
         },
         {
-            "name": "macos-debug",
-            "displayName": "macOS Debug",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
-            "installDir": "${sourceDir}/out/install/${presetName}",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
-            },
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Darwin"
-            },
-            "vendor": {
-                "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
-                    "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
+            "name": "all-x86",
+            "displayName": "Build everything for x86",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "x86-debug"
                 }
-            }
+            ]
+        },
+        {
+            "name": "editor-x64",
+            "displayName": "Build editor for x64",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "x64-debug"
+                },
+                {
+                    "type": "build",
+                    "name": "editor-x64"
+                }
+            ]
+        },
+        {
+            "name": "editor-x86",
+            "displayName": "Build editor for x86",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "x86-debug"
+                },
+                {
+                    "type": "build",
+                    "name": "editor-x86"
+                }
+            ]
         }
     ]
 }
