@@ -34,7 +34,9 @@ File::File(const std::string& path) {
   SetContent(fileContent);
 }
 
-void File::Rename(std::string const& newName) {}
+void File::Rename(std::string const& newName) {
+  std::cout << "Hi" << std::endl;
+}
 void File::Delete() {}
 void File::AppendData(std::vector<char> const&) {}
 void File::WriteData(std::vector<char> const&) {}
