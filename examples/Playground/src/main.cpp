@@ -24,10 +24,6 @@ int main() {
     bool isRunning = true;
 
     while (isRunning) {
-      glViewport(0, 0, window.GetWidth(), window.GetHeight());
-      glClear(GL_COLOR_BUFFER_BIT);
-      glClearColor(0.2f, 0.5f, 0.7f, 1.0f);
-
       isRunning = isRunning && window.OnTick(0.1f);
     }
   }
