@@ -21,6 +21,7 @@
       "name": "windows-base",
       "hidden": true,
       "inherits": "base",
+      "generator": "Visual Studio 17 2022",
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
@@ -56,7 +57,7 @@
     {
       "name": "debug-base",
       "hidden": true,
-      "verbose": false
+      "verbose": true
     },
     {
       "name": "all-x64",

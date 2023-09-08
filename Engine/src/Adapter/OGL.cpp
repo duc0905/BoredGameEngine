@@ -3,60 +3,94 @@
 #include <GLFW/glfw3.h>
 
 namespace Bored {
-    namespace Render {
-        namespace OGL {
-            Buffer::Buffer() {
-                glGenBuffers(1, &id);
-            }
+  namespace Render {
+    namespace OGL {
+      Buffer::Buffer() : id(0), size(0) {
+        glGenBuffers(1, &id);
+      }
 
-            Buffer::~Buffer() {
-                glDeleteBuffers(1, &id);
-            }
+      Buffer::~Buffer() {
+        glDeleteBuffers(1, &id);
+      }
 
-            void Buffer::SubData(std::vector<char> data, BufferLayout bl) {
-                glNamedBufferSubData(id, 0, data.size(), &data[0]);
-            }
-            std::vector<char> Buffer::GetData() {
-                std::vector<char> data(size, 0);
-                glNamedBufferSubData(id, 0, size, &data[0]);
-                return data;
-            }
+      VertexBuffer::VertexBuffer() : OGL::Buffer() {}
+      VertexBuffer::~VertexBuffer() {}
 
-            VertexBuffer::VertexBuffer() : OGL::Buffer() {}
-            VertexBuffer::~VertexBuffer() {}
+      void VertexBuffer::Bind() {
+        glBindBuffer(GL_ARRAY_BUFFER, id);
+      }
+      void VertexBuffer::Unbind() {
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+      }
 
-            void VertexBuffer::Bind() {
-                glBindBuffer(GL_ARRAY_BUFFER, id);
-            }
-            void VertexBuffer::Unbind() {
-                glBindBuffer(GL_ARRAY_BUFFER, 0);
-            }
+      void VertexBuffer::SubData(std::vector<char>, BufferLayout)
+      {
+      }
 
-            IndexBuffer::IndexBuffer() : OGL::Buffer() {}
-            IndexBuffer::~IndexBuffer() { }
+      std::vector<char> VertexBuffer::GetData()
+      {
+        return std::vector<char>();
+      }
 
-            void IndexBuffer::Bind() {
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
-            }
-            void IndexBuffer::Unbind() {
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-            }
+      IndexBuffer::IndexBuffer() : OGL::Buffer() {}
+      IndexBuffer::~IndexBuffer() { }
 
-            VertexArray::VertexArray() {
-                glGenVertexArrays(1, &id);
-            }
+      void IndexBuffer::Bind() {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
+      }
+      void IndexBuffer::Unbind() {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+      }
 
-            VertexArray::~VertexArray() {
-                glDeleteVertexArrays(1, &id);
-            }
+      void IndexBuffer::SubData(std::vector<unsigned int>)
+      {
+      }
 
-            void VertexArray::Bind() const {
-                glBindVertexArray(id);
-            }
+      std::vector<char> IndexBuffer::GetData()
+      {
+        return std::vector<char>();
+      }
 
-            void VertexArray::Unbind() const {
-                glBindVertexArray(0);
-            }
-        }
+      VertexArray::VertexArray() {
+        glGenVertexArrays(1, &id);
+      }
+
+      VertexArray::~VertexArray() {
+        glDeleteVertexArrays(1, &id);
+      }
+
+      void VertexArray::Bind() const {
+        glBindVertexArray(id);
+      }
+
+      void VertexArray::Unbind() const {
+        glBindVertexArray(0);
+      }
+
+      Context::Context(Bored::Window::Window* w)
+        : window(w) {
+        gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+      }
+
+      Context::~Context() {}
+
+      void Context::DrawVertexArray(std::shared_ptr<Render::VertexArray> vao, std::shared_ptr<Render::ShaderPipeline> pipeline)
+      {
+      }
+
+      Bored::Window::Window& Context::GetWindow() const
+      {
+        return *window;
+      }
+
+      bool Context::OnTick(double dt)
+      {
+          glViewport(0, 0, window->GetWidth(), window->GetHeight());
+          glClear(GL_COLOR_BUFFER_BIT);
+          glClearColor(0.2f, 0.5f, 0.7f, 1.0f);
+
+          return true;
+      }
     }
+  }
 }
