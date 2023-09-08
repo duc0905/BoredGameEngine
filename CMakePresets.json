@@ -57,7 +57,11 @@
     {
       "name": "debug-base",
       "hidden": true,
+<<<<<<< HEAD
       "verbose": true
+=======
+      "verbose": false
+>>>>>>> 496769099eb90b61905d1be99158e9b253200cec
     },
     {
       "name": "all-x64",
