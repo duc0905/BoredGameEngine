@@ -1,10 +1,12 @@
+#include "Adapter/OGL.h"
+#include "Adapter/STDFS.h"
+#include "PlaygroundConfig.h"
 #include <iostream>
 #include <memory>
-#include "Adapter/OGL.h"
-#include "PlaygroundConfig.h"
-#include "Adapter/STDFS.h"
 
-#define PrintMacro(mac) std::cout << "Value of " << #mac << ": " << mac << std::endl;
+
+#define PrintMacro(mac) \
+  std::cout << "Value of " << #mac << ": " << mac << std::endl;
 
 using namespace Bored::FileSystem::STDFS;
 
@@ -17,8 +19,7 @@ int main() {
     std::shared_ptr<File> file = std::make_shared<File>(test);
     std::string testContent = "hohohohoho";
     file->AppendData(testContent);
-  }
-  catch (std::exception e) {
+  } catch (std::exception e) {
     std::cerr << "Exception caught: " << e.what() << std::endl;
     exit(1);
   }
