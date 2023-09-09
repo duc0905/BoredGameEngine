@@ -12,7 +12,7 @@ std::shared_ptr<File> Bored::FileSystem::FileManager::CreateFile(
 
 std::shared_ptr<Directory> FileManager::MakeDirectory(
     const std::string& dirname) {
-  return std::shared_ptr<STDFS::Directory>();
+  return std::make_shared<STDFS::Directory>();
 }
 
 }  // namespace FileSystem

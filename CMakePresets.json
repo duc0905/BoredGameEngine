@@ -14,7 +14,7 @@
       "installDir": "${sourceDir}/out/install/${presetName}",
       "cacheVariables": {
         "CXX_STANDARD": "20",
-        "CXX_STANDARD_REQUIRED": "20"
+        "CXX_STANDARD_REQUIRED": true
       }
     },
     {
@@ -57,7 +57,7 @@
     {
       "name": "debug-base",
       "hidden": true,
-      "verbose": true
+      "verbose": false
     },
     {
       "name": "all-x64",

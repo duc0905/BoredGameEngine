@@ -23,3 +23,6 @@ CMakeUserPresets.json
 
 # imgui
 **/imgui.ini
+
+# playground
+/examples/Playground
