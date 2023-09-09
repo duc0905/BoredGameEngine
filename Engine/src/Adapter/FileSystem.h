@@ -26,7 +26,7 @@ class File {
   virtual void WriteData(const std::string& data) = 0;
 
   std::size_t GetSize() const { return content.size(); };
-  std::vector<std::string> GetExtensions() const;
+  std::vector<std::string> GetExtension() const;
 
   protected:
   void SetName(const std::string&);
