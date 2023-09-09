@@ -10,7 +10,6 @@ class File {
  public:
   std::string path;
   std::string name;
-  std::vector<char> content;
   File();
   File(const std::string& p, const std::string& n);
 
@@ -25,10 +24,10 @@ class File {
   virtual void AppendData(const std::string& data) = 0;
   virtual void WriteData(const std::string& data) = 0;
 
-  std::size_t GetSize() const { return content.size(); };
-  std::vector<std::string> GetExtension() const;
+  virtual std::size_t GetSize() const = 0;
+  std::string GetExtension() const;
 
-  protected:
+ protected:
   void SetName(const std::string&);
   void SetPath(const std::string&);
 };

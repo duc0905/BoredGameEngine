@@ -11,25 +11,13 @@ File::File(const std::string& path) {
   std::string parentDir = filePath.parent_path().string();
   std::string filename = filePath.filename().string();
 
-  std::ifstream inputFile(path, std::ios::binary);
+  std::fstream file(path, std::ios::binary | std::ios::out);
 
-  if (!inputFile.is_open()) {
-    std::cerr << "Failed to open file: " << filePath << std::endl;
+  if (!file.is_open()) {
+    std::cerr << "Failed to open/create file: " << filePath << std::endl;
   }
 
-  // Create a vector to store the file content
-  // std::vector<char> fileContent;
-
-  // Read the file content and push it into the vector
-  char ch;
-  while (inputFile.get(ch)) {
-    std::cout << ch;
-  }
-
-  std::cout << std::endl;
-
-  // Close the file
-  inputFile.close();
+  file.close();
 
   SetName(filename);
   SetPath(parentDir);
@@ -123,7 +111,9 @@ void File::WriteData(std::vector<char>& data) {
   outputFile.close();
 
   std::cout << "Data overwrite to the file successfully." << std::endl;
-}
+};
+
+std::size_t File::GetSize() const { return 0; };
 }  // namespace STDFS
 }  // namespace FileSystem
 }  // namespace Bored
