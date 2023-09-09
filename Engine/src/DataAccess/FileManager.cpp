@@ -1,16 +1,18 @@
 #include "FileManager.h"
+#include "STDFS.h"
+#include <memory>
 
 namespace Bored {
 namespace FileSystem {
 
 std::shared_ptr<File> Bored::FileSystem::FileManager::CreateFile(
-    std::string const& filename) {
-  return std::shared_ptr<File>(filename);
+    const std::string& filename) {
+  return std::make_shared<STDFS::File>(filename);
 }
 
 std::shared_ptr<Directory> FileManager::MakeDirectory(
-    std::string const& dirname) {
-  return std::shared_ptr<Directory>();
+    const std::string& dirname) {
+  return std::make_shared<STDFS::Directory>();
 }
 
 }  // namespace FileSystem

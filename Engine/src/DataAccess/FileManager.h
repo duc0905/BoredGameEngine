@@ -1,5 +1,8 @@
 #pragma once
-#include "FileSystem.h"
+#include "../Adapter/FileSystem.h"
+#include <memory>
+#include <string>
+#include <exception>
 
 namespace Bored {
 namespace FileSystem {
@@ -14,9 +17,9 @@ class FileManager {
   FileManager(std::string const& p) { path = p; }
   ~FileManager();
 
-  std::shared_ptr<File> CreateFile(std::string const& filename);
+  std::shared_ptr<File> CreateFile(const std::string& filename);
 
-  std::shared_ptr<Directory> MakeDirectory(std::string const& dirname);
+  std::shared_ptr<Directory> MakeDirectory(const std::string& dirname);
 
   void DeteleFile() throw(std::exception);
 
