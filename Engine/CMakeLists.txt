@@ -5,6 +5,7 @@ set(SOURCE_FILES
     "src/Adapter/Render.cpp"
     "src/Adapter/OGL.cpp"
     "src/Adapter/FileSystem.cpp"
+     "src/Adapter/Window.cpp"
     "src/Adapter/STDFS.cpp"
     )
 
@@ -12,11 +13,7 @@ add_library(Engine ${SOURCE_FILES})
 
 set_property(TARGET Engine PROPERTY CXX_STANDARD 20)
 
-set(RES_SOURCE_DIR "${CMAKE_SOURCE_DIR}/examples/Chess/resource")
-set(RES_DESTINATION_DIR "${CMAKE_BINARY_DIR}/examples/Chess/resource")
-
-set(WAV_FILE "${RES_SOURCE_DIR}/sound.wav")
-configure_file(${WAV_FILE} ${RES_DESTINATION_DIR}/sound.wav COPYONLY)
+configure_file(src/config.h.in src/config.h)
 
 find_package(glm CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)

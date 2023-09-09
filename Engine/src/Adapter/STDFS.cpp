@@ -18,29 +18,112 @@ File::File(const std::string& path) {
   }
 
   // Create a vector to store the file content
-  std::vector<char> fileContent;
+  // std::vector<char> fileContent;
 
   // Read the file content and push it into the vector
   char ch;
   while (inputFile.get(ch)) {
-    fileContent.push_back(ch);
+    std::cout << ch;
   }
+
+  std::cout << std::endl;
 
   // Close the file
   inputFile.close();
 
   SetName(filename);
   SetPath(parentDir);
-  SetContent(fileContent);
 }
 
 void File::Rename(std::string const& newName) {
-  std::cout << "Hi" << std::endl;
+  fs::path cwd = path;
+  fs::path target = cwd / newName;
+  fs::path source = cwd / name;
+  if (fs::exists(target)) {
+    std::cerr << "File already exist";
+    return;
+  };
+  if (fs::exists(source)) {
+    try {
+      // Rename the file
+      fs::rename(source, target);
+      std::cout << "File renamed successfully." << std::endl;
+    } catch (const fs::filesystem_error& e) {
+      std::cerr << "Error renaming file: " << e.what() << std::endl;
+      throw std::exception("Error renaming files");
+    }
+  } else {
+    std::cerr << "Source file does not exist." << std::endl;
+    throw std::exception("Error renaming files");
+  }
 }
-void File::Delete() {}
-void File::AppendData(std::vector<char> const&) {}
-void File::WriteData(std::vector<char> const&) {}
-void File::CopyFile() {}
+
+void File::Delete() {
+  fs::path cwd = path;
+  fs::path fileToDelete = cwd / name;
+  if (fs::exists(fileToDelete)) {
+    try {
+      fs::remove(fileToDelete);
+      std::cout << "File deleted successfully." << std::endl;
+    } catch (const fs::filesystem_error& e) {
+      std::cerr << "Error deleting file: " << e.what() << std::endl;
+      throw std::exception("Error deleting files");
+    }
+  } else {
+    std::cerr << "File doesn't exist to be deleted" << std::endl;
+    throw std::exception("Error deleting files");
+  }
+}
+
+void File::AppendData(const std::string& data) {
+  std::vector<char> charVector(data.begin(), data.end());
+  AppendData(charVector);
+}
+
+void File::WriteData(const std::string& data) {
+  std::vector<char> charVector(data.begin(), data.end());
+  WriteData(charVector);
+}
+
+void File::AppendData(std::vector<char>& data) {
+  fs::path cwd = path;
+  fs::path filePath = cwd / name;
+  std::ofstream outputFile(filePath, std::ios::binary | std::ios::app);
+
+  if (!outputFile.is_open()) {
+    std::cerr << "Failed to open file for appending: " << filePath << std::endl;
+    std::string ex = "Unable to append data to file: " + filePath.string();
+    throw std::exception(ex.c_str());
+  }
+
+  // Append the data to the file
+  outputFile.write(data.data(), data.size());
+
+  // Close the file
+  outputFile.close();
+
+  std::cout << "Data appended to the file successfully." << std::endl;
+}
+
+void File::WriteData(std::vector<char>& data) {
+  fs::path cwd = path;
+  fs::path filePath = cwd / name;
+  std::ofstream outputFile(filePath, std::ios::binary | std::ios::trunc);
+
+  if (!outputFile.is_open()) {
+    std::cerr << "Failed to open file for appending: " << filePath << std::endl;
+    std::string ex = "Unable to overwrite data to file: " + filePath.string();
+    throw std::exception(ex.c_str());
+  }
+
+  // Append the data to the file
+  outputFile.write(data.data(), data.size());
+
+  // Close the file
+  outputFile.close();
+
+  std::cout << "Data overwrite to the file successfully." << std::endl;
+}
 }  // namespace STDFS
 }  // namespace FileSystem
 }  // namespace Bored
