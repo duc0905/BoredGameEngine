@@ -10,7 +10,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED On)
 set(CMAKE_CXX_EXTENSIONS Off)
 
 configure_file(EngineConfig.h.in ${CMAKE_BINARY_DIR}/EngineConfig.h)
-
 enable_testing()
 
 include(FetchContent)
