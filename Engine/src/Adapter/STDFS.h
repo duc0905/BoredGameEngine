@@ -5,10 +5,10 @@
 #include <iostream>
 #include <string>
 
-
 namespace Bored {
 namespace FileSystem {
 namespace STDFS {
+namespace fs = std::filesystem;
 class File : public FileSystem::File {
  public:
   File(const std::string& path);
@@ -16,9 +16,14 @@ class File : public FileSystem::File {
   // Inherited via File
   virtual void Rename(std::string const& newName) override;
   virtual void Delete() override;
-  virtual void AppendData(std::vector<char> const&) override;
-  virtual void WriteData(std::vector<char> const&) override;
-  virtual void CopyFile() override;
+
+  virtual void AppendData(std::vector<char>& data) override;
+  virtual void WriteData(std::vector<char>& data) override;
+
+  virtual void AppendData(const std::string& data) override;
+  virtual void WriteData(const std::string& data) override;
+
+  virtual std::size_t GetSize() const override;
 
  private:
   std::fstream stream;

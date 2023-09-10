@@ -2,14 +2,25 @@
 
 namespace Bored {
 namespace FileSystem {
-File::File(const std::string& p, const std::string& n, std::vector<char>& c)
-    : path(p), name(n), content(c){};
+File::File(const std::string& p, const std::string& n) : path(p), name(n){};
+
+File::File() : path(""), name(""){};
 
 void File::SetName(const std::string& n) { name = n; }
 
 void File::SetPath(const std::string& p) { path = p; }
 
-void File::SetContent(std::vector<char>& c) { content = c; }
+std::string File::GetExtension() const {
+  size_t dotPosition = name.find_last_of(".");
+
+  if (dotPosition != std::string::npos) {
+    // Extract the extension (substring after the last dot)
+    return name.substr(dotPosition + 1);
+  } else {
+    // If no dot is found, return an empty string to indicate no extension
+    return "";
+  }
+}
 
 }  // namespace FileSystem
 }  // namespace Bored

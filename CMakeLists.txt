@@ -3,18 +3,31 @@
 #
 
 cmake_minimum_required(VERSION 3.25)
-project (BGE3 VERSION 2.0)
+project(BoredEngine VERSION 2.0)
 
-set(CXX_STANDARD 20)
-set(CXX_STANDARD_REQUIRED 20)
-# Add source to this project's executable.
-# add_executable (BGE3 "BGE3.cpp" "BGE3.h")
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED On)
+set(CMAKE_CXX_EXTENSIONS Off)
 
-# if (CMAKE_VERSION VERSION_GREATER 3.12)
-# endif()
+<<<<<<< HEAD
+configure_file(EngineConfig.h.in ${CMAKE_BINARY_DIR}/EngineConfig.h)
 
-# TODO: Add tests and install targets if needed.
-add_subdirectory ("Engine")
+enable_testing()
+
+=======
+enable_testing()
+
+>>>>>>> 4e6a5731f9735e74d72d6c720ee52d3e46d4b991
+include(FetchContent)
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+    )
+
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+
+add_subdirectory("Engine")
 add_subdirectory("Editor")
-
-add_subdirectory ("examples/Chess")
+add_subdirectory("examples")
