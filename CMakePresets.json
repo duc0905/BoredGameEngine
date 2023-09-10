@@ -57,7 +57,7 @@
     {
       "name": "debug-base",
       "hidden": true,
-      "verbose": false
+      "verbose": true
     },
     {
       "name": "all-x64",

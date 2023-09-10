@@ -9,10 +9,15 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED On)
 set(CMAKE_CXX_EXTENSIONS Off)
 
+<<<<<<< HEAD
 configure_file(EngineConfig.h.in ${CMAKE_BINARY_DIR}/EngineConfig.h)
 
 enable_testing()
 
+=======
+enable_testing()
+
+>>>>>>> 4e6a5731f9735e74d72d6c720ee52d3e46d4b991
 include(FetchContent)
 FetchContent_Declare(
     googletest

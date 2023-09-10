@@ -12,8 +12,7 @@ set(SOURCE_FILES
 add_library(Engine ${SOURCE_FILES})
 
 set_property(TARGET Engine PROPERTY CXX_STANDARD 20)
-
-configure_file(src/config.h.in src/config.h)
+configure_file(EngineConfig.h.in ${CMAKE_BINARY_DIR}/EngineConfig.h)
 
 find_package(glm CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
