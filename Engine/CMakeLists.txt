@@ -3,9 +3,10 @@ set(SOURCE_FILES
     "src/Adapter/Audio.cpp"
     "src/Adapter/OAL.cpp"
     "src/Adapter/Render.cpp"
-    "src/Adapter/OGL.cpp"
     "src/Adapter/FileSystem.cpp"
-     "src/Adapter/Window.cpp")
+    "src/Adapter/Window.cpp"
+    "src/DataAccess/RenderManager.cpp"
+    )
 
 add_library(Engine ${SOURCE_FILES})
 

@@ -5,9 +5,13 @@
 #include "../Adapter/Render.h"
 
 namespace Bored {
+    namespace Render {
+        class Manager; // Forward declare
+    }
   namespace Window {
 
     class Window {
+        friend class Render::Manager;
     public:
       Window();
       ~Window();
@@ -22,17 +26,9 @@ namespace Bored {
 
       bool OnTick(double dt);
 
-      void SwapBuffer() {
-        glfwSwapBuffers(nativeWindow);
-      }
-
-      void PollEvents() {
-        glfwPollEvents();
-      }
-
-      bool ShouldClose() {
-        return glfwWindowShouldClose(nativeWindow);
-      }
+      void SwapBuffer();
+      void PollEvents();
+      bool ShouldClose();
 
       template <class T,
         std::enable_if_t<std::is_base_of_v<Bored::Render::Context, T>, bool> = true>
@@ -56,6 +52,9 @@ namespace Bored {
 
         renderContext = std::make_unique<T>(this);
       }
+
+    private:
+      Bored::Render::Context* GetRenderContext() const { return renderContext.get(); }
     private:
       std::string name;
       unsigned int width = 800, height = 600;
