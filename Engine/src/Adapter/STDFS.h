@@ -5,11 +5,10 @@
 #include <iostream>
 #include <string>
 
-namespace fs = std::filesystem;
-
 namespace Bored {
 namespace FileSystem {
 namespace STDFS {
+namespace fs = std::filesystem;
 class File : public FileSystem::File {
  public:
   File(const std::string& path);
