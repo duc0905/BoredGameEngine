@@ -3,7 +3,6 @@
 
 #if RENDER_API == OGL_API
 #include "../Adapter/OGL.cpp" // Compile OGL.cpp only if the render
-                              // API is OpenGL
 #endif
 
 namespace Bored {

@@ -3,13 +3,12 @@
 #include <memory>
 #include "EngineConfig.h"
 
-#if RENDER_API == OGL_API
-#include "../Adapter/OGL.h"
+#if RENDER_API == OGL_API // need to include glad before glfw.
+#include <glad/glad.h>
 #endif
 
 #include "../Adapter/Window.h"
 #include "../Adapter/Render.h"
-
 
 namespace Bored {
     namespace Render {
