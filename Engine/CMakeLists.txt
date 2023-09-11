@@ -6,6 +6,7 @@ set(SOURCE_FILES
     "src/Adapter/FileSystem.cpp"
     "src/Adapter/Window.cpp"
     "src/DataAccess/RenderManager.cpp"
+    "src/Adapter/STDFS.cpp"
     )
 
 add_library(Engine ${SOURCE_FILES})
