@@ -16,6 +16,7 @@ class File : public FileSystem::File {
   // Inherited via File
   virtual void Rename(std::string const& newName) override;
   virtual void Delete() override;
+  //   virtual bool IsExists() override;
 
   virtual void AppendData(std::vector<char>& data) override;
   virtual void WriteData(std::vector<char>& data) override;
@@ -28,7 +29,11 @@ class File : public FileSystem::File {
  private:
   std::fstream stream;
 };
-class Directory : public FileSystem::Directory {};
+class Directory : public FileSystem::Directory {
+ public:
+  Directory(const std::string& file_path);
+  //   virtual bool IsExists() override;
+};
 
 }  // namespace STDFS
 }  // namespace FileSystem

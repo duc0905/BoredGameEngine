@@ -49,17 +49,11 @@ void File::Rename(std::string const& newName) {
 void File::Delete() {
   fs::path cwd = path;
   fs::path fileToDelete = cwd / name;
-  if (fs::exists(fileToDelete)) {
-    try {
-      fs::remove(fileToDelete);
-      std::cout << "File deleted successfully." << std::endl;
-    } catch (const fs::filesystem_error& e) {
-      std::cerr << "Error deleting file: " << e.what() << std::endl;
-      throw std::exception("Error deleting files");
-    }
-  } else {
-    std::cerr << "File doesn't exist to be deleted" << std::endl;
-    throw std::exception("Error deleting files");
+  try {
+    fs::remove(fileToDelete);
+    std::cout << "File deleted successfully." << std::endl;
+  } catch (const fs::filesystem_error& e) {
+    std::cerr << "Waring: " << e.what() << std::endl;
   }
 }
 
@@ -114,6 +108,31 @@ void File::WriteData(std::vector<char>& data) {
 };
 
 std::size_t File::GetSize() const { return 0; };
+
+// bool File::IsExists
+
+Directory::Directory(const std::string& file_path)
+    : FileSystem::Directory(file_path) {
+  fs::path cwd = file_path;
+  try {
+    // Use std::filesystem::create_directory to create the directory
+    fs::create_directory(file_path);
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+
+  for (const auto& entry : fs::directory_iterator(cwd)) {
+    const fs::path& currentPath = entry.path();
+
+    if (fs::is_directory(currentPath)) {
+      std::cout << "Folder: " << currentPath.filename() << std::endl;
+    } else if (fs::is_regular_file(currentPath)) {
+      std::cout << "File: " << currentPath.filename() << std::endl;
+    }
+    // LOAD file and sub dir
+  };
+  //   std::cout << "Success";
+}
 }  // namespace STDFS
 }  // namespace FileSystem
 }  // namespace Bored
