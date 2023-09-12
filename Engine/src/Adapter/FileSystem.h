@@ -21,6 +21,7 @@ class File {
   virtual void Rename(std::string const& newName) = 0;
   virtual void Delete() = 0;
 
+  virtual std::vector<char> GetData() = 0;
   virtual void AppendData(std::vector<char>&) = 0;
   virtual void WriteData(std::vector<char>&) = 0;
 
@@ -46,9 +47,8 @@ class Directory {
   Directory(const std::string& dirPath);
 
   //   virtual bool IsExists() = 0;
-
   std::vector<std::shared_ptr<File>> GetFiles() const { return files; }
-  std::vector<std::shared_ptr<Directory>> GetDirectories() const {
+  std::vector<std::shared_ptr<Directory>> GetDirectories() {
     return subDirectories;
   }
 

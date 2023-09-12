@@ -34,6 +34,9 @@ Directory::Directory(const std::string& dirPath) : path(dirPath) {
     dirName = "";
     throw std::exception("Invalid path for directory");
   }
+
+  subDirectories = std::vector<std::shared_ptr<FileSystem::Directory>>();
+  files = std::vector<std::shared_ptr<FileSystem::File>>();
 }
 
 }  // namespace FileSystem

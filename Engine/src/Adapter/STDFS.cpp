@@ -107,9 +107,52 @@ void File::WriteData(std::vector<char>& data) {
   std::cout << "Data overwrite to the file successfully." << std::endl;
 };
 
+std::vector<char> File::GetData() {
+  fs::path cwd = path;
+  std::string filePath = (cwd / name).string();
+  std::ifstream inputFile(filePath, std::ios::binary);
+
+  // Check if the file was opened successfully
+  if (!inputFile.is_open()) {
+    std::cerr << "Failed to open file: " << filePath << std::endl;
+    return std::vector<char>();  // Return an error code
+  }
+  // Create a vector to store the file content
+  std::vector<char> fileContent;
+
+  // Read the file content and push it into the vector
+  char ch;
+  while (inputFile.get(ch)) {
+    fileContent.push_back(ch);
+  }
+
+  return fileContent;
+}
+
 std::size_t File::GetSize() const { return 0; };
 
 // bool File::IsExists
+
+void Directory::LoadSubDirectories() {
+  if (loaded) {
+    return;
+  }
+
+  for (std::string dirPath : dirPaths) {
+    std::shared_ptr<Directory> dir = std::make_shared<Directory>(dirPath);
+    subDirectories.push_back(dir);
+  }
+  dirPaths = std::vector<std::string>();
+  loaded = true;
+};
+
+std::vector<std::shared_ptr<FileSystem::Directory>>
+Directory::GetDirectories() {
+  if (!loaded) {
+    LoadSubDirectories();
+  }
+  return subDirectories;
+}
 
 Directory::Directory(const std::string& file_path)
     : FileSystem::Directory(file_path) {
@@ -125,13 +168,12 @@ Directory::Directory(const std::string& file_path)
     const fs::path& currentPath = entry.path();
 
     if (fs::is_directory(currentPath)) {
-      std::cout << "Folder: " << currentPath.filename() << std::endl;
+      dirPaths.push_back(currentPath.string());
     } else if (fs::is_regular_file(currentPath)) {
-      std::cout << "File: " << currentPath.filename() << std::endl;
+      std::shared_ptr<File> f = std::make_shared<File>(currentPath.string());
+      files.push_back(f);
     }
-    // LOAD file and sub dir
   };
-  //   std::cout << "Success";
 }
 }  // namespace STDFS
 }  // namespace FileSystem
