@@ -19,5 +19,4 @@
 #define VIRTUAL_FS_API 2
 
 #define FILE_SYSTEM_API STDFS_API
-
 #endif  // ENGINE_CONFIG_H

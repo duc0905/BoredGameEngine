@@ -1,12 +1,13 @@
 set(SOURCE_FILES
     "src/Bored.cpp"
     "src/Adapter/Audio.cpp"
-    # "src/Adapter/OAL.cpp"
     "src/Adapter/Render.cpp"
     "src/Adapter/FileSystem.cpp"
     "src/Adapter/Window.cpp"
     "src/Adapter/STDFS.cpp"
     "src/DataAccess/RenderManager.cpp"
+    "src/DataAccess/FileManager/FileManager.cpp"
+    "src/DataAccess/FileManager/STDFM.cpp"
     )
 
 add_library(Engine ${SOURCE_FILES})

@@ -22,5 +22,22 @@ std::string File::GetExtension() const {
   }
 }
 
+Directory::Directory(const std::string& dirPath) : path(dirPath) {
+  size_t lastSeparator = dirPath.find_last_of(
+      "/\\");  // Use '/' for Unix-like systems and '\\' for Windows
+
+  if (lastSeparator != std::string::npos) {
+    // Extract the directory name (substring before the last separator)
+    dirName = dirPath.substr(lastSeparator + 1, -1);
+  } else {
+    // If no separator is found, return an empty string to indicate that
+    dirName = "";
+    throw std::exception("Invalid path for directory");
+  }
+
+  subDirectories = std::vector<std::shared_ptr<FileSystem::Directory>>();
+  files = std::vector<std::shared_ptr<FileSystem::File>>();
+}
+
 }  // namespace FileSystem
 }  // namespace Bored

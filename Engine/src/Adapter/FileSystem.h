@@ -15,9 +15,12 @@ class File {
 
   std::string GetName() const { return name; };
   std::string GetPath() const { return path; };
+  //   virtual bool IsExists() = 0;
+
   virtual void Rename(std::string const& newName) = 0;
   virtual void Delete() = 0;
 
+  virtual std::vector<char> GetData() = 0;
   virtual void AppendData(std::vector<char>&) = 0;
   virtual void WriteData(std::vector<char>&) = 0;
 
@@ -32,15 +35,25 @@ class File {
   void SetPath(const std::string&);
 };
 
-class Directory : public File {
+class Directory {
  public:
-  std::vector<std::shared_ptr<File>> files;
-  std::vector<std::shared_ptr<Directory>> subDirectories;
+  std::string path;
+  std::string dirName;
 
+  std::string GetDirname() const { return dirName; };
+  std::string GetPath() const { return path; };
+
+  Directory(const std::string& dirPath);
+
+  //   virtual bool IsExists() = 0;
   std::vector<std::shared_ptr<File>> GetFiles() const { return files; }
-  std::vector<std::shared_ptr<Directory>> GetDirectories() const {
+  std::vector<std::shared_ptr<Directory>> GetDirectories() {
     return subDirectories;
   }
+
+ protected:
+  std::vector<std::shared_ptr<File>> files;
+  std::vector<std::shared_ptr<Directory>> subDirectories;
 };
 }  // namespace FileSystem
 }  // namespace Bored
