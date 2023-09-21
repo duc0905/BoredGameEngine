@@ -38,9 +38,8 @@ class Directory : public FileSystem::Directory {
 
  public:
   Directory(const std::string& file_path);
-  //   virtual bool IsExists() override;
   void LoadSubDirectories();
-  std::vector<std::shared_ptr<FileSystem::Directory>> GetDirectories();
+  std::vector<std::shared_ptr<FileSystem::Directory>> GetDirectories() override;
 };
 
 }  // namespace STDFS

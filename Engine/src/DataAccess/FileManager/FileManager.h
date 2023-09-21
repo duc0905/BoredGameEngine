@@ -1,6 +1,5 @@
 #pragma once
 #include "../../Adapter/FileSystem.h"
-#include "EngineConfig.h"
 #include <exception>
 #include <memory>
 #include <string>

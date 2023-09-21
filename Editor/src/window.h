@@ -2,34 +2,37 @@
 #include <imgui.h>
 
 namespace Bored {
-  namespace Editor {
-    class BoredWindow {
-    public:
-      BoredWindow() = default;
-      ~BoredWindow() = default;
-      BoredWindow(const char *title, int width, int height);
+namespace Editor {
+class BoredWindow {
+ public:
+  BoredWindow() = default;
+  ~BoredWindow() = default;
+  BoredWindow(const char* title, int width, int height, bool open)
+      : _title(title), _width(width), _height(height), _open(open){};
+  BoredWindow(const char* title, int width, int height)
+      : BoredWindow(title, width, height, true){};
 
-      void Create() {
-          ImGui::Begin(title, &open, 0);
+  void Create() {
+    ImGui::SetNextWindowSize(ImVec2(_width, _height), ImGuiCond_Once);
+    ImGui::Begin(_title, &_open, 0);
+    Update();
+    ImGui::End();
+  }
 
-          // tim cach set width voi height
+  void SetOpen(bool open) { _open = open; };
 
-          Init();
+  virtual void Init() = 0;
+  virtual void Update() = 0;
+  virtual void Render() = 0;
+  virtual void Shutdown() = 0;
 
-          ImGui::End();
-      }
+  virtual bool IsRunning() const = 0;
 
-      virtual void Init() = 0;
-      virtual void Update() = 0;
-      virtual void Render() = 0;
-      virtual void Shutdown() = 0;
+ private:
+  const char* _title;
+  bool _open;
+  int _width, _height;
+};
 
-      virtual bool IsRunning() const = 0;
-    private:
-      const char* title;
-      bool open;
-      int width, height;
-    };
-
-  } // namespace Editor
-} // namespace Bored  
+}  // namespace Editor
+}  // namespace Bored

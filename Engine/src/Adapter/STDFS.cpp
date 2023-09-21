@@ -134,10 +134,6 @@ std::size_t File::GetSize() const { return 0; };
 // bool File::IsExists
 
 void Directory::LoadSubDirectories() {
-  if (loaded) {
-    return;
-  }
-
   for (std::string dirPath : dirPaths) {
     std::shared_ptr<Directory> dir = std::make_shared<Directory>(dirPath);
     subDirectories.push_back(dir);

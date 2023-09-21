@@ -47,10 +47,10 @@ class Directory {
   Directory(const std::string& dirPath);
 
   //   virtual bool IsExists() = 0;
-  std::vector<std::shared_ptr<File>> GetFiles() const { return files; }
-  std::vector<std::shared_ptr<Directory>> GetDirectories() {
+  virtual std::vector<std::shared_ptr<File>> GetFiles() const { return files; }
+  virtual std::vector<std::shared_ptr<Directory>> GetDirectories() {
     return subDirectories;
-  }
+  };
 
  protected:
   std::vector<std::shared_ptr<File>> files;
