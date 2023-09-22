@@ -8,6 +8,7 @@ set(SOURCE_FILES
     "src/DataAccess/RenderManager.cpp"
     "src/DataAccess/FileManager/FileManager.cpp"
     "src/DataAccess/FileManager/STDFM.cpp"
+    "src/GameLoop.cpp"
     )
 
 add_library(Engine ${SOURCE_FILES})
