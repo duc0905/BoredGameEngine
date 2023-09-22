@@ -22,16 +22,14 @@ class FileExplorer : public BoredWindow {
 
   virtual bool IsRunning() const override;
 
+  void SetOpenFileCallBack(
+      std::function<void(std::shared_ptr<FileSystem::File>)> callBack);
+
  private:
   void OpenWarningWindow();
   void FileDisplayer(std::shared_ptr<Bored::FileSystem::File> file);
   void SubDirDisplayer(std::shared_ptr<Bored::FileSystem::Directory> dir);
   void DirectoryDisplayer();
-
-  void ContentWindow();
-
-  void setOpenFileCallBack(
-      std::function<void(std::shared_ptr<FileSystem::File>)> callBack);
 
  private:
   bool loadedDir = false;

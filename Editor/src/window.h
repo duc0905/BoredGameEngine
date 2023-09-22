@@ -7,19 +7,22 @@ class BoredWindow {
  public:
   BoredWindow() = default;
   ~BoredWindow() = default;
-  BoredWindow(const char* title, int width, int height, bool open)
+  BoredWindow(std::string title, int width, int height, bool open)
       : _title(title), _width(width), _height(height), _open(open){};
-  BoredWindow(const char* title, int width, int height)
+  BoredWindow(std::string title, int width, int height)
       : BoredWindow(title, width, height, true){};
 
   void Create() {
-    ImGui::SetNextWindowSize(ImVec2(_width, _height), ImGuiCond_Once);
-    ImGui::Begin(_title, &_open, 0);
-    Update();
-    ImGui::End();
+    if (_open) {
+      ImGui::SetNextWindowSize(ImVec2(_width, _height), ImGuiCond_Once);
+      ImGui::Begin(_title.c_str(), &_open, 0);
+      Update();
+      ImGui::End();
+    }
   }
 
   void SetOpen(bool open) { _open = open; };
+  void SetTitle(std::string title) { _title = title; };
 
   virtual void Init() = 0;
   virtual void Update() = 0;
@@ -29,7 +32,7 @@ class BoredWindow {
   virtual bool IsRunning() const = 0;
 
  private:
-  const char* _title;
+  std::string _title;
   bool _open;
   int _width, _height;
 };

@@ -4,6 +4,7 @@
 // etc.) If you are new to Dear ImGui, read documentation from the docs/folder
 // + read the top of imgui.cpp. Read online:
 // https://github.com/ocornut/imgui/tree/master/docs
+#pragma once
 #include "FileExplorer.h"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -13,7 +14,11 @@
 #include <stdio.h>
 
 #define GL_SILENCE_DEPRECATION
+#include "FileContent.h"
+#include "window.h"
 #include <GLFW/glfw3.h>  // Will drag system OpenGL headers
+#include <iostream>
+#include <memory>
 
 // This example can also compile and run with Emscripten! See
 // 'Makefile.emscripten' for details.
@@ -21,6 +26,14 @@
 static void glfw_error_callback(int error, const char* description) {
   fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
+
+// void PrintFileName(std::shared_ptr<Bored::FileSystem::File> file,
+//                    Bored::Editor::BoredWindow& contentWindow) {
+//   std::cout << "this is from call back" << file->GetName() << std::endl;
+//   dynamic_cast<Bored::Editor::FileContentWindow&>(contentWindow)
+//       .SetFileToDisplay(file);
+//   contentWindow.SetOpen(true);
+// };
 
 // Main code
 int main(int, char**) {
@@ -123,11 +136,24 @@ int main(int, char**) {
 
   // Our state
   bool show_demo_window = true;
-  bool show_another_window = true;
+  bool show_another_window = false;
   ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
   std::shared_ptr<Bored::Editor::BoredWindow> fex =
       std::make_shared<Bored::Editor::FileExplorer>(90, 720);
+
+  std::shared_ptr<Bored::Editor::FileContentWindow> contentWindow =
+      std::make_shared<Bored::Editor::FileContentWindow>(720, 720, nullptr);
+
+  auto FileOnClickCallback =
+      [&](std::shared_ptr<Bored::FileSystem::File> file) {
+        contentWindow->SetFileToDisplay(file);
+        contentWindow->SetOpen(true);
+      };
+
+  // cast from BoredWindow to FileExplorer and call set callback
+  std::dynamic_pointer_cast<Bored::Editor::FileExplorer>(fex)
+      ->SetOpenFileCallBack(FileOnClickCallback);
 
   // Main loop
   while (!glfwWindowShouldClose(window)) {
@@ -158,6 +184,7 @@ int main(int, char**) {
     // ImGui::Begin("File Explorer");
     // ImGui::End();
     fex->Create();
+    contentWindow->Create();
     // 2. Show a simple window that we create ourselves. We use a Begin/End
     // pair to create a named window.
     {
@@ -231,72 +258,3 @@ int main(int, char**) {
 
   return 0;
 }
-
-// #include <iostream>
-// #include <shlobj.h>
-// #include <windows.h>
-
-// int main() {
-//   // Initialize the COM library
-//   HRESULT hr =
-//       CoInitializeEx(NULL, COINIT_APARTMENTTHREADED |
-//       COINIT_DISABLE_OLE1DDE);
-//   if (FAILED(hr)) {
-//     std::cerr << "Failed to initialize COM library" << std::endl;
-//     return 1;
-//   }
-
-//   // Initialize a BROWSEINFO structure
-//   BROWSEINFO bi = {0};
-//   bi.lpszTitle = "Select a folder";
-//   LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
-
-//   if (pidl != NULL) {
-//     // Get the selected folder's path
-//     TCHAR folderPath[MAX_PATH];
-//     if (SHGetPathFromIDList(pidl, folderPath)) {
-//       std::cout << "Selected folder: " << folderPath << std::endl;
-//     } else {
-//       std::cerr << "Failed to retrieve folder path" << std::endl;
-//     }
-
-//     // Free the PIDL
-//     IMalloc* imalloc = NULL;
-//     if (SUCCEEDED(SHGetMalloc(&imalloc))) {
-//       imalloc->Free(pidl);
-//       imalloc->Release();
-//     }
-//   } else {
-//     std::cerr << "No folder selected" << std::endl;
-//   }
-
-//   // Uninitialize the COM library
-//   CoUninitialize();
-
-//   return 0;
-// }
-// #include <iostream>
-// #include <windows.h>
-
-// int main() {
-//   OPENFILENAME ofn;
-//   char szFileName[MAX_PATH] = {0};
-
-//   ZeroMemory(&ofn, sizeof(ofn));
-//   ofn.lStructSize = sizeof(ofn);
-//   ofn.hwndOwner = NULL;           // Set to NULL for no parent window
-//   ofn.lpstrFilter = "Folders\0";  // Filter for folders only
-//   ofn.lpstrFile = szFileName;
-//   ofn.nMaxFile = sizeof(szFileName);
-//   ofn.lpstrTitle = "Select a folder";
-//   ofn.Flags = OFN_DONTADDTORECENT | OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST |
-//               OFN_NOCHANGEDIR;
-
-//   if (GetOpenFileName(&ofn)) {
-//     std::cout << "Selected folder: " << szFileName << std::endl;
-//   } else {
-//     std::cerr << "No folder selected" << std::endl;
-//   }
-
-//   return 0;
-// }

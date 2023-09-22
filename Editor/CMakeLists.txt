@@ -1,6 +1,7 @@
 set(SOURCE_FILES
     "src/FileExplorer.cpp"
     "src/app.cpp"
+    "src/FileContent.cpp"
     "src/Adapter/windowAPI.cpp"
 )
 
