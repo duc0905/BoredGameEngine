@@ -51,12 +51,23 @@ namespace Bored {
             return height;
         }
 
-
         bool Window::OnTick(double dt) {
             glfwPollEvents();
             glfwSwapBuffers(nativeWindow);
 
             return renderContext->OnTick(dt) && !glfwWindowShouldClose(nativeWindow);
+        }
+
+        void Window::SwapBuffer() {
+            glfwSwapBuffers(nativeWindow);
+        }
+
+        void Window::PollEvents() {
+            glfwPollEvents();
+        }
+
+        bool Window::ShouldClose() {
+            return glfwWindowShouldClose(nativeWindow);
         }
     }
 }

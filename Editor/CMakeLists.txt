@@ -1,4 +1,13 @@
-add_executable(BoredEditor src/app.cpp)
+set(SOURCE_FILES
+    "src/FileExplorer.cpp"
+    "src/app.cpp"
+    "src/FileContent.cpp"
+    "src/Adapter/windowAPI.cpp"
+)
+
+# add_library(BoredEditor ${SOURCE_FILES})
+
+add_executable(BoredEditor ${SOURCE_FILES})
 
 find_package(imgui CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
