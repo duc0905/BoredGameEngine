@@ -41,7 +41,6 @@ class Directory : public FileSystem::Directory {
   void LoadSubDirectories();
   std::vector<std::shared_ptr<FileSystem::Directory>> GetDirectories() override;
 };
-
 }  // namespace STDFS
 }  // namespace FileSystem
 }  // namespace Bored

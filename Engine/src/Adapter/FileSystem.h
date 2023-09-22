@@ -15,7 +15,6 @@ class File {
 
   std::string GetName() const { return name; };
   std::string GetPath() const { return path; };
-
   //   virtual bool IsExists() = 0;
 
   virtual void Rename(std::string const& newName) = 0;
