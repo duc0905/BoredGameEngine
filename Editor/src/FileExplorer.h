@@ -1,6 +1,5 @@
 #pragma once
-#include "../../Engine/src/DataAccess/FileManager/FileManager.h"
-#include "../../Engine/src/DataAccess/FileManager/STDFM.h"
+#include "Bored.hpp"
 #include "Adapter/api.h"
 #include "Adapter/windowAPI.h"
 #include "window.h"
