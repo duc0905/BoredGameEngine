@@ -4,10 +4,8 @@ set(SOURCE_FILES
     "src/Adapter/Render.cpp"
     "src/Adapter/FileSystem.cpp"
     "src/Adapter/Window.cpp"
-    "src/Adapter/STDFS.cpp"
-    "src/DataAccess/RenderManager.cpp"
-    "src/DataAccess/FileManager/FileManager.cpp"
-    "src/DataAccess/FileManager/STDFM.cpp"
+    "src/DataAccess/Render/Manager.cpp"
+    "src/DataAccess/FileManager/Manager.cpp"
     "src/GameLoop.cpp"
     )
 

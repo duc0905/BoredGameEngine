@@ -1,5 +1,7 @@
 #include "STDFM.h"
 
+#include "../../Adapter/STDFS.cpp"
+
 namespace Bored {
 namespace FileSystem {
 namespace STDFS {

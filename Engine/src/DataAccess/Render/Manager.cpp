@@ -1,12 +1,12 @@
-#include "RenderManager.hpp"
+#include "Manager.hpp"
 #include <memory>
 
 #if RENDER_API == OGL_API
-#include "../Adapter/OGL.cpp"  // Compile OGL.cpp only if the render
+#include "../../Adapter/OGL.cpp"  // Compile OGL.cpp only if the render
 #endif
 
-#include "../Adapter/Render.h"
-#include "../Adapter/Window.h"
+#include "../../Adapter/Render.h"
+#include "../../Adapter/Window.h"
 
 namespace Bored {
 namespace Render {

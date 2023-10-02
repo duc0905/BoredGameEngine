@@ -1,14 +1,14 @@
 #pragma once
 
-#include "EngineConfig.h"
 #include <memory>
+#include "EngineConfig.h"
 
 #if RENDER_API == OGL_API  // need to include glad before glfw.
 #include <glad/glad.h>
 #endif
 
-#include "../Adapter/Render.h"
-#include "../Adapter/Window.h"
+#include "../../Adapter/Render.h"
+#include "../../Adapter/Window.h"
 
 namespace Bored {
 namespace Render {
