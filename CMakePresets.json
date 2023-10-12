@@ -1,143 +1,201 @@
 ﻿{
-  "version": 6,
-  "cmakeMinimumRequired": {
-    "major": 3,
-    "minor": 25,
-    "patch": 0
-  },
-  "configurePresets": [
-    {
-      "name": "base",
-      "hidden": true,
-      "toolchainFile": "$env{vcpkgPath}/scripts/buildsystems/vcpkg.cmake",
-      "binaryDir": "${sourceDir}/out/build/${presetName}",
-      "installDir": "${sourceDir}/out/install/${presetName}",
-      "cacheVariables": {
-        "CXX_STANDARD": "20",
-        "CXX_STANDARD_REQUIRED": true
-      }
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 25,
+        "patch": 0
     },
-    {
-      "name": "windows-base",
-      "hidden": true,
-      "inherits": "base",
-      "generator": "Visual Studio 17 2022",
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Windows"
-      }
-    },
-    {
-      "name": "x64-debug",
-      "displayName": "x64 Debug",
-      "inherits": "windows-base",
-      "architecture": {
-        "value": "x64",
-        "strategy": "external"
-      },
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
-    },
-    {
-      "name": "x86-debug",
-      "displayName": "x86 Debug",
-      "inherits": "windows-base",
-      "architecture": {
-        "value": "x86",
-        "strategy": "external"
-      },
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
-    }
-  ],
-  "buildPresets": [
-    {
-      "name": "debug-base",
-      "hidden": true,
-      "verbose": true
-    },
-    {
-      "name": "all-x64",
-      "displayName": "Build everything for x64",
-      "inherits": "debug-base",
-      "configurePreset": "x64-debug"
-    },
-    {
-      "name": "all-x86",
-      "displayName": "Build everything for x86",
-      "inherits": "debug-base",
-      "configurePreset": "x86-debug"
-    },
-    {
-      "name": "editor-x64",
-      "displayName": "Build editor for x64",
-      "inherits": "debug-base",
-      "configurePreset": "x64-debug",
-      "targets": ["BoredEditor"]
-    },
-    {
-      "name": "editor-x86",
-      "displayName": "Build editor for x86",
-      "inherits": "debug-base",
-      "configurePreset": "x86-debug",
-      "targets": ["BoredEditor"]
-    }
-  ],
-  "workflowPresets": [
-    {
-      "name": "all-x64",
-      "displayName": "Build everything for x64",
-      "steps": [
+    "configurePresets": [
         {
-          "type": "configure",
-          "name": "x64-debug"
+            "name": "base",
+            "hidden": true,
+            "toolchainFile": "$env{vcpkgPath}/scripts/buildsystems/vcpkg.cmake",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "installDir": "${sourceDir}/out/install/${presetName}",
+            "cacheVariables": {
+                "CXX_STANDARD": "20",
+                "CXX_STANDARD_REQUIRED": true
+            }
         },
         {
-          "type": "build",
-          "name": "all-x64"
-        }
-      ]
-    },
-    {
-      "name": "all-x86",
-      "displayName": "Build everything for x86",
-      "steps": [
-        {
-          "type": "configure",
-          "name": "x86-debug"
-        }
-      ]
-    },
-    {
-      "name": "editor-x64",
-      "displayName": "Build editor for x64",
-      "steps": [
-        {
-          "type": "configure",
-          "name": "x64-debug"
+            "name": "windows-base",
+            "hidden": true,
+            "inherits": "base",
+            "generator": "Visual Studio 17 2022",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
         },
         {
-          "type": "build",
-          "name": "editor-x64"
-        }
-      ]
-    },
-    {
-      "name": "editor-x86",
-      "displayName": "Build editor for x86",
-      "steps": [
-        {
-          "type": "configure",
-          "name": "x86-debug"
+            "name": "x64-debug",
+            "displayName": "x64 Debug",
+            "inherits": "windows-base",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
         },
         {
-          "type": "build",
-          "name": "editor-x86"
+            "name": "x86-debug",
+            "displayName": "x86 Debug",
+            "inherits": "windows-base",
+            "architecture": {
+                "value": "x86",
+                "strategy": "external"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "x64-pg",
+            "displayName": "x64 Playground",
+            "inherits": "x64-debug",
+            "cacheVariables": {
+                "PLAYGROUND": true
+            }
+        },
+        {
+            "name": "x86-pg",
+            "displayName": "x86 Playground",
+            "inherits": "x86-debug",
+            "cacheVariables": {
+                "PLAYGROUND": true
+            }
         }
-      ]
-    }
-  ]
+    ],
+    "buildPresets": [
+        {
+            "name": "debug-base",
+            "hidden": true,
+            "verbose": true
+        },
+        {
+            "name": "all-x64",
+            "displayName": "Build everything for x64",
+            "inherits": "debug-base",
+            "configurePreset": "x64-debug"
+        },
+        {
+            "name": "all-x86",
+            "displayName": "Build everything for x86",
+            "inherits": "debug-base",
+            "configurePreset": "x86-debug"
+        },
+        {
+            "name": "editor-x64",
+            "displayName": "Build editor for x64",
+            "inherits": "debug-base",
+            "configurePreset": "x64-debug",
+            "targets": ["BoredEditor"]
+        },
+        {
+            "name": "editor-x86",
+            "displayName": "Build editor for x86",
+            "inherits": "debug-base",
+            "configurePreset": "x86-debug",
+            "targets": ["BoredEditor"]
+        },
+        {
+            "name": "x64-pg",
+            "displayName": "Build Playground for x64",
+            "inherits": "debug-base",
+            "configurePreset": "x64-pg",
+            "targets": ["Playground"]
+        },
+        {
+            "name": "x86-pg",
+            "displayName": "Build Playground for x86",
+            "inherits": "debug-base",
+            "configurePreset": "x86-pg",
+            "targets": ["Playground"]
+        }
+    ],
+    "workflowPresets": [
+        {
+            "name": "all-x64",
+            "displayName": "Build everything for x64",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "x64-debug"
+                },
+                {
+                    "type": "build",
+                    "name": "all-x64"
+                }
+            ]
+        },
+        {
+            "name": "all-x86",
+            "displayName": "Build everything for x86",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "x86-debug"
+                }
+            ]
+        },
+        {
+            "name": "editor-x64",
+            "displayName": "Build editor for x64",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "x64-debug"
+                },
+                {
+                    "type": "build",
+                    "name": "editor-x64"
+                }
+            ]
+        },
+        {
+            "name": "editor-x86",
+            "displayName": "Build editor for x86",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "x86-debug"
+                },
+                {
+                    "type": "build",
+                    "name": "editor-x86"
+                }
+            ]
+        },
+        {
+            "name": "x64-pg",
+            "displayName": "Build playground for x64",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "x64-pg"
+                },
+                {
+                    "type": "build",
+                    "name": "x64-pg"
+                }
+            ]
+        },
+        {
+            "name": "x86-pg",
+            "displayName": "Build playground for x86",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "x86-pg"
+                },
+                {
+                    "type": "build",
+                    "name": "x86-pg"
+                }
+            ]
+        }
+    ]
 }
