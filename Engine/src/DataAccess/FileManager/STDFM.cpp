@@ -25,7 +25,7 @@ std::shared_ptr<FileSystem::Directory> Manager::MakeDirectory(
   return std::make_shared<Directory>(dirPath);
 }
 
-Manager::Manager() { std::cout << "create"; };
+Manager::Manager() {};
 
 }  // namespace STDFS
 }  // namespace FileSystem

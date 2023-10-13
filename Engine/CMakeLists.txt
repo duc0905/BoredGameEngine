@@ -6,6 +6,7 @@ set(SOURCE_FILES
     "src/Adapter/Window.cpp"
     "src/DataAccess/Render/Manager.cpp"
     "src/DataAccess/FileManager/Manager.cpp"
+    "src/Frontend/Renderer.cpp"
     "src/GameLoop.cpp"
     )
 

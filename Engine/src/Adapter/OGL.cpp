@@ -48,7 +48,15 @@ void Context::DrawVertexArray(
     std::shared_ptr<Render::VertexArray> vao,
     std::shared_ptr<Render::ShaderPipeline> pipeline) {}
 
-Bored::Window::Window& Context::GetWindow() const { return *window; }
+Bored::Window::Window& Context::GetWindow() const
+{
+  return *window;
+}
+
+std::shared_ptr<FrameBuffer> Context::GetActiveFrameBuffer()
+{
+  return std::shared_ptr<FrameBuffer>();
+}
 
 bool Context::OnTick(double dt) {
   glViewport(0, 0, window->GetWidth(), window->GetHeight());
@@ -105,6 +113,22 @@ void ShaderPipeline::LoadFragmentShaderCode(const std::string& code) {
   throw std::exception("Not implemented");
 }
 
+void Texture::Bind() const
+{
 }
+
+void Texture::Unbind() const
+{
+}
+
+void Texture::SubData(unsigned w, unsigned h, unsigned int b, void* d)
+{
+  width = w;
+  height = h;
+  bpp = b;
+  data = (char*)d;
+  // TODO call opengl api
+}
+} // namespace OGL
 }
 }
