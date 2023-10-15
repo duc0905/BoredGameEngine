@@ -6,14 +6,14 @@ namespace Bored
 {
 namespace Editor
 {
-class Window
+class SubWindow
 {
   public:
-    Window() = default;
-    Window(std::string title, int width, int height, bool open)
+    SubWindow() = default;
+    SubWindow(const std::string& title, int width, int height, bool open)
         : _title(title), _width(width), _height(height), _open(open){};
-    Window(std::string title, int width, int height) : Window(title, width, height, true){};
-    virtual ~Window(){};
+    SubWindow(const std::string& title, int width, int height) : SubWindow(title, width, height, true){};
+    virtual ~SubWindow(){};
 
     void Create()
     {
@@ -21,7 +21,7 @@ class Window
         {
             ImGui::SetNextWindowSize(ImVec2(_width, _height), ImGuiCond_Once);
             ImGui::Begin(_title.c_str(), &_open, 0);
-            Update();
+            OnUpdate();
             ImGui::End();
         }
     }
@@ -35,9 +35,9 @@ class Window
         _title = title;
     };
 
-    virtual void Init() = 0;
-    virtual void Update() = 0;
-    virtual void Shutdown() = 0;
+    virtual void OnInit() = 0;
+    virtual void OnUpdate() = 0;
+    virtual void OnShutdown() = 0;
 
   private:
     std::string _title;

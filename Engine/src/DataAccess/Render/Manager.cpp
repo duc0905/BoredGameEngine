@@ -2,7 +2,7 @@
 #include <memory>
 
 #if RENDER_API == OGL_API
-#include "../../Adapter/OGL.cpp" // Compile OGL.cpp only if the render
+#include "../../Adapter/OGL.cpp" // Compile OGL.cpp only if the render api is OGL
 #endif
 
 #include "../../Adapter/Render.h"

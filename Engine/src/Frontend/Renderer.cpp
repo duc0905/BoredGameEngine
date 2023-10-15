@@ -1,5 +1,4 @@
 #include "Renderer.hpp"
-#include "../DataAccess/Render/Manager.cpp"
 
 namespace Bored
 {

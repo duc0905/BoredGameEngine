@@ -1,20 +1,20 @@
 #pragma once
 #include "Bored.hpp"
-#include "window.h"
+#include "SubWindow.h"
 #include <memory>
 
 namespace Bored
 {
 namespace Editor
 {
-class FileContentWindow : public Window
+class FileContentWindow : public SubWindow
 {
   public:
     FileContentWindow(int width, int height, std::shared_ptr<FileSystem::File> file);
 
-    virtual void Init() override;
-    virtual void Update() override;
-    virtual void Shutdown() override;
+    virtual void OnInit() override;
+    virtual void OnUpdate() override;
+    virtual void OnShutdown() override;
 
     void SetFileToDisplay(std::shared_ptr<FileSystem::File> file);
 

@@ -1,17 +1,17 @@
 #pragma once
-#include "window.h"
+#include "SubWindow.h"
 
 namespace Bored
 {
 namespace Editor
 {
-class GameScreen : public Window
+class GameScreen : public SubWindow
 {
   public:
     // Inherited via Window
-    void Init() override;
-    void Update() override;
-    void Shutdown() override;
+    void OnInit() override;
+    void OnUpdate() override;
+    void OnShutdown() override;
 
   public:
     GameScreen();

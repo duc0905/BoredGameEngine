@@ -2,7 +2,7 @@
 #include "Adapter/api.h"
 #include "Adapter/windowAPI.h"
 #include "Bored.hpp"
-#include "window.h"
+#include "SubWindow.h"
 #include <functional>
 #include <string>
 
@@ -10,15 +10,15 @@ namespace Bored
 {
 namespace Editor
 {
-class FileExplorer : public Window
+class FileExplorer : public SubWindow
 {
   public:
     FileExplorer(int width, int height, OSAdapter::Window::WindowAPI& win, FileSystem::STDFS::Manager& file_manager);
     FileExplorer(int width, int height);
 
-    virtual void Init() override;
-    virtual void Update() override;
-    virtual void Shutdown() override;
+    virtual void OnInit() override;
+    virtual void OnUpdate() override;
+    virtual void OnShutdown() override;
 
     void SetOpenFileCallBack(std::function<void(std::shared_ptr<FileSystem::File>)> callBack);
 

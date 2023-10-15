@@ -6,11 +6,11 @@ namespace Editor
 {
 
 FileContentWindow::FileContentWindow(int width, int height, std::shared_ptr<FileSystem::File> file)
-    : Window(ProcessFileNameToTitle(file), width, height, false), current_file(file)
+    : SubWindow(ProcessFileNameToTitle(file), width, height, false), current_file(file)
 {
 }
 
-void FileContentWindow::Update()
+void FileContentWindow::OnUpdate()
 {
     ImGui::Text("Hello from another window!");
     if (ImGui::Button("Close Me"))
@@ -28,8 +28,8 @@ std::string FileContentWindow::ProcessFileNameToTitle(std::shared_ptr<FileSystem
     return std::string("No file selected") + "###1";
 }
 
-void FileContentWindow::Init(){};
-void FileContentWindow::Shutdown(){};
+void FileContentWindow::OnInit(){};
+void FileContentWindow::OnShutdown(){};
 
 void FileContentWindow::SetFileToDisplay(std::shared_ptr<FileSystem::File> file)
 {

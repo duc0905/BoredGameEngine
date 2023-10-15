@@ -23,13 +23,13 @@ class Window : public Bored::Window
     Window();
     ~Window();
 
-    void SetWidth(unsigned int);
-    void SetHeight(unsigned int);
-    void SetTitle(const std::string&);
-    void SetFullscreen(bool);
+    void SetWidth(unsigned int) override;
+    void SetHeight(unsigned int) override;
+    void SetTitle(const std::string&) override;
+    void SetFullscreen(bool) override;
 
-    unsigned int GetWidth() const;
-    unsigned int GetHeight() const;
+    unsigned int GetWidth() const override;
+    unsigned int GetHeight() const override;
 
     // Inherited via Module
     void OnSetup() override;
@@ -41,25 +41,15 @@ class Window : public Bored::Window
         return nativeWindow;
     }
 
-    void ClearColor()
-    {
-        glClearColor(0.1f, 0.2f, 0.5f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-    }
-
-    void SwapBuffer()
-    {
-        glfwSwapBuffers(nativeWindow);
-    }
   private:
     std::string name;
-    unsigned int width = 800, height = 600;
+    int width = 800, height = 600;
     bool fullscreen = false;
-    //std::unique_ptr<Bored::Render::Context> renderContext;
+    // std::unique_ptr<Bored::Render::Context> renderContext;
     std::unique_ptr<Frontend::Renderer> renderer;
 
     GLFWwindow* nativeWindow = nullptr;
     std::unique_ptr<Render::Context> context;
 };
-} // namespace Window
+} // namespace GLFW
 } // namespace Bored

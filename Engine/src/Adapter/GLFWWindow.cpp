@@ -54,7 +54,11 @@ bool Window::OnUpdate(double dt)
 {
     glfwPollEvents();
     glfwSwapBuffers(nativeWindow);
-    ClearColor();
+
+    glClearColor(0.1f, 0.2f, 0.5f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glfwGetFramebufferSize(nativeWindow, &width, &height);
+    glViewport(0, 0, width, height);
 
     // return renderContext->OnTick(dt) && !glfwWindowShouldClose(nativeWindow);
     return !glfwWindowShouldClose(nativeWindow);
@@ -94,5 +98,5 @@ void Window::OnShutdown()
     glfwDestroyWindow(nativeWindow);
     glfwTerminate();
 }
-} // namespace Window
+} // namespace GLFW
 } // namespace Bored

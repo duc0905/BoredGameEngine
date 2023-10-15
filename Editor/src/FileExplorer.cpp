@@ -6,7 +6,7 @@ namespace Editor
 {
 FileExplorer::FileExplorer(int width, int height, OSAdapter::Window::WindowAPI& _win,
                            FileSystem::STDFS::Manager& _file_manager)
-    : Window("File Explorer", width, height), win(_win), file_manager(_file_manager)
+    : SubWindow("File Explorer", width, height), win(_win), file_manager(_file_manager)
 {
 }
 
@@ -16,11 +16,11 @@ FileExplorer::FileExplorer(int width, int height)
 {
 }
 
-void FileExplorer::Init()
+void FileExplorer::OnInit()
 {
 }
 
-void FileExplorer::Update()
+void FileExplorer::OnUpdate()
 {
     bool openWarning = false;
     static float f = 0.0f;
@@ -46,7 +46,7 @@ void FileExplorer::Update()
     }
 }
 
-void FileExplorer::Shutdown()
+void FileExplorer::OnShutdown()
 {
 }
 
