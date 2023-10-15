@@ -1,9 +1,8 @@
 set(SOURCE_FILES
-    "src/Bored.cpp"
     "src/Adapter/Audio.cpp"
     "src/Adapter/Render.cpp"
     "src/Adapter/FileSystem.cpp"
-    "src/Adapter/Window.cpp"
+    "src/Adapter/GLFWWindow.cpp"
     "src/DataAccess/Render/Manager.cpp"
     "src/DataAccess/FileManager/Manager.cpp"
     "src/Frontend/Renderer.cpp"

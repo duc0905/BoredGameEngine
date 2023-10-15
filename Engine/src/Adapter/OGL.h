@@ -1,8 +1,8 @@
 #pragma once
 
+#include <glad/glad.h>
 #include "Render.h"
 #include "Window.h"
-#include <glad/glad.h>
 #include <vector>
 
 namespace Bored
@@ -64,6 +64,10 @@ class VertexArray : public Render::VertexArray
     std::vector<Buffer> vertexBuffers;
 };
 
+class ColorBuffer : public Render::ColorBuffer
+{
+};
+
 class ShaderPipeline : Render::ShaderPipeline
 {
   public:
@@ -90,16 +94,33 @@ class ShaderPipeline : Render::ShaderPipeline
 class Texture : public Render::Texture
 {
   public:
-    // Inherited via Texture
-    void Bind() const override;
-    void Unbind() const override;
-    void SubData(unsigned width, unsigned height, unsigned int b, void* data) override;
+    Texture();
+    ~Texture();
+    void* GetId() const override;
+
+    unsigned int GetWidth() const override;
+    unsigned int GetHeight() const override;
+    unsigned int GetBPP() const override;
+  protected:
+    GLuint id;
+    unsigned int width, height, bpp;
+};
+
+class Texture2D : public Texture
+{
+  public:
+    Texture2D();
+
+    virtual void Bind() const override;
+    virtual void Unbind() const override;
+    virtual void SubData(unsigned width, unsigned height, unsigned int b, void* data) override;
+    virtual void* GetData() override;
 };
 
 class Context : public Render::Context
 {
   public:
-    Context(Bored::Window::Window* w);
+    Context();
     virtual ~Context();
 
     virtual bool OnTick(double dt) override;
@@ -107,12 +128,7 @@ class Context : public Render::Context
     virtual void DrawVertexArray(std::shared_ptr<Render::VertexArray> vao,
                                  std::shared_ptr<Render::ShaderPipeline> pipeline) override;
 
-    Bored::Window::Window& GetWindow() const;
-
     std::shared_ptr<FrameBuffer> GetActiveFrameBuffer() override;
-  private:
-    Bored::Window::Window* window;
-
 };
 } // namespace OGL
 } // namespace Render

@@ -7,4 +7,5 @@
 #include "../src/DataAccess/FileManager/STDFM.h"
 #endif
 
+#include "../src/Adapter/GLFWWindow.h"
 #include "../src/Frontend/Renderer.hpp"

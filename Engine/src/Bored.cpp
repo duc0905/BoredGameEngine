@@ -1,7 +1,3 @@
-#include "Adapter/Audio.h"
-#include <iostream>
-#include "AudioFile.h"
-
 // int main(int n, char** args)
 // {
 //     AudioFile<double> audio;
@@ -47,7 +43,7 @@
 //         format = AL_FORMAT_MONO8;
 //       else
 //         format = AL_FORMAT_MONO16;
-//     } 
+//     }
 //     else if (audio.isStereo()) {
 //       if (audio.getBitDepth() == 8)
 //         format = AL_FORMAT_STEREO8;

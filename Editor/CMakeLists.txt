@@ -4,6 +4,7 @@
 set(SOURCE_FILES
     "src/FileExplorer.cpp"
     "src/FileContent.cpp"
+    "src/GameScreen.cpp"
     "src/Adapter/windowAPI.cpp"
 )
 

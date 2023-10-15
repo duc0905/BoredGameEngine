@@ -38,7 +38,7 @@ void VertexArray::Bind() const { glBindVertexArray(id); }
 
 void VertexArray::Unbind() const { glBindVertexArray(0); }
 
-Context::Context(Bored::Window::Window* w) : window(w) {
+Context::Context() {
   gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 }
 
@@ -48,18 +48,13 @@ void Context::DrawVertexArray(
     std::shared_ptr<Render::VertexArray> vao,
     std::shared_ptr<Render::ShaderPipeline> pipeline) {}
 
-Bored::Window::Window& Context::GetWindow() const
-{
-  return *window;
-}
-
 std::shared_ptr<FrameBuffer> Context::GetActiveFrameBuffer()
 {
   return std::shared_ptr<FrameBuffer>();
 }
 
 bool Context::OnTick(double dt) {
-  glViewport(0, 0, window->GetWidth(), window->GetHeight());
+  //glViewport(0, 0, window->GetWidth(), window->GetHeight());
   glClear(GL_COLOR_BUFFER_BIT);
   glClearColor(0.2f, 0.5f, 0.7f, 1.0f);
 
@@ -113,22 +108,77 @@ void ShaderPipeline::LoadFragmentShaderCode(const std::string& code) {
   throw std::exception("Not implemented");
 }
 
-void Texture::Bind() const
+Texture::Texture() : id(0), width(0), height(0), bpp(0)
 {
+  // TODO
+  glGenTextures(1, &id);
 }
 
-void Texture::Unbind() const
+Texture::~Texture()
 {
+  //TODO
+  glDeleteTextures(1, &id);
 }
 
-void Texture::SubData(unsigned w, unsigned h, unsigned int b, void* d)
+void* Texture::GetId() const
+{
+  return (void*)(intptr_t)id;
+}
+
+unsigned int Texture::GetWidth() const
+{
+  return width;
+}
+
+unsigned int Texture::GetHeight() const
+{
+  return height;
+}
+
+unsigned int Texture::GetBPP() const
+{
+  return bpp;
+}
+
+void Texture2D::Bind() const
+{
+  glBindTexture(GL_TEXTURE_2D, id);
+}
+
+void Texture2D::Unbind() const
+{
+  glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void Texture2D::SubData(unsigned w, unsigned h, unsigned int b, void* d)
 {
   width = w;
   height = h;
   bpp = b;
-  data = (char*)d;
-  // TODO call opengl api
+
+  // TODO test
+  Bind();
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, d);
+  Unbind();
 }
+void* Texture2D::GetData()
+{
+  // TODO
+  throw std::exception("Not implemented");
+  return nullptr;
+}
+
+Texture2D::Texture2D() : Texture()
+{
+  Bind();
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  Unbind();
+}
+
 } // namespace OGL
 }
 }

@@ -49,3 +49,5 @@ RawStringFormats:
   BasedOnStyle: Google
 
 CommentPragmas: '(@copydoc|@copybrief|@see|@overload|@snippet)'
+
+SortIncludes: false

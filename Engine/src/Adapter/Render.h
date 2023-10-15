@@ -111,39 +111,24 @@ class VertexArray
 class Texture
 {
   public:
+    virtual void* GetId() const = 0;
     virtual void Bind() const = 0;
     virtual void Unbind() const = 0;
     virtual void SubData(unsigned width, unsigned height, unsigned int bpp, void* data) = 0;
+    virtual void* GetData() = 0;
 
-    unsigned int GetWidth()
-    {
-        return width;
-    }
-    unsigned int GetHeight()
-    {
-        return height;
-    }
-    unsigned int GetBPP()
-    {
-        return bpp;
-    }
-    char* GetData()
-    {
-        return data;
-    }
-
-  protected:
-    unsigned int width, height, bpp;
-    char* data;
+    virtual unsigned int GetWidth() const = 0;
+    virtual unsigned int GetHeight() const = 0;
+    virtual unsigned int GetBPP() const = 0;
 };
 
-class Texture2D : public Texture
+class Texture2D : private Texture
 {
 };
-class Texture3D : public Texture
+class Texture3D : private Texture
 {
 };
-class Cubemap : public Texture
+class Cubemap : private Texture
 {
 };
 
