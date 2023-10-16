@@ -9,14 +9,11 @@
 
 #define ENGINE_RESOURCE_DIR "@RES_DESTINATION_DIR@/res"
 
-#define OGL_API 1
-#define VK_API 2
-#define CPU_API 3
+#define OGL_API @OGL_API@
+#define VK_API @VK_API@
+#define CPI_API @CPU_API@
+#define RENDER_API @RENDER_API@
 
-#define RENDER_API OGL_API
-
-#define STDS_API 1
-#define VIRTUAL_FS_API 2
-
-#define FILE_SYSTEM_API STDFS_API
+#define STDFS_API @STDFS_API@
+#define FILE_SYSTEM_API @FILE_SYSTEM_API@
 #endif  // ENGINE_CONFIG_H

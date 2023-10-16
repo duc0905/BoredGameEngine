@@ -1,8 +1,8 @@
 #pragma once
-#include "../../Adapter/FileSystem.h"
 #include <exception>
 #include <memory>
 #include <string>
+#include "../../Adapter/FileSystem.h"
 
 namespace Bored {
 namespace FileSystem {
