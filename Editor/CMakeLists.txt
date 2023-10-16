@@ -2,6 +2,7 @@
 
 # Targets
 set(SOURCE_FILES
+    "src/SubWindow.cpp"
     "src/FileExplorer.cpp"
     "src/FileContent.cpp"
     "src/GameScreen.cpp"
@@ -9,28 +10,24 @@ set(SOURCE_FILES
 )
 
 add_library(Stuff ${SOURCE_FILES})
-add_executable(BoredEditor "src/app.cpp")
 
 find_package(imgui CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 
-target_link_libraries(BoredEditor PRIVATE glfw)
-target_link_libraries(BoredEditor PRIVATE imgui::imgui)
-target_link_libraries(BoredEditor PRIVATE glad::glad)
-
 target_link_libraries(Stuff PRIVATE glfw)
 target_link_libraries(Stuff PRIVATE imgui::imgui)
 target_link_libraries(Stuff PRIVATE glad::glad)
 target_link_libraries(Stuff PRIVATE Engine)
-target_link_libraries(BoredEditor PRIVATE Stuff)
-
-target_include_directories(BoredEditor PRIVATE
+target_include_directories(Stuff PRIVATE
           "${CMAKE_BINARY_DIR}"
           "${CMAKE_SOURCE_DIR}/Engine/include"
 )
 
-target_include_directories(Stuff PRIVATE
+add_executable(BoredEditor "src/app.cpp")
+target_link_libraries(BoredEditor PRIVATE imgui::imgui)
+target_link_libraries(BoredEditor PRIVATE Stuff)
+target_include_directories(BoredEditor PRIVATE
           "${CMAKE_BINARY_DIR}"
           "${CMAKE_SOURCE_DIR}/Engine/include"
 )
@@ -48,7 +45,7 @@ target_link_libraries(EditorTest GTest::gtest_main)
 
 target_include_directories(EditorTest PRIVATE
           "${CMAKE_BINARY_DIR}"
-          "${CMAKE_SOURCE_DIR}/examples/Playground/src"
+          "${CMAKE_SOURCE_DIR}/Editor/src"
 )
 
 include(GoogleTest)

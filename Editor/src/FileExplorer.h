@@ -16,9 +16,10 @@ class FileExplorer : public SubWindow
     FileExplorer(int width, int height, OSAdapter::Window::WindowAPI& win, FileSystem::STDFS::Manager& file_manager);
     FileExplorer(int width, int height);
 
-    virtual void OnInit() override;
-    virtual void OnUpdate() override;
+    virtual void OnSetup() override;
+    virtual bool OnUpdate(double dt) override;
     virtual void OnShutdown() override;
+    virtual void DrawContent() override;
 
     void SetOpenFileCallBack(std::function<void(std::shared_ptr<FileSystem::File>)> callBack);
 

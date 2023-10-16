@@ -1,5 +1,6 @@
 #pragma once
 #include "SubWindow.h"
+#include "Bored.hpp"
 
 namespace Bored
 {
@@ -9,14 +10,14 @@ class GameScreen : public SubWindow
 {
   public:
     // Inherited via Window
-    void OnInit() override;
-    void OnUpdate() override;
+    void OnSetup() override;
+    bool OnUpdate(double dt) override;
     void OnShutdown() override;
+    void DrawContent() override;
 
   public:
     GameScreen();
     ~GameScreen();
-  private:
 };
 
 } // namespace Editor

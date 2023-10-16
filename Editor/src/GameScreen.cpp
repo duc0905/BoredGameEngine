@@ -12,14 +12,34 @@ GameScreen::GameScreen()
 GameScreen::~GameScreen()
 {
 }
-void GameScreen::OnInit()
+void GameScreen::OnSetup()
 {
+    UseRenderContext(new Render::OGL::Context());
+    GetRenderer().SetClearColor({0.6f, 0.5f, 0.3f, 1.0f});
 }
-void GameScreen::OnUpdate()
+
+bool GameScreen::OnUpdate(double dt)
+{
+    // TODO: Update the game logic here
+    return true;
+}
+
+void GameScreen::DrawContent()
 {
     ImGui::Text("GameScreen");
-    //ImGui::Image((void*)5, ImVec2(800, 600));
+
+    // Get the gamerenderer
+    auto r = GetRenderer();
+    r.SetViewport(0, 0, GetWidth(), GetHeight()); // As large as this window
+    r.Clear();
+
+    // TODO: Draw actors here
+    auto tex = r.GetMainColorTexture();
+
+    // Draw the colorbuffer from the gamerenderer
+    ImGui::Image(tex->GetId(), ImGui::GetContentRegionAvail());
 }
+
 void GameScreen::OnShutdown()
 {
 }

@@ -1,4 +1,5 @@
 #include "FileExplorer.h"
+#include <imgui.h>
 
 namespace Bored
 {
@@ -16,16 +17,17 @@ FileExplorer::FileExplorer(int width, int height)
 {
 }
 
-void FileExplorer::OnInit()
+void FileExplorer::OnSetup()
 {
 }
 
-void FileExplorer::OnUpdate()
+bool FileExplorer::OnUpdate(double dt)
 {
-    bool openWarning = false;
-    static float f = 0.0f;
-    static std::string a = "Explorer";
+    return true;
+}
 
+void FileExplorer::DrawContent()
+{
     if (ImGui::Button("Open folder"))
     {
         std::string dirPath = win.OpenDirPath();

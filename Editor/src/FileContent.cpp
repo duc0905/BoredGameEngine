@@ -1,4 +1,5 @@
 #include "FileContent.h"
+#include <imgui.h>
 
 namespace Bored
 {
@@ -10,7 +11,12 @@ FileContentWindow::FileContentWindow(int width, int height, std::shared_ptr<File
 {
 }
 
-void FileContentWindow::OnUpdate()
+bool FileContentWindow::OnUpdate(double dt)
+{
+    return true;
+}
+
+void FileContentWindow::DrawContent()
 {
     ImGui::Text("Hello from another window!");
     if (ImGui::Button("Close Me"))
@@ -28,7 +34,7 @@ std::string FileContentWindow::ProcessFileNameToTitle(std::shared_ptr<FileSystem
     return std::string("No file selected") + "###1";
 }
 
-void FileContentWindow::OnInit(){};
+void FileContentWindow::OnSetup(){};
 void FileContentWindow::OnShutdown(){};
 
 void FileContentWindow::SetFileToDisplay(std::shared_ptr<FileSystem::File> file)

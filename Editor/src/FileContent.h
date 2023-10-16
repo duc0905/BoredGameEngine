@@ -12,9 +12,10 @@ class FileContentWindow : public SubWindow
   public:
     FileContentWindow(int width, int height, std::shared_ptr<FileSystem::File> file);
 
-    virtual void OnInit() override;
-    virtual void OnUpdate() override;
+    virtual void OnSetup() override;
+    virtual bool OnUpdate(double dt) override;
     virtual void OnShutdown() override;
+    virtual void DrawContent() override;
 
     void SetFileToDisplay(std::shared_ptr<FileSystem::File> file);
 

@@ -42,6 +42,7 @@ class Editor
         mainWindow.SetWidth(1280);
         mainWindow.SetHeight(720);
         mainWindow.OnSetup();
+        mainWindow.UseRenderContext(Bored::Render::OGL::Context::GetDefault());
 
         // Setup Dear ImGui context
         IMGUI_CHECKVERSION();
@@ -75,6 +76,9 @@ class Editor
         windows.push_back(contentWindow);
         windows.push_back(gameScreen);
 
+        for (auto w : windows)
+            w->OnSetup();
+
         return 0;
     }
 
@@ -84,6 +88,12 @@ class Editor
         bool isRunning = true;
         while (isRunning)
         {
+            // Logic updates
+            isRunning &= mainWindow.OnUpdate(0.016f);
+            for (auto w : windows)
+                w->OnUpdate(0.016f);
+
+            // Draw contents
             // Start the Dear ImGui frame
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
@@ -96,10 +106,11 @@ class Editor
             for (auto w : windows)
                 w->Create();
 
+            mainWindow.GetRenderer().BindFramebuffer();
+            // glBindFramebuffer(GL_FRAMEBUFFER, 0);
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-            isRunning &= mainWindow.OnUpdate(0.016f);
+            mainWindow.DrawContent();
         }
     }
 
