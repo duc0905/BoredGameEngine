@@ -75,13 +75,16 @@ void Window::OnSetup()
 
     glfwMakeContextCurrent(nativeWindow);
     glfwSwapInterval(1);
+
+    if (!renderContext)
+        throw std::exception("Must provide a render context using UseRenderContext");
+    renderContext->OnSetup();
 }
 
 bool Window::OnUpdate(double dt)
 {
     glfwPollEvents();
 
-    // return renderContext->OnTick(dt) && !glfwWindowShouldClose(nativeWindow);
     return !glfwWindowShouldClose(nativeWindow);
 }
 

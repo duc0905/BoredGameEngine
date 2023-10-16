@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glad/glad.h>
+// #include <glad/glad.h>
 #include "Render.h"
 #include "Window.h"
 #include <vector>
@@ -18,7 +18,7 @@ class Buffer : public Render::Buffer
     virtual ~Buffer();
 
   protected:
-    GLuint id;
+    unsigned int id;
     // Size in bytes
     unsigned int size;
 };
@@ -58,7 +58,7 @@ class VertexArray : public Render::VertexArray
 
     // TODO provide a way to attach vertex buffer
   private:
-    GLuint id;
+    unsigned int id;
     std::vector<Buffer> vertexBuffers;
 };
 
@@ -82,7 +82,7 @@ class ShaderPipeline : Render::ShaderPipeline
     virtual void LoadFragmentShaderCode(const std::string& code) = 0;
 
   private:
-    GLuint id;
+    unsigned int id;
 };
 
 class Texture : public Render::Texture
@@ -97,7 +97,7 @@ class Texture : public Render::Texture
     unsigned int GetBPP() const override;
 
   protected:
-    GLuint id;
+    unsigned int id;
     unsigned int width, height, bpp;
 };
 
@@ -135,7 +135,7 @@ class FrameBuffer : public Render::FrameBuffer
     static FrameBuffer* GetDefault();
 
   private:
-    GLuint id;
+    unsigned int id;
     std::shared_ptr<Texture2D> colorBuffer;
 
     // Special constructor used to create defaultFbo
@@ -149,6 +149,8 @@ class Context : public Render::Context
   public:
     Context();
     virtual ~Context();
+
+    virtual void OnSetup() override;
 
     virtual void DrawVertexArray(std::shared_ptr<Render::VertexArray> vao,
                                  std::shared_ptr<Render::ShaderPipeline> pipeline) override;

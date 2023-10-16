@@ -42,7 +42,7 @@ class Window : public Module
       }
       return *renderer;
     }
-  private:
+  protected:
     std::unique_ptr<Frontend::Renderer> renderer;
     std::unique_ptr<Render::Context> renderContext;
 

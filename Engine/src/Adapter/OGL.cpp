@@ -159,7 +159,8 @@ FrameBuffer::FrameBuffer(int w, int h)
 
 FrameBuffer::~FrameBuffer()
 {
-    glDeleteFramebuffers(1, &id);
+    if (id != 0)
+        glDeleteFramebuffers(1, &id);
 }
 
 void FrameBuffer::Bind()
@@ -271,10 +272,16 @@ void ShaderPipeline::LoadFragmentShaderCode(const std::string& code)
 
 Context::Context()
 {
-    fbo = std::make_unique<FrameBuffer>();
 }
 
 Context::~Context() {}
+
+void Context::OnSetup()
+{
+    gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+    if (!fbo)
+        fbo = std::make_unique<FrameBuffer>();
+}
 
 void Context::DrawVertexArray(std::shared_ptr<Render::VertexArray> vao,
                               std::shared_ptr<Render::ShaderPipeline> pipeline)
@@ -320,7 +327,6 @@ FrameBuffer* FrameBuffer::GetDefault()
 
 Context* Context::defaultContext = nullptr;
 Context::Context(int x) {
-    gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     fbo = std::unique_ptr<FrameBuffer>(FrameBuffer::GetDefault());
 }
 

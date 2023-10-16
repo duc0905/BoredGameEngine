@@ -216,6 +216,8 @@ class Context
   public:
     virtual ~Context() {}
 
+    virtual void OnSetup() = 0;
+
     virtual void DrawVertexArray(std::shared_ptr<VertexArray> vao, std::shared_ptr<ShaderPipeline> pipeline) = 0;
     virtual FrameBuffer& GetActiveFrameBuffer() = 0;
     virtual void ClearFrameBuffer(const glm::vec4&) = 0;
