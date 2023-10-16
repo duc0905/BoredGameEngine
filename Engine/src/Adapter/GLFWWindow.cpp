@@ -1,7 +1,7 @@
 #include <exception>
 #include "Window.h"
-#include "OGL.h"
 #include "GLFWWindow.h"
+#include <GLFW/glfw3.h>
 
 namespace Bored
 {
@@ -20,12 +20,12 @@ Window::~Window()
 {
 }
 
-void Window::SetWidth(unsigned int w)
+void Window::SetWidth(int w)
 {
     width = w;
 }
 
-void Window::SetHeight(unsigned int h)
+void Window::SetHeight(int h)
 {
     height = h;
 }
@@ -40,28 +40,14 @@ void Window::SetTitle(const std::string& n)
     name = n;
 }
 
-unsigned int Window::GetWidth() const
+int Window::GetWidth() const
 {
     return width;
 }
 
-unsigned int Window::GetHeight() const
+int Window::GetHeight() const
 {
     return height;
-}
-
-bool Window::OnUpdate(double dt)
-{
-    glfwPollEvents();
-    glfwSwapBuffers(nativeWindow);
-
-    glClearColor(0.1f, 0.2f, 0.5f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glfwGetFramebufferSize(nativeWindow, &width, &height);
-    glViewport(0, 0, width, height);
-
-    // return renderContext->OnTick(dt) && !glfwWindowShouldClose(nativeWindow);
-    return !glfwWindowShouldClose(nativeWindow);
 }
 
 void Window::OnSetup()
@@ -89,10 +75,26 @@ void Window::OnSetup()
 
     glfwMakeContextCurrent(nativeWindow);
     glfwSwapInterval(1);
-
-    // renderContext = std::make_unique<T>(this);
-    renderer = std::make_unique<Frontend::Renderer>(new Render::OGL::Context());
 }
+
+bool Window::OnUpdate(double dt)
+{
+    glfwPollEvents();
+
+    // return renderContext->OnTick(dt) && !glfwWindowShouldClose(nativeWindow);
+    return !glfwWindowShouldClose(nativeWindow);
+}
+
+void Window::DrawContent()
+{
+    Frontend::Renderer& r = GetRenderer();
+    glfwSwapBuffers(nativeWindow);
+    glfwGetFramebufferSize(nativeWindow, &width, &height);
+
+    r.SetViewport(0, 0, width, height); // Just in case another renderer reset the viewport
+    r.Clear();
+}
+
 void Window::OnShutdown()
 {
     glfwDestroyWindow(nativeWindow);

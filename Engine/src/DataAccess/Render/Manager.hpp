@@ -32,9 +32,6 @@ class Manager {
   std::shared_ptr<IndexBuffer> CreateIBO();
 
   std::shared_ptr<RenderBuffer> CreateRBO();
-  std::shared_ptr<ColorBuffer> CreateCBO();
-  std::shared_ptr<DepthBuffer> CreateDBO();
-  std::shared_ptr<StencilBuffer> CreateSBO();
   std::shared_ptr<FrameBuffer> CreateFBO();
 
   std::shared_ptr<Texture> CreateTexture2D();

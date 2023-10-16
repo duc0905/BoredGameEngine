@@ -1,5 +1,7 @@
 #pragma once
-#include "../Utils/Render.hpp"
+// #include "../Utils/Render.hpp"
+#include "../Adapter/Render.h"
+#include <glm/glm.hpp>
 
 namespace Bored
 {
@@ -14,13 +16,19 @@ class Renderer
   public:
     Renderer(Render::Context* c);
 
-    std::shared_ptr<Render::Texture> GetMainColorTexture()
-    {
-        return context->GetActiveFrameBuffer()->GetColorTexture();
-    }
+
+    std::shared_ptr<Render::Texture> GetMainColorTexture();
+
+    void BindFramebuffer();
+
+    void SetViewport(int l, int b, int r, int t);
+    void SetClearColor(const glm::vec4& c);
+    void SetClearColor(const glm::vec3& c);
+    void Clear();
 
   private:
-    std::unique_ptr<Render::Context> context;
+    Render::Context* context;
+    glm::vec4 clearColor;
 };
 }
 }

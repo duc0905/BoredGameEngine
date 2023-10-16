@@ -2,7 +2,7 @@
 #include <memory>
 
 #if RENDER_API == OGL_API
-#include "../../Adapter/OGL.cpp" // Compile OGL.cpp only if the render api is OGL
+#include "../../Adapter/OGL.h" // Compile OGL.cpp only if the render api is OGL
 #endif
 
 #include "../../Adapter/Render.h"
@@ -57,22 +57,11 @@ std::shared_ptr<IndexBuffer> Manager::CreateIBO()
 #endif
 }
 
-std::shared_ptr<ColorBuffer> Manager::CreateCBO()
-{
-    return nullptr;
-}
 std::shared_ptr<RenderBuffer> Manager::CreateRBO()
 {
     return nullptr;
 }
-std::shared_ptr<DepthBuffer> Manager::CreateDBO()
-{
-    return nullptr;
-}
-std::shared_ptr<StencilBuffer> Manager::CreateSBO()
-{
-    return nullptr;
-}
+
 std::shared_ptr<FrameBuffer> Manager::CreateFBO()
 {
     return nullptr;

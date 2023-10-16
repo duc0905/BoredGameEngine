@@ -33,7 +33,6 @@ class VertexBuffer : public Buffer, public Render::VertexBuffer
     virtual void Unbind() override;
 
     virtual void SubData(std::vector<char>, BufferLayout) override;
-    std::vector<char> GetData() override;
 };
 
 class IndexBuffer : public Buffer, public Render::IndexBuffer
@@ -47,7 +46,6 @@ class IndexBuffer : public Buffer, public Render::IndexBuffer
 
     // Inherited via Buffer
     void SubData(std::vector<unsigned int>) override;
-    std::vector<char> GetData() override;
 };
 
 class VertexArray : public Render::VertexArray
@@ -62,10 +60,6 @@ class VertexArray : public Render::VertexArray
   private:
     GLuint id;
     std::vector<Buffer> vertexBuffers;
-};
-
-class ColorBuffer : public Render::ColorBuffer
-{
 };
 
 class ShaderPipeline : Render::ShaderPipeline
@@ -101,6 +95,7 @@ class Texture : public Render::Texture
     unsigned int GetWidth() const override;
     unsigned int GetHeight() const override;
     unsigned int GetBPP() const override;
+
   protected:
     GLuint id;
     unsigned int width, height, bpp;
@@ -110,11 +105,43 @@ class Texture2D : public Texture
 {
   public:
     Texture2D();
+    ~Texture2D();
 
     virtual void Bind() const override;
     virtual void Unbind() const override;
     virtual void SubData(unsigned width, unsigned height, unsigned int b, void* data) override;
-    virtual void* GetData() override;
+};
+
+/**
+ * @brief OpenGL implementation of Render::FrameBuffer
+ */
+class FrameBuffer : public Render::FrameBuffer
+{
+  public:
+    FrameBuffer(int w, int h);
+    FrameBuffer() : FrameBuffer(0, 0) {}
+    ~FrameBuffer();
+
+    void Bind();
+    void Unbind();
+    virtual std::shared_ptr<Render::Texture> GetColorTexture() override;
+    virtual bool CheckStatus() override;
+    virtual bool HasDepthTest() override;
+    virtual bool HasStencilTest() override;
+    virtual void AddRenderBuffer(std::shared_ptr<RenderBuffer> rbo) override;
+
+    void ResizeBuffers(int w, int h);
+
+    static FrameBuffer* GetDefault();
+
+  private:
+    GLuint id;
+    std::shared_ptr<Texture2D> colorBuffer;
+
+    // Special constructor used to create defaultFbo
+    FrameBuffer(int x);
+    // Should not read from default FBO since it is rendered to the screen
+    static FrameBuffer* defaultFbo;
 };
 
 class Context : public Render::Context
@@ -123,12 +150,22 @@ class Context : public Render::Context
     Context();
     virtual ~Context();
 
-    virtual bool OnTick(double dt) override;
-
     virtual void DrawVertexArray(std::shared_ptr<Render::VertexArray> vao,
                                  std::shared_ptr<Render::ShaderPipeline> pipeline) override;
 
-    std::shared_ptr<FrameBuffer> GetActiveFrameBuffer() override;
+    Render::FrameBuffer& GetActiveFrameBuffer() override;
+
+    virtual void ClearFrameBuffer(const glm::vec4&) override;
+    virtual void SetViewport(int l, int b, int r, int t) override;
+
+    static Context* GetDefault();
+  private:
+    std::unique_ptr<FrameBuffer> fbo;
+    int width = 0, height = 0;
+
+    // Special constructor only used to create the default context
+    Context(int x);
+    static Context* defaultContext;
 };
 } // namespace OGL
 } // namespace Render
