@@ -1,2 +1,5 @@
 add_subdirectory("Chess")
-add_subdirectory("Playground")
+
+if (PLAYGROUND)
+    add_subdirectory("Playground")
+endif()
