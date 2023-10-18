@@ -23,6 +23,7 @@ set(SOURCE_FILES
     "src/DataAccess/Render/Manager.cpp"
     "src/DataAccess/FileManager/Manager.cpp"
     "src/Frontend/Renderer.cpp"
+    "src/Frontend/Input.cpp"
     "src/GameLoop.cpp"
     "src/Bored.cpp"
     )
