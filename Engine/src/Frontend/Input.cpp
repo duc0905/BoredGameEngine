@@ -2,9 +2,9 @@
 
 namespace Bored
 {
-namespace Input
+namespace Frontend
 {
-void Manager::EvaluateKey(Input::Key key, Input::Action action, int mods, double val)
+void Input::EvaluateKey(Key key, Action action, int mods, double val)
 {
     if (!headContext)
     {
@@ -29,7 +29,7 @@ void Manager::EvaluateKey(Input::Key key, Input::Action action, int mods, double
     }
 }
 
-void Manager::BindAction(const std::string& name, ActionCallback func)
+void Input::BindAction(const std::string& name, ActionCallback func)
 {
     auto it = actionMap.find(name);
     if (it != actionMap.end())
@@ -39,7 +39,7 @@ void Manager::BindAction(const std::string& name, ActionCallback func)
     actionMap[name] = func;
 }
 
-void Manager::BindRange(const std::string& name, RangeCallback func, float weight)
+void Input::BindRange(const std::string& name, RangeCallback func, float weight)
 {
     auto it = rangeMap.find(name);
     if (it != rangeMap.end())
@@ -49,12 +49,12 @@ void Manager::BindRange(const std::string& name, RangeCallback func, float weigh
     rangeMap[name] = {func, weight};
 }
 
-void Manager::AddContext(Context* con)
+void Input::AddContext(Context* con)
 {
     AddContext(std::shared_ptr<Context>(con));
 }
 
-void Manager::AddContext(std::shared_ptr<Context> con)
+void Input::AddContext(std::shared_ptr<Context> con)
 {
     if (headContext)
     {
@@ -75,22 +75,22 @@ void Manager::AddContext(std::shared_ptr<Context> con)
     con->Activate();
 }
 
-bool Manager::IsContextActivate(Context* con)
+bool Input::IsContextActivate(Context* con)
 {
     return IsContextActivate(std::shared_ptr<Context>(con));
 }
 
-bool Manager::IsContextActivate(std::shared_ptr<Context> con)
+bool Input::IsContextActivate(std::shared_ptr<Context> con)
 {
     return con->isActive_;
 }
 
-void Manager::RemoveContext(Context* con)
+void Input::RemoveContext(Context* con)
 {
     RemoveContext(std::shared_ptr<Context>(con));
 }
 
-void Manager::RemoveContext(std::shared_ptr<Context> con)
+void Input::RemoveContext(std::shared_ptr<Context> con)
 {
     auto cur = headContext;
     if (cur)
@@ -109,31 +109,31 @@ void Manager::RemoveContext(std::shared_ptr<Context> con)
     }
 }
 
-void Manager::ActivateContext(Context* con)
+void Input::ActivateContext(Context* con)
 {
     ActivateContext(std::shared_ptr<Context>(con));
 }
 
-void Manager::ActivateContext(std::shared_ptr<Context> con)
+void Input::ActivateContext(std::shared_ptr<Context> con)
 {
     con->Activate();
 }
 
-void Manager::DeactivateContext(Context* con)
+void Input::DeactivateContext(Context* con)
 {
     DeactivateContext(std::shared_ptr<Context>(con));
 }
 
-void Manager::DeactivateContext(std::shared_ptr<Context> con)
+void Input::DeactivateContext(std::shared_ptr<Context> con)
 {
     con->Deactivate();
 }
-void Manager::ResetPriority(Context* con, int priorityLevel)
+void Input::ResetPriority(Context* con, int priorityLevel)
 {
     ResetPriority(std::shared_ptr<Context>(con), priorityLevel);
 }
 
-void Manager::ResetPriority(std::shared_ptr<Context> con, int priorityLevel)
+void Input::ResetPriority(std::shared_ptr<Context> con, int priorityLevel)
 {
     auto cur = headContext;
     std::shared_ptr<Context> target;
@@ -161,27 +161,27 @@ void Manager::ResetPriority(std::shared_ptr<Context> con, int priorityLevel)
     }
 }
 
-// std::shared_ptr<Actor> Manager::GetCursorHoveringActor()
+// std::shared_ptr<Actor> Input::GetCursorHoveringActor()
 // {
 //     // return renderer->GetActorAt(mouseInfo.posX, mouseInfo.posY);
 // }
 
-void Manager::Context::ResetPriority(int priority)
+void Input::Context::ResetPriority(int priority)
 {
     priority_ = priority;
 }
 
-void Manager::Context::Activate()
+void Input::Context::Activate()
 {
     isActive_ = true;
 }
 
-void Manager::Context::Deactivate()
+void Input::Context::Deactivate()
 {
     isActive_ = false;
 }
 
-void Manager::Context::AddActionMapping(Input::Key key, int mods, const std::string& name)
+void Input::Context::AddActionMapping(Key key, int mods, const std::string& name)
 {
     auto it = actionMap_.find({key, mods});
 
@@ -192,7 +192,7 @@ void Manager::Context::AddActionMapping(Input::Key key, int mods, const std::str
     actionMap_[{key, mods}] = name;
 }
 
-void Manager::Context::AddRangeMapping(Input::Key key, int mods, const std::string& name, const float& weight)
+void Input::Context::AddRangeMapping(Key key, int mods, const std::string& name, const float& weight)
 {
     auto it = rangeMap_.find({key, mods});
 
@@ -203,7 +203,7 @@ void Manager::Context::AddRangeMapping(Input::Key key, int mods, const std::stri
     rangeMap_[{key, mods}] = {name, weight};
 }
 
-void Manager::Context::RemoveActionMapping(Input::Key key, int mods)
+void Input::Context::RemoveActionMapping(Key key, int mods)
 {
     auto it = actionMap_.find({key, mods});
 
@@ -212,7 +212,7 @@ void Manager::Context::RemoveActionMapping(Input::Key key, int mods)
         actionMap_.erase(it);
 }
 
-void Manager::Context::RemoveRangeMapping(Input::Key key, int mods)
+void Input::Context::RemoveRangeMapping(Key key, int mods)
 {
     auto it = rangeMap_.find({key, mods});
 
@@ -221,7 +221,7 @@ void Manager::Context::RemoveRangeMapping(Input::Key key, int mods)
         rangeMap_.erase(it);
 }
 
-std::string Manager::Context::MapKeyAction(Input::Key key, int mods)
+std::string Input::Context::MapKeyAction(Key key, int mods)
 {
     if (!isActive_)
     {
@@ -237,7 +237,7 @@ std::string Manager::Context::MapKeyAction(Input::Key key, int mods)
     return "";
 }
 
-std::pair<std::string, float> Manager::Context::MapKeyRange(Input::Key key, int mods)
+std::pair<std::string, float> Input::Context::MapKeyRange(Key key, int mods)
 {
     if (!isActive_)
     {

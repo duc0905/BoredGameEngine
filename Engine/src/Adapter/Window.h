@@ -1,8 +1,9 @@
 #pragma once
 #include <memory>
 #include "../GameLoop.hpp"
-#include "Render.h"
 #include "../Frontend/Renderer.hpp"
+#include "../Frontend/Input.hpp"
+#include "Render.h"
 
 namespace Bored
 {
@@ -44,6 +45,7 @@ class Window : public Module
     }
   private:
     std::unique_ptr<Frontend::Renderer> renderer;
+    std::unique_ptr<Frontend::Input> input;
     std::unique_ptr<Render::Context> renderContext;
 
     // TODO Audio context

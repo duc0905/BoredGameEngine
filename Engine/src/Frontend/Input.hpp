@@ -8,7 +8,7 @@
 namespace Bored
 {
   class Actor;
-namespace Input
+namespace Frontend
 {
 enum Key
 {
@@ -100,28 +100,28 @@ enum ActionEnum
 /**
  * @brief 
  */
-class Manager : public Module
+class Input : public Module
 {
   public:
     /** Context
-     * Define a set of actions/state/ranges those are available when this context is active
+     * Define a set of actions/ranges those are available when this context is active
      * Multiple contexts can be active at once
      * Using Chain of responsibility pattern
      */
     class Context
     {
-        friend class Manager;
+        friend class Input;
       public:
         Context() = default;
 
-        void AddActionMapping(Input::Key key, int mods, const std::string& name);
-        void RemoveActionMapping(Input::Key key, int mods);
+        void AddActionMapping(Key key, int mods, const std::string& name);
+        void RemoveActionMapping(Key key, int mods);
 
-        void AddRangeMapping(Input::Key key, int mods, const std::string& name, const float& weight);
-        void RemoveRangeMapping(Input::Key key, int mods);
+        void AddRangeMapping(Key key, int mods, const std::string& name, const float& weight);
+        void RemoveRangeMapping(Key key, int mods);
 
-        std::string MapKeyAction(Input::Key key, int mods);
-        std::pair<std::string, float> MapKeyRange(Input::Key key, int mods);
+        std::string MapKeyAction(Key key, int mods);
+        std::pair<std::string, float> MapKeyRange(Key key, int mods);
 
       private:
         void ResetPriority(int priority);
@@ -138,13 +138,13 @@ class Manager : public Module
     };
 
   public:
-    typedef std::function<void(Input::Action)> ActionCallback;
-    typedef std::function<void(Input::Action, float)> RangeCallback;
+    typedef std::function<void(Action)> ActionCallback;
+    typedef std::function<void(Action, float)> RangeCallback;
 
   public:
     /* ============ Context management ============= */
 
-    void EvaluateKey(Input::Key key, Input::Action action, int mods, double val);
+    void EvaluateKey(Key key, Action action, int mods, double val);
 
     void BindAction(const std::string& name, ActionCallback func);
     void BindRange(const std::string& name, RangeCallback func, float val = 1.0f);
@@ -177,9 +177,6 @@ class Manager : public Module
     virtual void SetCursorImage(unsigned char* image, unsigned int width, unsigned int height) = 0;
     virtual void EnableCursor() = 0;
     virtual void DisableCursor() = 0;
-
-    std::shared_ptr<Actor> GetCursorHoveringActor();
-
   private:
     std::shared_ptr<Context> headContext;
     std::map<std::string, ActionCallback> actionMap;
