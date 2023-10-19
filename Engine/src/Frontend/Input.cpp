@@ -29,6 +29,30 @@ void Input::EvaluateKey(Key key, Action action, int mods, double val)
     }
 }
 
+void Input::OnSetup()
+{
+    // Maybe setup the headContext
+}
+
+bool Input::OnUpdate(double dt)
+{
+    window->PollEvents();
+    return true;
+}
+
+void Input::OnShutdown()
+{
+    // Clean up contexts
+}
+
+Input::Input(Window* w) : window(w)
+{
+}
+
+Input::~Input()
+{
+}
+
 void Input::BindAction(const std::string& name, ActionCallback func)
 {
     auto it = actionMap.find(name);

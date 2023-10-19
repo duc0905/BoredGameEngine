@@ -4,6 +4,7 @@
 #include <string>
 #include <functional>
 #include "../GameLoop.hpp"
+#include "../Adapter/Window.h"
 
 namespace Bored
 {
@@ -98,11 +99,14 @@ enum ActionEnum
 };
 
 /**
- * @brief 
+ * @brief TODO
  */
 class Input : public Module
 {
   public:
+    Input(Window* w);
+    virtual ~Input();
+
     /** Context
      * Define a set of actions/ranges those are available when this context is active
      * Multiple contexts can be active at once
@@ -138,12 +142,22 @@ class Input : public Module
     };
 
   public:
+    // TODO Provide a way to propagate the event to the next context
+    // (just maybe)
     typedef std::function<void(Action)> ActionCallback;
     typedef std::function<void(Action, float)> RangeCallback;
 
   public:
     /* ============ Context management ============= */
-
+    /**
+     * @brief Call the corresponding action/range callback registered with key and action
+     * @param key The key created the event
+     * @param action Press/Repeat/Release
+     * @param mods Agumenting keys (ctrl, alt, shift,...)
+     * @param val The value corresponds to the key (how far the mouse moved,
+     *            how tilted the joystick is, ...)
+     * @details Should only be called by the implementation of this class
+     */
     void EvaluateKey(Key key, Action action, int mods, double val);
 
     void BindAction(const std::string& name, ActionCallback func);
@@ -164,9 +178,16 @@ class Input : public Module
     void DeactivateContext(Context* con);
     void DeactivateContext(std::shared_ptr<Context> con);
 
+    // TODO Use something with this information
     void ResetPriority(Context* con, int priorityLevel);
     void ResetPriority(std::shared_ptr<Context> con, int priorityLevel);
 
+  public:
+    // Inherited from Module
+    virtual void OnSetup();
+    virtual bool OnUpdate(double dt);
+    virtual void OnShutdown();
+    
     /* ========== Cursor management =========== */
 
     inline std::pair<double, double> GetMousePosition() const
@@ -177,10 +198,13 @@ class Input : public Module
     virtual void SetCursorImage(unsigned char* image, unsigned int width, unsigned int height) = 0;
     virtual void EnableCursor() = 0;
     virtual void DisableCursor() = 0;
+
   private:
     std::shared_ptr<Context> headContext;
     std::map<std::string, ActionCallback> actionMap;
     std::map<std::string, std::pair<RangeCallback, float>> rangeMap;
+
+    Bored::Window* window;
 
     struct MouseInfo
     {
@@ -207,5 +231,4 @@ class Input : public Module
 };
 
 } // namespace Input
-
 } // namespace Bored

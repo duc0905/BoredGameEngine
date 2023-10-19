@@ -2,11 +2,16 @@
 #include <memory>
 #include "../GameLoop.hpp"
 #include "../Frontend/Renderer.hpp"
-#include "../Frontend/Input.hpp"
+// #include "../Frontend/Input.hpp"
 #include "Render.h"
 
 namespace Bored
 {
+namespace Frontend
+{
+class Input; // Forward declare
+}
+
 class Window : public Module
 {
   public:
@@ -17,6 +22,8 @@ class Window : public Module
 
     virtual int GetWidth() const = 0;
     virtual int GetHeight() const = 0;
+
+    virtual void PollEvents() = 0;
 
     /** 
      * @brief the content of the window using ImGui
@@ -43,9 +50,10 @@ class Window : public Module
       }
       return *renderer;
     }
-  private:
+
+    virtual Frontend::Input* GetInput() = 0;
+  protected:
     std::unique_ptr<Frontend::Renderer> renderer;
-    std::unique_ptr<Frontend::Input> input;
     std::unique_ptr<Render::Context> renderContext;
 
     // TODO Audio context

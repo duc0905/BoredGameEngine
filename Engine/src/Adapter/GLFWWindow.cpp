@@ -2,6 +2,7 @@
 #include "Window.h"
 #include "GLFWWindow.h"
 #include <GLFW/glfw3.h>
+#include "../GameStruct.hpp"
 
 namespace Bored
 {
@@ -14,6 +15,8 @@ static void error_callback(int error, const char* description)
 
 Window::Window()
 {
+    input = std::make_unique<Input>(this);
+    game.window = this;
 }
 
 Window::~Window()
@@ -50,6 +53,26 @@ int Window::GetHeight() const
     return height;
 }
 
+void Window::DrawContent()
+{
+    Frontend::Renderer& r = GetRenderer();
+    glfwSwapBuffers(nativeWindow);
+    glfwGetFramebufferSize(nativeWindow, &width, &height);
+
+    r.SetViewport(0, 0, width, height); // Just in case another renderer reset the viewport
+    r.Clear();
+}
+
+void Window::PollEvents()
+{
+    glfwPollEvents();
+}
+
+Frontend::Input* Window::GetInput()
+{
+    return input.get();
+}
+
 void Window::OnSetup()
 {
     if (!glfwInit())
@@ -75,24 +98,16 @@ void Window::OnSetup()
 
     glfwMakeContextCurrent(nativeWindow);
     glfwSwapInterval(1);
+
+    // Setup input callbacks
+    input->OnSetup();
 }
 
 bool Window::OnUpdate(double dt)
 {
-    glfwPollEvents();
+    input->OnUpdate(dt);
 
-    // return renderContext->OnTick(dt) && !glfwWindowShouldClose(nativeWindow);
     return !glfwWindowShouldClose(nativeWindow);
-}
-
-void Window::DrawContent()
-{
-    Frontend::Renderer& r = GetRenderer();
-    glfwSwapBuffers(nativeWindow);
-    glfwGetFramebufferSize(nativeWindow, &width, &height);
-
-    r.SetViewport(0, 0, width, height); // Just in case another renderer reset the viewport
-    r.Clear();
 }
 
 void Window::OnShutdown()
@@ -100,5 +115,60 @@ void Window::OnShutdown()
     glfwDestroyWindow(nativeWindow);
     glfwTerminate();
 }
+
+Input::Input(Window* w): Frontend::Input(w), window(w)
+{
+}
+
+Input::~Input()
+{
+}
+
+void Input::OnSetup()
+{
+    Frontend::Input::OnSetup();
+
+    glfwSetKeyCallback(window->GetNativeWindow(),
+    [](GLFWwindow* w, int key, int scan, int action, int mods) {
+        // TODO
+        // GetInputInstance()
+        game.window->GetInput()->EvaluateKey(Input::GetKey(key), Input::GetAction(action), Input::GetMods(mods), 1.0f);
+        if (action == GLFW_PRESS) {
+            printf("Pressed key: %d\n", key);
+        }
+    });
+}
+
+Frontend::Key Input::GetKey(int k)
+{
+    // TODO
+    return Frontend::Key::KEY_UNKNOWN;
+}
+
+Frontend::Action Input::GetAction(int a)
+{
+    // TODO
+    return Frontend::Action::UNKNOWN;
+}
+
+int Input::GetMods(int m)
+{
+    // TODO
+    return 0;
+}
+
+void Input::SetCursorImage(unsigned char* image, unsigned int width, unsigned int height)
+{
+    throw std::exception("Not implemented");
+}
+void Input::EnableCursor()
+{
+    throw std::exception("Not implemented");
+}
+void Input::DisableCursor()
+{
+    throw std::exception("Not implemented");
+}
+
 } // namespace GLFW
 } // namespace Bored
