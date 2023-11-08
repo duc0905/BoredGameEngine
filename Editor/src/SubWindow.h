@@ -35,6 +35,8 @@ class SubWindow : public Window
         return nullptr;
     }
 
+    void* GetNativeWindow() override;
+
   private:
     std::string _title;
     bool _open;

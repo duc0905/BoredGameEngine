@@ -16,7 +16,7 @@ static void error_callback(int error, const char* description)
 Window::Window()
 {
     input = std::make_unique<Input>(this);
-    game.window = this;
+    id = game.AddWindow(this);
 }
 
 Window::~Window()
@@ -128,12 +128,19 @@ void Input::OnSetup()
 {
     Frontend::Input::OnSetup();
 
-    glfwSetKeyCallback(window->GetNativeWindow(),
-    [](GLFWwindow* w, int key, int scan, int action, int mods) {
-        // TODO
-        // GetInputInstance()
-        game.window->GetInput()->EvaluateKey(Input::GetKey(key), Input::GetAction(action), Input::GetMods(mods), 1.0f);
-        if (action == GLFW_PRESS) {
+    glfwSetKeyCallback((GLFWwindow*)window->GetNativeWindow(), [](GLFWwindow* w, int key, int scan, int action, int mods) {
+        if (game.GetWindow(w))
+            game.GetWindow(w)
+                ->GetInput()
+                ->EvaluateKey(Input::GetKey(key), Input::GetAction(action),
+                                                       Input::GetMods(mods), 1.0f);
+        else {
+            throw std::exception("Someone forgot to add the window to the GameStruct");
+            return;
+        }
+
+        if (action == GLFW_PRESS)
+        {
             printf("Pressed key: %d\n", key);
         }
     });

@@ -52,9 +52,13 @@ class Window : public Module
     }
 
     virtual Frontend::Input* GetInput() = 0;
+    virtual void* GetNativeWindow() = 0;
+
+    short GetId() const { return id;}
   protected:
     std::unique_ptr<Frontend::Renderer> renderer;
     std::unique_ptr<Render::Context> renderContext;
+    short id;
 
     // TODO Audio context
 };

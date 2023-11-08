@@ -8,7 +8,7 @@
     "configurePresets": [{
             "name": "base",
             "hidden": true,
-            "toolchainFile": "$env{vcpkgPath}/scripts/buildsystems/vcpkg.cmake",
+            "toolchainFile": "external/vcpkg/scripts/buildsystems/vcpkg.cmake",
             "binaryDir": "${sourceDir}/out/build/${presetName}",
             "installDir": "${sourceDir}/out/install/${presetName}",
             "cacheVariables": {
@@ -112,80 +112,6 @@
             "inherits": "debug-base",
             "configurePreset": "x86-pg",
             "targets": ["PG", "PGTest"]
-        }
-    ],
-    "workflowPresets": [{
-            "name": "all-x64",
-            "displayName": "Build everything for x64",
-            "steps": [{
-                    "type": "configure",
-                    "name": "x64-debug"
-                },
-                {
-                    "type": "build",
-                    "name": "all-x64"
-                }
-            ]
-        },
-        {
-            "name": "all-x86",
-            "displayName": "Build everything for x86",
-            "steps": [{
-                "type": "configure",
-                "name": "x86-debug"
-            }]
-        },
-        {
-            "name": "editor-x64",
-            "displayName": "Build editor for x64",
-            "steps": [{
-                    "type": "configure",
-                    "name": "x64-debug"
-                },
-                {
-                    "type": "build",
-                    "name": "editor-x64"
-                }
-            ]
-        },
-        {
-            "name": "editor-x86",
-            "displayName": "Build editor for x86",
-            "steps": [{
-                    "type": "configure",
-                    "name": "x86-debug"
-                },
-                {
-                    "type": "build",
-                    "name": "editor-x86"
-                }
-            ]
-        },
-        {
-            "name": "x64-pg",
-            "displayName": "Build playground for x64",
-            "steps": [{
-                    "type": "configure",
-                    "name": "x64-pg"
-                },
-                {
-                    "type": "build",
-                    "name": "x64-pg"
-                }
-            ]
-        },
-        {
-            "name": "x86-pg",
-            "displayName": "Build playground for x86",
-            "steps": [{
-                    "type": "configure",
-                    "name": "x86-pg"
-                },
-                {
-                    "type": "build",
-                    "name": "x86-pg"
-                }
-            ]
         }
     ]
 }

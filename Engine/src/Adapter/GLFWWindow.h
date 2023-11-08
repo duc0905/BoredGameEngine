@@ -42,7 +42,7 @@ class Window : public Bored::Window
     void DrawContent() override;
     void PollEvents() override;
 
-    GLFWwindow* GetNativeWindow() const
+    void* GetNativeWindow() override
     {
         return nativeWindow;
     }
