@@ -41,9 +41,9 @@ find_package(glfw3 CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(OpenAL CONFIG REQUIRED)
 
-target_link_libraries(Engine PRIVATE OpenAL::OpenAL)
-target_link_libraries(Engine PRIVATE glfw)
-target_link_libraries(Engine PRIVATE glad::glad)
-target_link_libraries(Engine PRIVATE glm::glm)
+target_link_libraries(Engine PUBLIC OpenAL::OpenAL)
+target_link_libraries(Engine PUBLIC glfw)
+target_link_libraries(Engine PUBLIC glad::glad)
+target_link_libraries(Engine PUBLIC glm::glm)
 
 target_include_directories(Engine PRIVATE "${CMAKE_BINARY_DIR}")

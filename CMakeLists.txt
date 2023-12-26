@@ -2,7 +2,7 @@
 # project specific logic here.
 #
 
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.5)
 project(BoredEngine VERSION 2.0)
 
 set(CMAKE_CXX_STANDARD 20)
