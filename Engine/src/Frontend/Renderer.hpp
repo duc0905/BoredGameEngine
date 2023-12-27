@@ -16,7 +16,6 @@ class Renderer
   public:
     Renderer(Render::Context* c);
 
-
     std::shared_ptr<Render::Texture> GetMainColorTexture();
 
     void BindFramebuffer();

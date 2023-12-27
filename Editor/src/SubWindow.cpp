@@ -1,5 +1,6 @@
 #include "SubWindow.h"
 #include <imgui.h>
+#include <imgui_internal.h>
 
 namespace Bored
 {
@@ -56,6 +57,10 @@ void SubWindow::SetHeight(int h) {
 void SubWindow::SetFullscreen(bool f)
 {
   throw std::exception("Cannot a sub-window fullscreen");
+}
+void* SubWindow::GetNativeWindow()
+{
+    return ImGui::FindWindowByName(_title.c_str());
 }
 } // namespace Editor
 } // namespace Bored

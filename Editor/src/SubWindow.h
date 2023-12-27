@@ -29,6 +29,14 @@ class SubWindow : public Window
     void SetHeight(int h) override;
     void SetFullscreen(bool) override;
 
+    void PollEvents() override {}
+    Frontend::Input* GetInput() override
+    {
+        return nullptr;
+    }
+
+    void* GetNativeWindow() override;
+
   private:
     std::string _title;
     bool _open;

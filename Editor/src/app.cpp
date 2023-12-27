@@ -60,7 +60,7 @@ class Editor
 
         // Setup Platform/Renderer backends
         const char* glsl_version = "#version 330";
-        ImGui_ImplGlfw_InitForOpenGL(mainWindow.GetNativeWindow(), true);
+        ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)mainWindow.GetNativeWindow(), true);
         ImGui_ImplOpenGL3_Init(glsl_version);
 
         auto fex = std::make_shared<Bored::Editor::FileExplorer>(90, 720);

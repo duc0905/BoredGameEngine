@@ -1,6 +1,7 @@
 #pragma once
 #include "Window.h"
 #include "Render.h"
+#include "../Frontend/Input.hpp"
 #include <memory>
 #include <string>
 
@@ -11,13 +12,14 @@ namespace Render
 {
 // Forward declare
 class Manager;
-}
+} // namespace Render
 } // namespace Bored
 
 namespace Bored
 {
 namespace GLFW
 {
+class Input;
 class Window : public Bored::Window
 {
   public:
@@ -38,11 +40,14 @@ class Window : public Bored::Window
     void OnShutdown() override;
 
     void DrawContent() override;
+    void PollEvents() override;
 
-    GLFWwindow* GetNativeWindow() const
+    void* GetNativeWindow() override
     {
         return nativeWindow;
     }
+
+    Frontend::Input* GetInput() override;
 
   private:
     std::string name;
@@ -50,6 +55,27 @@ class Window : public Bored::Window
     bool fullscreen = false;
 
     GLFWwindow* nativeWindow = nullptr;
+
+    std::unique_ptr<Input> input;
+};
+
+class Input : public Frontend::Input
+{
+  public:
+    Input(Window* w);
+    ~Input();
+    virtual void SetCursorImage(unsigned char* image, unsigned int width, unsigned int height) override;
+    virtual void EnableCursor() override;
+    virtual void DisableCursor() override;
+
+    virtual void OnSetup() override;
+
+  private:
+    static Frontend::Key GetKey(int k);
+    static Frontend::Action GetAction(int a);
+    static int GetMods(int m);
+
+    Window* window;
 };
 } // namespace GLFW
 } // namespace Bored
