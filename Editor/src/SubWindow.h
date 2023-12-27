@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "Bored.hpp"
+#include <iostream>
 
 namespace Bored
 {

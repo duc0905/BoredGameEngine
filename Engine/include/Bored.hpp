@@ -16,3 +16,5 @@
 
 #include "../src/Adapter/Window.h"
 #include "../src/Adapter/GLFWWindow.h"
+
+#include "../src/GameStruct.hpp"
