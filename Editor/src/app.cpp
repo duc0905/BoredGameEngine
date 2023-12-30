@@ -12,6 +12,10 @@
 #include "FileContent.h"
 #include "FileExplorer.h"
 
+#include "Bored.hpp"
+
+Bored::Game game;
+
 class Editor
 {
   private:
@@ -66,8 +70,8 @@ class Editor
         auto fex = std::make_shared<Bored::Editor::FileExplorer>(90, 720);
         auto contentWindow = std::make_shared<Bored::Editor::FileContentWindow>(720, 720, nullptr);
         auto gameScreen = std::make_shared<Bored::Editor::GameScreen>();
-
-        fex->SetOpenFileCallBack([&](std::shared_ptr<Bored::FileSystem::File> file) {
+        contentWindow->SetOpen(true);
+        fex->SetOpenFileCallBack([=](std::shared_ptr<Bored::FileSystem::File> file) {
             contentWindow->SetFileToDisplay(file);
             contentWindow->SetOpen(true);
         });
@@ -86,7 +90,7 @@ class Editor
     {
         // TODO: Use GameLoop instead
         bool isRunning = true;
-        while (isRunning)
+        while (true)
         {
             // Logic updates
             isRunning &= mainWindow.OnUpdate(0.016f);
