@@ -12,5 +12,9 @@
 #endif
 
 #include "../src/Frontend/Renderer.hpp"
+#include "../src/Frontend/Input.hpp"
+
 #include "../src/Adapter/Window.h"
 #include "../src/Adapter/GLFWWindow.h"
+
+#include "../src/GameStruct.hpp"

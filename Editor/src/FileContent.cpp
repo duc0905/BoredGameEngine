@@ -18,10 +18,15 @@ bool FileContentWindow::OnUpdate(double dt)
 
 void FileContentWindow::DrawContent()
 {
-    ImGui::Text("Hello from another window!");
-    if (ImGui::Button("Close Me"))
     {
         SetOpen(false);
+    }
+
+    if(current_file != nullptr)
+    {   
+        auto data = current_file->GetData();
+        std::string content = std::string(begin(data), end(data));
+        ImGui::Text(content.c_str());
     }
 }
 

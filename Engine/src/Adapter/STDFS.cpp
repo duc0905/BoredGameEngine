@@ -11,7 +11,7 @@ File::File(const std::string& path) {
   std::string parentDir = filePath.parent_path().string();
   std::string filename = filePath.filename().string();
 
-  std::fstream file(path, std::ios::binary | std::ios::out);
+  std::fstream file(path, std::ios::binary | std::ios::out | std::ios::app);
 
   if (!file.is_open()) {
     std::cerr << "Failed to open/create file: " << filePath << std::endl;

@@ -12,6 +12,10 @@
 #include "FileContent.h"
 #include "FileExplorer.h"
 
+#include "Bored.hpp"
+
+Bored::Game game;
+
 class Editor
 {
   private:
@@ -60,14 +64,14 @@ class Editor
 
         // Setup Platform/Renderer backends
         const char* glsl_version = "#version 330";
-        ImGui_ImplGlfw_InitForOpenGL(mainWindow.GetNativeWindow(), true);
+        ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)mainWindow.GetNativeWindow(), true);
         ImGui_ImplOpenGL3_Init(glsl_version);
 
         auto fex = std::make_shared<Bored::Editor::FileExplorer>(90, 720);
         auto contentWindow = std::make_shared<Bored::Editor::FileContentWindow>(720, 720, nullptr);
         auto gameScreen = std::make_shared<Bored::Editor::GameScreen>();
-
-        fex->SetOpenFileCallBack([&](std::shared_ptr<Bored::FileSystem::File> file) {
+        contentWindow->SetOpen(true);
+        fex->SetOpenFileCallBack([=](std::shared_ptr<Bored::FileSystem::File> file) {
             contentWindow->SetFileToDisplay(file);
             contentWindow->SetOpen(true);
         });
@@ -86,7 +90,7 @@ class Editor
     {
         // TODO: Use GameLoop instead
         bool isRunning = true;
-        while (isRunning)
+        while (true)
         {
             // Logic updates
             isRunning &= mainWindow.OnUpdate(0.016f);

@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "Bored.hpp"
+#include <iostream>
 
 namespace Bored
 {
@@ -28,6 +29,14 @@ class SubWindow : public Window
     void SetWidth(int w) override;
     void SetHeight(int h) override;
     void SetFullscreen(bool) override;
+
+    void PollEvents() override {}
+    Frontend::Input* GetInput() override
+    {
+        return nullptr;
+    }
+
+    void* GetNativeWindow() override;
 
   private:
     std::string _title;
