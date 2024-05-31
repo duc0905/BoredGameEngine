@@ -5,22 +5,24 @@
         "minor": 25,
         "patch": 0
     },
-    "configurePresets": [{
+    "configurePresets": [
+        {
             "name": "base",
             "hidden": true,
             "toolchainFile": "external/vcpkg/scripts/buildsystems/vcpkg.cmake",
             "binaryDir": "${sourceDir}/out/build/${presetName}",
             "installDir": "${sourceDir}/out/install/${presetName}",
+            "generator": "Ninja",
             "cacheVariables": {
                 "CXX_STANDARD": "20",
-                "CXX_STANDARD_REQUIRED": true
+                "CXX_STANDARD_REQUIRED": true,
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true
             }
         },
         {
             "name": "windows-base",
             "hidden": true,
             "inherits": "base",
-            "generator": "Visual Studio 17 2022",
             "condition": {
                 "type": "equals",
                 "lhs": "${hostSystemName}",
@@ -68,7 +70,8 @@
             }
         }
     ],
-    "buildPresets": [{
+    "buildPresets": [
+        {
             "name": "debug-base",
             "hidden": true,
             "verbose": false
@@ -90,28 +93,55 @@
             "displayName": "Build editor for x64",
             "inherits": "debug-base",
             "configurePreset": "x64-debug",
-            "targets": ["BoredEditor", "EditorTest"]
+            "targets": [
+                "BoredEditor",
+                "EditorTest"
+            ]
         },
         {
             "name": "editor-x86",
             "displayName": "Build editor for x86",
             "inherits": "debug-base",
             "configurePreset": "x86-debug",
-            "targets": ["BoredEditor", "EditorTest"]
+            "targets": [
+                "BoredEditor",
+                "EditorTest"
+            ]
         },
         {
             "name": "x64-pg",
             "displayName": "Build Playground for x64",
             "inherits": "debug-base",
             "configurePreset": "x64-pg",
-            "targets": ["PG", "PGTest"]
+            "targets": [
+                "PG",
+                "PGTest"
+            ]
         },
         {
             "name": "x86-pg",
             "displayName": "Build Playground for x86",
             "inherits": "debug-base",
             "configurePreset": "x86-pg",
-            "targets": ["PG", "PGTest"]
+            "targets": [
+                "PG",
+                "PGTest"
+            ]
+        }
+    ],
+    "workflowPresets": [
+        {
+            "name": "editor",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "x64-debug"
+                },
+                {
+                    "type": "build",
+                    "name": "editor-x64"
+                }
+            ]
         }
     ]
 }
