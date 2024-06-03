@@ -25,7 +25,7 @@ CMakeUserPresets.json
 **/imgui.ini
 
 # cache
-/.cache
+.cache/
 
 # playground
 /examples/Playground
