@@ -42,7 +42,7 @@ bool Input::OnUpdate(double dt)
 
 void Input::OnShutdown()
 {
-    // Clean up contexts
+    // TODO: Clean up contexts
 }
 
 Input::Input(Window* w) : window(w)

@@ -2,7 +2,7 @@
 
 #include <glad/glad.h>
 #include "Render.h"
-#include "Window.h"
+// #include "Window.h"
 #include <vector>
 
 namespace Bored
@@ -122,8 +122,8 @@ class FrameBuffer : public Render::FrameBuffer
     FrameBuffer() : FrameBuffer(0, 0) {}
     ~FrameBuffer();
 
-    void Bind();
-    void Unbind();
+    void Bind() override;
+    void Unbind() override;
     virtual std::shared_ptr<Render::Texture> GetColorTexture() override;
     virtual bool CheckStatus() override;
     virtual bool HasDepthTest() override;

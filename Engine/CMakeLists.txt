@@ -24,7 +24,7 @@ set(SOURCE_FILES
     "src/DataAccess/FileManager/Manager.cpp"
     "src/Frontend/Renderer.cpp"
     "src/Frontend/Input.cpp"
-    "src/GameLoop.cpp"
+    "src/GameLogic.cpp"
     "src/Bored.cpp"
     )
 

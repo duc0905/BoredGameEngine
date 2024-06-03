@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include "../GameLoop.hpp"
+#include "../GameLogic.hpp"
 #include "../Frontend/Renderer.hpp"
 // #include "../Frontend/Input.hpp"
 #include "Render.h"

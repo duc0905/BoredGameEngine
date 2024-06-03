@@ -79,7 +79,7 @@ void VertexArray::Unbind() const
     glBindVertexArray(0);
 }
 
-Texture::Texture() : id(0), width(0), height(0), bpp(0)
+Texture::Texture() : Render::Texture(), id(0), width(0), height(0), bpp(0)
 {
     glGenTextures(1, &id);
 }
@@ -314,7 +314,7 @@ FrameBuffer::FrameBuffer(int x)
 FrameBuffer* FrameBuffer::GetDefault()
 {
     if (!defaultFbo)
-        defaultFbo = new FrameBuffer(0);
+        defaultFbo = new FrameBuffer();
     return defaultFbo;
 }
 

@@ -3,7 +3,7 @@
 #include <map>
 #include <string>
 #include <functional>
-#include "../GameLoop.hpp"
+#include "../GameLogic.hpp"
 #include "../Adapter/Window.h"
 
 namespace Bored
@@ -178,7 +178,7 @@ class Input : public Module
     void DeactivateContext(Context* con);
     void DeactivateContext(std::shared_ptr<Context> con);
 
-    // TODO Use something with this information
+    // TODO: Use something with this information
     void ResetPriority(Context* con, int priorityLevel);
     void ResetPriority(std::shared_ptr<Context> con, int priorityLevel);
 

@@ -1,24 +1,23 @@
-#pragma once
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
-#include <iostream>
+// #include <iostream>
 #include <memory>
 
-#include "Bored.hpp"
+// #include "Bored.hpp"
 
 #include "SubWindow.h"
 #include "GameScreen.hpp"
 #include "FileContent.h"
 #include "FileExplorer.h"
 
-#include "Bored.hpp"
-
 Bored::Game game;
 
 class Editor
 {
   private:
+    static std::unique_ptr<Editor> instance;
+
     Editor()
     {
     }
@@ -132,8 +131,6 @@ class Editor
     }
 
   private:
-    static std::unique_ptr<Editor> instance;
-
     Bored::GLFW::Window mainWindow;
     // Sub windows
     std::vector<std::shared_ptr<Bored::Editor::SubWindow>> windows;
