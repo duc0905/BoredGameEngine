@@ -69,7 +69,7 @@ class Editor
         auto fex = std::make_shared<Bored::Editor::FileExplorer>(90, 720);
         auto contentWindow = std::make_shared<Bored::Editor::FileContentWindow>(720, 720, nullptr);
         auto gameScreen = std::make_shared<Bored::Editor::GameScreen>();
-        contentWindow->SetOpen(true);
+        contentWindow->SetOpen(false);
         fex->SetOpenFileCallBack([=](std::shared_ptr<Bored::FileSystem::File> file) {
             contentWindow->SetFileToDisplay(file);
             contentWindow->SetOpen(true);
@@ -101,7 +101,7 @@ class Editor
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
-            ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+            ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
 
             if (show_demo_window)
                 ImGui::ShowDemoWindow(&show_demo_window);
@@ -110,7 +110,7 @@ class Editor
                 w->Create();
 
             mainWindow.GetRenderer().BindFramebuffer();
-            // glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
             mainWindow.DrawContent();
