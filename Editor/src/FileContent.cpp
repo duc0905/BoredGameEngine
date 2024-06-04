@@ -18,12 +18,8 @@ bool FileContentWindow::OnUpdate(double dt)
 
 void FileContentWindow::DrawContent()
 {
+    if (current_file != nullptr)
     {
-        SetOpen(false);
-    }
-
-    if(current_file != nullptr)
-    {   
         auto data = current_file->GetData();
         std::string content = std::string(begin(data), end(data));
         ImGui::Text(content.c_str());
@@ -39,8 +35,8 @@ std::string FileContentWindow::ProcessFileNameToTitle(std::shared_ptr<FileSystem
     return std::string("No file selected") + "###1";
 }
 
-void FileContentWindow::OnSetup(){};
-void FileContentWindow::OnShutdown(){};
+void FileContentWindow::OnSetup() {};
+void FileContentWindow::OnShutdown() {};
 
 void FileContentWindow::SetFileToDisplay(std::shared_ptr<FileSystem::File> file)
 {
