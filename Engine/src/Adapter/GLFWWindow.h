@@ -23,7 +23,7 @@ class Input;
 class Window : public Bored::Window
 {
 public:
-  Window();
+  // Window();
   ~Window();
 
   void SetWidth(int) override;
@@ -48,6 +48,11 @@ public:
   }
 
   Frontend::Input* GetInput() override;
+
+  static Window* GetInstance();
+private:
+  Window();
+  static std::unique_ptr<Window> instance_;
 
 private:
   std::string name;

@@ -39,16 +39,16 @@ int main() {
   logic.AddModule(myLogic);
 
   // the Frontend
-  Bored::GLFW::Window window;
+  Bored::GLFW::Window* window = Bored::GLFW::Window::GetInstance();
 
-  window.SetHeight(1080);
-  window.SetWidth(1920);
-  window.SetTitle("Chess");
-  window.OnSetup();
-  window.UseRenderContext(Bored::Render::OGL::Context::GetDefault());
-  window.GetRenderer().SetClearColor({0.7f, 0.3f, 0.4f});
+  window->SetHeight(1080);
+  window->SetWidth(1920);
+  window->SetTitle("Chess");
+  window->OnSetup();
+  window->UseRenderContext(Bored::Render::OGL::Context::GetDefault());
+  window->GetRenderer().SetClearColor({0.7f, 0.3f, 0.4f});
 
-  // auto input = window.GetInput();
+  // auto input = window->GetInput();
   //
   // TODO: Setup key mapping
   // Read from file
@@ -73,13 +73,13 @@ int main() {
     end = std::chrono::steady_clock::now();
     dt = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-    isRunning &= window.OnUpdate(dt);
-    window.DrawContent();
+    isRunning &= window->OnUpdate(dt);
+    window->DrawContent();
 
     isRunning &= logic.OnUpdate(dt);
     start = end;
   }
 
-  window.OnShutdown();
+  window->OnShutdown();
   return 0;
 }

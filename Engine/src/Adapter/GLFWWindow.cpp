@@ -1,5 +1,6 @@
 #include <exception>
 #include <iostream>
+#include <memory>
 #include "Window.h"
 #include "GLFWWindow.h"
 #include <GLFW/glfw3.h>
@@ -14,10 +15,18 @@ static void error_callback(int error, const char* description)
     fprintf(stderr, "Error: %s\n", description);
 }
 
+std::unique_ptr<Window> Window::instance_ = nullptr;
+
 Window::Window()
 {
     input = std::make_unique<Input>(this);
     // id = game.AddWindow(this);
+}
+
+Window* Window::GetInstance() {
+    if (!instance_)
+        instance_ = std::unique_ptr<Window>(new Window());
+    return instance_.get();
 }
 
 Window::~Window()
@@ -131,20 +140,10 @@ void Input::OnSetup()
 
     glfwSetKeyCallback((GLFWwindow*)window->GetNativeWindow(),
                        [](GLFWwindow* w, int key, int scan, int action, int mods) {
-                        std::cout << "Receiving input " << GetKey(key) << " " << scan << " " << action << " " << mods << std::endl;
-                       // if (game.GetWindow(w))
-                       //     game.GetWindow(w)->GetInput()->EvaluateKey(Input::GetKey(key), Input::GetAction(action),
-                       //                                                Input::GetMods(mods), 1.0f);
-                       // else
-                       // {
-                       //     throw std::exception("Someone forgot to add the window to the GameStruct");
-                       //     return;
-                       // }
+                       Window::GetInstance()->GetInput()->EvaluateKey(GetKey(key), GetAction(action), GetMods(mods), 1.0f);
 
-                       //    if (action == GLFW_PRESS)
-                       //    {
-                       //    printf("Pressed key: %d\n", key);
-                       //    }
+                       std::cout << "Receiving input " << GetKey(key) << " " << scan << " " << action << " " << mods << std::endl;
+
                        });
 }
 
