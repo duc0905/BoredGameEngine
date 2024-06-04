@@ -52,7 +52,7 @@ public:
   static Window* GetInstance();
 private:
   Window();
-  static std::unique_ptr<Window> instance_;
+  static std::unique_ptr<Window> instancee_;
 
 private:
   std::string name;

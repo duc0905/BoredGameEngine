@@ -18,3 +18,5 @@
 #include "../src/Adapter/GLFWWindow.h"
 
 #include "../src/GameStruct.hpp"
+
+#include "../src/Utils/DLLLoader/DLLLoader.hpp"

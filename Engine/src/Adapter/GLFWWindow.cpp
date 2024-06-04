@@ -4,7 +4,7 @@
 #include "Window.h"
 #include "GLFWWindow.h"
 #include <GLFW/glfw3.h>
-#include "../GameStruct.hpp"
+// #include "../GameStruct.hpp"
 
 namespace Bored
 {
@@ -15,7 +15,7 @@ static void error_callback(int error, const char* description)
     fprintf(stderr, "Error: %s\n", description);
 }
 
-std::unique_ptr<Window> Window::instance_ = nullptr;
+std::unique_ptr<Window> Window::instancee_ = nullptr;
 
 Window::Window()
 {
@@ -24,9 +24,9 @@ Window::Window()
 }
 
 Window* Window::GetInstance() {
-    if (!instance_)
-        instance_ = std::unique_ptr<Window>(new Window());
-    return instance_.get();
+    if (!instancee_)
+        instancee_ = std::unique_ptr<Window>(new Window());
+    return instancee_.get();
 }
 
 Window::~Window()
