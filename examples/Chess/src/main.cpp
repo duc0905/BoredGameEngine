@@ -1,6 +1,8 @@
 #include "Bored.hpp"
 #include <chrono>
 
+/* TODO: Try to use ChessLogic.dll in this file */
+
 int main() {
   auto* window = Bored::GLFW::Window::GetInstance();
 

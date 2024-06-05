@@ -1,11 +1,13 @@
-#include "pch.h"
-#include "../Core.h"
-#include "Utils.h"
+// #include "pch.h"
+// #include "../Core.h"
+// #include "Utils.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 #include <stb_image.h>
+
+#include "Render.hpp"
 
 using namespace Bored::Render;
 using namespace std;
@@ -13,6 +15,8 @@ using namespace std;
 std::vector<std::shared_ptr<Texture>>TextureFactory::storage;
 std::vector<std::shared_ptr<Material>>MaterialFactory::storage;
 std::vector<std::shared_ptr<Mesh>>MeshFactory::storage;
+
+/* TODO: Fix this file */
 
 shared_ptr<Texture> TextureFactory::Load(const string& path) {
   shared_ptr<Texture> tex = Find(path);
@@ -27,10 +31,10 @@ shared_ptr<Texture> TextureFactory::Load(const string& path) {
       tex = make_shared<Texture>(
         path, (unsigned int)w, (unsigned int)h, (unsigned int)bpp, data);
     } else {
-      Bored::logger->warn("Failed to load file: " + path);
+      // Bored::logger->warn("Failed to load file: " + path);
       unsigned char white[4] = { 0xff, 0xff, 0xff, 0xff };
       tex = Load(path, 1, 1, 4, white);
-      logger->warn("Using white texture for: " + path);
+      // logger->warn("Using white texture for: " + path);
     }
 
     storage.push_back(tex);
@@ -46,7 +50,7 @@ std::shared_ptr<Texture> TextureFactory::Load(const std::string& name,
   if (t == nullptr) {
     if (bpp > 4 || bpp <= 0)
     {
-      logger->warn("BPP cannot be other than 1, 2, 3, 4. Assuming BPP = 4.");
+      // logger->warn("BPP cannot be other than 1, 2, 3, 4. Assuming BPP = 4.");
       bpp = 4;
     }
 
@@ -61,7 +65,7 @@ std::shared_ptr<Texture> TextureFactory::Load(const std::string& name,
 
 std::shared_ptr<Texture>
 Bored::Render::TextureFactory::Load(const Texture& tex) {
-  shared_ptr<Texture> t = Find(tex.name);
+  // shared_ptr<Texture> t = Find(tex.name);
   if (t == nullptr) {
     t = make_shared<Texture>(tex);
     storage.push_back(t);

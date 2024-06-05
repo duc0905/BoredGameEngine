@@ -1,5 +1,9 @@
 #include "Bored.hpp"
 
+/*
+    TODO: Create CreateInstance and DeleteInstance functions
+*/
+
 class ChessLogic : public Bored::Module {
 public:
   void OnSetup() override;

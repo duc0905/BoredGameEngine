@@ -12,6 +12,9 @@
 namespace Bored {
 namespace Util {
 
+/** TODO: Write this
+    * TODO: Move implementations to cpp file
+    */
 class DLLLoader {
 
 private:
