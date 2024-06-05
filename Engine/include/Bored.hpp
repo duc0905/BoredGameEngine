@@ -1,7 +1,8 @@
 #pragma once
 
-#include "../src/DataAccess/FileManager/Manager.h"
 #include "../src/GameLogic.hpp"
+#include "../src/DataAccess/FileManager/Manager.h"
+#include "../src/DataAccess/Actor/ActorManager.hpp"
 
 #if FILE_SYSTEM_API == STDFS_API
 #include "../src/DataAccess/FileManager/STDFM.h"

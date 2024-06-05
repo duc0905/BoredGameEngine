@@ -68,11 +68,12 @@ std::shared_ptr<FrameBuffer> Manager::CreateFBO()
 }
 std::shared_ptr<Texture> Manager::CreateTexture2D()
 {
+    std::shared_ptr<Texture> tex = nullptr;
 #if RENDER_API == OGL_API
-    return std::make_shared<OGL::Texture2D>();
-#else
-    return nullptr;
+    tex = std::make_shared<OGL::Texture2D>();
 #endif
+
+    return tex;
 }
 std::shared_ptr<ShaderPipeline> Manager::CreateShaderProgram()
 {

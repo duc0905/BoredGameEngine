@@ -22,6 +22,7 @@ set(SOURCE_FILES
     "src/Adapter/GLFWWindow.cpp"
     "src/DataAccess/Render/Manager.cpp"
     "src/DataAccess/FileManager/Manager.cpp"
+    "src/DataAccess/Actor/ActorManager.cpp"
     "src/Frontend/Renderer.cpp"
     "src/Frontend/Input.cpp"
     "src/GameLogic.cpp"

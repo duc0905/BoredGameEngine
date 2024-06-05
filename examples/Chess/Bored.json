@@ -2,8 +2,15 @@
 	"name": "Chess Game",
 	"version": "1.0.0",
 	"description": "A simple chess game",
-	"shared_library": "./build/win-deb/chess.dll",
-	"modules": [
+	"core_modules": [
+		{
+			"type": "ActorManager"
+		},
+		{
+			"type": "Physics"
+		}
+	],
+	"custom_modules": [
 		"ChessLogic.dll",
 		"temp.dll"
 	]

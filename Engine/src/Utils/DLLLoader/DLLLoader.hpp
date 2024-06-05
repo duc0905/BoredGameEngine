@@ -1,5 +1,5 @@
 #pragma once
-#ifdef defined WIN32 || defined WIN64
+#if defined _WIN32 || defined _WIN64
 #include <Windows.h>
 #elif __linux__
 #include <dlfcn.h>
@@ -9,14 +9,17 @@
 #include <memory>
 #include <stdexcept>
 
+namespace Bored {
+namespace Util {
+
 class DLLLoader {
 
 private:
-    #ifdef WIN32
+#if defined _WIN32 || defined _WIN64
     HMODULE m_handle = nullptr;
-    #elif __linux__
+#elif defined __linux__
     void* m_handle = nullptr;
-    #endif
+#endif
 
 public:
     DLLLoader() = default;
@@ -27,11 +30,11 @@ public:
     ~DLLLoader() = default;
 
     void Load(const std::string& path) {
-        #if defined WIN32
+#if defined _WIN32 || defined _WIN64
         m_handle = LoadLibrary(path.c_str());
-        #elif defined __linux__
+#elif defined __linux__
         m_handle = dlopen(path.c_str(), RTLD_LAZY);
-        #endif
+#endif
 
         if (!m_handle) {
             throw std::runtime_error("Failed to load DLL: " + path);
@@ -40,11 +43,11 @@ public:
 
     void Unload() {
         if (m_handle) {
-            #ifdef WIN32
+#if defined _WIN32 || defined _WIN64
             FreeLibrary(m_handle);
-            #elif __linux__
+#elif __linux__
             dlclose(m_handle);
-            #endif
+#endif
             m_handle = nullptr;
         }
     }
@@ -55,11 +58,11 @@ public:
             throw std::runtime_error("DLL not loaded");
         }
 
-        #ifdef WIN32
+#if defined _WIN32 || defined _WIN64
         auto func = GetProcAddress(m_handle, name.c_str());
-        #elif __linux__
+#elif __linux__
         auto func = dlsym(m_handle, name.c_str());
-        #endif
+#endif
         if (!func) {
             throw std::runtime_error("Failed to get function: " + name);
         }
@@ -73,20 +76,20 @@ public:
             throw std::runtime_error("DLL not loaded");
         }
 
-        #ifdef WIN32
+#if defined _WIN32 || defined _WIN64
         auto func = GetProcAddress(m_handle, "CreateInstance");
-        #elif __linux__
+#elif __linux__
         auto func = dlsym(m_handle, "CreateInstance");
-        #endif
+#endif
         if (!func) {
             throw std::runtime_error("Failed to get function: CreateInstance");
         }
-        
-        #ifdef WIN32
+
+#if defined _WIN32 || defined _WIN64
         auto del_func = GetProcAddress(m_handle, "DeleteInstance");
-        #elif __linux__
+#elif __linux__
         auto del_func = dlsym(m_handle, "DeleteInstance");
-        #endif
+#endif
         if (!del_func) {
             throw std::runtime_error("Failed to get function: DeleteInstance");
         }
@@ -96,3 +99,6 @@ public:
         return std::shared_ptr<T>(createInstance());
     }
 };
+
+}
+}
