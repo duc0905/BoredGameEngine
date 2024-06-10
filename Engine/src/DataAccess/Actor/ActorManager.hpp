@@ -7,13 +7,6 @@
 #include "./Components/Transform.hpp"
 #include "./Components/IDToPtr.hpp"
 
-// TODO: This is just for Windows. Do for other platforms
-#ifdef ACTORMANAGER_EXPORTS
-#define ACTORMANAGER_API __declspec(dllexport)
-#else
-#define ACTORMANAGER_API  __declspec(dllimport)
-#endif
-
 namespace Bored {
 
 /**
@@ -22,6 +15,8 @@ namespace Bored {
 class ActorManager : public Module
 {
 public:
+	ActorManager() = default;
+	~ActorManager() = default;
 	entt::registry actor_registry;
 	/**
      * @brief Create an actor or subtype of actor
@@ -119,6 +114,3 @@ public:
 };
 
 }
-
-extern "C" ACTORMANAGER_API Bored::ActorManager* CreateInstance();
-extern "C" ACTORMANAGER_API void DeleteInstance(Bored::ActorManager* instance);

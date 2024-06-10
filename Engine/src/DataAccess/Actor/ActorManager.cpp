@@ -1,5 +1,3 @@
-#define ACTORMANAGER_EXPORTS
-
 #include "ActorManager.hpp"
 
 namespace Bored {
@@ -24,12 +22,4 @@ bool ActorManager::OnUpdate(double dt) {
 
 void ActorManager::OnShutdown() {}
 
-}
-
-Bored::ActorManager* CreateInstance() {
-	return new Bored::ActorManager();
-}
-
-void DeleteInstance(Bored::ActorManager* instance) {
-	delete instance;
 }
