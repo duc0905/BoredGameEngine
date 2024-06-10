@@ -1,10 +1,18 @@
 #pragma once
 
+#include <sstream>
 #include <entt/entt.hpp>
 #include "../../GameLogic.hpp"
 #include "Actor.hpp"
 #include "./Components/Transform.hpp"
 #include "./Components/IDToPtr.hpp"
+
+// TODO: This is just for Windows. Do for other platforms
+#ifdef ACTORMANAGER_EXPORTS
+#define ACTORMANAGER_API __declspec(dllexport)
+#else
+#define ACTORMANAGER_API  __declspec(dllimport)
+#endif
 
 namespace Bored {
 
@@ -100,14 +108,17 @@ public:
 		return;
 	}
 
-	bool IsValidActor(entt::entity id) const { return actor_registry.valid(id); }
+	bool IsValidActor(entt::entity id) const;
 
 	void Delete(entt::entity id);
 
 	// Inherited via Module
-	virtual void OnSetup() override {};
+	virtual void OnSetup() override;
 	virtual bool OnUpdate(double dt) override;
 	virtual void OnShutdown() override;
 };
 
 }
+
+extern "C" ACTORMANAGER_API Bored::ActorManager* CreateInstance();
+extern "C" ACTORMANAGER_API void DeleteInstance(Bored::ActorManager* instance);

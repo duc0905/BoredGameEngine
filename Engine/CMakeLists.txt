@@ -8,21 +8,21 @@ set(STDFS_API 1)
 set(VIRTUAL_FS_API 2)
 set(FILE_SYSTEM_API ${STDFS_API})
 
-configure_file(EngineConfig.h.in ${CMAKE_BINARY_DIR}/EngineConfig.h)
-
-set(RES_SOURCE_DIR "${CMAKE_SOURCE_DIR}/Engine/res")
-set(RES_DESTINATION_DIR "${CMAKE_BINARY_DIR}/Engine")
-file(COPY ${RES_SOURCE_DIR} DESTINATION ${RES_DESTINATION_DIR})
+find_package(glm CONFIG REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
+find_package(glad CONFIG REQUIRED)
+find_package(OpenAL CONFIG REQUIRED)
+find_package(EnTT CONFIG REQUIRED)
 
 # Main target
-set(SOURCE_FILES
+set(ENGINE_SOURCE_FILES
     "src/Adapter/Audio.cpp"
     "src/Adapter/Render.cpp"
     "src/Adapter/FileSystem.cpp"
     "src/Adapter/GLFWWindow.cpp"
     "src/DataAccess/Render/Manager.cpp"
     "src/DataAccess/FileManager/Manager.cpp"
-    "src/DataAccess/Actor/ActorManager.cpp"
+    # "src/DataAccess/Actor/ActorManager.cpp"
     "src/Frontend/Renderer.cpp"
     "src/Frontend/Input.cpp"
     "src/GameLogic.cpp"
@@ -30,21 +30,32 @@ set(SOURCE_FILES
     )
 
 if (${RENDER_API} EQUAL ${OGL_API})
-list(APPEND SOURCE_FILES "src/Adapter/OGL.cpp")
+    list(APPEND ENGINE_SOURCE_FILES "src/Adapter/OGL.cpp")
 endif()
 
-add_library(Engine ${SOURCE_FILES})
+add_library(Engine ${ENGINE_SOURCE_FILES})
+
+configure_file(EngineConfig.h.in ${CMAKE_BINARY_DIR}/EngineConfig.h)
+
+set(RES_SOURCE_DIR "${CMAKE_SOURCE_DIR}/Engine/res")
+set(RES_DESTINATION_DIR "${CMAKE_BINARY_DIR}/Engine")
+file(COPY ${RES_SOURCE_DIR} DESTINATION ${RES_DESTINATION_DIR})
 
 set_property(TARGET Engine PROPERTY CXX_STANDARD 20)
-
-find_package(glm CONFIG REQUIRED)
-find_package(glfw3 CONFIG REQUIRED)
-find_package(glad CONFIG REQUIRED)
-find_package(OpenAL CONFIG REQUIRED)
 
 target_link_libraries(Engine PUBLIC OpenAL::OpenAL)
 target_link_libraries(Engine PUBLIC glfw)
 target_link_libraries(Engine PUBLIC glad::glad)
 target_link_libraries(Engine PUBLIC glm::glm)
-
 target_include_directories(Engine PRIVATE "${CMAKE_BINARY_DIR}")
+
+set(ACTOR_MNG_FILES
+    "src/DataAccess/Actor/ActorManager.cpp"
+)
+
+add_library(ActorManager ${ACTOR_MNG_FILES})
+target_link_libraries(ActorManager PRIVATE EnTT::EnTT)
+
+install(TARGETS ActorManager)
+install(FILES "src/DataAccess/Actor/ActorManager.hpp" DESTINATION "include/Actor")
+# target_compile_definitions(ActorManager PRIVATE ACTORMANAGER_EXPORTS)

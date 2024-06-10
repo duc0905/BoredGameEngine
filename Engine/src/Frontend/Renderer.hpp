@@ -1,7 +1,6 @@
 #pragma once
-// #include "../Utils/Render.hpp"
-#include "../Adapter/Render.h"
 #include <glm/glm.hpp>
+#include "../Adapter/Render.h"
 
 namespace Bored
 {

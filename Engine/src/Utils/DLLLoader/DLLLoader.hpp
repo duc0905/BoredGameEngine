@@ -9,6 +9,9 @@
 #include <memory>
 #include <stdexcept>
 
+#define CREATE_INSTANCE "CreateInstance"
+#define DELETE_INSTANCE "DeleteInstance"
+
 namespace Bored {
 namespace Util {
 
@@ -80,21 +83,21 @@ public:
         }
 
 #if defined _WIN32 || defined _WIN64
-        auto func = GetProcAddress(m_handle, "CreateInstance");
+        auto func = GetProcAddress(m_handle, CREATE_INSTANCE);
 #elif __linux__
-        auto func = dlsym(m_handle, "CreateInstance");
+        auto func = dlsym(m_handle, CREATE_INSTANCE);
 #endif
         if (!func) {
-            throw std::runtime_error("Failed to get function: CreateInstance");
+            throw std::runtime_error(std::string("Failed to get function: ") + CREATE_INSTANCE);
         }
 
 #if defined _WIN32 || defined _WIN64
-        auto del_func = GetProcAddress(m_handle, "DeleteInstance");
+        auto del_func = GetProcAddress(m_handle, DELETE_INSTANCE);
 #elif __linux__
-        auto del_func = dlsym(m_handle, "DeleteInstance");
+        auto del_func = dlsym(m_handle, DELETE_INSTANCE);
 #endif
         if (!del_func) {
-            throw std::runtime_error("Failed to get function: DeleteInstance");
+            throw std::runtime_error(std::string("Failed to get function: ") + DELETE_INSTANCE);
         }
 
         auto createInstance = reinterpret_cast<T* (*)()>(func);
