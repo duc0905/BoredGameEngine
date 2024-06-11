@@ -2,12 +2,10 @@
 
 #include <string>
 
-#include "SubWindow.h"
-#include "GameManifest/Manifest.hpp"
+#include "SubWindow.hpp"
 
 class Editor
 {
-    friend class Bored::Editor::SubWindow;
 private:
     static std::unique_ptr<Editor> _instance;
 
@@ -29,7 +27,7 @@ public:
 private:
     Bored::GLFW::Window* mainWindow;
     // Sub windows
-    std::vector<std::shared_ptr<Bored::Editor::SubWindow>> windows;
+    std::vector<std::shared_ptr<SubWindow>> windows;
 
     Manifest _game;
     bool _gameLoaded = false;

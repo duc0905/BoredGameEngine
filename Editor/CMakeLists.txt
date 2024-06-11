@@ -3,6 +3,7 @@
 # Targets
 set(SOURCE_FILES
     "src/SubWindow.cpp"
+    "src/Editor.cpp"
     "src/FileExplorer.cpp"
     "src/FileContent.cpp"
     "src/GameScreen.cpp"

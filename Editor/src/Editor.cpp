@@ -3,8 +3,8 @@
 #include "imgui_impl_opengl3.h"
 
 #include "Editor.hpp"
-#include "FileExplorer.h"
-#include "FileContent.h"
+#include "FileExplorer.hpp"
+#include "FileContent.hpp"
 #include "GameScreen.hpp"
 
 std::unique_ptr<Editor> Editor::_instance = nullptr;
@@ -47,9 +47,9 @@ void Editor::Init() {
     ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)mainWindow->GetNativeWindow(), true);
     ImGui_ImplOpenGL3_Init(glsl_version);
 
-    auto fex = std::make_shared<Bored::Editor::FileExplorer>(90, 720);
-    auto contentWindow = std::make_shared<Bored::Editor::FileContentWindow>(720, 720, nullptr);
-    auto gameScreen = std::make_shared<Bored::Editor::GameScreen>();
+    auto fex = std::make_shared<FileExplorer>(_game, 90, 720);
+    auto contentWindow = std::make_shared<FileContentWindow>(_game, 720, 720, nullptr);
+    auto gameScreen = std::make_shared<GameScreen>(_game);
     contentWindow->SetOpen(false);
     fex->SetOpenFileCallBack([=](std::shared_ptr<Bored::FileSystem::File> file) {
         contentWindow->SetFileToDisplay(file);
