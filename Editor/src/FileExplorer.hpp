@@ -17,6 +17,7 @@ public:
   virtual void DrawContent() override;
 
   void SetOpenFileCallBack(std::function<void(std::shared_ptr<Bored::FileSystem::File>)> callBack);
+  void SetOpenProjectCallback(std::function<void(std::string)> cb);
 
 private:
   void OpenWarningWindow();
@@ -28,8 +29,11 @@ private:
   bool loadedDir = false;
   bool openContentWindow = false;
   bool errorOpenDir = false;
+
   Bored::Editor::OSAdapter::OS& win;
   Bored::FileSystem::FileManager& file_manager;
   std::shared_ptr<Bored::FileSystem::Directory> current_dir;
+
   std::function<void(std::shared_ptr<Bored::FileSystem::File>)> openFileCallBack;
+  std::function<void(std::string)> _openProject;
 };

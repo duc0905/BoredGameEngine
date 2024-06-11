@@ -42,4 +42,4 @@ struct Game
 
 } // namespace Bored
 
-extern Bored::Game game;
+// extern Bored::Game game;

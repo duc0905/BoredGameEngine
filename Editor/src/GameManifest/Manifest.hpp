@@ -1,3 +1,4 @@
+#pragma once
 #include "Bored.hpp"
 #include <string>
 #include <map>
@@ -7,9 +8,9 @@ struct Manifest {
   std::string name;
   std::string description;
 
-  struct {
+  struct Version {
     unsigned short major;
-    unsigned short minot;
+    unsigned short minor;
     unsigned short patch;
   } version;
 

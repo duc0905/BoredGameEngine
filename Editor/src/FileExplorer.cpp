@@ -2,12 +2,12 @@
 #include <imgui.h>
 
 FileExplorer::FileExplorer(Manifest& game, int width, int height, Bored::Editor::OSAdapter::Window::WindowAPI& _win, Bored::FileSystem::STDFS::Manager& _file_manager)
-    : SubWindow(game, "File Explorer", width, height), win(_win), file_manager(_file_manager)
+: SubWindow(game, "File Explorer", width, height), win(_win), file_manager(_file_manager)
 {
 }
 
 FileExplorer::FileExplorer(Manifest& game, int width, int height)
-    : FileExplorer(game, width, height, Bored::Editor::OSAdapter::Window::WindowAPI::GetInstance(), Bored::FileSystem::STDFS::Manager::GetInstance())
+: FileExplorer(game, width, height, Bored::Editor::OSAdapter::Window::WindowAPI::GetInstance(), Bored::FileSystem::STDFS::Manager::GetInstance())
 {
 }
 
@@ -20,26 +20,21 @@ bool FileExplorer::OnUpdate(double dt)
     return true;
 }
 
-void FileExplorer::DrawContent()
-{
-    if (ImGui::Button("Open folder"))
-    {
+void FileExplorer::DrawContent() {
+    if (ImGui::Button("Open folder")) {
         std::string dirPath = win.OpenDirPath();
-        if (dirPath == "")
-        {
+        if (dirPath == "") {
             errorOpenDir = true;
         }
-        else
-        {
+        else {
             loadedDir = true;
             current_dir = file_manager.MakeDirectory(dirPath);
+            _openProject(dirPath);
         }
     }
-    OpenWarningWindow();
-    if (loadedDir)
-    {
-        DirectoryDisplayer();
-    }
+
+    if (errorOpenDir) OpenWarningWindow();
+    if (loadedDir) DirectoryDisplayer();
 }
 
 void FileExplorer::OnShutdown()
@@ -48,17 +43,14 @@ void FileExplorer::OnShutdown()
 
 void FileExplorer::OpenWarningWindow()
 {
-    if (errorOpenDir)
-    {
-        ImGui::Begin("Error open directory",
-                     &errorOpenDir); // Pass a pointer to our bool variable (the
-                                     // window will have a closing button that
-                                     // will clear the bool when clicked)
-        ImGui::Text("Warning!: Error while open directory! Please try again");
-        if (ImGui::Button("Close"))
-            errorOpenDir = false;
-        ImGui::End();
-    }
+    ImGui::Begin("Error open directory",
+                 &errorOpenDir); // Pass a pointer to our bool variable (the
+    // window will have a closing button that
+    // will clear the bool when clicked)
+    ImGui::Text("Warning!: Error while open directory! Please try again");
+    if (ImGui::Button("Close"))
+        errorOpenDir = false;
+    ImGui::End();
 }
 void FileExplorer::DirectoryDisplayer()
 {
@@ -99,4 +91,8 @@ void FileExplorer::FileDisplayer(std::shared_ptr<Bored::FileSystem::File> file)
 void FileExplorer::SetOpenFileCallBack(std::function<void(std::shared_ptr<Bored::FileSystem::File>)> callBack)
 {
     openFileCallBack = callBack;
+}
+
+void FileExplorer::SetOpenProjectCallback(std::function<void(std::string)> cb) {
+    _openProject = cb;
 }

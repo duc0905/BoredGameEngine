@@ -8,6 +8,7 @@ set(SOURCE_FILES
     "src/FileContent.cpp"
     "src/GameScreen.cpp"
     "src/Adapter/windowAPI.cpp"
+    "src/GameManifest/Loader.cpp"
 )
 
 add_library(Stuff ${SOURCE_FILES})
@@ -15,20 +16,22 @@ add_library(Stuff ${SOURCE_FILES})
 find_package(imgui CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
 
 target_link_libraries(Stuff PRIVATE glfw)
 target_link_libraries(Stuff PRIVATE imgui::imgui)
 target_link_libraries(Stuff PRIVATE glad::glad)
 target_link_libraries(Stuff PRIVATE Engine)
+target_link_libraries(Stuff PRIVATE nlohmann_json::nlohmann_json)
 target_include_directories(Stuff PRIVATE
           "${CMAKE_BINARY_DIR}"
           "${CMAKE_SOURCE_DIR}/Engine/include"
 )
 
-add_executable(BoredEditor "src/app.cpp")
-target_link_libraries(BoredEditor PRIVATE imgui::imgui)
-target_link_libraries(BoredEditor PRIVATE Stuff)
-target_include_directories(BoredEditor PRIVATE
+add_executable(Editor "src/app.cpp")
+target_link_libraries(Editor PRIVATE imgui::imgui)
+target_link_libraries(Editor PRIVATE Stuff)
+target_include_directories(Editor PRIVATE
           "${CMAKE_BINARY_DIR}"
           "${CMAKE_SOURCE_DIR}/Engine/include"
 )

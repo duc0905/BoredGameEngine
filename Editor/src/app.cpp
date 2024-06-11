@@ -1,5 +1,6 @@
 // #include <iostream>
 #include "Editor.hpp"
+#include "GameManifest/Loader.hpp"
 
 // Main code
 int main(int, char**)

@@ -17,5 +17,6 @@
 	"custom_modules": [
 		"ChessLogic.dll",
 		"temp.dll"
-	]
+	],
+	"dl_file": "./build/Chess/Chess.dll"
 }

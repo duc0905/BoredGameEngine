@@ -1,3 +1,4 @@
+#include "GameManifest/Loader.hpp"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
@@ -6,6 +7,7 @@
 #include "FileExplorer.hpp"
 #include "FileContent.hpp"
 #include "GameScreen.hpp"
+#include <filesystem>
 
 std::unique_ptr<Editor> Editor::_instance = nullptr;
 
@@ -54,6 +56,10 @@ void Editor::Init() {
     fex->SetOpenFileCallBack([=](std::shared_ptr<Bored::FileSystem::File> file) {
         contentWindow->SetFileToDisplay(file);
         contentWindow->SetOpen(true);
+    });
+
+    fex->SetOpenProjectCallback([this](std::string dir) {
+        OpenProject(dir);
     });
 
     windows.push_back(fex);
@@ -108,4 +114,19 @@ void Editor::Shutdown() {
 
 void Editor::OpenProject(const std::string& directory) {
     // TODO: Implement this method
+
+    if (!std::filesystem::exists(directory)) {
+        std::cerr << "Directory " << directory << "DNE" << std::endl;
+        return;
+    }
+
+    std::filesystem::path man_file = std::filesystem::path(directory) / "Bored.json";
+    if (!std::filesystem::exists(man_file)) {
+        std::cerr << "Manifest file DNE in " << directory << std::endl;
+        return;
+    }
+
+    std::cout << "Yay :)" << std::endl;
+    _game = LoadManifestFile(man_file.string());
+    PrintManifest(_game);
 }

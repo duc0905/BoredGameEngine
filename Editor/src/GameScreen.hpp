@@ -1,6 +1,5 @@
 #pragma once
 #include "SubWindow.hpp"
-#include "Bored.hpp"
 
 class GameScreen : public SubWindow
 {
