@@ -1,12 +1,8 @@
 #include "GameScreen.hpp"
 #include <imgui.h>
 
-namespace Bored
-{
-namespace Editor
-{
-GameScreen::GameScreen() 
-  : SubWindow("Gamescreen", 800, 600)
+GameScreen::GameScreen(Manifest& game) 
+  : SubWindow(game, "Gamescreen", 800, 600)
 {
 }
 GameScreen::~GameScreen()
@@ -14,8 +10,8 @@ GameScreen::~GameScreen()
 }
 void GameScreen::OnSetup()
 {
-    UseRenderContext(new Render::OGL::Context());
-    GetRenderer().SetClearColor({0.6f, 0.5f, 0.3f, 1.0f});
+    UseRenderContext(new Bored::Render::OGL::Context());
+    GetRenderer().SetClearColor({0.0f, 0.1f, 0.3f, 1.0f});
 }
 
 bool GameScreen::OnUpdate(double dt)
@@ -43,6 +39,3 @@ void GameScreen::DrawContent()
 void GameScreen::OnShutdown()
 {
 }
-
-} // namespace Editor
-} // namespace Bored

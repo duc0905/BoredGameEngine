@@ -7,10 +7,9 @@
 #include <assimp/scene.h>
 #include <stb_image.h>
 
-#include "Render.hpp"
+#include "RenderUtil.hpp"
 
 using namespace Bored::Render;
-using namespace std;
 
 std::vector<std::shared_ptr<Texture>>TextureFactory::storage;
 std::vector<std::shared_ptr<Material>>MaterialFactory::storage;
@@ -18,8 +17,8 @@ std::vector<std::shared_ptr<Mesh>>MeshFactory::storage;
 
 /* TODO: Fix this file */
 
-shared_ptr<Texture> TextureFactory::Load(const string& path) {
-  shared_ptr<Texture> tex = Find(path);
+std::shared_ptr<Texture> TextureFactory::Load(const std::string& path) {
+  std::shared_ptr<Texture> tex = Find(path);
   if (tex == nullptr) {
     int w, h, bpp;
     unsigned char* data;
@@ -46,7 +45,7 @@ shared_ptr<Texture> TextureFactory::Load(const string& path) {
 std::shared_ptr<Texture> TextureFactory::Load(const std::string& name,
   unsigned int w, unsigned int h, unsigned int bpp,
   unsigned char* data) {
-  shared_ptr<Texture> t = Find(name);
+  std::shared_ptr<Texture> t = Find(name);
   if (t == nullptr) {
     if (bpp > 4 || bpp <= 0)
     {
@@ -63,17 +62,16 @@ std::shared_ptr<Texture> TextureFactory::Load(const std::string& name,
   return t;
 }
 
-std::shared_ptr<Texture>
-Bored::Render::TextureFactory::Load(const Texture& tex) {
-  // shared_ptr<Texture> t = Find(tex.name);
+std::shared_ptr<Texture> Bored::Render::TextureFactory::Load(const Texture& tex) {
+  std::shared_ptr<Texture> t = Find(tex.name);
   if (t == nullptr) {
-    t = make_shared<Texture>(tex);
+    t = std::make_shared<Texture>(tex);
     storage.push_back(t);
   }
   return t;
 }
 
-shared_ptr<Texture> TextureFactory::Find(const std::string& path) {
+std::shared_ptr<Texture> TextureFactory::Find(const std::string& path) {
   for (auto text : storage)
     if (text->name == path)
       return text;
@@ -113,7 +111,7 @@ std::shared_ptr<Mesh> MeshFactory::Load(const std::string& name,
 std::shared_ptr<Mesh> MeshFactory::Load(const Mesh& mesh) {
   std::shared_ptr<Mesh> m = Find(mesh.name);
   if (!m) {
-    m = make_shared<Mesh>(mesh);
+    m = std::make_shared<Mesh>(mesh);
     storage.push_back(m);
   }
   return m;
@@ -133,7 +131,7 @@ MaterialFactory::Load(const std::string& name,
   std::shared_ptr<Texture> diff,
   std::shared_ptr<Texture> spec) {
 
-  shared_ptr<Material> m = Load(name);
+  std::shared_ptr<Material> m = Load(name);
   //m->shininess = shininess;
   //m->reflectivity = reflectiveness;
   m->diffuse = diff;
@@ -144,9 +142,9 @@ MaterialFactory::Load(const std::string& name,
 
 std::shared_ptr<Material>
 Bored::Render::MaterialFactory::Load(const Material& mat) {
-  shared_ptr<Material> m = Find(mat.name);
+  std::shared_ptr<Material> m = Find(mat.name);
   if (!m) {
-    m = make_shared<Material>(mat);
+    m = std::make_shared<Material>(mat);
     storage.push_back(m);
   }
 
@@ -155,7 +153,7 @@ Bored::Render::MaterialFactory::Load(const Material& mat) {
 
 std::shared_ptr<Material>
 Bored::Render::MaterialFactory::Load(const std::string& name) {
-  shared_ptr<Material> m = Find(name);
+  std::shared_ptr<Material> m = Find(name);
   if (!m) {
     m = make_shared<Material>(name);
     storage.push_back(m);

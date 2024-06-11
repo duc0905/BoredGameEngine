@@ -1,11 +1,7 @@
-#include "SubWindow.h"
 #include <imgui.h>
 #include <imgui_internal.h>
+#include "SubWindow.hpp"
 
-namespace Bored
-{
-namespace Editor
-{
 void SubWindow::Create()
 {
     if (_open)
@@ -62,5 +58,3 @@ void* SubWindow::GetNativeWindow()
 {
     return ImGui::FindWindowByName(_title.c_str());
 }
-} // namespace Editor
-} // namespace Bored

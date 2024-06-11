@@ -12,18 +12,18 @@ namespace Render
 {
 enum ComponentType
 {
-    None = 0,
-    Bool,
-    Float,
-    Float2,
-    Float3,
-    Float4,
-    Int,
-    Int2,
-    Int3,
-    Int4,
-    Mat3,
-    Mat4
+  None = 0,
+  Bool,
+  Float,
+  Float2,
+  Float3,
+  Float4,
+  Int,
+  Int2,
+  Int3,
+  Int4,
+  Mat3,
+  Mat4
 };
 
 /**
@@ -32,13 +32,13 @@ enum ComponentType
  **/
 class Buffer
 {
-  public:
-    virtual ~Buffer()
-    {
-    }
+public:
+  virtual ~Buffer()
+  {
+  }
 
-    virtual void Bind() = 0;
-    virtual void Unbind() = 0;
+  virtual void Bind() = 0;
+  virtual void Unbind() = 0;
 };
 
 /**
@@ -46,31 +46,31 @@ class Buffer
  **/
 class VertexBuffer : public Buffer
 {
-  public:
-    typedef std::map<std::string, ComponentType> BufferLayout;
+public:
+  typedef std::map<std::string, ComponentType> BufferLayout;
 
-  public:
-    virtual ~VertexBuffer()
-    {
-    }
-    /* *
+public:
+  virtual ~VertexBuffer()
+  {
+  }
+  /* *
      * Get buffer's layout
      * */
-    BufferLayout GetLayout() const
-    {
-        return layout;
-    }
+  BufferLayout GetLayout() const
+  {
+    return layout;
+  }
 
-    /* *
+  /* *
      * Substitute data inside the buffer with new data
      * */
-    virtual void SubData(std::vector<char>, BufferLayout) = 0;
+  virtual void SubData(std::vector<char>, BufferLayout) = 0;
 
-  protected:
-    /* *
+protected:
+  /* *
      * Layout of the data inside the buffer
      * */
-    BufferLayout layout;
+  BufferLayout layout;
 };
 
 /**
@@ -78,12 +78,12 @@ class VertexBuffer : public Buffer
  **/
 class IndexBuffer : public Buffer
 {
-  public:
-    virtual ~IndexBuffer()
-    {
-    }
+public:
+  virtual ~IndexBuffer()
+  {
+  }
 
-    virtual void SubData(std::vector<unsigned int>) = 0;
+  virtual void SubData(std::vector<unsigned int>) = 0;
 };
 
 /* *
@@ -92,29 +92,32 @@ class IndexBuffer : public Buffer
  * */
 class VertexArray
 {
-  public:
-    virtual ~VertexArray()
-    {
-    }
+public:
+  virtual ~VertexArray()
+  {
+  }
 
-    virtual void Bind() const = 0;
-    virtual void Unbind() const = 0;
+  virtual void Bind() const = 0;
+  virtual void Unbind() const = 0;
 
-  protected:
-    std::unique_ptr<IndexBuffer> ibo;
+protected:
+  std::unique_ptr<IndexBuffer> ibo;
 };
 
 class Texture
 {
-  public:
-    virtual void* GetId() const = 0;
-    virtual void Bind() const = 0;
-    virtual void Unbind() const = 0;
-    virtual void SubData(unsigned width, unsigned height, unsigned int bpp, void* data) = 0;
+public:
+  std::string GetName() { return _name; }
+  virtual void* GetId() const = 0;
+  virtual void Bind() const = 0;
+  virtual void Unbind() const = 0;
+  virtual void SubData(unsigned width, unsigned height, unsigned int bpp, void* data) = 0;
 
-    virtual unsigned int GetWidth() const = 0;
-    virtual unsigned int GetHeight() const = 0;
-    virtual unsigned int GetBPP() const = 0;
+  virtual unsigned int GetWidth() const = 0;
+  virtual unsigned int GetHeight() const = 0;
+  virtual unsigned int GetBPP() const = 0;
+private:
+  std::string _name;
 };
 
 class Texture2D : private Texture
@@ -129,8 +132,8 @@ class Cubemap : private Texture
 
 class Attachment
 {
-  public:
-    virtual bool CheckStatus() = 0;
+public:
+  virtual bool CheckStatus() = 0;
 };
 
 /**
@@ -146,39 +149,39 @@ class RenderBuffer : public Attachment
  **/
 class FrameBuffer : public Buffer
 {
-  public:
-    virtual std::shared_ptr<Texture> GetColorTexture() = 0;
-    virtual bool CheckStatus() = 0;
-    virtual bool HasDepthTest() = 0;
-    virtual bool HasStencilTest() = 0;
-    virtual void AddRenderBuffer(std::shared_ptr<RenderBuffer> rbo) = 0;
+public:
+  virtual std::shared_ptr<Texture> GetColorTexture() = 0;
+  virtual bool CheckStatus() = 0;
+  virtual bool HasDepthTest() = 0;
+  virtual bool HasStencilTest() = 0;
+  virtual void AddRenderBuffer(std::shared_ptr<RenderBuffer> rbo) = 0;
 };
 
 class Shader
 {
-  public:
-    virtual bool IsComplete() = 0;
+public:
+  virtual bool IsComplete() = 0;
 };
 class VertexShader : public Shader
 {
-  public:
-    virtual ~VertexShader()
-    {
-    }
+public:
+  virtual ~VertexShader()
+  {
+  }
 };
 class GeometryShader : public Shader
 {
-  public:
-    virtual ~GeometryShader()
-    {
-    }
+public:
+  virtual ~GeometryShader()
+  {
+  }
 };
 class FragmentShader : public Shader
 {
-  public:
-    virtual ~FragmentShader()
-    {
-    }
+public:
+  virtual ~FragmentShader()
+  {
+  }
 };
 
 /**
@@ -186,40 +189,40 @@ class FragmentShader : public Shader
  **/
 class ShaderPipeline
 {
-  public:
-    virtual ~ShaderPipeline()
-    {
-    }
+public:
+  virtual ~ShaderPipeline()
+  {
+  }
 
-    virtual void Bind() = 0;
-    virtual void Unbind() = 0;
-    virtual void SetUniform(const std::string& name, int value) = 0;
-    virtual bool IsComplete() = 0;
+  virtual void Bind() = 0;
+  virtual void Unbind() = 0;
+  virtual void SetUniform(const std::string& name, int value) = 0;
+  virtual bool IsComplete() = 0;
 
-    virtual void LoadVertexShaderFile(std::shared_ptr<FileSystem::File> f) = 0;
-    virtual void LoadGeometryShaderFile(std::shared_ptr<FileSystem::File> f) = 0;
-    virtual void LoadFragmentShaderFile(std::shared_ptr<FileSystem::File> f) = 0;
+  virtual void LoadVertexShaderFile(std::shared_ptr<FileSystem::File> f) = 0;
+  virtual void LoadGeometryShaderFile(std::shared_ptr<FileSystem::File> f) = 0;
+  virtual void LoadFragmentShaderFile(std::shared_ptr<FileSystem::File> f) = 0;
 
-    virtual void LoadVertexShaderCode(const std::string& code) = 0;
-    virtual void LoadGeometryShaderCode(const std::string& code) = 0;
-    virtual void LoadFragmentShaderCode(const std::string& code) = 0;
+  virtual void LoadVertexShaderCode(const std::string& code) = 0;
+  virtual void LoadGeometryShaderCode(const std::string& code) = 0;
+  virtual void LoadFragmentShaderCode(const std::string& code) = 0;
 
-  protected:
-    std::unique_ptr<VertexShader> vShader;
-    std::unique_ptr<GeometryShader> gShader;
-    std::unique_ptr<FragmentShader> fShader;
+protected:
+  std::unique_ptr<VertexShader> vShader;
+  std::unique_ptr<GeometryShader> gShader;
+  std::unique_ptr<FragmentShader> fShader;
 };
 
 
 class Context
 {
-  public:
-    virtual ~Context() {}
+public:
+  virtual ~Context() {}
 
-    virtual void DrawVertexArray(std::shared_ptr<VertexArray> vao, std::shared_ptr<ShaderPipeline> pipeline) = 0;
-    virtual FrameBuffer& GetActiveFrameBuffer() = 0;
-    virtual void ClearFrameBuffer(const glm::vec4&) = 0;
-    virtual void SetViewport(int l, int b, int r, int t) = 0;
+  virtual void DrawVertexArray(std::shared_ptr<VertexArray> vao, std::shared_ptr<ShaderPipeline> pipeline) = 0;
+  virtual FrameBuffer& GetActiveFrameBuffer() = 0;
+  virtual void ClearFrameBuffer(const glm::vec4&) = 0;
+  virtual void SetViewport(int l, int b, int r, int t) = 0;
 };
 } // namespace Render
 } // namespace Bored

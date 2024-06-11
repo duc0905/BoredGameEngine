@@ -1,13 +1,8 @@
-#include "FileContent.h"
+#include "FileContent.hpp"
 #include <imgui.h>
 
-namespace Bored
-{
-namespace Editor
-{
-
-FileContentWindow::FileContentWindow(int width, int height, std::shared_ptr<FileSystem::File> file)
-    : SubWindow(ProcessFileNameToTitle(file), width, height, false), current_file(file)
+FileContentWindow::FileContentWindow(Manifest& game, int width, int height, std::shared_ptr<Bored::FileSystem::File> file)
+    : SubWindow(game, ProcessFileNameToTitle(file), width, height, false), current_file(file)
 {
 }
 
@@ -22,11 +17,11 @@ void FileContentWindow::DrawContent()
     {
         auto data = current_file->GetData();
         std::string content = std::string(begin(data), end(data));
-        ImGui::Text(content.c_str());
+        ImGui::Text("%s", content.c_str());
     }
 }
 
-std::string FileContentWindow::ProcessFileNameToTitle(std::shared_ptr<FileSystem::File> file)
+std::string FileContentWindow::ProcessFileNameToTitle(std::shared_ptr<Bored::FileSystem::File> file)
 {
     if (file != nullptr)
     {
@@ -38,10 +33,8 @@ std::string FileContentWindow::ProcessFileNameToTitle(std::shared_ptr<FileSystem
 void FileContentWindow::OnSetup() {};
 void FileContentWindow::OnShutdown() {};
 
-void FileContentWindow::SetFileToDisplay(std::shared_ptr<FileSystem::File> file)
+void FileContentWindow::SetFileToDisplay(std::shared_ptr<Bored::FileSystem::File> file)
 {
     current_file = file;
     SetTitle(ProcessFileNameToTitle(file));
 }
-} // namespace Editor
-} // namespace Bored

@@ -1,19 +1,13 @@
-#include "FileExplorer.h"
+#include "FileExplorer.hpp"
 #include <imgui.h>
 
-namespace Bored
-{
-namespace Editor
-{
-FileExplorer::FileExplorer(int width, int height, OSAdapter::Window::WindowAPI& _win,
-                           FileSystem::STDFS::Manager& _file_manager)
-    : SubWindow("File Explorer", width, height), win(_win), file_manager(_file_manager)
+FileExplorer::FileExplorer(Manifest& game, int width, int height, Bored::Editor::OSAdapter::Window::WindowAPI& _win, Bored::FileSystem::STDFS::Manager& _file_manager)
+    : SubWindow(game, "File Explorer", width, height), win(_win), file_manager(_file_manager)
 {
 }
 
-FileExplorer::FileExplorer(int width, int height)
-    : FileExplorer(width, height, OSAdapter::Window::WindowAPI::GetInstance(),
-                   FileSystem::STDFS::Manager::GetInstance())
+FileExplorer::FileExplorer(Manifest& game, int width, int height)
+    : FileExplorer(game, width, height, Bored::Editor::OSAdapter::Window::WindowAPI::GetInstance(), Bored::FileSystem::STDFS::Manager::GetInstance())
 {
 }
 
@@ -102,9 +96,7 @@ void FileExplorer::FileDisplayer(std::shared_ptr<Bored::FileSystem::File> file)
         };
 }
 
-void FileExplorer::SetOpenFileCallBack(std::function<void(std::shared_ptr<FileSystem::File>)> callBack)
+void FileExplorer::SetOpenFileCallBack(std::function<void(std::shared_ptr<Bored::FileSystem::File>)> callBack)
 {
     openFileCallBack = callBack;
 }
-} // namespace Editor
-} // namespace Bored

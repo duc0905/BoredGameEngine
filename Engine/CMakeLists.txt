@@ -25,6 +25,7 @@ set(ENGINE_SOURCE_FILES
     # "src/DataAccess/Actor/ActorManager.cpp"
     "src/Frontend/Renderer.cpp"
     "src/Frontend/Input.cpp"
+    # "src/Frontend/RenderUtil.cpp"
     "src/GameLogic.cpp"
     "src/Bored.cpp"
     )
