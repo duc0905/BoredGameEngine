@@ -4,12 +4,12 @@
 	"description": "A simple chess game",
 	"core_modules": [
 		{
-			"type": "ActorManager",
+			"type": "ACTORMANAGER",
 			"version": "1.0.0",
 			"config": {}
 		},
 		{
-			"type": "Physics",
+			"type": "PHYSICS",
 			"version": "1.0.0",
 			"config": {}
 		}

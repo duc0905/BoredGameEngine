@@ -92,13 +92,8 @@ class Texture : public Render::Texture
     ~Texture();
     void* GetId() const override;
 
-    unsigned int GetWidth() const override;
-    unsigned int GetHeight() const override;
-    unsigned int GetBPP() const override;
-
   protected:
     GLuint id;
-    unsigned int width, height, bpp;
 };
 
 class Texture2D : public Texture
@@ -157,6 +152,8 @@ class Context : public Render::Context
 
     virtual void ClearFrameBuffer(const glm::vec4&) override;
     virtual void SetViewport(int l, int b, int r, int t) override;
+
+    virtual std::shared_ptr<Render::Texture> CreateTexture() override;
 
     static Context* GetDefault();
   private:

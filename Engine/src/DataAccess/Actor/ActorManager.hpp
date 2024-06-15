@@ -1,7 +1,7 @@
 #pragma once
 
 #include <sstream>
-#include <entt/entt.hpp>
+#include <entt/entity/registry.hpp>
 #include "../../GameLogic.hpp"
 #include "Actor.hpp"
 #include "./Components/Transform.hpp"

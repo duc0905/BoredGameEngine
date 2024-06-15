@@ -1,6 +1,9 @@
 #pragma once
 #include "SubWindow.hpp"
 
+/**
+  * This class is purely for displaying, no logic processing is dealt here
+  */
 class GameScreen : public SubWindow
 {
   public:

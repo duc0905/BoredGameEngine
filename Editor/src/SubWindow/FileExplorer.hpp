@@ -1,9 +1,9 @@
 #pragma once
-#include "Adapter/api.h"
-#include "Adapter/windowAPI.h"
+#include <functional>
+#include "../Adapter/api.h"
+#include "../Adapter/windowAPI.h"
 #include "Bored.hpp"
 #include "SubWindow.hpp"
-#include <functional>
 
 class FileExplorer : public SubWindow
 {

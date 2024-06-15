@@ -1,6 +1,7 @@
 // #include "pch.h"
 // #include "../Core.h"
 // #include "Utils.h"
+#include <iostream>
 #define STB_IMAGE_IMPLEMENTATION
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
@@ -63,7 +64,7 @@ std::shared_ptr<Texture> TextureFactory::Load(const std::string& name,
 }
 
 std::shared_ptr<Texture> Bored::Render::TextureFactory::Load(const Texture& tex) {
-  std::shared_ptr<Texture> t = Find(tex.name);
+  std::shared_ptr<Texture> t = Find(tex._name);
   if (t == nullptr) {
     t = std::make_shared<Texture>(tex);
     storage.push_back(t);
@@ -73,7 +74,7 @@ std::shared_ptr<Texture> Bored::Render::TextureFactory::Load(const Texture& tex)
 
 std::shared_ptr<Texture> TextureFactory::Find(const std::string& path) {
   for (auto text : storage)
-    if (text->name == path)
+    if (text->_name == path)
       return text;
   return nullptr;
 }
@@ -181,6 +182,8 @@ void GetMaterials(const aiScene* scene, std::vector<Material>& mats) {
   }
 }
 
+// TODO: Use factory to generate correct textures (OGL / Vulkan / ...)
+// Use Macros to determine
 void GetTextures(const aiScene* scene, std::vector<Texture>& texs) {
   texs.assign(scene->mNumTextures, Texture());
 
@@ -253,8 +256,9 @@ Bored::Render::Model Bored::Helper::Load(const std::string& file) {
 
   // If the import failed, report it
   if (nullptr == scene) {
-    logger->warn(std::string("Cannot load model.\n")
-      + importer.GetErrorString());
+    std::cerr << "Error while loading model " << importer.GetErrorString() << std::endl;
+    // logger->warn(std::string("Cannot load model.\n")
+    //   + importer.GetErrorString());
     return Model(); // TODO return a cube
   }
 
@@ -265,7 +269,7 @@ Bored::Render::Model Bored::Helper::Load(const std::string& file) {
 
   // Push texs into registries
   for (auto& tex : texs) {
-    tex.name = scene->GetShortFilename(file.c_str()) + tex.name;
+    tex._name = scene->GetShortFilename(file.c_str()) + tex._name;
     TextureFactory::Load(tex);
   }
 
@@ -316,7 +320,7 @@ Bored::Render::Model Bored::Helper::Load(const std::string& file) {
   Model m;
   for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
     aiMesh* me = scene->mMeshes[i];
-    me->mMaterialIndex;
+    // me->mMaterialIndex;
     m.renderables.push_back({ MeshFactory::Load(meshes[i].name),
                              MaterialFactory::Load(mats[i].name) });
   }

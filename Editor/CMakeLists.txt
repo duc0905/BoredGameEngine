@@ -2,11 +2,11 @@
 
 # Targets
 set(SOURCE_FILES
-    "src/SubWindow.cpp"
     "src/Editor.cpp"
-    "src/FileExplorer.cpp"
-    "src/FileContent.cpp"
-    "src/GameScreen.cpp"
+    "src/SubWindow/SubWindow.cpp"
+    "src/SubWindow/FileExplorer.cpp"
+    "src/SubWindow/FileContent.cpp"
+    "src/SubWindow/GameScreen.cpp"
     "src/Adapter/windowAPI.cpp"
     "src/GameManifest/Loader.cpp"
 )
@@ -32,7 +32,7 @@ add_executable(Editor "src/app.cpp")
 target_link_libraries(Editor PRIVATE imgui::imgui)
 target_link_libraries(Editor PRIVATE Stuff)
 target_include_directories(Editor PRIVATE
-          "${CMAKE_BINARY_DIR}"
+          "${CMAKE_BINARY_DIR}/include"
           "${CMAKE_SOURCE_DIR}/Engine/include"
 )
 
@@ -48,7 +48,7 @@ target_link_libraries(EditorTest Stuff)
 target_link_libraries(EditorTest GTest::gtest_main)
 
 target_include_directories(EditorTest PRIVATE
-          "${CMAKE_BINARY_DIR}"
+          "${CMAKE_BINARY_DIR}/include"
           "${CMAKE_SOURCE_DIR}/Editor/src"
 )
 

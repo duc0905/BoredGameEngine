@@ -1,13 +1,13 @@
-#include "GameManifest/Loader.hpp"
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+#include <filesystem>
 
 #include "Editor.hpp"
-#include "FileExplorer.hpp"
-#include "FileContent.hpp"
-#include "GameScreen.hpp"
-#include <filesystem>
+#include "GameManifest/Loader.hpp"
+#include "SubWindow/FileExplorer.hpp"
+#include "SubWindow/FileContent.hpp"
+#include "SubWindow/GameScreen.hpp"
 
 std::unique_ptr<Editor> Editor::_instance = nullptr;
 
@@ -76,8 +76,7 @@ void Editor::Run() {
     {
         // Logic updates
         isRunning &= mainWindow->OnUpdate(0.016f);
-        for (auto w : windows)
-        w->OnUpdate(0.016f);
+        for (auto w : windows) isRunning &= w->OnUpdate(0.016f);
 
         // Draw contents
         // Start the Dear ImGui frame
@@ -89,8 +88,7 @@ void Editor::Run() {
         if (show_demo_window)
             ImGui::ShowDemoWindow(&show_demo_window);
 
-        for (auto w : windows)
-        w->Create();
+        for (auto w : windows) w->Create();
 
         mainWindow->GetRenderer().BindFramebuffer();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -128,5 +126,6 @@ void Editor::OpenProject(const std::string& directory) {
 
     std::cout << "Yay :)" << std::endl;
     _game = LoadManifestFile(man_file.string());
+    _game.path = directory;
     PrintManifest(_game);
 }

@@ -1,8 +1,8 @@
 #pragma once
 
 #include <string>
-
-#include "SubWindow.hpp"
+#include "GameManifest/Manifest.hpp"
+#include "SubWindow/SubWindow.hpp"
 
 class Editor
 {

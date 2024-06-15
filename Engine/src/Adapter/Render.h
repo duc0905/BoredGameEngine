@@ -107,17 +107,16 @@ protected:
 class Texture
 {
 public:
-  std::string GetName() { return _name; }
   virtual void* GetId() const = 0;
   virtual void Bind() const = 0;
   virtual void Unbind() const = 0;
   virtual void SubData(unsigned width, unsigned height, unsigned int bpp, void* data) = 0;
 
-  virtual unsigned int GetWidth() const = 0;
-  virtual unsigned int GetHeight() const = 0;
-  virtual unsigned int GetBPP() const = 0;
-private:
+public:
   std::string _name;
+  unsigned int _width;
+  unsigned int _height;
+  unsigned int _bpp;
 };
 
 class Texture2D : private Texture
@@ -223,6 +222,8 @@ public:
   virtual FrameBuffer& GetActiveFrameBuffer() = 0;
   virtual void ClearFrameBuffer(const glm::vec4&) = 0;
   virtual void SetViewport(int l, int b, int r, int t) = 0;
+
+  virtual std::shared_ptr<Texture> CreateTexture() = 0;
 };
 } // namespace Render
 } // namespace Bored

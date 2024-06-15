@@ -75,22 +75,13 @@ std::string ParseDescription(json data) {
     return data["description"];
 }
 
-std::string ParsePath(const std::string& file) {
-    // TODO:
-    return "";
-}
-
-/* TODO: Implement */
 Manifest LoadManifestFile(const std::string& file)
 {
     Manifest m;
-
     std::ifstream f(file);
 
-    std::cout << "Filename: " << file << std::endl;
-
     if (!f.is_open()) {
-        std::cout << "file dne\n";
+        std::cerr << "Manifest file DNE\n";
         return {};
     }
 
@@ -105,7 +96,9 @@ Manifest LoadManifestFile(const std::string& file)
     m.name = ParseName(data);
     m.description = ParseDescription(data);
     m.version = ParseVersion(data);
-    m.path = ParsePath(file);
+    // NOTE: path cannot be stored in the manifest file
+    // path will be set by the editor when open a project
+    /* TODO: Implement other fields */
 
     return m;
 }

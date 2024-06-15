@@ -1,4 +1,5 @@
 #include "OGL.h"
+#include "Render.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <memory>
@@ -79,7 +80,7 @@ void VertexArray::Unbind() const
     glBindVertexArray(0);
 }
 
-Texture::Texture() : Render::Texture(), id(0), width(0), height(0), bpp(0)
+Texture::Texture() : Render::Texture(), id(0)
 {
     glGenTextures(1, &id);
 }
@@ -94,21 +95,6 @@ void* Texture::GetId() const
     return (void*)(intptr_t)id;
 }
 
-unsigned int Texture::GetWidth() const
-{
-    return width;
-}
-
-unsigned int Texture::GetHeight() const
-{
-    return height;
-}
-
-unsigned int Texture::GetBPP() const
-{
-    return bpp;
-}
-
 void Texture2D::Bind() const
 {
     glBindTexture(GL_TEXTURE_2D, id);
@@ -121,11 +107,10 @@ void Texture2D::Unbind() const
 
 void Texture2D::SubData(unsigned w, unsigned h, unsigned int b, void* d)
 {
-    width = w;
-    height = h;
-    bpp = b;
+    _width = w;
+    _height = h;
+    _bpp = b;
 
-    // TODO test
     Bind();
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, d);
     Unbind();
@@ -185,18 +170,21 @@ bool FrameBuffer::CheckStatus()
 
 bool FrameBuffer::HasDepthTest()
 {
+    // TODO:
     throw std::exception("Not implemented");
     return false;
 }
 
 bool FrameBuffer::HasStencilTest()
 {
+    // TODO:
     throw std::exception("Not implemented");
     return false;
 }
 
 void FrameBuffer::AddRenderBuffer(std::shared_ptr<RenderBuffer> rbo)
 {
+    // TODO:
     throw std::exception("Not implemented");
 }
 
@@ -228,6 +216,7 @@ void ShaderPipeline::Unbind()
 
 void ShaderPipeline::SetUniform(const std::string& name, int value)
 {
+    // TODO:
     throw std::exception("Not implemented");
 }
 
@@ -238,34 +227,40 @@ bool ShaderPipeline::IsComplete()
 
 void ShaderPipeline::LoadVertexShaderFile(std::shared_ptr<FileSystem::File> f)
 {
+    // TODO:
     //   LoadVertexShaderCode(f->GetData());
     throw std::exception("Not implemented");
 }
 
 void ShaderPipeline::LoadGeometryShaderFile(std::shared_ptr<FileSystem::File> f)
 {
+    // TODO:
     //   LoadGeometryShaderCode(f->GetData());
     throw std::exception("Not implemented");
 }
 
 void ShaderPipeline::LoadFragmentShaderFile(std::shared_ptr<FileSystem::File> f)
 {
+    // TODO:
     //   LoadFragmetShaderCode(f->GetData());
     throw std::exception("Not implemented");
 }
 
 void ShaderPipeline::LoadVertexShaderCode(const std::string& code)
 {
+    // TODO:
     throw std::exception("Not implemented");
 }
 
 void ShaderPipeline::LoadGeometryShaderCode(const std::string& code)
 {
+    // TODO:
     throw std::exception("Not implemented");
 }
 
 void ShaderPipeline::LoadFragmentShaderCode(const std::string& code)
 {
+    // TODO:
     throw std::exception("Not implemented");
 }
 
@@ -322,6 +317,11 @@ Context* Context::defaultContext = nullptr;
 Context::Context(int x) {
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     fbo = std::unique_ptr<FrameBuffer>(FrameBuffer::GetDefault());
+}
+
+std::shared_ptr<Render::Texture> Context::CreateTexture() {
+    // TODO:
+    return std::make_shared<Texture2D>();
 }
 
 Context* Context::GetDefault()

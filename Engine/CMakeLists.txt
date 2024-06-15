@@ -13,6 +13,7 @@ find_package(glfw3 CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(OpenAL CONFIG REQUIRED)
 find_package(EnTT CONFIG REQUIRED)
+find_package(assimp CONFIG REQUIRED)
 
 # Main target
 set(ENGINE_SOURCE_FILES
@@ -42,12 +43,17 @@ set(RES_SOURCE_DIR "${CMAKE_SOURCE_DIR}/Engine/res")
 set(RES_DESTINATION_DIR "${CMAKE_BINARY_DIR}/Engine")
 file(COPY ${RES_SOURCE_DIR} DESTINATION ${RES_DESTINATION_DIR})
 
+set(INCLUDE_FILES "src/DataAccess/Actor/ActorManager.hpp")
+set(INCLUDE_DESTINATION_DIR "${CMAKE_BINARY_DIR}/include")
+file(COPY ${INCLUDE_FILES} DESTINATION ${INCLUDE_DESTINATION_DIR})
+
 set_property(TARGET Engine PROPERTY CXX_STANDARD 20)
 
-target_link_libraries(Engine PUBLIC OpenAL::OpenAL)
-target_link_libraries(Engine PUBLIC glfw)
-target_link_libraries(Engine PUBLIC glad::glad)
+target_link_libraries(Engine PRIVATE OpenAL::OpenAL)
+target_link_libraries(Engine PRIVATE glfw)
+target_link_libraries(Engine PRIVATE glad::glad)
 target_link_libraries(Engine PUBLIC glm::glm)
+target_link_libraries(Engine PRIVATE assimp::assimp)
 target_include_directories(Engine PRIVATE "${CMAKE_BINARY_DIR}")
 
 set(ACTOR_MNG_FILES

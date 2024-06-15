@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "GameManifest/Manifest.hpp"
+#include "../GameManifest/Manifest.hpp"
 #include "Bored.hpp"
 
 /// @brief Sub-window of editor
@@ -40,5 +40,6 @@ private:
   bool _open;
   int _width, _height;
 
+protected:
   Manifest& _game;
 };
