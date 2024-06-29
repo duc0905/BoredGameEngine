@@ -46,7 +46,6 @@ void Renderer::Clear()
   context->ClearFrameBuffer(clearColor);
 }
 
-// TODO:
 std::shared_ptr<Render::Texture> Renderer::LoadTexture(const std::string& path) {
   int w, h, bpp;
   unsigned char* data;

@@ -1,4 +1,5 @@
 #include "FileExplorer.hpp"
+#include <tinyfiledialogs/tinyfiledialogs.h>
 #include <imgui.h>
 
 FileExplorer::FileExplorer(Manifest& game, int width, int height, Bored::Editor::OSAdapter::Window::WindowAPI& _win, Bored::FileSystem::STDFS::Manager& _file_manager)
@@ -22,14 +23,20 @@ bool FileExplorer::OnUpdate(double dt)
 
 void FileExplorer::DrawContent() {
     if (ImGui::Button("Open folder")) {
-        std::string dirPath = win.OpenDirPath();
-        if (dirPath == "") {
-            errorOpenDir = true;
-        }
-        else {
+        // std::string dirPath = win.OpenDirPath();
+        // if (dirPath == "") {
+        //     errorOpenDir = true;
+        // }
+        // else {
+        //     loadedDir = true;
+        //     current_dir = file_manager.MakeDirectory(dirPath);
+        //     _openProject(dirPath);
+        // }
+        char* path = tinyfd_selectFolderDialog("Open Project", NULL);
+        if (path != NULL) {
             loadedDir = true;
-            current_dir = file_manager.MakeDirectory(dirPath);
-            _openProject(dirPath);
+            current_dir = file_manager.MakeDirectory(path);
+            _openProject(path);
         }
     }
 

@@ -17,6 +17,7 @@ find_package(imgui CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
+find_package(tinyfiledialogs CONFIG REQUIRED)
 
 target_link_libraries(Stuff PRIVATE glfw)
 target_link_libraries(Stuff PRIVATE imgui::imgui)
@@ -30,6 +31,7 @@ target_include_directories(Stuff PRIVATE
 
 add_executable(Editor "src/app.cpp")
 target_link_libraries(Editor PRIVATE imgui::imgui)
+target_link_libraries(Editor PRIVATE tinyfiledialogs::tinyfiledialogs)
 target_link_libraries(Editor PRIVATE Stuff)
 target_include_directories(Editor PRIVATE
           "${CMAKE_BINARY_DIR}/include"
