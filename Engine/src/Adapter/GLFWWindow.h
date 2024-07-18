@@ -39,7 +39,7 @@ public:
   bool OnUpdate(double dt) override;
   void OnShutdown() override;
 
-  void DrawContent() override;
+  void NewFrame() override;
   void PollEvents() override;
 
   void* GetNativeWindow() override

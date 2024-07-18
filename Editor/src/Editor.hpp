@@ -32,5 +32,5 @@ private:
     Manifest _game;
     bool _gameLoaded = false;
 
-    bool show_demo_window = false;
+    bool show_demo_window = true;
 };

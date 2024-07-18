@@ -46,6 +46,23 @@ void Renderer::Clear()
   context->ClearFrameBuffer(clearColor);
 }
 
+
+void Renderer::SetProjector(std::shared_ptr<Render::Projector> projector) {
+  _projector = projector;
+}
+
+void Renderer::SetCamera(std::shared_ptr<Render::Camera> camera) {
+  _camera = camera;
+}
+
+void Renderer::DrawModel(std::shared_ptr<Render::Model> model, const glm::mat4& modelMatrix) {
+  // Get Camera
+  //
+  // Get View matrix
+  //
+  // Get model matrix
+}
+
 std::shared_ptr<Render::Texture> Renderer::LoadTexture(const std::string& path) {
   int w, h, bpp;
   unsigned char* data;
@@ -110,9 +127,9 @@ void GetMaterials(const aiScene* scene, std::vector<std::shared_ptr<Material>>& 
 
   for (unsigned int i = 0; i < scene->mNumMaterials; i++) {
     aiMaterial* mat = scene->mMaterials[i];
-    std::shared_ptr<Material> myMat = std::shared_ptr<Material>();
+    std::shared_ptr<Material> myMat = std::make_shared<Material>();
 
-    myMat->name = std::string(scene->mMaterials[i]->GetName().C_Str()) +
+    myMat->name = std::string(mat->GetName().C_Str()) +
       std::to_string(i);
     // TODO:
     // aiColor3D diff, spec;
@@ -206,8 +223,8 @@ std::shared_ptr<Render::Model> Renderer::LoadModel(const std::string& file) {
   }
 
   std::vector<std::shared_ptr<Material>> mats;
-    std::vector<std::shared_ptr<Texture>> texs;
-    std::vector<std::shared_ptr<Mesh>> meshes;
+  std::vector<std::shared_ptr<Texture>> texs;
+  std::vector<std::shared_ptr<Mesh>> meshes;
   ProcessScene(scene, mats, texs, meshes, context);
 
   // Push texs into registries

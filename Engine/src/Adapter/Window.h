@@ -29,7 +29,7 @@ class Window : public Module
      * @brief the content of the window using ImGui
      * Can assume that is being called in a valid window
     **/
-    virtual void DrawContent() = 0;
+    virtual void NewFrame() = 0;
 
     /**
      * @brief Set the render context to be used by the renderer

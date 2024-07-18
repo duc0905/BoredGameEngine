@@ -51,7 +51,6 @@ void GameScreen::DrawContent()
     //     }
     // }
 
-
     auto tex = r.GetMainColorTexture();
 
     // Draw the colorbuffer from the gamerenderer

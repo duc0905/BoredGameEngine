@@ -63,7 +63,7 @@ int Window::GetHeight() const
     return height;
 }
 
-void Window::DrawContent()
+void Window::NewFrame()
 {
     Frontend::Renderer& r = GetRenderer();
     glfwSwapBuffers(nativeWindow);
@@ -116,6 +116,8 @@ void Window::OnSetup()
 bool Window::OnUpdate(double dt)
 {
     input->OnUpdate(dt);
+
+    NewFrame();
 
     return !glfwWindowShouldClose(nativeWindow);
 }
