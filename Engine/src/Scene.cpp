@@ -1,15 +1,26 @@
-#include "GameLogic.hpp"
+#include "Scene.hpp"
+#include <memory>
 
-namespace Bored {
-GameLogic::GameLogic() {}
+namespace Bored
+{
 
-GameLogic::~GameLogic() {}
-
-void GameLogic::AddModule(std::shared_ptr<Module> module) {
-    mods.push_back(module);
+ActorManager* Module::GetActorManager()
+{
+    if (_scene)
+        return &_scene->_actorManager;
+    else
+        return nullptr;
 }
 
-// void GameLogic::Run() {
+Scene::Scene()
+{
+}
+
+Scene::~Scene()
+{
+}
+
+// void Scene::Run() {
 //     for (auto mod : mods) {
 //         mod->OnSetup();
 //     }
@@ -32,13 +43,15 @@ void GameLogic::AddModule(std::shared_ptr<Module> module) {
 //     }
 // }
 
-bool GameLogic::OnUpdate(double dt) {
+bool Scene::OnUpdate(double dt)
+{
     bool isRunning = true;
 
-    for (auto mod : mods) {
+    for (auto mod : _mods)
+    {
         isRunning &= mod->OnUpdate(dt);
     }
 
     return isRunning;
 }
-}  // namespace Bored
+} // namespace Bored

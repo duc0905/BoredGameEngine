@@ -15,7 +15,7 @@ struct Game
     std::vector<Window*> windows;
 
     // Contains the "logic" part of the game
-    Bored::GameLogic game_logic;
+    Bored::Scene game_logic;
 
     short AddWindow(Window* w)
     {

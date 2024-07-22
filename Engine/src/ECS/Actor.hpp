@@ -1,13 +1,12 @@
 #pragma once
 
 #include <entt/entt.hpp>
-#include "../../GameLogic.hpp"
 
 namespace Bored {
 /**
-   * @brief Component-based entity
-   */
-class Actor : public Bored::Module
+ * @brief Component-based entity
+ */
+class Actor
 {
 public:
 	entt::entity id;

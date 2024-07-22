@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../src/GameLogic.hpp"
+#include "../src/Scene.hpp"
 #include "../src/DataAccess/FileManager/Manager.h"
 // #include "../src/DataAccess/Actor/ActorManager.hpp"
-#include "../src/DataAccess/Actor/Components/IDToPtr.hpp"
-#include "../src/DataAccess/Actor/Components/Transform.hpp"
+#include "../src/ECS/Components/IDToPtr.hpp"
+#include "../src/ECS/Components/Transform.hpp"
 
 #if FILE_SYSTEM_API == STDFS_API
 #include "../src/DataAccess/FileManager/STDFM.h"

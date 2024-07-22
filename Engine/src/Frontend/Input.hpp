@@ -3,12 +3,12 @@
 #include <map>
 #include <string>
 #include <functional>
-#include "../GameLogic.hpp"
+#include "../Scene.hpp"
 #include "../Adapter/Window.h"
 
 namespace Bored
 {
-  class Actor;
+class Actor;
 namespace Frontend
 {
 enum Key
@@ -115,6 +115,7 @@ class Input : public Module
     class Context
     {
         friend class Input;
+
       public:
         Context() = default;
 
@@ -187,7 +188,7 @@ class Input : public Module
     virtual void OnSetup();
     virtual bool OnUpdate(double dt);
     virtual void OnShutdown();
-    
+
     /* ========== Cursor management =========== */
 
     inline std::pair<double, double> GetMousePosition() const
@@ -223,6 +224,7 @@ class Input : public Module
         bool btn7;
         bool btn8;
     } mouseInfo;
+
   public:
     inline MouseInfo GetMouseInfo() const
     {
@@ -230,5 +232,5 @@ class Input : public Module
     }
 };
 
-} // namespace Input
+} // namespace Frontend
 } // namespace Bored

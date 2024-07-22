@@ -28,7 +28,7 @@ set(ENGINE_SOURCE_FILES
     "src/Frontend/RenderUtil.cpp"
     "src/Frontend/Input.cpp"
     # "src/Frontend/RenderUtil.cpp"
-    "src/GameLogic.cpp"
+    "src/Scene.cpp"
     "src/Bored.cpp"
     )
 
@@ -44,7 +44,7 @@ set(RES_SOURCE_DIR "${CMAKE_SOURCE_DIR}/Engine/res")
 set(RES_DESTINATION_DIR "${CMAKE_BINARY_DIR}/Engine")
 file(COPY ${RES_SOURCE_DIR} DESTINATION ${RES_DESTINATION_DIR})
 
-set(INCLUDE_FILES "src/DataAccess/Actor/ActorManager.hpp")
+set(INCLUDE_FILES "src/ECS/ActorManager.hpp")
 set(INCLUDE_DESTINATION_DIR "${CMAKE_BINARY_DIR}/include")
 file(COPY ${INCLUDE_FILES} DESTINATION ${INCLUDE_DESTINATION_DIR})
 
@@ -58,7 +58,7 @@ target_link_libraries(Engine PRIVATE assimp::assimp)
 target_include_directories(Engine PRIVATE "${CMAKE_BINARY_DIR}")
 
 set(ACTOR_MNG_FILES
-    "src/DataAccess/Actor/ActorManager.cpp"
+    "src/ECS/ActorManager.cpp"
 )
 
 add_library(ActorManager ${ACTOR_MNG_FILES})

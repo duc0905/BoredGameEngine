@@ -2,7 +2,6 @@
 
 #include <sstream>
 #include <entt/entity/registry.hpp>
-#include "../../GameLogic.hpp"
 #include "Actor.hpp"
 #include "./Components/Transform.hpp"
 #include "./Components/IDToPtr.hpp"
@@ -10,9 +9,9 @@
 namespace Bored {
 
 /**
-   * @brief A special data structure to manage actors effectively
-   */
-class ActorManager : public Module
+ * @brief A special data structure to manage actors effectively
+ */
+class ActorManager
 {
 public:
 	ActorManager() = default;
@@ -107,10 +106,6 @@ public:
 
 	void Delete(entt::entity id);
 
-	// Inherited via Module
-	virtual void OnSetup() override;
-	virtual bool OnUpdate(double dt) override;
-	virtual void OnShutdown() override;
 };
 
 }
