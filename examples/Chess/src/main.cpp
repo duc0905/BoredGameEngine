@@ -56,7 +56,13 @@ class Mod : public Bored::Module
     }
     virtual bool OnUpdate(double dt) override
     {
+        auto am = GetActorManager();
+        auto v = am->Get<IDToPtr>();
+        am->Create<Bored::Actor>();
+
         std::cout << "Hi from mod" << std::endl;
+        std::cout << "Number of actors: " << v.size() << std::endl;
+
         return true;
     };
     virtual void OnShutdown() override{};
