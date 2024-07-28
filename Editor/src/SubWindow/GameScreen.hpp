@@ -14,5 +14,5 @@ class GameScreen : public SubWindow
     void OnSetup() override;
     bool OnUpdate(double dt) override;
     void OnShutdown() override;
-    void DrawContent() override;
+    void NewFrame() override;
 };

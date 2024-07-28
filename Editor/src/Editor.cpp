@@ -94,7 +94,7 @@ void Editor::Run() {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        mainWindow->DrawContent();
+        mainWindow->NewFrame();
     }
 }
 

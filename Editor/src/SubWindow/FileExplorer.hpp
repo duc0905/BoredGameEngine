@@ -14,7 +14,7 @@ public:
   virtual void OnSetup() override;
   virtual bool OnUpdate(double dt) override;
   virtual void OnShutdown() override;
-  virtual void DrawContent() override;
+  virtual void NewFrame() override;
 
   void SetOpenFileCallBack(std::function<void(std::shared_ptr<Bored::FileSystem::File>)> callBack);
   void SetOpenProjectCallback(std::function<void(std::string)> cb);

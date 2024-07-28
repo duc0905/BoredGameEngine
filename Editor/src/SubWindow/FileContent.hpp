@@ -12,7 +12,7 @@ class FileContentWindow : public SubWindow
     virtual void OnSetup() override;
     virtual bool OnUpdate(double dt) override;
     virtual void OnShutdown() override;
-    virtual void DrawContent() override;
+    virtual void NewFrame() override;
 
     void SetFileToDisplay(std::shared_ptr<Bored::FileSystem::File> file);
 

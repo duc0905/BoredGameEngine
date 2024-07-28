@@ -18,6 +18,6 @@ void AssetManager::OnShutdown() {
 
 }
 
-void AssetManager::DrawContent() {
-
+void AssetManager::NewFrame() {
+    // TODO:
 }

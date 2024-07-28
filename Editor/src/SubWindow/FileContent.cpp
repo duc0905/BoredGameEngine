@@ -11,7 +11,7 @@ bool FileContentWindow::OnUpdate(double dt)
     return true;
 }
 
-void FileContentWindow::DrawContent()
+void FileContentWindow::NewFrame()
 {
     if (current_file != nullptr)
     {

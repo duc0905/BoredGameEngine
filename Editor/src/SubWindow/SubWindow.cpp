@@ -11,7 +11,7 @@ void SubWindow::Create()
         auto dim = ImGui::GetWindowSize();
         _width = dim.x;
         _height = dim.y;
-        DrawContent();
+        NewFrame();
         ImGui::End();
     }
 }

@@ -24,7 +24,7 @@ bool GameScreen::OnUpdate(double dt)
     return true;
 }
 
-void GameScreen::DrawContent()
+void GameScreen::NewFrame()
 {
     ImGui::Text("GameScreen");
 

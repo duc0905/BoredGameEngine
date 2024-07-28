@@ -21,7 +21,7 @@ bool FileExplorer::OnUpdate(double dt)
     return true;
 }
 
-void FileExplorer::DrawContent() {
+void FileExplorer::NewFrame() {
     if (ImGui::Button("Open folder")) {
         // std::string dirPath = win.OpenDirPath();
         // if (dirPath == "") {

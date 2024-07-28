@@ -20,6 +20,8 @@ public:
   void Create();
   void SetOpen(bool open);
 
+  // void NewFrame() override {}
+
   void SetTitle(const std::string& title) override;
   int GetWidth() const override;
   int GetHeight() const override;
