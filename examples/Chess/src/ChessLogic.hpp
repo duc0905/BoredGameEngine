@@ -1,17 +1,14 @@
 #include "Bored.hpp"
 
-/*
-    TODO: Create CreateInstance and DeleteInstance functions
-*/
+class ChessLogic : public Bored::Module
+{
+  public:
+    void OnSetup() override;
+    bool OnUpdate(double dt) override;
+    void OnShutdown() override;
 
-class ChessLogic : public Bored::Module {
-public:
-  void OnSetup() override;
-  bool OnUpdate(double dt) override;
-  void OnShutdown() override;
-
-public:
-  void HandleClick();
+  public:
+    void HandleClick();
 };
 
 // int main() {

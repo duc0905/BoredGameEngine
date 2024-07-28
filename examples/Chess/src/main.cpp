@@ -7,6 +7,7 @@
 // #include <assimp/Importer.hpp>
 // #include <assimp/scene.h>
 // #include <assimp/postprocess.h>
+#include "ChessLogic.hpp"
 
 // void ExploreMeshes(const aiScene* scene, const aiNode* node) {
 //   std::cout << "Node: " << node->mName.C_Str() << std::endl;
@@ -72,7 +73,7 @@ struct Game
 {
     Bored::Window* window;
     std::shared_ptr<Bored::Scene> activeScene;
-    std::vector<Bored::Scene> scenes;
+    std::vector<std::shared_ptr<Bored::Scene>> scenes;
 };
 
 int main()
@@ -81,7 +82,8 @@ int main()
     g.window = Bored::GLFW::Window::GetInstance();
     std::shared_ptr<Bored::Scene> s1 = std::make_shared<Bored::Scene>();
     g.activeScene = s1;
-    s1->AddModule<Mod>();
+    // s1->AddModule<Mod>();
+    s1->AddDLModule<ChessLogic>("C:/dev/BGE3/build/win-deb/examples/Chess/Chess.dll");
 
     // Bored::GLFW::Window* w = Bored::GLFW::Window::GetInstance();
     g.window->OnSetup();

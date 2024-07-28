@@ -1,5 +1,6 @@
 #pragma once
 #include "ECS/ActorManager.hpp"
+#include "Utils/DLLLoader/DLLLoader.hpp"
 #include <memory>
 #include <utility>
 #include <vector>
@@ -53,13 +54,31 @@ class Scene
     {
         std::shared_ptr<T> m = std::make_shared<T>(std::forward<Args>(args)...);
         m->Attach(this);
-        _mods.push_back(m);
+        m_mods.push_back(m);
         return m;
+    }
+
+    /**
+     * modulePath is the path to the dll
+     */
+    template <class T>
+    std::shared_ptr<T> AddDLModule(const std::string& modulePath, const std::string& allocSymbol = CREATE_INSTANCE,
+                                   const std::string& deleteSymbl = DELETE_INSTANCE)
+    {
+        std::shared_ptr<Util::DLLoader> loader = std::make_shared<Util::DLLoader>(modulePath);
+        loader->Load();
+        std::shared_ptr<T> mod = loader->GetIntance<T>();
+        mod->OnUpdate(1000);
+        mod->Attach(this);
+        m_mods.push_back(mod);
+        m_loaders.push_back(loader);
+        return mod;
     }
 
   private:
     std::weak_ptr<Scene> _this;
-    std::vector<std::shared_ptr<Module>> _mods;
+    std::vector<std::shared_ptr<Module>> m_mods;
+    std::vector<std::shared_ptr<Util::DLLoader>> m_loaders;
     Bored::ActorManager _actorManager;
 };
 } // namespace Bored

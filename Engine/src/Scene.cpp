@@ -1,5 +1,6 @@
 #include "Scene.hpp"
 #include <memory>
+#include <iostream>
 
 namespace Bored
 {
@@ -47,9 +48,16 @@ bool Scene::OnUpdate(double dt)
 {
     bool isRunning = true;
 
-    for (auto mod : _mods)
+    for (auto mod : m_mods)
     {
-        isRunning &= mod->OnUpdate(dt);
+        try
+        {
+            isRunning &= mod->OnUpdate(dt);
+        }
+        catch (std::exception e)
+        {
+            std::cerr << "Exception: " << e.what() << std::endl;
+        }
     }
 
     return isRunning;
