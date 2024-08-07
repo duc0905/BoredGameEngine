@@ -81,6 +81,7 @@ int main()
     Game g;
     g.window = Bored::GLFW::Window::GetInstance();
     std::shared_ptr<Bored::Scene> s1 = std::make_shared<Bored::Scene>();
+    g.scenes.push_back(s1);
     g.activeScene = s1;
     s1->AddModule<ChessLogic>();
     // s1->AddModule<Mod>();
@@ -92,30 +93,35 @@ int main()
     auto s = g.activeScene;
 
     // TODO: Change camera to be an actor in the scene
-    std::shared_ptr<Bored::Render::Camera> camera = std::make_shared<Bored::Render::Camera>();
-    std::shared_ptr<Bored::Render::Projector> projector =
-        std::make_shared<Bored::Render::OrthoProjector>(0.0f, 100.0f, 0.0f, 100.0f);
-
-    r.SetCamera(camera);
-    r.SetProjector(projector);
+    // std::shared_ptr<Bored::Render::Camera> camera = std::make_shared<Bored::Render::Camera>();
+    // std::shared_ptr<Bored::Render::Projector> projector =
+    //     std::make_shared<Bored::Render::OrthoProjector>(0.0f, 100.0f, 0.0f, 100.0f);
+    //
+    // r.SetCamera(camera);
+    // r.SetProjector(projector);
     r.SetClearColor({0.3f, 0.1f, 0.1f, 1.0f});
 
     // auto cubeModel = r.LoadModel(cube);
     // std::cout << cubeModel->renderables[0].first->norms.size() << std::endl;
-    std::shared_ptr<Transform> transform = std::make_shared<Transform>();
+    // std::shared_ptr<Transform> transform = std::make_shared<Transform>();
+
+    s->OnSetup();
 
     while (g.window->OnUpdate(1000))
     {
+        g.window->NewFrame();
         g.activeScene->OnUpdate(1000);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glClearColor(0.3f, 0.1f, 0.1f, 1.0f);
         glfwSwapBuffers((GLFWwindow*)g.window->GetNativeWindow());
-        // w->NewFrame();
 
         // r.DrawModel(cubeModel, transform->GetMat());
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
 
+    for (auto scene : g.scenes) {
+        scene->OnShutdown();
+    }
     g.window->OnShutdown();
 
     return 0;
