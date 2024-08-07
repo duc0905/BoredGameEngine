@@ -47,8 +47,9 @@ class Scene
     Scene();
     ~Scene();
 
-    // void Run();
+    void OnSetup();
     bool OnUpdate(double dt);
+    void OnShutdown();
 
     template <class T, class... Args> std::shared_ptr<T> AddModule(Args&&... args)
     {

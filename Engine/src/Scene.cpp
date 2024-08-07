@@ -1,4 +1,5 @@
 #include "Scene.hpp"
+#include <exception>
 #include <memory>
 #include <iostream>
 
@@ -21,28 +22,20 @@ Scene::~Scene()
 {
 }
 
-// void Scene::Run() {
-//     for (auto mod : mods) {
-//         mod->OnSetup();
-//     }
-//
-//     bool isRunning = true;
-//     double dt = 0;
-//     std::chrono::steady_clock::time_point start, end;
-//
-//     while (isRunning) {
-//         start = std::chrono::steady_clock::now();
-//         for (auto mod : mods) {
-//             end = std::chrono::steady_clock::now();
-//             dt = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-//             isRunning &= mod->OnUpdate(dt);
-//         }
-//     }
-//
-//     for (auto mod : mods) {
-//         mod->OnShutdown();
-//     }
-// }
+void Scene::OnSetup()
+{
+    for (auto mod : m_mods)
+    {
+        try
+        {
+            mod->OnSetup();
+        }
+        catch (std::exception e)
+        {
+            std::cerr << "Exception: " << e.what() << std::endl;
+        }
+    }
+}
 
 bool Scene::OnUpdate(double dt)
 {
@@ -61,5 +54,16 @@ bool Scene::OnUpdate(double dt)
     }
 
     return isRunning;
+}
+
+void Scene::OnShutdown()
+{
+    for (auto mod : m_mods) {
+        try {
+            mod->OnShutdown();
+        } catch (std::exception e) {
+            std::cerr << "Exception: " << e.what() << std::endl;
+        }
+    }
 }
 } // namespace Bored
