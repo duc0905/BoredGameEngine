@@ -11,13 +11,15 @@
 
 std::unique_ptr<Editor> Editor::_instance = nullptr;
 
-Editor& Editor::GetInstance() {
+Editor& Editor::GetInstance()
+{
     if (!_instance)
         _instance = std::unique_ptr<Editor>(new Editor());
     return *_instance;
 }
 
-void Editor::Init() {
+void Editor::Init()
+{
     // Decide GL+GLSL versions
     // GL 3.0 + GLSL 130
     // glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -58,25 +60,25 @@ void Editor::Init() {
         contentWindow->SetOpen(true);
     });
 
-    fex->SetOpenProjectCallback([this](std::string dir) {
-        OpenProject(dir);
-    });
+    fex->SetOpenProjectCallback([this](std::string dir) { OpenProject(dir); });
 
     windows.push_back(fex);
     windows.push_back(contentWindow);
     windows.push_back(gameScreen);
 
     for (auto w : windows)
-    w->OnSetup();
+        w->OnSetup();
 }
 
-void Editor::Run() {
+void Editor::Run()
+{
     bool isRunning = true;
     while (isRunning)
     {
         // Logic updates
         isRunning &= mainWindow->OnUpdate(0.016f);
-        for (auto w : windows) isRunning &= w->OnUpdate(0.016f);
+        for (auto w : windows)
+            isRunning &= w->OnUpdate(0.016f);
 
         // Draw contents
         // Start the Dear ImGui frame
@@ -88,38 +90,42 @@ void Editor::Run() {
         if (show_demo_window)
             ImGui::ShowDemoWindow(&show_demo_window);
 
-        for (auto w : windows) w->Create();
+        for (auto w : windows)
+            w->Create();
 
         mainWindow->GetRenderer().BindFramebuffer();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        mainWindow->NewFrame();
     }
 }
 
-void Editor::Shutdown() {
+void Editor::Shutdown()
+{
     // Cleanup
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 
     for (auto w : windows)
-    w->OnShutdown();
+        w->OnShutdown();
 
     mainWindow->OnShutdown();
 }
 
-void Editor::OpenProject(const std::string& directory) {
+void Editor::OpenProject(const std::string& directory)
+{
     // TODO: Implement this method
 
-    if (!std::filesystem::exists(directory)) {
+    if (!std::filesystem::exists(directory))
+    {
         std::cerr << "Directory " << directory << "DNE" << std::endl;
         return;
     }
 
     std::filesystem::path man_file = std::filesystem::path(directory) / "Bored.json";
-    if (!std::filesystem::exists(man_file)) {
+    if (!std::filesystem::exists(man_file))
+    {
         std::cerr << "Manifest file DNE in " << directory << std::endl;
         return;
     }
