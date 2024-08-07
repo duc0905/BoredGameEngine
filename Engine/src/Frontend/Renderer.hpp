@@ -6,6 +6,7 @@
 
 #include "../ECS/Actor.hpp"
 #include "../Adapter/Render.h"
+#include "../Scene.hpp"
 #include "RenderUtil.hpp"
 
 namespace Bored
@@ -32,7 +33,7 @@ class Renderer
     void Clear();
 
   public:
-    void DrawModel(std::shared_ptr<Render::Model> model, const glm::mat4& modeMatrix);
+    void DrawActiveScene();
 
   public:
     void SetProjector(std::shared_ptr<Render::Projector> projector);
@@ -60,8 +61,9 @@ class Renderer
     glm::vec4 clearColor;
 
   private:
-    std::shared_ptr<Render::Projector> _projector;
-    std::shared_ptr<Render::Camera> _camera;
+    // std::shared_ptr<Render::Projector> _projector;
+    // std::shared_ptr<Render::Camera> _camera;
+    std::shared_ptr<Bored::Scene> _active_scene;
 
   private:
     std::map<std::string, std::shared_ptr<Render::Model>> _modelRegistry;

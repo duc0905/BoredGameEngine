@@ -9,16 +9,17 @@
     {
       "name": "base",
       "hidden": true,
-      "toolchainFile": "external/vcpkg/scripts/buildsystems/vcpkg.cmake",
       "binaryDir": "${sourceDir}/build/${presetName}",
       "installDir": "${sourceDir}/install/${presetName}",
       "generator": "Ninja",
       "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "external/vcpkg/scripts/buildsystems/vcpkg.cmake",
         "CXX_STANDARD": "20",
         "CXX_STANDARD_REQUIRED": true,
         "CMAKE_EXPORT_COMPILE_COMMANDS": true,
         "CMAKE_C_COMPILER": "clang",
-        "CMAKE_CXX_COMPILER": "clang++"
+        "CMAKE_CXX_COMPILER": "clang++",
+        "VCPKG_FEATURE_FLAGS": "manifests"
       }
     },
     {

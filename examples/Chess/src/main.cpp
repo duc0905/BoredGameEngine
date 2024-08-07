@@ -66,7 +66,7 @@ class Mod : public Bored::Module
 
         return true;
     };
-    virtual void OnShutdown() override{};
+    virtual void OnShutdown() override {};
 };
 
 struct Game
@@ -82,13 +82,14 @@ int main()
     g.window = Bored::GLFW::Window::GetInstance();
     std::shared_ptr<Bored::Scene> s1 = std::make_shared<Bored::Scene>();
     g.activeScene = s1;
+    s1->AddModule<ChessLogic>();
     // s1->AddModule<Mod>();
-    s1->AddDLModule<ChessLogic>("C:/dev/BGE3/build/win-deb/examples/Chess/Chess.dll");
 
     // Bored::GLFW::Window* w = Bored::GLFW::Window::GetInstance();
     g.window->OnSetup();
     g.window->UseRenderContext(Bored::Render::OGL::Context::GetDefault());
     auto r = g.window->GetRenderer();
+    auto s = g.activeScene;
 
     // TODO: Change camera to be an actor in the scene
     std::shared_ptr<Bored::Render::Camera> camera = std::make_shared<Bored::Render::Camera>();
@@ -100,6 +101,7 @@ int main()
     r.SetClearColor({0.3f, 0.1f, 0.1f, 1.0f});
 
     auto cubeModel = r.LoadModel(cube);
+    std::cout << cubeModel->renderables[0].first->norms.size() << std::endl;
     std::shared_ptr<Transform> transform = std::make_shared<Transform>();
 
     while (g.window->OnUpdate(1000))
@@ -109,6 +111,7 @@ int main()
         glClearColor(0.3f, 0.1f, 0.1f, 1.0f);
         glfwSwapBuffers((GLFWwindow*)g.window->GetNativeWindow());
         // w->NewFrame();
+
         // r.DrawModel(cubeModel, transform->GetMat());
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }

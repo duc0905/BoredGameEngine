@@ -9,7 +9,9 @@ target_include_directories(Chess PRIVATE
 )
 
 add_executable(BoredChess
-  "src/main.cpp")
+    "src/main.cpp"
+    "src/ChessLogic.cpp")
+
 
 target_link_libraries(BoredChess PRIVATE Engine)
 

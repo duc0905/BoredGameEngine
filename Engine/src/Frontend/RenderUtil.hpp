@@ -15,7 +15,7 @@ struct Material
     std::shared_ptr<Texture> specular;
 };
 
-// TODO: 
+// TODO:
 // struct Light
 // {
 //     glm::vec3 color;
@@ -43,14 +43,18 @@ struct Model
 {
     std::vector<Renderable> renderables;
 
-    Model() : renderables({}) {}
-    Model(const Model& other) : renderables(other.renderables) {}
+    Model() : renderables({})
+    {
+    }
+    Model(const Model& other) : renderables(other.renderables)
+    {
+    }
 };
 
 // TODO: Description
 class Projector
 {
-public:
+  public:
     // Get the projection matrix for this projector
     [[nodiscard]] virtual glm::mat4 GetMat() const = 0;
 };
@@ -58,7 +62,7 @@ public:
 // TODO: Description
 class Camera
 {
-public:
+  public:
     glm::vec3 dir = {1.0f, 0.0f, 0.0f};
     glm::vec3 up = {0.0f, 0.0f, 1.0f};
     float yaw = 0.0f, pitch = 0.0f;
@@ -73,9 +77,11 @@ public:
 class OrthoProjector : public Projector
 {
     float l, r, t, b;
-public:
-    OrthoProjector(float left, float right, float bottom, float top)
-    : l(left), r(right), t(top), b(bottom) {}
+
+  public:
+    OrthoProjector(float left, float right, float bottom, float top) : l(left), r(right), t(top), b(bottom)
+    {
+    }
 
     [[nodiscard]] virtual glm::mat4 GetMat() const override;
 };
@@ -83,14 +89,16 @@ public:
 // TODO: Description
 class PerspProjector : public Projector
 {
-public:
-    const unsigned int& w, h;
+  public:
+    const unsigned int &w, h;
     float fov = 30.0f;
     float zNear = 0.1f, zFar = 100.0f;
-public:
-    PerspProjector(const unsigned int& width, const unsigned int& height)
-    : w(width), h(height) {}
+
+  public:
+    PerspProjector(const unsigned int& width, const unsigned int& height) : w(width), h(height)
+    {
+    }
     [[nodiscard]] virtual glm::mat4 GetMat() const override;
 };
-}
-}
+} // namespace Render
+} // namespace Bored

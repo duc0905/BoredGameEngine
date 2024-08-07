@@ -114,7 +114,9 @@ class FrameBuffer : public Render::FrameBuffer
 {
   public:
     FrameBuffer(int w, int h);
-    FrameBuffer() : FrameBuffer(0, 0) {}
+    FrameBuffer() : FrameBuffer(0, 0)
+    {
+    }
     ~FrameBuffer();
 
     void Bind() override;
@@ -156,6 +158,7 @@ class Context : public Render::Context
     virtual std::shared_ptr<Render::Texture> CreateTexture() override;
 
     static Context* GetDefault();
+
   private:
     std::unique_ptr<FrameBuffer> fbo;
     int width = 0, height = 0;

@@ -4,6 +4,11 @@
 
 void ChessLogic::OnSetup()
 {
+    auto am = GetActorManager();
+    auto a = am->Create<Bored::Actor>();
+    std::string cube = "build/win-deb/examples/Chess/res/cube.gltf";
+    auto cubeModel = r.LoadModel(cube);
+    am->AddComponent<Bored::Render::Model>(a->id, cube);
 }
 
 bool ChessLogic::OnUpdate(double dt)

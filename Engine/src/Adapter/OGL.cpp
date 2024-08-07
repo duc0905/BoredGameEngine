@@ -131,14 +131,14 @@ Texture2D::~Texture2D()
     glDeleteTextures(1, &id);
 }
 
-FrameBuffer::FrameBuffer(int w, int h)
-: colorBuffer(std::make_shared<Texture2D>())
+FrameBuffer::FrameBuffer(int w, int h) : colorBuffer(std::make_shared<Texture2D>())
 {
     glGenFramebuffers(1, &id);
     Bind();
     colorBuffer->SubData(w, h, 3, nullptr);
     colorBuffer->Bind();
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, (GLuint)(intptr_t)colorBuffer->GetId(), 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, (GLuint)(intptr_t)colorBuffer->GetId(),
+                           0);
     colorBuffer->Unbind();
 }
 
@@ -269,7 +269,9 @@ Context::Context()
     fbo = std::make_unique<FrameBuffer>();
 }
 
-Context::~Context() {}
+Context::~Context()
+{
+}
 
 void Context::DrawVertexArray(std::shared_ptr<Render::VertexArray> vao,
                               std::shared_ptr<Render::ShaderPipeline> pipeline)
@@ -303,8 +305,9 @@ void Context::SetViewport(int l, int b, int r, int t)
 }
 
 FrameBuffer* FrameBuffer::defaultFbo = nullptr;
-FrameBuffer::FrameBuffer(int x)
-    : id(0) {}
+FrameBuffer::FrameBuffer(int x) : id(0)
+{
+}
 
 FrameBuffer* FrameBuffer::GetDefault()
 {
@@ -314,12 +317,14 @@ FrameBuffer* FrameBuffer::GetDefault()
 }
 
 Context* Context::defaultContext = nullptr;
-Context::Context(int x) {
+Context::Context(int x)
+{
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     fbo = std::unique_ptr<FrameBuffer>(FrameBuffer::GetDefault());
 }
 
-std::shared_ptr<Render::Texture> Context::CreateTexture() {
+std::shared_ptr<Render::Texture> Context::CreateTexture()
+{
     // TODO:
     return std::make_shared<Texture2D>();
 }
