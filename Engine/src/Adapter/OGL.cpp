@@ -80,7 +80,7 @@ void VertexArray::Unbind() const
     glBindVertexArray(0);
 }
 
-Texture::Texture() : Render::Texture(), id(0)
+Texture::Texture() : Render::ITexture(), id(0)
 {
     glGenTextures(1, &id);
 }
@@ -157,7 +157,7 @@ void FrameBuffer::Unbind()
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-std::shared_ptr<Render::Texture> FrameBuffer::GetColorTexture()
+std::shared_ptr<Render::ITexture> FrameBuffer::GetColorTexture()
 {
     return colorBuffer;
 }
@@ -323,7 +323,7 @@ Context::Context(int x)
     fbo = std::unique_ptr<FrameBuffer>(FrameBuffer::GetDefault());
 }
 
-std::shared_ptr<Render::Texture> Context::CreateTexture()
+std::shared_ptr<Render::ITexture> Context::CreateTexture()
 {
     // TODO:
     return std::make_shared<Texture2D>();

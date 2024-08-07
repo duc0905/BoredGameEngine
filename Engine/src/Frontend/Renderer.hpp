@@ -23,7 +23,7 @@ class Renderer
   public:
     Renderer(Render::Context* c);
 
-    std::shared_ptr<Render::Texture> GetMainColorTexture();
+    std::shared_ptr<Render::ITexture> GetMainColorTexture();
 
     void BindFramebuffer();
 
@@ -42,16 +42,14 @@ class Renderer
 
     /*  */
   public:
-    std::shared_ptr<Render::Model> LoadModel(const std::string& file);
+    std::shared_ptr<Render::ITexture> LoadTexture(const std::string& path);
+    std::shared_ptr<Render::ITexture> LoadTexture(std::shared_ptr<Render::ITexture> tex);
+    std::shared_ptr<Render::ITexture> LoadTexture(const std::string& name, unsigned int w, unsigned int h,
+                                                  unsigned int bpp, unsigned char* data);
+    std::shared_ptr<Render::ITexture> GetTexture(const std::string& path);
 
-    std::shared_ptr<Render::Texture> LoadTexture(const std::string& path);
-    std::shared_ptr<Render::Texture> LoadTexture(std::shared_ptr<Render::Texture> tex);
-    std::shared_ptr<Render::Texture> LoadTexture(const std::string& name, unsigned int w, unsigned int h,
-                                                 unsigned int bpp, unsigned char* data);
-    std::shared_ptr<Render::Texture> GetTexture(const std::string& path);
-
-    std::shared_ptr<Render::Mesh> LoadMesh(std::shared_ptr<Render::Mesh> mesh);
-    std::shared_ptr<Render::Mesh> GetMesh(const std::string& name);
+    std::shared_ptr<Render::IMesh> LoadMesh(std::shared_ptr<Render::IMesh> mesh);
+    std::shared_ptr<Render::IMesh> GetMesh(const std::string& name);
 
     std::shared_ptr<Render::Material> LoadMaterial(std::shared_ptr<Render::Material> mat);
     std::shared_ptr<Render::Material> GetMaterial(const std::string& name);
@@ -67,9 +65,9 @@ class Renderer
 
   private:
     std::map<std::string, std::shared_ptr<Render::Model>> _modelRegistry;
-    std::map<std::string, std::shared_ptr<Render::Texture>> _textureRegistry;
+    std::map<std::string, std::shared_ptr<Render::ITexture>> _textureRegistry;
     std::map<std::string, std::shared_ptr<Render::Material>> _materialRegistry;
-    std::map<std::string, std::shared_ptr<Render::Mesh>> _meshRegistry;
+    std::map<std::string, std::shared_ptr<Render::IMesh>> _meshRegistry;
 };
 } // namespace Frontend
 } // namespace Bored

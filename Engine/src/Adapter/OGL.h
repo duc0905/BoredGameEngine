@@ -85,7 +85,7 @@ class ShaderPipeline : Render::ShaderPipeline
     GLuint id;
 };
 
-class Texture : public Render::Texture
+class Texture : public Render::ITexture
 {
   public:
     Texture();
@@ -121,7 +121,7 @@ class FrameBuffer : public Render::FrameBuffer
 
     void Bind() override;
     void Unbind() override;
-    virtual std::shared_ptr<Render::Texture> GetColorTexture() override;
+    virtual std::shared_ptr<Render::ITexture> GetColorTexture() override;
     virtual bool CheckStatus() override;
     virtual bool HasDepthTest() override;
     virtual bool HasStencilTest() override;
@@ -155,7 +155,7 @@ class Context : public Render::Context
     virtual void ClearFrameBuffer(const glm::vec4&) override;
     virtual void SetViewport(int l, int b, int r, int t) override;
 
-    virtual std::shared_ptr<Render::Texture> CreateTexture() override;
+    virtual std::shared_ptr<Render::ITexture> CreateTexture() override;
 
     static Context* GetDefault();
 

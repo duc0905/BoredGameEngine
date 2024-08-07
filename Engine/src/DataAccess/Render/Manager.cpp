@@ -25,10 +25,10 @@ Manager& Manager::GetInstance()
     return *instance_;
 }
 
-//void Manager::UseRenderContext(Bored::Window::Window* w)
+// void Manager::UseRenderContext(Bored::Window::Window* w)
 //{
-//    context = w->GetRenderContext();
-//}
+//     context = w->GetRenderContext();
+// }
 
 std::shared_ptr<VertexArray> Manager::CreateVAO()
 {
@@ -66,9 +66,9 @@ std::shared_ptr<FrameBuffer> Manager::CreateFBO()
 {
     return nullptr;
 }
-std::shared_ptr<Texture> Manager::CreateTexture2D()
+std::shared_ptr<ITexture> Manager::CreateTexture2D()
 {
-    std::shared_ptr<Texture> tex = nullptr;
+    std::shared_ptr<ITexture> tex = nullptr;
 #if RENDER_API == OGL_API
     tex = std::make_shared<OGL::Texture2D>();
 #endif

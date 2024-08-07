@@ -100,8 +100,8 @@ int main()
     r.SetProjector(projector);
     r.SetClearColor({0.3f, 0.1f, 0.1f, 1.0f});
 
-    auto cubeModel = r.LoadModel(cube);
-    std::cout << cubeModel->renderables[0].first->norms.size() << std::endl;
+    // auto cubeModel = r.LoadModel(cube);
+    // std::cout << cubeModel->renderables[0].first->norms.size() << std::endl;
     std::shared_ptr<Transform> transform = std::make_shared<Transform>();
 
     while (g.window->OnUpdate(1000))

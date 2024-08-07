@@ -23,3 +23,5 @@
 #include "../src/GameStruct.hpp"
 
 #include "../src/Utils/DLLLoader/DLLLoader.hpp"
+
+#include "../src/Frontend/RenderUtil.hpp"

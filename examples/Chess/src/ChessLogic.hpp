@@ -1,3 +1,4 @@
+#pragma once
 #include "Bored.hpp"
 
 class ChessLogic : public Bored::Module
