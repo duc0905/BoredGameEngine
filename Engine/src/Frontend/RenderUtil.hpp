@@ -1,9 +1,10 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <memory>
-#include "../Adapter/Render.h"
 #include <iostream>
 #include <assimp/scene.h>
+#include "../Adapter/Render.h"
+#include "../Adapter/OGL.h"
 
 namespace Bored
 {
@@ -85,62 +86,41 @@ struct CPUMesh : public IMesh
 
 struct OGLMesh : public IMesh
 {
-    std::vector<glm::vec3> pos;
-    std::vector<glm::vec2> uvs;
-    std::vector<glm::vec3> norms;
-    std::vector<unsigned int> indices;
+  public:
+    OGLMesh()
+    {
+    }
+
+    ~OGLMesh()
+    {
+    }
 
     virtual std::vector<glm::vec3> getPos() const override
     {
-        return pos;
+        // data dang chua ca pos, uvs, norms
+        std::vector<char> data = m_vbo.GetData();
+
+        std::vector<glm::vec3> pos(data.begin(), data.end());
+
+        return {};
     }
     virtual std::vector<glm::vec2> getUVs() const override
     {
-        return uvs;
+        return {};
     }
     virtual std::vector<glm::vec3> getNorms() const override
     {
-        return norms;
+        return {};
     }
     virtual std::vector<unsigned int> getIndices() const override
     {
-        return indices;
+        return {};
     }
-    virtual void subPos(std::vector<glm::vec3> pos) override
-    {
-        this->pos = pos;
-    }
-    virtual void subUVs(std::vector<glm::vec2> uvs) override
-    {
-        this->uvs = uvs;
-    }
-    virtual void subNorms(std::vector<glm::vec3> norms) override
-    {
-        this->norms = norms;
-    }
-    virtual void subIndices(std::vector<unsigned int> indices) override
-    {
-        this->indices = indices;
-    }
-    // unsigned int vao, vbo, ebo;
-    // unsigned int numIndices;
 
-    // virtual std::vector<glm::vec3> getPos() const override
-    // {
-
-    // }
-    // virtual std::vector<glm::vec2> getUVs() const override
-    // {
-    //     return {};
-    // }
-    // virtual std::vector<glm::vec3> getNorms() const override
-    // {
-    //     return {};
-    // }
-    // virtual std::vector<unsigned int> getIndices() const override
-    // {
-    //     return {};
-    // }
+  private:
+    Bored::Render::OGL::VertexBuffer m_vbo;
+    Bored::Render::OGL::IndexBuffer m_ebo;
+    Bored::Render::OGL::VertexArray m_vao;
 };
 
 typedef std::pair<std::shared_ptr<IMesh>, std::shared_ptr<Material>> Renderable;

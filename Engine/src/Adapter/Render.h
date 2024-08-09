@@ -26,6 +26,82 @@ enum ComponentType
     Mat4
 };
 
+typedef std::map<std::string, ComponentType> BufferLayout;
+
+static unsigned int GetSizeOf(const ComponentType& t)
+{
+    switch (t)
+    {
+    case ComponentType::Float:
+        return sizeof(float);
+    case ComponentType::Float2:
+        return sizeof(float) * 2;
+    case ComponentType::Float3:
+        return sizeof(float) * 3;
+    case ComponentType::Float4:
+        return sizeof(float) * 4;
+    case ComponentType::Int:
+        return sizeof(int);
+    case ComponentType::Int2:
+        return sizeof(int) * 2;
+    case ComponentType::Int3:
+        return sizeof(int) * 3;
+    case ComponentType::Int4:
+        return sizeof(int) * 4;
+    case ComponentType::Mat3:
+        return sizeof(float) * 9;
+    case ComponentType::Mat4:
+        return sizeof(float) * 16;
+    case ComponentType::Bool:
+        return sizeof(bool);
+    default:
+        return 0;
+    }
+}
+
+static uint8_t GetCountOf(const ComponentType& t)
+{
+    switch (t)
+    {
+    case ComponentType::Float:
+        return 1;
+    case ComponentType::Float2:
+        return 2;
+    case ComponentType::Float3:
+        return 3;
+    case ComponentType::Float4:
+        return 4;
+    case ComponentType::Int:
+        return 1;
+    case ComponentType::Int2:
+        return 2;
+    case ComponentType::Int3:
+        return 3;
+    case ComponentType::Int4:
+        return 4;
+    case ComponentType::Mat3:
+        return 9;
+    case ComponentType::Mat4:
+        return 16;
+    case ComponentType::Bool:
+        return 1;
+    default:
+        return 0;
+    }
+}
+
+static unsigned int GetStride(const BufferLayout& bl)
+{
+    unsigned int stride = 0;
+
+    for (auto& [_, comp] : bl)
+    {
+        stride += GetSizeOf(comp);
+    }
+
+    return stride;
+}
+
 /**
  * A buffer in the GPU
  * Will not store data in the GPU, so will not store data in here
@@ -47,12 +123,10 @@ class Buffer
 class VertexBuffer : public Buffer
 {
   public:
-    typedef std::map<std::string, ComponentType> BufferLayout;
-
-  public:
     virtual ~VertexBuffer()
     {
     }
+
     /* *
      * Get buffer's layout
      * */
@@ -65,6 +139,13 @@ class VertexBuffer : public Buffer
      * Substitute data inside the buffer with new data
      * */
     virtual void SubData(std::vector<char>, BufferLayout) = 0;
+
+    virtual std::vector<char> GetData() const = 0;
+
+    virtual void AddLayout(const std::string& name, ComponentType type)
+    {
+        layout[name] = type;
+    }
 
   protected:
     /* *
@@ -84,6 +165,8 @@ class IndexBuffer : public Buffer
     }
 
     virtual void SubData(std::vector<unsigned int>) = 0;
+
+    virtual std::vector<char> GetData() const = 0;
 };
 
 /* *
@@ -100,8 +183,7 @@ class VertexArray
     virtual void Bind() const = 0;
     virtual void Unbind() const = 0;
 
-  protected:
-    std::unique_ptr<IndexBuffer> ibo;
+    virtual void AttachBuffer(std::shared_ptr<VertexBuffer> vbo) = 0;
 };
 
 class ITexture

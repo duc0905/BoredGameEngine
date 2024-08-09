@@ -11,19 +11,19 @@ namespace Render
 {
 namespace OGL
 {
-class Buffer : public Render::Buffer
-{
-  public:
-    Buffer();
-    virtual ~Buffer();
+// class Buffer : public Render::Buffer
+// {
+//   public:
+//     Buffer();
+//     virtual ~Buffer();
 
-  protected:
-    GLuint id;
-    // Size in bytes
-    unsigned int size;
-};
+//   protected:
+//     GLuint id;
+//     // Size in bytes
+//     unsigned int size;
+// };
 
-class VertexBuffer : public Buffer, public Render::VertexBuffer
+class VertexBuffer : public Render::VertexBuffer
 {
   public:
     VertexBuffer();
@@ -33,9 +33,13 @@ class VertexBuffer : public Buffer, public Render::VertexBuffer
     virtual void Unbind() override;
 
     virtual void SubData(std::vector<char>, BufferLayout) override;
+    virtual std::vector<char> GetData() const override;
+
+  private:
+    GLuint id;
 };
 
-class IndexBuffer : public Buffer, public Render::IndexBuffer
+class IndexBuffer : public Render::IndexBuffer
 {
   public:
     IndexBuffer();
@@ -46,6 +50,11 @@ class IndexBuffer : public Buffer, public Render::IndexBuffer
 
     // Inherited via Buffer
     void SubData(std::vector<unsigned int>) override;
+
+    virtual std::vector<char> GetData() const override;
+
+  private:
+    GLuint id;
 };
 
 class VertexArray : public Render::VertexArray
@@ -53,33 +62,41 @@ class VertexArray : public Render::VertexArray
   public:
     VertexArray();
     virtual ~VertexArray();
+
     virtual void Bind() const override;
     virtual void Unbind() const override;
 
-    // TODO provide a way to attach vertex buffer
+    virtual void AttachBuffer(std::shared_ptr<Bored::Render::VertexBuffer> vbo) override;
+
   private:
     GLuint id;
-    std::vector<Buffer> vertexBuffers;
+    std::vector<VertexBuffer> vertexBuffers;
 };
 
-class ShaderPipeline : Render::ShaderPipeline
+class ShaderPipeline : public Render::ShaderPipeline
 {
   public:
     ShaderPipeline();
     ~ShaderPipeline();
 
-    virtual void Bind() = 0;
-    virtual void Unbind() = 0;
-    virtual void SetUniform(const std::string& name, int value) = 0;
-    virtual bool IsComplete() = 0;
+    // TODO: implement
+    virtual void Bind();
+    virtual void Unbind();
+    virtual void SetUniform(const std::string& name, int value) {};
+    virtual bool IsComplete()
+    {
+        return false;
+    };
 
-    virtual void LoadVertexShaderFile(std::shared_ptr<FileSystem::File> f) = 0;
-    virtual void LoadGeometryShaderFile(std::shared_ptr<FileSystem::File> f) = 0;
-    virtual void LoadFragmentShaderFile(std::shared_ptr<FileSystem::File> f) = 0;
+    // TODO: implement
+    virtual void LoadVertexShaderFile(std::shared_ptr<FileSystem::File> f) {};
+    virtual void LoadGeometryShaderFile(std::shared_ptr<FileSystem::File> f) {};
+    virtual void LoadFragmentShaderFile(std::shared_ptr<FileSystem::File> f) {};
 
-    virtual void LoadVertexShaderCode(const std::string& code) = 0;
-    virtual void LoadGeometryShaderCode(const std::string& code) = 0;
-    virtual void LoadFragmentShaderCode(const std::string& code) = 0;
+    // TODO: implement
+    virtual void LoadVertexShaderCode(const std::string& code) {};
+    virtual void LoadGeometryShaderCode(const std::string& code) {};
+    virtual void LoadFragmentShaderCode(const std::string& code) {};
 
   private:
     GLuint id;

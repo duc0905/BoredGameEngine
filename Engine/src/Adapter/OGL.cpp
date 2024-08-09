@@ -10,21 +10,47 @@ namespace Render
 {
 namespace OGL
 {
-Buffer::Buffer() : id(0), size(0)
+
+static GLenum GetOpenGLTypeOf(const ComponentType& t)
+{
+    switch (t)
+    {
+    case ComponentType::Float:
+        return GL_FLOAT;
+    case ComponentType::Float2:
+        return GL_FLOAT;
+    case ComponentType::Float3:
+        return GL_FLOAT;
+    case ComponentType::Float4:
+        return GL_FLOAT;
+    case ComponentType::Int:
+        return GL_INT;
+    case ComponentType::Int2:
+        return GL_INT;
+    case ComponentType::Int3:
+        return GL_INT;
+    case ComponentType::Int4:
+        return GL_INT;
+    case ComponentType::Mat3:
+        return GL_FLOAT;
+    case ComponentType::Mat4:
+        return GL_FLOAT;
+    case ComponentType::Bool:
+        return GL_BOOL;
+    default:
+        return 0;
+    }
+}
+
+VertexBuffer::VertexBuffer()
 {
     glGenBuffers(1, &id);
 }
 
-Buffer::~Buffer()
-{
-    glDeleteBuffers(1, &id);
-}
-
-VertexBuffer::VertexBuffer() : OGL::Buffer()
-{
-}
 VertexBuffer::~VertexBuffer()
 {
+    glDeleteBuffers(1, &id);
+    Unbind();
 }
 
 void VertexBuffer::Bind()
@@ -38,13 +64,23 @@ void VertexBuffer::Unbind()
 
 void VertexBuffer::SubData(std::vector<char>, BufferLayout)
 {
+    // TODO: Implement
 }
 
-IndexBuffer::IndexBuffer() : OGL::Buffer()
+std::vector<char> VertexBuffer::GetData() const
 {
+    // TODO:Implement
+    return {};
+}
+
+IndexBuffer::IndexBuffer()
+{
+    glGenBuffers(1, &id);
 }
 IndexBuffer::~IndexBuffer()
 {
+    glDeleteBuffers(1, &id);
+    Unbind();
 }
 
 void IndexBuffer::Bind()
@@ -58,6 +94,13 @@ void IndexBuffer::Unbind()
 
 void IndexBuffer::SubData(std::vector<unsigned int>)
 {
+    // TODO: Implement
+}
+
+std::vector<char> IndexBuffer::GetData() const
+{
+    // TODO: Implement
+    return {};
 }
 
 VertexArray::VertexArray()
@@ -68,6 +111,7 @@ VertexArray::VertexArray()
 VertexArray::~VertexArray()
 {
     glDeleteVertexArrays(1, &id);
+    Unbind();
 }
 
 void VertexArray::Bind() const
@@ -78,6 +122,29 @@ void VertexArray::Bind() const
 void VertexArray::Unbind() const
 {
     glBindVertexArray(0);
+}
+
+void VertexArray::AttachBuffer(std::shared_ptr<Bored::Render::VertexBuffer> vbo)
+{
+    Bind();
+    vbo->Bind();
+
+    auto bl = vbo->GetLayout();
+    auto stride = GetStride(bl);
+    GLintptr offset = 0;
+
+    int i = 0;
+    for (auto& [_, comp] : bl)
+    {
+        glEnableVertexAttribArray(i);
+        glVertexAttribPointer(i, GetCountOf(comp), GetOpenGLTypeOf(comp), GL_FALSE, stride, (GLvoid*)offset);
+        offset += GetSizeOf(comp);
+
+        i++;
+    }
+
+    vbo->Unbind();
+    Unbind();
 }
 
 Texture::Texture() : Render::ITexture(), id(0)
@@ -212,56 +279,6 @@ void ShaderPipeline::Bind()
 void ShaderPipeline::Unbind()
 {
     glUseProgram(0);
-}
-
-void ShaderPipeline::SetUniform(const std::string& name, int value)
-{
-    // TODO:
-    throw std::exception("Not implemented");
-}
-
-bool ShaderPipeline::IsComplete()
-{
-    return vShader && vShader->IsComplete() && fShader->IsComplete() && (gShader ? gShader->IsComplete() : true);
-}
-
-void ShaderPipeline::LoadVertexShaderFile(std::shared_ptr<FileSystem::File> f)
-{
-    // TODO:
-    //   LoadVertexShaderCode(f->GetData());
-    throw std::exception("Not implemented");
-}
-
-void ShaderPipeline::LoadGeometryShaderFile(std::shared_ptr<FileSystem::File> f)
-{
-    // TODO:
-    //   LoadGeometryShaderCode(f->GetData());
-    throw std::exception("Not implemented");
-}
-
-void ShaderPipeline::LoadFragmentShaderFile(std::shared_ptr<FileSystem::File> f)
-{
-    // TODO:
-    //   LoadFragmetShaderCode(f->GetData());
-    throw std::exception("Not implemented");
-}
-
-void ShaderPipeline::LoadVertexShaderCode(const std::string& code)
-{
-    // TODO:
-    throw std::exception("Not implemented");
-}
-
-void ShaderPipeline::LoadGeometryShaderCode(const std::string& code)
-{
-    // TODO:
-    throw std::exception("Not implemented");
-}
-
-void ShaderPipeline::LoadFragmentShaderCode(const std::string& code)
-{
-    // TODO:
-    throw std::exception("Not implemented");
 }
 
 Context::Context()
