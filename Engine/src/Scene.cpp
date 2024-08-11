@@ -1,4 +1,5 @@
 #include "Scene.hpp"
+#include "Adapter/Window.h"
 #include <exception>
 #include <memory>
 #include <iostream>
@@ -8,8 +9,8 @@ namespace Bored
 
 ActorManager* Module::GetActorManager()
 {
-    if (_scene)
-        return &_scene->_actorManager;
+    if (m_scene)
+        return &m_scene->_actorManager;
     else
         return nullptr;
 }
@@ -29,6 +30,21 @@ void Scene::OnSetup()
         try
         {
             mod->OnSetup();
+        }
+        catch (std::exception e)
+        {
+            std::cerr << "Exception: " << e.what() << std::endl;
+        }
+    }
+}
+
+void Scene::OnSwitchScene()
+{
+    for (auto mod : m_mods)
+    {
+        try
+        {
+            mod->OnSwitchScene();
         }
         catch (std::exception e)
         {
@@ -58,10 +74,14 @@ bool Scene::OnUpdate(double dt)
 
 void Scene::OnShutdown()
 {
-    for (auto mod : m_mods) {
-        try {
+    for (auto mod : m_mods)
+    {
+        try
+        {
             mod->OnShutdown();
-        } catch (std::exception e) {
+        }
+        catch (std::exception e)
+        {
             std::cerr << "Exception: " << e.what() << std::endl;
         }
     }

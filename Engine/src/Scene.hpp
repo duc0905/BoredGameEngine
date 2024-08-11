@@ -1,13 +1,15 @@
 #pragma once
-#include "ECS/ActorManager.hpp"
-#include "Utils/DLLLoader/DLLLoader.hpp"
 #include <memory>
 #include <utility>
 #include <vector>
 
+// #include "Adapter/Window.h"
+#include "ECS/ActorManager.hpp"
+#include "Utils/DLLLoader/DLLLoader.hpp"
+
 namespace Bored
 {
-
+class Window;
 class Scene;
 
 /**
@@ -20,6 +22,7 @@ class Module
 
   public:
     virtual void OnSetup() = 0;
+    virtual void OnSwitchScene() {}
     virtual bool OnUpdate(double dt) = 0;
     virtual void OnShutdown() = 0;
 
@@ -29,11 +32,11 @@ class Module
   private:
     void Attach(Scene* scene)
     {
-        _scene = scene;
+        m_scene = scene;
     }
 
   protected:
-    Scene* _scene;
+    Scene* m_scene;
 };
 
 /**
@@ -47,7 +50,11 @@ class Scene
     Scene();
     ~Scene();
 
+    /**
+     * TODO: Clearly define when these lifecycle methods should be called
+     */
     void OnSetup();
+    void OnSwitchScene();
     bool OnUpdate(double dt);
     void OnShutdown();
 

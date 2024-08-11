@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
+#include <cstring>
 #include <memory>
 #include <iostream>
 #include <assimp/scene.h>
@@ -44,83 +45,129 @@ struct IMesh
  */
 struct CPUMesh : public IMesh
 {
-    std::vector<glm::vec3> pos;
-    std::vector<glm::vec2> uvs;
-    std::vector<glm::vec3> norms;
-    std::vector<unsigned int> indices;
-
+  public:
     virtual std::vector<glm::vec3> getPos() const override
     {
-        return pos;
+        return m_pos;
     }
     virtual std::vector<glm::vec2> getUVs() const override
     {
-        return uvs;
+        return m_uvs;
     }
     virtual std::vector<glm::vec3> getNorms() const override
     {
-        return norms;
+        return m_norms;
     }
     virtual std::vector<unsigned int> getIndices() const override
     {
-        return indices;
+        return m_indices;
     }
 
     virtual void subPos(std::vector<glm::vec3> pos) override
     {
-        this->pos = pos;
+        this->m_pos = pos;
     }
     virtual void subUVs(std::vector<glm::vec2> uvs) override
     {
-        this->uvs = uvs;
+        this->m_uvs = uvs;
     }
     virtual void subNorms(std::vector<glm::vec3> norms) override
     {
-        this->norms = norms;
+        this->m_norms = norms;
     }
     virtual void subIndices(std::vector<unsigned int> indices) override
     {
-        this->indices = indices;
+        this->m_indices = indices;
     }
+
+  private:
+    std::vector<glm::vec3> m_pos;
+    std::vector<glm::vec2> m_uvs;
+    std::vector<glm::vec3> m_norms;
+    std::vector<unsigned int> m_indices;
 };
 
+/**
+ * TODO: Move somewhere
+ */
 struct OGLMesh : public IMesh
 {
   public:
-    OGLMesh()
-    {
+    OGLMesh() {
+        m_posVbo.SetLayout({{"Pos", Float3}});
+        m_uvsVbo.SetLayout({{"UVs", Float2}});
+        m_normVbo.SetLayout({{"Norm", Float3}});
+
+        m_vao.AttachBuffer(m_posVbo);
+        m_vao.AttachBuffer(m_uvsVbo);
+        m_vao.AttachBuffer(m_normVbo);
     }
 
-    ~OGLMesh()
-    {
+    OGLMesh(IMesh& other) : OGLMesh() {
+        subPos(other.getPos());
+        subUVs(other.getUVs());
+        subNorms(other.getNorms());
     }
 
     virtual std::vector<glm::vec3> getPos() const override
     {
-        // data dang chua ca pos, uvs, norms
-        std::vector<char> data = m_vbo.GetData();
-
+        std::vector<char> data = m_posVbo.GetData();
         std::vector<glm::vec3> pos(data.begin(), data.end());
-
-        return {};
+        return pos;
     }
     virtual std::vector<glm::vec2> getUVs() const override
     {
-        return {};
+        std::vector<char> data = m_posVbo.GetData();
+        std::vector<glm::vec2> uvs(data.begin(), data.end());
+        return uvs;
     }
     virtual std::vector<glm::vec3> getNorms() const override
     {
-        return {};
+        std::vector<char> data = m_posVbo.GetData();
+        std::vector<glm::vec3> norm(data.begin(), data.end());
+        return norm;
     }
     virtual std::vector<unsigned int> getIndices() const override
     {
-        return {};
+        std::vector<char> data = m_posVbo.GetData();
+        std::vector<unsigned int> indices(data.begin(), data.end());
+        return indices;
     }
 
+    virtual void subPos(std::vector<glm::vec3> p_pos) override
+    {
+        unsigned int size = p_pos.size() * sizeof(glm::vec3);
+        std::vector<char> pos(size);
+        memcpy(&pos, &p_pos, size);
+        m_posVbo.SubData(pos);
+    }
+
+    virtual void subUVs(std::vector<glm::vec2> p_uvs) override
+    {
+        unsigned int size = p_uvs.size() * sizeof(glm::vec2);
+        std::vector<char> uvs(size);
+        memcpy(&uvs, &p_uvs, size);
+        m_posVbo.SubData(uvs);
+    }
+
+    virtual void subNorms(std::vector<glm::vec3> p_norms) override
+    {
+        unsigned int size = p_norms.size() * sizeof(glm::vec3);
+        std::vector<char> norms(size);
+        memcpy(&norms, &p_norms, size);
+        m_posVbo.SubData(norms);
+    }
+
+    virtual void subIndices(std::vector<unsigned int> p_indices) override
+    {
+        m_ebo.SubData(p_indices);
+    }
   private:
-    Bored::Render::OGL::VertexBuffer m_vbo;
-    Bored::Render::OGL::IndexBuffer m_ebo;
+    // TODO: Think about how to attach the vbos
+    //
     Bored::Render::OGL::VertexArray m_vao;
+    Bored::Render::OGL::VertexBuffer m_posVbo, m_uvsVbo, m_normVbo;
+    Bored::Render::OGL::IndexBuffer m_ebo;
 };
 
 typedef std::pair<std::shared_ptr<IMesh>, std::shared_ptr<Material>> Renderable;

@@ -32,11 +32,12 @@ class VertexBuffer : public Render::VertexBuffer
     virtual void Bind() override;
     virtual void Unbind() override;
 
-    virtual void SubData(std::vector<char>, BufferLayout) override;
+    virtual void SubData(const std::vector<char>&) override;
     virtual std::vector<char> GetData() const override;
 
   private:
     GLuint id;
+    unsigned int size = 0;
 };
 
 class IndexBuffer : public Render::IndexBuffer
@@ -49,7 +50,7 @@ class IndexBuffer : public Render::IndexBuffer
     virtual void Unbind() override;
 
     // Inherited via Buffer
-    void SubData(std::vector<unsigned int>) override;
+    void SubData(std::vector<unsigned int>&) override;
 
     virtual std::vector<char> GetData() const override;
 
@@ -66,11 +67,13 @@ class VertexArray : public Render::VertexArray
     virtual void Bind() const override;
     virtual void Unbind() const override;
 
+    virtual void AttachBuffer(Bored::Render::VertexBuffer& vbo) override;
     virtual void AttachBuffer(std::shared_ptr<Bored::Render::VertexBuffer> vbo) override;
 
   private:
     GLuint id;
-    std::vector<VertexBuffer> vertexBuffers;
+    unsigned int m_attribIndex = 0;
+    // std::vector<VertexBuffer> vertexBuffers;
 };
 
 class ShaderPipeline : public Render::ShaderPipeline

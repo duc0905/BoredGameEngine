@@ -10,26 +10,31 @@ void ChessLogic::OnSetup()
     auto am = GetActorManager();
     auto cubeModel = Bored::Render::LoadModel(cubeFile);
 
-    cube1 = am->Create<Bored::Actor>();
-    am->AddComponent<Bored::Render::Model>(cube1->id, *cubeModel);
+    cube = am->Create<Bored::Actor>();
+    auto model = am->AddComponent<Bored::Render::Model>(cube->id, *cubeModel);
+    std::cout << "In setup: " << model.renderables.size() << std::endl;
+}
 
-    cube2 = am->Create<Bored::Actor>();
-    am->AddComponent<Bored::Render::Model>(cube2->id, *cubeModel);
+void ChessLogic::OnSwitchScene()
+{
+    auto am = GetActorManager();
+    auto& model = am->Get<Bored::Render::Model>(cube->id);
+
+    // TODO: Convert into OGL meshes {}
+    for (int i = 0; i < model.renderables.size(); i++) {
+        auto& mesh = model.renderables[i].second;
+    }
 }
 
 bool ChessLogic::OnUpdate(double dt)
 {
-    // std::cout << "Hello from ChessLogic!" << std::endl;
     auto am = GetActorManager();
-    auto model1 = am->Get<Bored::Render::Model>(cube1->id);
-    auto model2 = am->Get<Bored::Render::Model>(cube2->id);
+    auto model = am->Get<Bored::Render::Model>(cube->id);
+    std::cout << "In Update: " << model.renderables.size() << std::endl;
 
-    std::cout << "Actor id: " << (unsigned int)cube1->id << std::endl;
-    std::cout << model1.renderables[0].first->getIndices().size() << std::endl;
+    // std::cout << "Actor id: " << (unsigned int)cube->id << std::endl;
+    // std::cout << model.renderables[0].first->getIndices().size() << std::endl;
 
-
-    std::cout << "Actor id: " << (unsigned int)cube2->id << std::endl;
-    std::cout << model2.renderables[0].first->getIndices().size() << std::endl;
     return true;
 }
 

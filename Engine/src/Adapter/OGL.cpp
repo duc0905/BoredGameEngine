@@ -62,15 +62,19 @@ void VertexBuffer::Unbind()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void VertexBuffer::SubData(std::vector<char>, BufferLayout)
+void VertexBuffer::SubData(const std::vector<char>& p_data)
 {
-    // TODO: Implement
+    size = p_data.size();
+    glNamedBufferSubData(id, 0, size, &p_data);
 }
 
 std::vector<char> VertexBuffer::GetData() const
 {
-    // TODO:Implement
-    return {};
+    std::vector<char> data(size);
+
+    glGetNamedBufferSubData(id, 0, size, &data);
+
+    return data;
 }
 
 IndexBuffer::IndexBuffer()
@@ -92,7 +96,7 @@ void IndexBuffer::Unbind()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void IndexBuffer::SubData(std::vector<unsigned int>)
+void IndexBuffer::SubData(std::vector<unsigned int>&)
 {
     // TODO: Implement
 }
@@ -124,27 +128,30 @@ void VertexArray::Unbind() const
     glBindVertexArray(0);
 }
 
-void VertexArray::AttachBuffer(std::shared_ptr<Bored::Render::VertexBuffer> vbo)
+void VertexArray::AttachBuffer(Bored::Render::VertexBuffer& vbo)
 {
     Bind();
-    vbo->Bind();
+    vbo.Bind();
 
-    auto bl = vbo->GetLayout();
+    auto bl = vbo.GetLayout();
     auto stride = GetStride(bl);
     GLintptr offset = 0;
 
-    int i = 0;
     for (auto& [_, comp] : bl)
     {
-        glEnableVertexAttribArray(i);
-        glVertexAttribPointer(i, GetCountOf(comp), GetOpenGLTypeOf(comp), GL_FALSE, stride, (GLvoid*)offset);
+        glEnableVertexAttribArray(m_attribIndex);
+        glVertexAttribPointer(m_attribIndex, GetCountOf(comp), GetOpenGLTypeOf(comp), GL_FALSE, stride, (GLvoid*)offset);
         offset += GetSizeOf(comp);
 
-        i++;
+        m_attribIndex++;
     }
 
-    vbo->Unbind();
+    vbo.Unbind();
     Unbind();
+}
+
+void VertexArray::AttachBuffer(std::shared_ptr<Bored::Render::VertexBuffer> vbo) {
+    AttachBuffer(*vbo);
 }
 
 Texture::Texture() : Render::ITexture(), id(0)

@@ -1,8 +1,6 @@
 #pragma once
 #include <memory>
-#include "../Scene.hpp"
 #include "../Frontend/Renderer.hpp"
-// #include "../Frontend/Input.hpp"
 #include "Render.h"
 
 namespace Bored
