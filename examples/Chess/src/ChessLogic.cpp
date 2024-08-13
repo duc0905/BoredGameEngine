@@ -20,9 +20,23 @@ void ChessLogic::OnSwitchScene()
     auto am = GetActorManager();
     auto& model = am->Get<Bored::Render::Model>(cube->id);
 
-    // TODO: Convert into OGL meshes {}
+    // TODO: Convert into OGL meshes
     for (int i = 0; i < model.renderables.size(); i++) {
-        auto& mesh = model.renderables[i].second;
+        auto mesh = model.renderables[i].first;
+
+        auto pos = mesh->getPos();
+        std::cout << "CPU mesh:\n";
+        for (auto& p : pos) {
+            std::cout << p.x << " " << p.y << " " << p.z << std::endl;
+        }
+
+        Bored::Render::OGLMesh oglMesh(*mesh);
+        auto oglPos = mesh->getPos();
+        std::cout << "OGL mesh:\n";
+        for (auto& p : oglPos) {
+            std::cout << p.x << " " << p.y << " " << p.z << std::endl;
+        }
+        
     }
 }
 

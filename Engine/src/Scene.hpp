@@ -4,6 +4,7 @@
 #include <vector>
 
 // #include "Adapter/Window.h"
+#include "ECS/Actor.hpp"
 #include "ECS/ActorManager.hpp"
 #include "Utils/DLLLoader/DLLLoader.hpp"
 
@@ -22,7 +23,9 @@ class Module
 
   public:
     virtual void OnSetup() = 0;
-    virtual void OnSwitchScene() {}
+    virtual void OnSwitchScene()
+    {
+    }
     virtual bool OnUpdate(double dt) = 0;
     virtual void OnShutdown() = 0;
 
@@ -83,10 +86,23 @@ class Scene
         return mod;
     }
 
+    Bored::ActorManager& GetActorManager()
+    {
+        return m_actorManager;
+    }
+
+  public:
+    void UseCamera(std::shared_ptr<Bored::Actor> p_camera);
+    std::shared_ptr<Bored::Actor> GetActiveCamera() const;
+
   private:
     std::weak_ptr<Scene> _this;
     std::vector<std::shared_ptr<Module>> m_mods;
     std::vector<std::shared_ptr<Util::DLLoader>> m_loaders;
-    Bored::ActorManager _actorManager;
+
+    Bored::ActorManager m_actorManager;
+
+  private:
+    std::shared_ptr<Bored::Actor> m_activeCamera;
 };
 } // namespace Bored

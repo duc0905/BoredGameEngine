@@ -94,19 +94,32 @@ struct OGLMesh : public IMesh
 {
   public:
     OGLMesh() {
+        m_vao.Bind();
+        m_ebo.Bind();
+
         m_posVbo.SetLayout({{"Pos", Float3}});
         m_uvsVbo.SetLayout({{"UVs", Float2}});
         m_normVbo.SetLayout({{"Norm", Float3}});
 
+        // Attach the VBOs to VAO
         m_vao.AttachBuffer(m_posVbo);
         m_vao.AttachBuffer(m_uvsVbo);
         m_vao.AttachBuffer(m_normVbo);
+
+        m_ebo.Unbind();
+        m_vao.Unbind();
     }
 
     OGLMesh(IMesh& other) : OGLMesh() {
+        m_vao.Bind();
+
         subPos(other.getPos());
         subUVs(other.getUVs());
         subNorms(other.getNorms());
+
+        subIndices(other.getIndices());
+
+        m_vao.Unbind();
     }
 
     virtual std::vector<glm::vec3> getPos() const override
@@ -136,25 +149,33 @@ struct OGLMesh : public IMesh
 
     virtual void subPos(std::vector<glm::vec3> p_pos) override
     {
-        unsigned int size = p_pos.size() * sizeof(glm::vec3);
-        std::vector<char> pos(size);
-        memcpy(&pos, &p_pos, size);
+        unsigned int const size = p_pos.size() * sizeof(glm::vec3);
+        char* s = (char*)malloc(size + 1);
+        memcpy(s, &p_pos, size);
+        std::string s2(s);
+        std::vector<char> pos(s2.begin(), s2.end());
         m_posVbo.SubData(pos);
     }
 
     virtual void subUVs(std::vector<glm::vec2> p_uvs) override
     {
-        unsigned int size = p_uvs.size() * sizeof(glm::vec2);
-        std::vector<char> uvs(size);
-        memcpy(&uvs, &p_uvs, size);
+        unsigned int const size = p_uvs.size() * sizeof(glm::vec2);
+        char* s = (char*)malloc(size + 1);
+        memcpy(s, &p_uvs, size);
+        std::string s2(s);
+        free(s);
+        std::vector<char> uvs(s2.begin(), s2.end());
         m_posVbo.SubData(uvs);
     }
 
     virtual void subNorms(std::vector<glm::vec3> p_norms) override
     {
-        unsigned int size = p_norms.size() * sizeof(glm::vec3);
-        std::vector<char> norms(size);
-        memcpy(&norms, &p_norms, size);
+        unsigned int const size = p_norms.size() * sizeof(glm::vec3);
+        char* s = (char*)malloc(size + 1);
+        memcpy(s, &p_norms, size);
+        std::string s2(s);
+        free(s);
+        std::vector<char> norms(s2.begin(), s2.end());
         m_posVbo.SubData(norms);
     }
 

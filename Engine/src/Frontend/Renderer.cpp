@@ -57,10 +57,21 @@ void Renderer::SetCamera(std::shared_ptr<Render::Camera> camera)
 void Renderer::DrawActiveScene()
 {
     // Get Camera
+    
     //
     // Get View matrix
     //
     // Get model matrix
+}
+
+void Renderer::OnSwitchScene(std::shared_ptr<Bored::Scene> p_scene)
+{
+    auto& am = p_scene->GetActorManager();
+    auto models = am.Get<Bored::Render::Model>();
+
+    for (auto [id, model] : models.each()) {
+        // TODO: Convert to OGLMesh
+    }
 }
 
 std::shared_ptr<Render::ITexture> Renderer::LoadTexture(const std::string& path)
@@ -78,14 +89,14 @@ std::shared_ptr<Render::ITexture> Renderer::LoadTexture(const std::string& path)
     unsigned char white[4] = {0xff, 0xff, 0xff, 0xff};
     auto tex = LoadTexture(path, 1, 1, 4, white);
 
-    _textureRegistry.insert({path, tex});
+    m_textureRegistry.insert({path, tex});
     return tex;
 }
 
 std::shared_ptr<Render::ITexture> Renderer::LoadTexture(std::shared_ptr<Render::ITexture> tex)
 {
-    if (_textureRegistry.find(tex->_name) == _textureRegistry.end())
-        _textureRegistry.insert({tex->_name, tex});
+    if (m_textureRegistry.find(tex->_name) == m_textureRegistry.end())
+        m_textureRegistry.insert({tex->_name, tex});
 
     return tex;
 }
@@ -98,39 +109,39 @@ std::shared_ptr<Render::ITexture> Renderer::LoadTexture(const std::string& name,
     tex->SubData(w, h, bpp, data);
     tex->_name = name;
 
-    _textureRegistry.insert({name, tex});
+    m_textureRegistry.insert({name, tex});
     return tex;
 }
 
 std::shared_ptr<Render::ITexture> Renderer::GetTexture(const std::string& name)
 {
-    if (_textureRegistry.find(name) == _textureRegistry.end())
+    if (m_textureRegistry.find(name) == m_textureRegistry.end())
         return nullptr;
-    return _textureRegistry[name];
+    return m_textureRegistry[name];
 }
 
 std::shared_ptr<Render::IMesh> Renderer::LoadMesh(std::shared_ptr<Render::IMesh> mesh)
 {
-    _meshRegistry.insert({mesh->name, mesh});
+    m_meshRegistry.insert({mesh->name, mesh});
     return mesh;
 }
 std::shared_ptr<Render::IMesh> Renderer::GetMesh(const std::string& name)
 {
-    if (_meshRegistry.find(name) == _meshRegistry.end())
+    if (m_meshRegistry.find(name) == m_meshRegistry.end())
         return nullptr;
-    return _meshRegistry[name];
+    return m_meshRegistry[name];
 }
 
 std::shared_ptr<Render::Material> Renderer::LoadMaterial(std::shared_ptr<Render::Material> mat)
 {
-    _materialRegistry.insert({mat->name, mat});
+    m_materialRegistry.insert({mat->name, mat});
     return mat;
 }
 std::shared_ptr<Render::Material> Renderer::GetMaterial(const std::string& name)
 {
-    if (_materialRegistry.find(name) == _materialRegistry.end())
+    if (m_materialRegistry.find(name) == m_materialRegistry.end())
         return nullptr;
-    return _materialRegistry[name];
+    return m_materialRegistry[name];
 }
 } // namespace Frontend
 } // namespace Bored

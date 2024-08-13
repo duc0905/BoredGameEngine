@@ -36,11 +36,13 @@ class Renderer
     void DrawActiveScene();
 
   public:
+    void OnSwitchScene(std::shared_ptr<Bored::Scene> p_scene);
+
+  public:
     void SetProjector(std::shared_ptr<Render::Projector> projector);
     // TODO: Change camera to be an actor in the scene
     void SetCamera(std::shared_ptr<Render::Camera> camera);
 
-    /*  */
   public:
     std::shared_ptr<Render::ITexture> LoadTexture(const std::string& path);
     std::shared_ptr<Render::ITexture> LoadTexture(std::shared_ptr<Render::ITexture> tex);
@@ -61,13 +63,13 @@ class Renderer
   private:
     // std::shared_ptr<Render::Projector> _projector;
     // std::shared_ptr<Render::Camera> _camera;
-    std::shared_ptr<Bored::Scene> _active_scene;
+    std::shared_ptr<Bored::Scene> m_activeScene;
 
   private:
-    std::map<std::string, std::shared_ptr<Render::Model>> _modelRegistry;
-    std::map<std::string, std::shared_ptr<Render::ITexture>> _textureRegistry;
-    std::map<std::string, std::shared_ptr<Render::Material>> _materialRegistry;
-    std::map<std::string, std::shared_ptr<Render::IMesh>> _meshRegistry;
+    std::map<std::string, std::shared_ptr<Render::Model>> m_modelRegistry;
+    std::map<std::string, std::shared_ptr<Render::ITexture>> m_textureRegistry;
+    std::map<std::string, std::shared_ptr<Render::Material>> m_materialRegistry;
+    std::map<std::string, std::shared_ptr<Render::IMesh>> m_meshRegistry;
 };
 } // namespace Frontend
 } // namespace Bored

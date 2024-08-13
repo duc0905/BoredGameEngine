@@ -64,6 +64,6 @@ class Window : public Module
     std::unique_ptr<Render::Context> renderContext;
     short id;
 
-    // TODO Audio context
+    // TODO: Add Audio context
 };
 } // namespace Bored

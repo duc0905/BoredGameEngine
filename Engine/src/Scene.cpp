@@ -10,7 +10,7 @@ namespace Bored
 ActorManager* Module::GetActorManager()
 {
     if (m_scene)
-        return &m_scene->_actorManager;
+        return &m_scene->m_actorManager;
     else
         return nullptr;
 }
@@ -86,4 +86,18 @@ void Scene::OnShutdown()
         }
     }
 }
+
+void Scene::UseCamera(std::shared_ptr<Bored::Actor> p_camera)
+{
+    if (!m_actorManager.IsValidActor(p_camera->id))
+    {
+        throw new std::exception("Invalid actor");
+    }
+
+    // TODO: Fix this
+    auto cam = m_actorManager.Get<Transform>(p_camera->id);
+
+    m_activeCamera = p_camera;
+}
+
 } // namespace Bored
