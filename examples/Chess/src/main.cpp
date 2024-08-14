@@ -1,9 +1,9 @@
-#include "Bored.hpp"
-#include <GLFW/glfw3.h>
 #include <chrono>
 #include <iostream>
 #include <memory>
 #include <thread>
+#include "Bored.hpp"
+#include <GLFW/glfw3.h>
 #include "ChessLogic.hpp"
 
 // NOTE: The path will be relative to the path of the terminal,
@@ -21,7 +21,7 @@ class Mod : public Bored::Module
     virtual bool OnUpdate(double dt) override
     {
         auto am = GetActorManager();
-        auto v = am->Get<IDToPtr>();
+        auto v = am->Get<Bored::ECS::IDToPtr>();
         am->Create<Bored::Actor>();
 
         std::cout << "Hi from mod" << std::endl;
@@ -41,6 +41,7 @@ struct Game
     void SwitchScene(std::shared_ptr<Bored::Scene> p_scene) {
         activeScene = p_scene;
         activeScene->OnSwitchScene();
+        window->GetRenderer().OnSwitchScene(p_scene);
     }
 };
 

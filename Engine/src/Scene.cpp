@@ -1,8 +1,10 @@
 #include "Scene.hpp"
-#include "Adapter/Window.h"
 #include <exception>
 #include <memory>
 #include <iostream>
+
+#include "ECS/Components/Transform.hpp"
+#include "ECS/Components/Camera.hpp"
 
 namespace Bored
 {
@@ -94,10 +96,24 @@ void Scene::UseCamera(std::shared_ptr<Bored::Actor> p_camera)
         throw new std::exception("Invalid actor");
     }
 
-    // TODO: Fix this
-    auto cam = m_actorManager.Get<Transform>(p_camera->id);
+    auto [transform, camera] = m_actorManager.Get<ECS::Transform, ECS::Camera>(p_camera->id);
+
+    if (transform == nullptr)
+    {
+        throw std::exception("Actor being used as camera does not have Transform component");
+    }
+
+    if (camera == nullptr)
+    {
+        throw std::exception("Actor being used as camera does not have Camera component");
+    }
 
     m_activeCamera = p_camera;
+}
+
+std::shared_ptr<Bored::Actor> Scene::GetActiveCamera() const
+{
+    return m_activeCamera;
 }
 
 } // namespace Bored

@@ -44,20 +44,15 @@ void Renderer::Clear()
     context->ClearFrameBuffer(clearColor);
 }
 
-void Renderer::SetProjector(std::shared_ptr<Render::Projector> projector)
-{
-    // _projector = projector;
-}
-
-void Renderer::SetCamera(std::shared_ptr<Render::Camera> camera)
-{
-    // _camera = camera;
-}
+// void Renderer::SetCamera(std::shared_ptr<ECS::Camera> camera)
+// {
+//     // _camera = camera;
+// }
 
 void Renderer::DrawActiveScene()
 {
     // Get Camera
-    
+    auto camera = m_activeScene->GetActiveCamera();
     //
     // Get View matrix
     //

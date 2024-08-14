@@ -32,8 +32,8 @@ class ActorManager
         auto id = actor_registry.create();
         std::shared_ptr<T> a = std::make_shared<T>(args...);
         a->id = id;
-        actor_registry.emplace<Transform>(id);
-        actor_registry.emplace<IDToPtr>(id, a);
+        actor_registry.emplace<Bored::ECS::Transform>(id);
+        actor_registry.emplace<Bored::ECS::IDToPtr>(id, a);
         return a;
     }
 
@@ -47,16 +47,31 @@ class ActorManager
         return actor_registry.view<Comps...>();
     }
 
+    /**
+     * TODO: Fill
+     *
+     * Description.
+     */
     template <typename... Comps> decltype(auto) Get(entt::entity id)
     {
-        return actor_registry.get<Comps...>(id);
+        return actor_registry.try_get<Comps...>(id);
     }
 
+    /**
+     * TODO: Fill
+     *
+     * Description.
+     */
     template <typename... Comps> decltype(auto) GetOrCreate(entt::entity id)
     {
         return actor_registry.get_or_emplace<Comps...>(id);
     }
 
+    /**
+     * TODO: Fill
+     *
+     * Description.
+     */
     template <typename T, class... Args> T& AddComponent(entt::entity id, Args&&... args)
     {
         if (!actor_registry.valid(id))
@@ -79,9 +94,14 @@ class ActorManager
         return actor_registry.emplace_or_replace<T>(id, std::forward<Args>(args)...);
     }
 
+    /**
+     * TODO: Fill
+     *
+     * Description.
+     */
     template <typename T> void RemoveComponent(entt::entity id)
     {
-        if (typeid(T) == typeid(Transform))
+        if (typeid(T) == typeid(Bored::ECS::Transform))
         {
             // logger->warn("Cannot remove Transform component.");
             return;

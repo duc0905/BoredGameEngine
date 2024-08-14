@@ -2,7 +2,6 @@
 #include <glm/glm.hpp>
 #include <cstring>
 #include <memory>
-#include <iostream>
 #include <assimp/scene.h>
 #include "../Adapter/Render.h"
 #include "../Adapter/OGL.h"
@@ -93,7 +92,8 @@ struct CPUMesh : public IMesh
 struct OGLMesh : public IMesh
 {
   public:
-    OGLMesh() {
+    OGLMesh()
+    {
         m_vao.Bind();
         m_ebo.Bind();
 
@@ -110,7 +110,8 @@ struct OGLMesh : public IMesh
         m_vao.Unbind();
     }
 
-    OGLMesh(IMesh& other) : OGLMesh() {
+    OGLMesh(IMesh& other) : OGLMesh()
+    {
         m_vao.Bind();
 
         subPos(other.getPos());
@@ -183,6 +184,7 @@ struct OGLMesh : public IMesh
     {
         m_ebo.SubData(p_indices);
     }
+
   private:
     // TODO: Think about how to attach the vbos
     //
@@ -221,54 +223,5 @@ void ProcessScene(const aiScene* scene, std::vector<std::shared_ptr<Material>>& 
 
 std::shared_ptr<Model> LoadModel(const std::string& file);
 
-// TODO: Description
-class Projector
-{
-  public:
-    // Get the projection matrix for this projector
-    [[nodiscard]] virtual glm::mat4 GetMat() const = 0;
-};
-
-// TODO: Description
-class Camera
-{
-  public:
-    glm::vec3 dir = {1.0f, 0.0f, 0.0f};
-    glm::vec3 up = {0.0f, 0.0f, 1.0f};
-    float yaw = 0.0f, pitch = 0.0f;
-
-    // Get the direction the camera is facing
-    [[nodiscard]] glm::vec3 GetDir() const;
-    // Get the view matrix for this camera
-    [[nodiscard]] glm::mat4 GetViewMat(const glm::vec3& pos) const;
-};
-
-// TODO: Description
-class OrthoProjector : public Projector
-{
-    float l, r, t, b;
-
-  public:
-    OrthoProjector(float left, float right, float bottom, float top) : l(left), r(right), t(top), b(bottom)
-    {
-    }
-
-    [[nodiscard]] virtual glm::mat4 GetMat() const override;
-};
-
-// TODO: Description
-class PerspProjector : public Projector
-{
-  public:
-    const unsigned int &w, h;
-    float fov = 30.0f;
-    float zNear = 0.1f, zFar = 100.0f;
-
-  public:
-    PerspProjector(const unsigned int& width, const unsigned int& height) : w(width), h(height)
-    {
-    }
-    [[nodiscard]] virtual glm::mat4 GetMat() const override;
-};
 } // namespace Render
 } // namespace Bored

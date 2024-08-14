@@ -4,7 +4,6 @@
 #include <map>
 #include <memory>
 
-#include "../ECS/Actor.hpp"
 #include "../Adapter/Render.h"
 #include "../Scene.hpp"
 #include "RenderUtil.hpp"
@@ -39,9 +38,9 @@ class Renderer
     void OnSwitchScene(std::shared_ptr<Bored::Scene> p_scene);
 
   public:
-    void SetProjector(std::shared_ptr<Render::Projector> projector);
+    // void SetProjector(std::shared_ptr<Render::Projector> projector);
     // TODO: Change camera to be an actor in the scene
-    void SetCamera(std::shared_ptr<Render::Camera> camera);
+    // void SetCamera(std::shared_ptr<Actor> camera);
 
   public:
     std::shared_ptr<Render::ITexture> LoadTexture(const std::string& path);

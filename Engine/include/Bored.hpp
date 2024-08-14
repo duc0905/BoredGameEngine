@@ -5,6 +5,7 @@
 // #include "../src/DataAccess/Actor/ActorManager.hpp"
 #include "../src/ECS/Components/IDToPtr.hpp"
 #include "../src/ECS/Components/Transform.hpp"
+#include "../src/ECS/Components/Camera.hpp"
 
 #if FILE_SYSTEM_API == STDFS_API
 #include "../src/DataAccess/FileManager/STDFM.h"
