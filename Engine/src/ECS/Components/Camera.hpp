@@ -45,17 +45,20 @@ class Projector
  */
 class OrthoProjector : public Projector
 {
-    float l, r, t, b;
-
   public:
-    OrthoProjector(float left, float right, float bottom, float top) : l(left), r(right), t(top), b(bottom)
+    OrthoProjector(float left, float right, float bottom, float top, float p_near = -1.0f, float p_far = 1.0f)
+        : l(left), r(right), t(top), b(bottom), m_near(p_near), m_far(p_far)
     {
     }
 
     [[nodiscard]] virtual glm::mat4 GetMat() const override
     {
-        return glm::ortho(l, r, b, t);
+        return glm::ortho(l, r, b, t, m_near, m_far);
     }
+
+  public:
+    float l, r, t, b;
+    float m_near, m_far;
 };
 
 /**
@@ -92,6 +95,7 @@ class PerspProjector : public Projector
         return glm::perspectiveFov(fov, (float)w, (float)h, zNear, zFar);
     }
 };
+
 /**
  * TODO: Document
  *
@@ -106,7 +110,8 @@ class PerspProjector : public Projector
  */
 struct Camera
 {
-    Camera(Projector* p_projector = new OrthoProjector(0.0f, 100.0f, 0.0f, 100.0f)) : projector(std::move(p_projector))
+    Camera(Projector* p_projector = new OrthoProjector(0.0f, 10.0f, 0.0f, 10.0f, 0.0f, 10.0f))
+        : projector(std::move(p_projector))
     {
     }
 
