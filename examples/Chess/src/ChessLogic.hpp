@@ -15,4 +15,5 @@ class ChessLogic : public Bored::Module
 
   private:
     std::shared_ptr<Bored::Actor> cube;
+    std::shared_ptr<Bored::Actor> triangle;
 };

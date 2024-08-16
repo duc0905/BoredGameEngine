@@ -1,8 +1,13 @@
 #include "Renderer.hpp"
 #include "RenderUtil.hpp"
+#include <exception>
 #include <iostream>
 // #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+
+#include "../ECS/Components/Transform.hpp"
+#include "../ECS/Components/Camera.hpp"
+#include <glm/fwd.hpp>
 
 namespace Bored
 {
@@ -44,19 +49,92 @@ void Renderer::Clear()
     context->ClearFrameBuffer(clearColor);
 }
 
-// void Renderer::SetCamera(std::shared_ptr<ECS::Camera> camera)
-// {
-//     // _camera = camera;
-// }
+void Renderer::UseShaderProgram(std::shared_ptr<Bored::Render::ShaderProgram> p_shader)
+{
+    if (p_shader->IsLinked())
+    {
+        m_shaderProgram = p_shader;
+    }
+    else
+    {
+        throw std::exception("Shader is not complete");
+    }
+}
+
+/**
+ * Helper to get View and Project matrices
+ *
+ * Description.
+ */
+glm::mat4 GetMatrices(ECS::Transform& transform, ECS::Camera& camera)
+{
+    // TODO: implement
+    glm::vec3 eye = transform.pos;
+    glm::vec3 center = transform.pos + camera.dir;
+    glm::vec3 up = camera.up;
+
+    return camera.projector->GetMat() * glm::lookAt(eye, center, up);
+}
+
+glm::mat4 GetModelMatrix(ECS::Transform& transform, Render::Model& model)
+{
+    // TODO: implement
+    return glm::mat4(1.0f);
+}
+
+void PrintMatrix(glm::mat4 m)
+{
+    std::cout << m[0][0] << " " << m[0][1] << " " << m[0][2] << " " << m[0][3] << std::endl;
+    std::cout << m[1][0] << " " << m[1][1] << " " << m[1][2] << " " << m[1][3] << std::endl;
+    std::cout << m[2][0] << " " << m[2][1] << " " << m[2][2] << " " << m[2][3] << std::endl;
+    std::cout << m[3][0] << " " << m[3][1] << " " << m[3][2] << " " << m[3][3] << std::endl;
+}
 
 void Renderer::DrawActiveScene()
 {
     // Get Camera
     auto camera = m_activeScene->GetActiveCamera();
-    //
-    // Get View matrix
-    //
-    // Get model matrix
+
+    // Get MVP matrix
+    auto [transformComp, cameraComp] = m_activeScene->GetActorManager().Get<ECS::Transform, ECS::Camera>(camera->id);
+
+    if (transformComp == nullptr || cameraComp == nullptr)
+    {
+        throw std::exception("Invalid camera actor");
+    }
+
+    m_shaderProgram->Bind();
+    auto vpMatrix = GetMatrices(*transformComp, *cameraComp);
+    m_shaderProgram->SetUniform("VPMatrix", vpMatrix);
+
+    auto view = m_activeScene->GetActorManager().Get<Bored::ECS::Transform, Bored::Render::Model>();
+
+    for (auto [id, trans, model] : view.each())
+    {
+        auto modelMatrix = GetModelMatrix(trans, model);
+        m_shaderProgram->SetUniform("ModelMatrix", modelMatrix);
+
+        for (auto [mesh, material] : model.renderables)
+        {
+            // std::cout << "Drawing " << mesh->name << std::endl;
+            auto pos = mesh->getPos();
+            glm::mat4 mvp = vpMatrix * modelMatrix;
+            glm::vec4 p0 = mvp * glm::vec4(pos[0], 1.0f);
+            glm::vec4 p1 = mvp * glm::vec4(pos[1], 1.0f);
+            glm::vec4 p2 = mvp * glm::vec4(pos[2], 1.0f);
+
+            std::cout << "final pos0: " << p0.x << " " << p0.y << " " << p0.z << std::endl;
+            std::cout << "final pos1: " << p1.x << " " << p1.y << " " << p1.z << std::endl;
+            std::cout << "final pos2: " << p2.x << " " << p2.y << " " << p2.z << std::endl;
+
+            // PrintMatrix(mvp);
+
+            m_shaderProgram->Draw(mesh, material);
+            // TODO:
+            // context->DrawVertexArray(mesh->m_vaosomehow, m_shaderProgram);
+        }
+    }
+    m_shaderProgram->Unbind();
 }
 
 void Renderer::OnSwitchScene(std::shared_ptr<Bored::Scene> p_scene)
@@ -64,7 +142,9 @@ void Renderer::OnSwitchScene(std::shared_ptr<Bored::Scene> p_scene)
     auto& am = p_scene->GetActorManager();
     auto models = am.Get<Bored::Render::Model>();
 
-    for (auto [id, model] : models.each()) {
+    m_activeScene = p_scene;
+    for (auto [id, model] : models.each())
+    {
         // TODO: Convert to OGLMesh
     }
 }

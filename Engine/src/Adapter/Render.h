@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <glm/glm.hpp>
+#include "../Frontend/RenderUtil.hpp"
 #include "FileSystem.h"
 
 namespace Bored
@@ -54,8 +55,9 @@ class Buffer
     {
     }
 
-    virtual void Bind() = 0;
-    virtual void Unbind() = 0;
+    virtual void Bind() const = 0;
+    virtual void Unbind() const = 0;
+    virtual size_t GetSize() const = 0;
 };
 
 /**
@@ -80,6 +82,7 @@ class VertexBuffer : public Buffer
      * Substitute data inside the buffer with new data
      * */
     virtual void SubData(const std::vector<char>&) = 0;
+    virtual void SubData(void* p_data, size_t size) = 0;
 
     virtual std::vector<char> GetData() const = 0;
 
@@ -128,67 +131,6 @@ class VertexArray
     virtual void AttachBuffer(std::shared_ptr<VertexBuffer> vbo) = 0;
 };
 
-class ITexture
-{
-  public:
-    virtual void* GetId() const = 0;
-    virtual void Bind() const = 0;
-    virtual void Unbind() const = 0;
-    virtual void SubData(unsigned width, unsigned height, unsigned int bpp, void* data) = 0;
-
-  public:
-    std::string _name;
-    unsigned int _width;
-    unsigned int _height;
-    unsigned int _bpp;
-};
-
-class CPUTexture : public ITexture
-{
-  public:
-    virtual void* GetId() const
-    {
-        return nullptr;
-    }
-    virtual void Bind() const
-    {
-    }
-    virtual void Unbind() const
-    {
-    }
-    virtual void SubData(unsigned width, unsigned height, unsigned int bpp, void* data)
-    {
-    }
-};
-
-class OGLTexture : public ITexture
-{
-  public:
-    virtual void* GetId() const
-    {
-        return nullptr;
-    }
-    virtual void Bind() const
-    {
-    }
-    virtual void Unbind() const
-    {
-    }
-    virtual void SubData(unsigned width, unsigned height, unsigned int bpp, void* data)
-    {
-    }
-};
-
-class Texture2D : private ITexture
-{
-};
-class Texture3D : private ITexture
-{
-};
-class Cubemap : private ITexture
-{
-};
-
 class Attachment
 {
   public:
@@ -221,6 +163,7 @@ class Shader
   public:
     virtual bool IsComplete() = 0;
 };
+
 class VertexShader : public Shader
 {
   public:
@@ -228,6 +171,7 @@ class VertexShader : public Shader
     {
     }
 };
+
 class GeometryShader : public Shader
 {
   public:
@@ -235,6 +179,7 @@ class GeometryShader : public Shader
     {
     }
 };
+
 class FragmentShader : public Shader
 {
   public:
@@ -246,17 +191,34 @@ class FragmentShader : public Shader
 /**
  * Also known as Shader program
  **/
-class ShaderPipeline
+class ShaderProgram
 {
   public:
-    virtual ~ShaderPipeline()
+    virtual ~ShaderProgram()
     {
     }
 
     virtual void Bind() = 0;
     virtual void Unbind() = 0;
-    virtual void SetUniform(const std::string& name, int value) = 0;
-    virtual bool IsComplete() = 0;
+
+    virtual void SetUniform(const std::string& p_name, int p_value) = 0;
+    virtual void SetUniform(const std::string& p_name, int p_v1, int p_v2) = 0;
+    virtual void SetUniform(const std::string& p_name, int p_v1, int p_v2, int p_v3) = 0;
+    virtual void SetUniform(const std::string& p_name, int p_v1, int p_v2, int p_v3, int p_v4) = 0;
+
+    virtual void SetUniform(const std::string& p_name, unsigned int p_value) = 0;
+    virtual void SetUniform(const std::string& p_name, unsigned int p_v1, unsigned int p_v2) = 0;
+    virtual void SetUniform(const std::string& p_name, unsigned int p_v1, unsigned int p_v2, unsigned int p_v3) = 0;
+    virtual void SetUniform(const std::string& p_name, unsigned int p_v1, unsigned int p_v2, unsigned int p_v3, unsigned int p_v4) = 0;
+
+    virtual void SetUniform(const std::string& p_name, float p_value) = 0;
+    virtual void SetUniform(const std::string& p_name, float p_v1, float p_v2) = 0;
+    virtual void SetUniform(const std::string& p_name, float p_v1, float p_v2, float p_v3) = 0;
+    virtual void SetUniform(const std::string& p_name, float p_v1, float p_v2, float p_v3, float p_v4) = 0;
+
+    virtual void SetUniform(const std::string& p_name, glm::mat2 p_value) = 0;
+    virtual void SetUniform(const std::string& p_name, glm::mat3 p_value) = 0;
+    virtual void SetUniform(const std::string& p_name, glm::mat4 p_value) = 0;
 
     virtual void LoadVertexShaderFile(std::shared_ptr<FileSystem::File> f) = 0;
     virtual void LoadGeometryShaderFile(std::shared_ptr<FileSystem::File> f) = 0;
@@ -266,12 +228,30 @@ class ShaderPipeline
     virtual void LoadGeometryShaderCode(const std::string& code) = 0;
     virtual void LoadFragmentShaderCode(const std::string& code) = 0;
 
+    virtual void Link() = 0;
+    virtual bool IsLinked() = 0;
+
+  public:
+    virtual void Draw(std::shared_ptr<Render::IMesh> p_mesh, std::shared_ptr<Render::Material> p_material) = 0;
+
   protected:
     std::unique_ptr<VertexShader> vShader;
     std::unique_ptr<GeometryShader> gShader;
     std::unique_ptr<FragmentShader> fShader;
 };
 
+/**
+ * TODO: write this
+ *
+ * Abstract Factory pattern to create render utility for drivers
+ *
+ * @param name Type and description of the parameter.
+ * @return Type and description of the returned value.
+ *
+ * @example
+ * // Description of my example.
+ * Write me later
+ */
 class Context
 {
   public:
@@ -279,7 +259,8 @@ class Context
     {
     }
 
-    virtual void DrawVertexArray(std::shared_ptr<VertexArray> vao, std::shared_ptr<ShaderPipeline> pipeline) = 0;
+    virtual void DrawVertexArray(std::shared_ptr<VertexArray> vao, std::shared_ptr<ShaderProgram> pipeline) = 0;
+
     virtual FrameBuffer& GetActiveFrameBuffer() = 0;
     virtual void ClearFrameBuffer(const glm::vec4&) = 0;
     virtual void SetViewport(int l, int b, int r, int t) = 0;

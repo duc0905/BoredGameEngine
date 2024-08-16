@@ -3,13 +3,68 @@
 #include <cstring>
 #include <memory>
 #include <assimp/scene.h>
-#include "../Adapter/Render.h"
-#include "../Adapter/OGL.h"
+// #include "../Adapter/OGL.h"
 
 namespace Bored
 {
 namespace Render
 {
+
+class ITexture
+{
+  public:
+    virtual void* GetId() const = 0;
+    virtual void Bind() const = 0;
+    virtual void Unbind() const = 0;
+    virtual void SubData(unsigned width, unsigned height, unsigned int bpp, void* data) = 0;
+
+  public:
+    std::string _name;
+    unsigned int _width;
+    unsigned int _height;
+    unsigned int _bpp;
+};
+
+class CPUTexture : public ITexture
+{
+public:
+    ~CPUTexture()
+    {
+        if (m_hasData)
+        {
+            free(m_data);
+        }
+    }
+  public:
+    virtual void* GetId() const
+    {
+        return nullptr;
+    }
+
+    virtual void Bind() const
+    {
+    }
+
+    virtual void Unbind() const
+    {
+    }
+
+    virtual void SubData(unsigned p_width, unsigned p_height, unsigned int p_bpp, void* p_data)
+    {
+        size_t size = p_width * p_height * p_bpp;
+        m_data = (char*)malloc(size);
+        memcpy(m_data, p_data, size);
+        m_width = p_width;
+        m_height = p_height;
+        m_bpp = p_bpp;
+        m_hasData = true;
+    }
+
+  private:
+    void* m_data;
+    bool m_hasData = false;
+    unsigned int m_width = 0, m_height = 0, m_bpp = 4;
+};
 
 struct Material
 {
@@ -84,113 +139,6 @@ struct CPUMesh : public IMesh
     std::vector<glm::vec2> m_uvs;
     std::vector<glm::vec3> m_norms;
     std::vector<unsigned int> m_indices;
-};
-
-/**
- * TODO: Move somewhere
- */
-struct OGLMesh : public IMesh
-{
-  public:
-    OGLMesh()
-    {
-        m_vao.Bind();
-        m_ebo.Bind();
-
-        m_posVbo.SetLayout({{"Pos", Float3}});
-        m_uvsVbo.SetLayout({{"UVs", Float2}});
-        m_normVbo.SetLayout({{"Norm", Float3}});
-
-        // Attach the VBOs to VAO
-        m_vao.AttachBuffer(m_posVbo);
-        m_vao.AttachBuffer(m_uvsVbo);
-        m_vao.AttachBuffer(m_normVbo);
-
-        m_ebo.Unbind();
-        m_vao.Unbind();
-    }
-
-    OGLMesh(IMesh& other) : OGLMesh()
-    {
-        m_vao.Bind();
-
-        subPos(other.getPos());
-        subUVs(other.getUVs());
-        subNorms(other.getNorms());
-
-        subIndices(other.getIndices());
-
-        m_vao.Unbind();
-    }
-
-    virtual std::vector<glm::vec3> getPos() const override
-    {
-        std::vector<char> data = m_posVbo.GetData();
-        std::vector<glm::vec3> pos(data.begin(), data.end());
-        return pos;
-    }
-    virtual std::vector<glm::vec2> getUVs() const override
-    {
-        std::vector<char> data = m_posVbo.GetData();
-        std::vector<glm::vec2> uvs(data.begin(), data.end());
-        return uvs;
-    }
-    virtual std::vector<glm::vec3> getNorms() const override
-    {
-        std::vector<char> data = m_posVbo.GetData();
-        std::vector<glm::vec3> norm(data.begin(), data.end());
-        return norm;
-    }
-    virtual std::vector<unsigned int> getIndices() const override
-    {
-        std::vector<char> data = m_posVbo.GetData();
-        std::vector<unsigned int> indices(data.begin(), data.end());
-        return indices;
-    }
-
-    virtual void subPos(std::vector<glm::vec3> p_pos) override
-    {
-        unsigned int const size = p_pos.size() * sizeof(glm::vec3);
-        char* s = (char*)malloc(size + 1);
-        memcpy(s, &p_pos, size);
-        std::string s2(s);
-        std::vector<char> pos(s2.begin(), s2.end());
-        m_posVbo.SubData(pos);
-    }
-
-    virtual void subUVs(std::vector<glm::vec2> p_uvs) override
-    {
-        unsigned int const size = p_uvs.size() * sizeof(glm::vec2);
-        char* s = (char*)malloc(size + 1);
-        memcpy(s, &p_uvs, size);
-        std::string s2(s);
-        free(s);
-        std::vector<char> uvs(s2.begin(), s2.end());
-        m_posVbo.SubData(uvs);
-    }
-
-    virtual void subNorms(std::vector<glm::vec3> p_norms) override
-    {
-        unsigned int const size = p_norms.size() * sizeof(glm::vec3);
-        char* s = (char*)malloc(size + 1);
-        memcpy(s, &p_norms, size);
-        std::string s2(s);
-        free(s);
-        std::vector<char> norms(s2.begin(), s2.end());
-        m_posVbo.SubData(norms);
-    }
-
-    virtual void subIndices(std::vector<unsigned int> p_indices) override
-    {
-        m_ebo.SubData(p_indices);
-    }
-
-  private:
-    // TODO: Think about how to attach the vbos
-    //
-    Bored::Render::OGL::VertexArray m_vao;
-    Bored::Render::OGL::VertexBuffer m_posVbo, m_uvsVbo, m_normVbo;
-    Bored::Render::OGL::IndexBuffer m_ebo;
 };
 
 typedef std::pair<std::shared_ptr<IMesh>, std::shared_ptr<Material>> Renderable;

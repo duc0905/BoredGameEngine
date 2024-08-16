@@ -13,6 +13,7 @@
 
 #if RENDER_API == OGL_API
 #include "../src/Adapter/OGL.h"
+#include "../src/Frontend/OGLMesh.hpp"
 #endif
 
 #include "../src/Frontend/Renderer.hpp"

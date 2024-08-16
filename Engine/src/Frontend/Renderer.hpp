@@ -32,15 +32,9 @@ class Renderer
     void Clear();
 
   public:
+    void UseShaderProgram(std::shared_ptr<Bored::Render::ShaderProgram> p_shader);
     void DrawActiveScene();
-
-  public:
     void OnSwitchScene(std::shared_ptr<Bored::Scene> p_scene);
-
-  public:
-    // void SetProjector(std::shared_ptr<Render::Projector> projector);
-    // TODO: Change camera to be an actor in the scene
-    // void SetCamera(std::shared_ptr<Actor> camera);
 
   public:
     std::shared_ptr<Render::ITexture> LoadTexture(const std::string& path);
@@ -58,10 +52,9 @@ class Renderer
   private:
     Render::Context* context;
     glm::vec4 clearColor;
+    std::shared_ptr<Render::ShaderProgram> m_shaderProgram;
 
   private:
-    // std::shared_ptr<Render::Projector> _projector;
-    // std::shared_ptr<Render::Camera> _camera;
     std::shared_ptr<Bored::Scene> m_activeScene;
 
   private:

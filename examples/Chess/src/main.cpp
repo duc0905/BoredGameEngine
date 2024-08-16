@@ -29,7 +29,7 @@ class Mod : public Bored::Module
 
         return true;
     };
-    virtual void OnShutdown() override {};
+    virtual void OnShutdown() override{};
 };
 
 struct Game
@@ -38,12 +38,29 @@ struct Game
     std::shared_ptr<Bored::Scene> activeScene;
     // std::vector<std::shared_ptr<Bored::Scene>> scenes;
 
-    void SwitchScene(std::shared_ptr<Bored::Scene> p_scene) {
+    void SwitchScene(std::shared_ptr<Bored::Scene> p_scene)
+    {
         activeScene = p_scene;
         activeScene->OnSwitchScene();
         window->GetRenderer().OnSwitchScene(p_scene);
     }
 };
+
+const char* vShaderSrc = R""""(#version 400
+in vec3 vp;
+
+uniform mat4 VPMatrix = mat4(1.0);
+uniform mat4 ModelMatrix = mat4(1.0);
+void main() {
+    gl_Position = VPMatrix * ModelMatrix * vec4(vp, 1.0);
+})"""";
+
+const char* fShaderSrc = R""""(#version 400
+out vec4 color;
+
+void main() {
+    color = vec4(1.0, 0.0, 0.0, 1.0);
+})"""";
 
 int main()
 {
@@ -57,30 +74,29 @@ int main()
     // Bored::GLFW::Window* w = Bored::GLFW::Window::GetInstance();
     g.window->OnSetup();
     g.window->UseRenderContext(Bored::Render::OGL::Context::GetDefault());
-    auto r = g.window->GetRenderer();
+    auto& r = g.window->GetRenderer();
 
-    // TODO: Change camera to be an actor in the scene
-    // std::shared_ptr<Bored::Render::Camera> camera = std::make_shared<Bored::Render::Camera>();
-    // std::shared_ptr<Bored::Render::Projector> projector =
-    //     std::make_shared<Bored::Render::OrthoProjector>(0.0f, 100.0f, 0.0f, 100.0f);
-    //
-    // r.SetCamera(camera);
-    // r.SetProjector(projector);
-    r.SetClearColor({0.3f, 0.1f, 0.1f, 1.0f});
+    std::shared_ptr<Bored::Render::OGL::ShaderProgram> myShader = std::make_shared<Bored::Render::OGL::ShaderProgram>();
+    myShader->LoadVertexShaderCode(vShaderSrc);
+    myShader->LoadFragmentShaderCode(fShaderSrc);
+    myShader->Link();
+    r.UseShaderProgram(myShader);
+
+    glm::vec4 cc = {0.2f, 0.2f, 0.2f, 1.0f};
 
     s1->OnSetup();
     g.SwitchScene(s1);
 
-    while (g.window->OnUpdate(1000))
-    {
-        g.window->NewFrame();
-        g.activeScene->OnUpdate(1000);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glClearColor(0.3f, 0.1f, 0.1f, 1.0f);
-        glfwSwapBuffers((GLFWwindow*)g.window->GetNativeWindow());
+    double dt = 0.016f;
 
-        // r.DrawModel(cubeModel, transform->GetMat());
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    while (g.window->OnUpdate(dt))
+    {
+        // r.SetClearColor(cc);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        g.activeScene->OnUpdate(dt);
+        r.DrawActiveScene();
+        std::this_thread::sleep_for(std::chrono::milliseconds((int)(dt * 1000)));
     }
 
     g.activeScene->OnShutdown();
