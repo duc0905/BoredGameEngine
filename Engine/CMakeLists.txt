@@ -21,7 +21,7 @@ set(ENGINE_SOURCE_FILES
     "src/Adapter/Render.cpp"
     "src/Adapter/FileSystem.cpp"
     "src/Adapter/GLFWWindow.cpp"
-    "src/DataAccess/Render/Manager.cpp"
+    # "src/DataAccess/Render/Manager.cpp"
     "src/DataAccess/FileManager/Manager.cpp"
     "src/ECS/ActorManager.cpp"
     "src/Frontend/Renderer.cpp"
@@ -34,6 +34,7 @@ set(ENGINE_SOURCE_FILES
 
 if (${RENDER_API} EQUAL ${OGL_API})
     list(APPEND ENGINE_SOURCE_FILES "src/Adapter/OGL.cpp")
+    list(APPEND ENGINE_SOURCE_FILES "src/Frontend/OGLMesh.cpp")
 endif()
 
 add_library(Engine ${ENGINE_SOURCE_FILES})
