@@ -110,7 +110,7 @@ class PerspProjector : public Projector
  */
 struct Camera
 {
-    Camera(Projector* p_projector = new OrthoProjector(0.0f, 10.0f, 0.0f, 10.0f, 0.0f, 10.0f))
+    Camera(Projector* p_projector = new OrthoProjector(-10.0f, 10.0f, -10.0f, 10.0f, 0.0f, 10.0f))
         : projector(std::move(p_projector))
     {
     }

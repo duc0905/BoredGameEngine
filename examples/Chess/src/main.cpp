@@ -67,11 +67,8 @@ int main()
     Game g;
     g.window = Bored::GLFW::Window::GetInstance();
     std::shared_ptr<Bored::Scene> s1 = std::make_shared<Bored::Scene>();
-    // g.scenes.push_back(s1);
     s1->AddModule<ChessLogic>();
-    // s1->AddModule<Mod>();
 
-    // Bored::GLFW::Window* w = Bored::GLFW::Window::GetInstance();
     g.window->OnSetup();
     g.window->UseRenderContext(Bored::Render::OGL::Context::GetDefault());
     auto& r = g.window->GetRenderer();
@@ -83,6 +80,7 @@ int main()
     r.UseShaderProgram(myShader);
 
     glm::vec4 cc = {0.2f, 0.2f, 0.2f, 1.0f};
+    r.SetClearColor(cc);
 
     s1->OnSetup();
     g.SwitchScene(s1);

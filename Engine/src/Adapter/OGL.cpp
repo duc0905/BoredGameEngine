@@ -617,6 +617,7 @@ void ShaderProgram::Link()
         }
     }
 }
+
 void PrintMatrix(glm::mat4 m)
 {
     std::cout << m[0][0] << " " << m[0][1] << " " << m[0][2] << " " << m[0][3] << std::endl;
@@ -635,11 +636,6 @@ void ShaderProgram::Draw(std::shared_ptr<Render::IMesh> p_mesh, std::shared_ptr<
     }
 
     Bind();
-
-    glm::mat4 vpMat;
-    glGetUniformfv(m_id, GetLocation("VPMatrix"), glm::value_ptr(vpMat));
-    PrintMatrix(vpMat);
-
     mesh->m_vao.Bind();
     glDrawArrays(GL_TRIANGLES, 0, mesh->m_ebo.GetSize());
     Unbind();

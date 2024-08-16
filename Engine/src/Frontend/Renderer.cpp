@@ -7,6 +7,7 @@
 
 #include "../ECS/Components/Transform.hpp"
 #include "../ECS/Components/Camera.hpp"
+#include <glm/ext/matrix_transform.hpp>
 #include <glm/fwd.hpp>
 
 namespace Bored
@@ -76,10 +77,16 @@ glm::mat4 GetMatrices(ECS::Transform& transform, ECS::Camera& camera)
     return camera.projector->GetMat() * glm::lookAt(eye, center, up);
 }
 
-glm::mat4 GetModelMatrix(ECS::Transform& transform, Render::Model& model)
+glm::mat4 GetModelMatrix(ECS::Transform& transform)
 {
-    // TODO: implement
-    return glm::mat4(1.0f);
+    glm::mat4 m(1.0f);
+    m = glm::translate(m, transform.pos);
+    m = glm::rotate(m, glm::radians(transform.rotation.x), {1.0f, 0.0f, 0.0f});
+    m = glm::rotate(m, glm::radians(transform.rotation.y), {0.0f, 1.0f, 0.0f});
+    m = glm::rotate(m, glm::radians(transform.rotation.z), {0.0f, 0.0f, 1.0f});
+    m = glm::scale(m, transform.scale);
+
+    return m;
 }
 
 void PrintMatrix(glm::mat4 m)
@@ -111,28 +118,11 @@ void Renderer::DrawActiveScene()
 
     for (auto [id, trans, model] : view.each())
     {
-        auto modelMatrix = GetModelMatrix(trans, model);
+        auto modelMatrix = GetModelMatrix(trans);
         m_shaderProgram->SetUniform("ModelMatrix", modelMatrix);
 
         for (auto [mesh, material] : model.renderables)
-        {
-            // std::cout << "Drawing " << mesh->name << std::endl;
-            auto pos = mesh->getPos();
-            glm::mat4 mvp = vpMatrix * modelMatrix;
-            glm::vec4 p0 = mvp * glm::vec4(pos[0], 1.0f);
-            glm::vec4 p1 = mvp * glm::vec4(pos[1], 1.0f);
-            glm::vec4 p2 = mvp * glm::vec4(pos[2], 1.0f);
-
-            std::cout << "final pos0: " << p0.x << " " << p0.y << " " << p0.z << std::endl;
-            std::cout << "final pos1: " << p1.x << " " << p1.y << " " << p1.z << std::endl;
-            std::cout << "final pos2: " << p2.x << " " << p2.y << " " << p2.z << std::endl;
-
-            // PrintMatrix(mvp);
-
             m_shaderProgram->Draw(mesh, material);
-            // TODO:
-            // context->DrawVertexArray(mesh->m_vaosomehow, m_shaderProgram);
-        }
     }
     m_shaderProgram->Unbind();
 }
