@@ -168,8 +168,6 @@ void Renderer::OnSwitchScene(std::shared_ptr<Bored::Scene> p_scene)
         // NOTE: Unload all meshes from render driver to memory
         // TODO: Should be unload into disk instead
         ConvertModelInScene(*m_activeScene, m_cpuFactory);
-        // TODO: Do the same for Audio resources
-        // ConvertAudioInScene(*m_activeScene, m_cpuFactory);
     }
 
     m_activeScene = p_scene;
@@ -181,8 +179,6 @@ void Renderer::OnSwitchScene(std::shared_ptr<Bored::Scene> p_scene)
     } else {
         // NOTE: Load all meshes to the render driver
         ConvertModelInScene(*m_activeScene, *m_factory);
-        // TODO: Do the same for Audio resources
-        // ConvertAudioInScene(*m_activeScene, m_factory);
     }
 }
 
