@@ -34,7 +34,9 @@ set(ENGINE_SOURCE_FILES
 
 if (${RENDER_API} EQUAL ${OGL_API})
     list(APPEND ENGINE_SOURCE_FILES "src/Adapter/OGL.cpp")
-    list(APPEND ENGINE_SOURCE_FILES "src/Frontend/OGLMesh.cpp")
+    list(APPEND ENGINE_SOURCE_FILES "src/Frontend/OGL/Mesh.cpp")
+    list(APPEND ENGINE_SOURCE_FILES "src/Frontend/OGL/Texture.cpp")
+    list(APPEND ENGINE_SOURCE_FILES "src/Frontend/OGL/Factory.cpp")
 endif()
 
 add_library(Engine ${ENGINE_SOURCE_FILES})

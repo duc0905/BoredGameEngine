@@ -2,7 +2,6 @@
 
 #include <glad/glad.h>
 #include "Render.h"
-// #include "Window.h"
 #include <cstddef>
 #include <map>
 #include <vector>
@@ -13,6 +12,7 @@ namespace Render
 {
 namespace OGL
 {
+
 // class Buffer : public Render::Buffer
 // {
 //   public:
@@ -34,9 +34,9 @@ class VertexBuffer : public Render::VertexBuffer
     virtual void Bind() const override;
     virtual void Unbind() const override;
 
-    virtual void SubData(const std::vector<char>&) override;
+    virtual void SubData(const std::vector<std::byte>&) override;
     virtual void SubData(void* p_data, size_t size) override;
-    virtual std::vector<char> GetData() const override;
+    virtual std::vector<std::byte> GetData() const override;
     virtual size_t GetSize() const override
     {
         return size;
@@ -58,7 +58,7 @@ class IndexBuffer : public Render::IndexBuffer
 
     // Inherited via Buffer
     virtual void SubData(std::vector<unsigned int>&) override;
-    virtual std::vector<char> GetData() const override;
+    virtual std::vector<unsigned int> GetData() const override;
     virtual size_t GetSize() const override
     {
         return size;
@@ -87,18 +87,18 @@ class VertexArray : public Render::VertexArray
     // std::vector<VertexBuffer> vertexBuffers;
 };
 
-class Texture : public Render::ITexture
+class NativeTexture : public Render::NativeTexture
 {
   public:
-    Texture();
-    ~Texture();
+    NativeTexture();
+    ~NativeTexture();
     void* GetId() const override;
 
   protected:
     GLuint id;
 };
 
-class Texture2D : public Texture
+class Texture2D : public NativeTexture
 {
   public:
     Texture2D();
@@ -107,6 +107,7 @@ class Texture2D : public Texture
     virtual void Bind() const override;
     virtual void Unbind() const override;
     virtual void SubData(unsigned width, unsigned height, unsigned int b, void* data) override;
+    virtual std::vector<std::byte> GetData() override;
 };
 
 // TODO: implement
@@ -176,9 +177,6 @@ class ShaderProgram : public Render::ShaderProgram
     virtual void Link() override;
     virtual bool IsLinked() override;
 
-  public:
-    virtual void Draw(std::shared_ptr<Render::IMesh> p_mesh, std::shared_ptr<Render::Material> p_material) override;
-
 private:
     GLint GetLocation(const std::string& p_name);
   private:
@@ -201,7 +199,7 @@ class FrameBuffer : public Render::FrameBuffer
 
     void Bind() const override;
     void Unbind() const override;
-    virtual std::shared_ptr<Render::ITexture> GetColorTexture() override;
+    virtual std::shared_ptr<Render::NativeTexture> GetColorTexture() override;
     virtual bool CheckStatus() override;
     virtual bool HasDepthTest() override;
     virtual bool HasStencilTest() override;
@@ -232,15 +230,12 @@ class Context : public Render::Context
     Context();
     virtual ~Context();
 
-    virtual void DrawVertexArray(std::shared_ptr<Render::VertexArray> vao,
-                                 std::shared_ptr<Render::ShaderProgram> pipeline) override;
-
     Render::FrameBuffer& GetActiveFrameBuffer() override;
 
     virtual void ClearFrameBuffer(const glm::vec4&) override;
     virtual void SetViewport(int l, int b, int r, int t) override;
 
-    virtual std::shared_ptr<Render::ITexture> CreateTexture() override;
+    virtual void Draw(Render::ShaderProgram& p_shader, Render::VertexArray& p_vao, Render::IndexBuffer& p_ebo) override;
 
     static Context* GetDefault();
 

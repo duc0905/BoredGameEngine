@@ -1,9 +1,8 @@
 #pragma once
 #include <glm/glm.hpp>
-#include <cstring>
 #include <memory>
 #include <assimp/scene.h>
-// #include "../Adapter/OGL.h"
+#include "../Adapter/Render.h"
 
 namespace Bored
 {
@@ -13,58 +12,12 @@ namespace Render
 class ITexture
 {
   public:
-    virtual void* GetId() const = 0;
-    virtual void Bind() const = 0;
-    virtual void Unbind() const = 0;
-    virtual void SubData(unsigned width, unsigned height, unsigned int bpp, void* data) = 0;
+    virtual Render::NativeTexture& GetNativeTexture() = 0;
 
   public:
-    std::string _name;
-    unsigned int _width;
-    unsigned int _height;
-    unsigned int _bpp;
+    std::string m_name;
 };
 
-class CPUTexture : public ITexture
-{
-public:
-    ~CPUTexture()
-    {
-        if (m_hasData)
-        {
-            free(m_data);
-        }
-    }
-  public:
-    virtual void* GetId() const
-    {
-        return nullptr;
-    }
-
-    virtual void Bind() const
-    {
-    }
-
-    virtual void Unbind() const
-    {
-    }
-
-    virtual void SubData(unsigned p_width, unsigned p_height, unsigned int p_bpp, void* p_data)
-    {
-        size_t size = p_width * p_height * p_bpp;
-        m_data = (char*)malloc(size);
-        memcpy(m_data, p_data, size);
-        m_width = p_width;
-        m_height = p_height;
-        m_bpp = p_bpp;
-        m_hasData = true;
-    }
-
-  private:
-    void* m_data;
-    bool m_hasData = false;
-    unsigned int m_width = 0, m_height = 0, m_bpp = 4;
-};
 
 struct Material
 {
@@ -80,65 +33,24 @@ struct Material
 //     glm::vec3 color;
 //     float ambient, diffuse, specular;
 // };
+
 struct IMesh
 {
     std::string name;
     virtual ~IMesh() = default;
-    virtual std::vector<glm::vec3> getPos() const = 0;
-    virtual std::vector<glm::vec2> getUVs() const = 0;
-    virtual std::vector<glm::vec3> getNorms() const = 0;
-    virtual std::vector<unsigned int> getIndices() const = 0;
-    virtual void subPos(std::vector<glm::vec3> pos) = 0;
-    virtual void subUVs(std::vector<glm::vec2> uvs) = 0;
-    virtual void subNorms(std::vector<glm::vec3> norms) = 0;
-    virtual void subIndices(std::vector<unsigned int> indices) = 0;
-};
 
-/**
- * Represent the vertices, indices, and UV coordinates for the Model
- */
-struct CPUMesh : public IMesh
-{
-  public:
-    virtual std::vector<glm::vec3> getPos() const override
-    {
-        return m_pos;
-    }
-    virtual std::vector<glm::vec2> getUVs() const override
-    {
-        return m_uvs;
-    }
-    virtual std::vector<glm::vec3> getNorms() const override
-    {
-        return m_norms;
-    }
-    virtual std::vector<unsigned int> getIndices() const override
-    {
-        return m_indices;
-    }
+    virtual Bored::Render::VertexArray* GetVertexArray() = 0;
+    virtual Bored::Render::IndexBuffer* GetIndexBuffer() = 0;
 
-    virtual void subPos(std::vector<glm::vec3> pos) override
-    {
-        this->m_pos = pos;
-    }
-    virtual void subUVs(std::vector<glm::vec2> uvs) override
-    {
-        this->m_uvs = uvs;
-    }
-    virtual void subNorms(std::vector<glm::vec3> norms) override
-    {
-        this->m_norms = norms;
-    }
-    virtual void subIndices(std::vector<unsigned int> indices) override
-    {
-        this->m_indices = indices;
-    }
+    virtual std::vector<glm::vec3> GetPos() const = 0;
+    virtual std::vector<glm::vec2> GetUVs() const = 0;
+    virtual std::vector<glm::vec3> GetNorms() const = 0;
+    virtual std::vector<unsigned int> GetIndices() const = 0;
 
-  private:
-    std::vector<glm::vec3> m_pos;
-    std::vector<glm::vec2> m_uvs;
-    std::vector<glm::vec3> m_norms;
-    std::vector<unsigned int> m_indices;
+    virtual void SubPos(std::vector<glm::vec3> pos) = 0;
+    virtual void SubUVs(std::vector<glm::vec2> uvs) = 0;
+    virtual void SubNorms(std::vector<glm::vec3> norms) = 0;
+    virtual void SubIndices(std::vector<unsigned int> indices) = 0;
 };
 
 typedef std::pair<std::shared_ptr<IMesh>, std::shared_ptr<Material>> Renderable;
@@ -158,16 +70,19 @@ struct Model
     }
 };
 
-void GetMaterials(const aiScene* scene, std::vector<std::shared_ptr<Material>>& mats);
+class IFactory
+{
+  public:
+    virtual std::shared_ptr<IMesh> CreateMesh() = 0;
+    virtual std::shared_ptr<IMesh> CreateMesh(IMesh& other) = 0;
+    virtual std::shared_ptr<Material> CreateMaterial() = 0;
+    virtual std::shared_ptr<Material> CreateMaterial(Material& other) = 0;
+    virtual std::shared_ptr<ITexture> CreateTexture() = 0;
+    virtual std::shared_ptr<ITexture> CreateTexture(ITexture& other) = 0;
 
-void GetTextures(const aiScene* scene, std::vector<std::shared_ptr<ITexture>>& texs
-                 //, Render::Context* renderContext
-);
-
-void GetMeshes(const aiScene* scene, std::vector<std::shared_ptr<IMesh>>& meshes);
-
-void ProcessScene(const aiScene* scene, std::vector<std::shared_ptr<Material>>& mats,
-                  std::vector<std::shared_ptr<ITexture>>& texs, std::vector<std::shared_ptr<IMesh>>& meshes);
+  public:
+    virtual ~IFactory() = default;
+};
 
 std::shared_ptr<Model> LoadModel(const std::string& file);
 

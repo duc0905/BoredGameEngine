@@ -3,6 +3,7 @@
 #include <exception>
 #include <iostream>
 // #define STB_IMAGE_IMPLEMENTATION
+#include <memory>
 #include <stb_image.h>
 
 #include "../ECS/Components/Transform.hpp"
@@ -20,7 +21,7 @@ Renderer::Renderer(Render::Context* c) : context(c)
 {
 }
 
-std::shared_ptr<Render::ITexture> Renderer::GetMainColorTexture()
+std::shared_ptr<Render::NativeTexture> Renderer::GetMainColorTexture()
 {
     return context->GetActiveFrameBuffer().GetColorTexture();
 }
@@ -69,7 +70,6 @@ void Renderer::UseShaderProgram(std::shared_ptr<Bored::Render::ShaderProgram> p_
  */
 glm::mat4 GetMatrices(ECS::Transform& transform, ECS::Camera& camera)
 {
-    // TODO: implement
     glm::vec3 eye = transform.pos;
     glm::vec3 center = transform.pos + camera.dir;
     glm::vec3 up = camera.up;
@@ -122,91 +122,138 @@ void Renderer::DrawActiveScene()
         m_shaderProgram->SetUniform("ModelMatrix", modelMatrix);
 
         for (auto [mesh, material] : model.renderables)
-            m_shaderProgram->Draw(mesh, material);
+        {
+            std::cout << "[Info]: Drawing mesh: " << mesh->name << std::endl;
+            // TODO: Set the material uniforms
+            context->Draw(*m_shaderProgram, *mesh->GetVertexArray(), *mesh->GetIndexBuffer());
+            // m_shaderProgram->Draw(mesh, material);
+        }
     }
     m_shaderProgram->Unbind();
 }
 
-void Renderer::OnSwitchScene(std::shared_ptr<Bored::Scene> p_scene)
+void ConvertModelInScene(Bored::Scene& p_scene, IFactory& p_factory)
 {
-    auto& am = p_scene->GetActorManager();
+    auto& am = p_scene.GetActorManager();
     auto models = am.Get<Bored::Render::Model>();
 
-    m_activeScene = p_scene;
     for (auto [id, model] : models.each())
     {
-        // TODO: Convert to OGLMesh
+        for (int i = 0; i < model.renderables.size(); i++)
+        {
+            auto [mesh, material] = model.renderables[i];
+
+            if (mesh != nullptr)
+            {
+                std::shared_ptr<IMesh> cmesh = p_factory.CreateMesh(*mesh);
+                model.renderables[i].first = cmesh;
+            }
+
+            if (material != nullptr)
+            {
+                std::shared_ptr<Material> mat = p_factory.CreateMaterial(*material);
+                model.renderables[i].second = mat;
+            }
+        }
     }
 }
 
-std::shared_ptr<Render::ITexture> Renderer::LoadTexture(const std::string& path)
+void Renderer::OnSwitchScene(std::shared_ptr<Bored::Scene> p_scene)
 {
-    int w, h, bpp;
-    unsigned char* data;
+    if (p_scene == nullptr)
+        return;
 
-    stbi_set_flip_vertically_on_load(1);
-    data = stbi_load(path.c_str(), &w, &h, &bpp, 4);
+    if (m_activeScene != nullptr)
+    {
+        // NOTE: Unload all meshes from render driver to memory
+        // TODO: Should be unload into disk instead
+        ConvertModelInScene(*m_activeScene, m_cpuFactory);
+        // TODO: Do the same for Audio resources
+        // ConvertAudioInScene(*m_activeScene, m_cpuFactory);
+    }
 
-    if (data)
-        return LoadTexture(path, (unsigned int)w, (unsigned int)h, (unsigned int)bpp, data);
+    m_activeScene = p_scene;
 
-    std::cout << "Failed to load file " << path << std::endl;
-    unsigned char white[4] = {0xff, 0xff, 0xff, 0xff};
-    auto tex = LoadTexture(path, 1, 1, 4, white);
-
-    m_textureRegistry.insert({path, tex});
-    return tex;
+    if (m_factory == nullptr)
+    {
+        std::cerr << "[Warning]: Renderer was not provided a render context\n";
+        return;
+    } else {
+        // NOTE: Load all meshes to the render driver
+        ConvertModelInScene(*m_activeScene, *m_factory);
+        // TODO: Do the same for Audio resources
+        // ConvertAudioInScene(*m_activeScene, m_factory);
+    }
 }
 
-std::shared_ptr<Render::ITexture> Renderer::LoadTexture(std::shared_ptr<Render::ITexture> tex)
-{
-    if (m_textureRegistry.find(tex->_name) == m_textureRegistry.end())
-        m_textureRegistry.insert({tex->_name, tex});
-
-    return tex;
-}
-
-std::shared_ptr<Render::ITexture> Renderer::LoadTexture(const std::string& name, unsigned int w, unsigned int h,
-                                                        unsigned int bpp, unsigned char* data)
-{
-    auto tex = context->CreateTexture();
-
-    tex->SubData(w, h, bpp, data);
-    tex->_name = name;
-
-    m_textureRegistry.insert({name, tex});
-    return tex;
-}
-
-std::shared_ptr<Render::ITexture> Renderer::GetTexture(const std::string& name)
-{
-    if (m_textureRegistry.find(name) == m_textureRegistry.end())
-        return nullptr;
-    return m_textureRegistry[name];
-}
-
-std::shared_ptr<Render::IMesh> Renderer::LoadMesh(std::shared_ptr<Render::IMesh> mesh)
-{
-    m_meshRegistry.insert({mesh->name, mesh});
-    return mesh;
-}
-std::shared_ptr<Render::IMesh> Renderer::GetMesh(const std::string& name)
-{
-    if (m_meshRegistry.find(name) == m_meshRegistry.end())
-        return nullptr;
-    return m_meshRegistry[name];
-}
-
-std::shared_ptr<Render::Material> Renderer::LoadMaterial(std::shared_ptr<Render::Material> mat)
-{
-    m_materialRegistry.insert({mat->name, mat});
-    return mat;
-}
-std::shared_ptr<Render::Material> Renderer::GetMaterial(const std::string& name)
-{
-    if (m_materialRegistry.find(name) == m_materialRegistry.end())
-        return nullptr;
-    return m_materialRegistry[name];
-}
+// std::shared_ptr<Render::ITexture> Renderer::LoadTexture(const std::string& path)
+// {
+//     int w, h, bpp;
+//     unsigned char* data;
+//
+//     stbi_set_flip_vertically_on_load(1);
+//     data = stbi_load(path.c_str(), &w, &h, &bpp, 4);
+//
+//     if (data)
+//         return LoadTexture(path, (unsigned int)w, (unsigned int)h, (unsigned int)bpp, data);
+//
+//     std::cout << "Failed to load file " << path << std::endl;
+//     unsigned char white[4] = {0xff, 0xff, 0xff, 0xff};
+//     auto tex = LoadTexture(path, 1, 1, 4, white);
+//
+//     m_textureRegistry.insert({path, tex});
+//     return tex;
+// }
+//
+// std::shared_ptr<Render::ITexture> Renderer::LoadTexture(std::shared_ptr<Render::ITexture> tex)
+// {
+//     if (m_textureRegistry.find(tex->_name) == m_textureRegistry.end())
+//         m_textureRegistry.insert({tex->_name, tex});
+//
+//     return tex;
+// }
+//
+// std::shared_ptr<Render::ITexture> Renderer::LoadTexture(const std::string& name, unsigned int w, unsigned int h,
+//                                                         unsigned int bpp, unsigned char* data)
+// {
+//     auto tex = context->CreateTexture();
+//
+//     tex->SubData(w, h, bpp, data);
+//     tex->_name = name;
+//
+//     m_textureRegistry.insert({name, tex});
+//     return tex;
+// }
+//
+// std::shared_ptr<Render::ITexture> Renderer::GetTexture(const std::string& name)
+// {
+//     if (m_textureRegistry.find(name) == m_textureRegistry.end())
+//         return nullptr;
+//     return m_textureRegistry[name];
+// }
+//
+// std::shared_ptr<Render::IMesh> Renderer::LoadMesh(std::shared_ptr<Render::IMesh> mesh)
+// {
+//     m_meshRegistry.insert({mesh->name, mesh});
+//     return mesh;
+// }
+// std::shared_ptr<Render::IMesh> Renderer::GetMesh(const std::string& name)
+// {
+//     if (m_meshRegistry.find(name) == m_meshRegistry.end())
+//         return nullptr;
+//     return m_meshRegistry[name];
+// }
+//
+// std::shared_ptr<Render::Material> Renderer::LoadMaterial(std::shared_ptr<Render::Material> mat)
+// {
+//     m_materialRegistry.insert({mat->name, mat});
+//     return mat;
+// }
+// std::shared_ptr<Render::Material> Renderer::GetMaterial(const std::string& name)
+// {
+//     if (m_materialRegistry.find(name) == m_materialRegistry.end())
+//         return nullptr;
+//     return m_materialRegistry[name];
+// }
 } // namespace Frontend
 } // namespace Bored

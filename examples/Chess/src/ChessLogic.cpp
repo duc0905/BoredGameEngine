@@ -4,12 +4,12 @@
 
 void ChessLogic::OnSetup()
 {
-    std::string cubeFile = "build/win-deb/examples/Chess/res/cube.gltf";
     std::cout << "Setting up" << std::endl;
 
     auto am = GetActorManager();
-    auto cubeModel = Bored::Render::LoadModel(cubeFile);
-
+    
+    // std::string cubeFile = "build/win-deb/examples/Chess/res/cube.gltf";
+    // auto cubeModel = Bored::Render::LoadModel(cubeFile);
     // cube = am->Create<Bored::Actor>();
     // auto& model = am->AddComponent<Bored::Render::Model>(cube->id, *cubeModel);
 
@@ -20,10 +20,10 @@ void ChessLogic::OnSetup()
     auto triTrans = am->Get<Bored::ECS::Transform>(triangle->id);
 
     triMesh->name = "Triangle Mesh";
-    triMesh->subPos({{0.0f, 0.5f, 0.0f}, {-0.5f, -0.5f, 0.0f}, {0.5f, -0.5f, 0.0f}});
-    triMesh->subUVs({{0.0f, 0.0f}, {0.0f, 0.0f}, {0.0f, 0.0f}});
-    triMesh->subNorms({{0.1f, 2.3f, 4.5f}, {6.7f, 8.9f, 0.1f}, {2.3f, 4.5f, 6.7f}});
-    triMesh->subIndices({0, 1, 2});
+    triMesh->SubPos({{0.0f, 0.5f, 0.0f}, {-0.5f, -0.5f, 0.0f}, {0.5f, -0.5f, 0.0f}});
+    triMesh->SubUVs({{0.0f, 0.0f}, {0.0f, 0.0f}, {0.0f, 0.0f}});
+    triMesh->SubNorms({{0.1f, 2.3f, 4.5f}, {6.7f, 8.9f, 0.1f}, {2.3f, 4.5f, 6.7f}});
+    triMesh->SubIndices({0, 1, 2});
 
     triTrans->pos = {2.0f, 0.0f, 0.0f};
 

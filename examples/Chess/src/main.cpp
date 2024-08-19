@@ -38,14 +38,22 @@ struct Game
     std::shared_ptr<Bored::Scene> activeScene;
     // std::vector<std::shared_ptr<Bored::Scene>> scenes;
 
+    // NOTE:
+    // Need an asset manager
+    // asset manager and renderer need to access the same render context/render factory
     void SwitchScene(std::shared_ptr<Bored::Scene> p_scene)
     {
+        // TODO: Call on detach method on activeScene;
         activeScene = p_scene;
+
         activeScene->OnSwitchScene();
-        window->GetRenderer().OnSwitchScene(p_scene);
+        window->GetRenderer().OnSwitchScene(activeScene);
+        // TODO:
+        // window->GetSpeaker().OnSwitchScene(activeScene);
     }
 };
 
+// TODO: Read these things from txt files
 const char* vShaderSrc = R""""(#version 400
 in vec3 vp;
 
@@ -66,12 +74,14 @@ int main()
 {
     Game g;
     g.window = Bored::GLFW::Window::GetInstance();
+    g.window->OnSetup();
+    g.window->UseRenderContext(Bored::Render::OGL::Context::GetDefault());
+
     std::shared_ptr<Bored::Scene> s1 = std::make_shared<Bored::Scene>();
     s1->AddModule<ChessLogic>();
 
-    g.window->OnSetup();
-    g.window->UseRenderContext(Bored::Render::OGL::Context::GetDefault());
     auto& r = g.window->GetRenderer();
+    r.UseFactory(new Bored::Render::OGL::Factory());
 
     std::shared_ptr<Bored::Render::OGL::ShaderProgram> myShader = std::make_shared<Bored::Render::OGL::ShaderProgram>();
     myShader->LoadVertexShaderCode(vShaderSrc);

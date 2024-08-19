@@ -1,15 +1,14 @@
 #include "OGL.h"
-#include "Render.h"
-#include <gl/gl.h>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <glm/gtc/type_ptr.hpp>
 #include <cstring>
 #include <exception>
 #include <iostream>
 #include <memory>
 
-#include "../Frontend/OGLMesh.hpp"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <glm/gtc/type_ptr.hpp>
+
+#include "Render.h"
 
 namespace Bored
 {
@@ -69,7 +68,7 @@ void VertexBuffer::Unbind() const
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void VertexBuffer::SubData(const std::vector<char>& p_data)
+void VertexBuffer::SubData(const std::vector<std::byte>& p_data)
 {
     size = p_data.size();
     std::cout << &p_data << std::endl;
@@ -86,9 +85,9 @@ void VertexBuffer::SubData(void* p_data, size_t p_size)
     Unbind();
 }
 
-std::vector<char> VertexBuffer::GetData() const
+std::vector<std::byte> VertexBuffer::GetData() const
 {
-    std::vector<char> data(size);
+    std::vector<std::byte> data(size);
 
     Bind();
     glGetBufferSubData(GL_ARRAY_BUFFER, 0, size, data.data());
@@ -127,10 +126,10 @@ void IndexBuffer::SubData(std::vector<unsigned int>& p_data)
     Unbind();
 }
 
-std::vector<char> IndexBuffer::GetData() const
+std::vector<unsigned int> IndexBuffer::GetData() const
 {
     // TODO: Implement
-    std::vector<char> data(size * sizeof(unsigned int));
+    std::vector<unsigned int> data(size);
 
     Bind();
     glGetBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, size * sizeof(unsigned int), data.data());
@@ -188,17 +187,17 @@ void VertexArray::AttachBuffer(std::shared_ptr<Bored::Render::VertexBuffer> vbo)
     AttachBuffer(*vbo);
 }
 
-Texture::Texture() : Render::ITexture(), id(0)
+NativeTexture::NativeTexture() : Render::NativeTexture(), id(0)
 {
     glGenTextures(1, &id);
 }
 
-Texture::~Texture()
+NativeTexture::~NativeTexture()
 {
     glDeleteTextures(1, &id);
 }
 
-void* Texture::GetId() const
+void* NativeTexture::GetId() const
 {
     return (void*)(intptr_t)id;
 }
@@ -213,18 +212,49 @@ void Texture2D::Unbind() const
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+GLint GetOpenGLPixelType(unsigned int bpp)
+{
+    switch (bpp)
+    {
+    case 1:
+        return GL_RED;
+    case 2:
+        return GL_RG;
+    case 3:
+        return GL_RGB;
+    case 4:
+        return GL_RGBA;
+    default:
+        return GL_RGBA;
+    }
+}
+
 void Texture2D::SubData(unsigned w, unsigned h, unsigned int b, void* d)
 {
-    _width = w;
-    _height = h;
-    _bpp = b;
+    m_width = w;
+    m_height = h;
+    m_bpp = b;
+
+    GLint type = GetOpenGLPixelType(m_bpp);
 
     Bind();
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, d);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, type, GL_UNSIGNED_BYTE, d);
     Unbind();
 }
 
-Texture2D::Texture2D() : Texture()
+std::vector<std::byte> Texture2D::GetData()
+{
+    size_t size = m_width * m_height * m_bpp;
+    std::vector<std::byte> data(size);
+
+    Bind();
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
+    Unbind();
+
+    return data;
+}
+
+Texture2D::Texture2D() : NativeTexture()
 {
     Bind();
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -248,6 +278,7 @@ FrameBuffer::FrameBuffer(int w, int h) : colorBuffer(std::make_shared<Texture2D>
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, (GLuint)(intptr_t)colorBuffer->GetId(),
                            0);
     colorBuffer->Unbind();
+    Unbind();
 }
 
 FrameBuffer::~FrameBuffer()
@@ -265,7 +296,7 @@ void FrameBuffer::Unbind() const
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-std::shared_ptr<Render::ITexture> FrameBuffer::GetColorTexture()
+std::shared_ptr<Render::NativeTexture> FrameBuffer::GetColorTexture()
 {
     return colorBuffer;
 }
@@ -273,7 +304,9 @@ std::shared_ptr<Render::ITexture> FrameBuffer::GetColorTexture()
 bool FrameBuffer::CheckStatus()
 {
     Bind();
-    return glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
+    bool isOk = glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
+    Unbind();
+    return isOk;
 }
 
 bool FrameBuffer::HasDepthTest()
@@ -311,10 +344,6 @@ Context::~Context()
 {
 }
 
-void Context::DrawVertexArray(std::shared_ptr<Render::VertexArray> vao, std::shared_ptr<Render::ShaderProgram> pipeline)
-{
-}
-
 Render::FrameBuffer& Context::GetActiveFrameBuffer()
 {
     return *fbo;
@@ -339,6 +368,7 @@ void Context::SetViewport(int l, int b, int r, int t)
         height = newHeight;
         fbo->ResizeBuffers(width, height);
     }
+    fbo->Unbind();
 }
 
 FrameBuffer* FrameBuffer::defaultFbo = nullptr;
@@ -367,10 +397,58 @@ Context::Context(int x)
     std::cout << "OpenGL version supported " << version << std::endl;
 }
 
-std::shared_ptr<Render::ITexture> Context::CreateTexture()
+void Context::Draw(Render::ShaderProgram& p_shader, Render::VertexArray& p_vao, Render::IndexBuffer& p_ebo)
 {
-    // TODO:
-    return std::make_shared<Texture2D>();
+    // if (&p_shader == nullptr || &p_vao == nullptr || &p_ebo == nullptr)
+    // {
+    //     std::cerr << "[Error]: something is null\n";
+    //     std::cerr << "[Warning]: Not rendering this VertexArray\n";
+    //     return;
+    // }
+
+    try
+    {
+        ShaderProgram& shader = dynamic_cast<ShaderProgram&>(p_shader);
+    }
+    catch (std::bad_cast e)
+    {
+        std::cerr << "[Error]: p_shader is not an OpenGL Shader\n";
+        std::cerr << "[Error]: " << e.what() << std::endl;
+        std::cerr << "[Warning]: Not rendering this VertexArray\n";
+        return;
+    }
+
+    try
+    {
+        VertexArray& vao = dynamic_cast<VertexArray&>(p_vao);
+    }
+    catch (std::bad_cast e)
+    {
+        std::cerr << "[Error]: p_vao is not an OpenGL VertexArray" << std::endl;
+        std::cerr << "[Error]: " << e.what() << std::endl;
+        std::cerr << "[Warning]: Not rendering this VertexArray\n";
+        return;
+    }
+
+    try
+    {
+        IndexBuffer& ebo = dynamic_cast<IndexBuffer&>(p_ebo);
+    }
+    catch (std::bad_cast e)
+    {
+        std::cerr << "[Error]: p_ebo is not an OpenGL IndexBuffer" << std::endl;
+        std::cerr << "[Error]: " << e.what() << std::endl;
+        std::cerr << "[Warning]: Not rendering this VertexArray\n";
+        return;
+    }
+
+    p_shader.Bind();
+    p_vao.Bind();
+    p_ebo.Bind();
+    glDrawElements(GL_TRIANGLES, p_ebo.GetSize(), GL_UNSIGNED_INT, NULL);
+    p_ebo.Unbind();
+    p_vao.Unbind();
+    p_shader.Unbind();
 }
 
 Context* Context::GetDefault()
@@ -512,7 +590,6 @@ void ShaderProgram::LoadVertexShaderCode(const std::string& code)
 
 void ShaderProgram::LoadGeometryShaderCode(const std::string& code)
 {
-    // TODO: implement
     std::cout << "Loading geometry shader:\n" << code << std::endl;
     GLuint gs = glCreateShader(GL_GEOMETRY_SHADER);
     auto src = code.c_str();
@@ -539,7 +616,6 @@ void ShaderProgram::LoadGeometryShaderCode(const std::string& code)
 
 void ShaderProgram::LoadFragmentShaderCode(const std::string& code)
 {
-    // TODO: implement
     std::cout << "Loading fragment shader:\n" << code << std::endl;
     GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
     auto src = code.c_str();
@@ -618,28 +694,6 @@ void ShaderProgram::Link()
     }
 }
 
-void PrintMatrix(glm::mat4 m)
-{
-    std::cout << m[0][0] << " " << m[0][1] << " " << m[0][2] << " " << m[0][3] << std::endl;
-    std::cout << m[1][0] << " " << m[1][1] << " " << m[1][2] << " " << m[1][3] << std::endl;
-    std::cout << m[2][0] << " " << m[2][1] << " " << m[2][2] << " " << m[2][3] << std::endl;
-    std::cout << m[3][0] << " " << m[3][1] << " " << m[3][2] << " " << m[3][3] << std::endl;
-}
-
-void ShaderProgram::Draw(std::shared_ptr<Render::IMesh> p_mesh, std::shared_ptr<Render::Material> p_material)
-{
-    // TODO: implement
-    std::shared_ptr<Render::OGL::Mesh> mesh = std::dynamic_pointer_cast<Render::OGL::Mesh>(p_mesh);
-    if (mesh == nullptr)
-    {
-        throw std::exception("p_mesh is not Bored::Render::OGL::Mesh");
-    }
-
-    Bind();
-    mesh->m_vao.Bind();
-    glDrawArrays(GL_TRIANGLES, 0, mesh->m_ebo.GetSize());
-    Unbind();
-}
 } // namespace OGL
 } // namespace Render
 } // namespace Bored

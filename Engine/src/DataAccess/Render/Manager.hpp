@@ -38,7 +38,7 @@ class Manager
     std::shared_ptr<FrameBuffer> CreateFBO();
 
     std::shared_ptr<ITexture> CreateTexture2D();
-    std::shared_ptr<ShaderPipeline> CreateShaderProgram();
+    std::shared_ptr<ShaderProgram> CreateShaderProgram();
 
   private:
     static std::unique_ptr<Manager> instance_;

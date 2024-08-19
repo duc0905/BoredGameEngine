@@ -8,6 +8,9 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
+#include "CPU/Mesh.hpp"
+#include "CPU/Texture.hpp"
+
 namespace Bored
 {
 namespace Render
@@ -35,17 +38,14 @@ void GetMaterials(const aiScene* scene, std::vector<std::shared_ptr<Material>>& 
     }
 }
 
-void GetTextures(const aiScene* scene, std::vector<std::shared_ptr<ITexture>>& texs
-                 //, Render::Context* renderContext
-)
+void GetTextures(const aiScene* scene, std::vector<std::shared_ptr<ITexture>>& texs)
 {
     for (unsigned int i = 0; i < scene->mNumTextures; i++)
     {
         aiTexture* tex = scene->mTextures[i];
-        // std::shared_ptr<ITexture> myTex = renderContext->CreateTexture();
-        std::shared_ptr<ITexture> myTex = std::make_shared<CPUTexture>();
-        myTex->SubData(tex->mWidth, tex->mHeight, 4, tex->pcData);
-        myTex->_name = tex->mFilename.C_Str();
+        std::shared_ptr<CPU::Texture> myTex = std::make_shared<CPU::Texture>();
+        myTex->GetNativeTexture().SubData(tex->mWidth, tex->mHeight, 4, tex->pcData);
+        myTex->m_name = tex->mFilename.C_Str();
         texs.push_back(myTex);
     }
 }
@@ -56,11 +56,11 @@ void GetMeshes(const aiScene* scene, std::vector<std::shared_ptr<IMesh>>& meshes
     for (unsigned int i = 0; i < scene->mNumMeshes; i++)
     {
         aiMesh* me = scene->mMeshes[i];
-        std::shared_ptr<IMesh> myMesh = std::make_shared<CPUMesh>();
+        std::shared_ptr<CPU::Mesh> myMesh = std::make_shared<CPU::Mesh>();
         // myMesh->subPos(std::vector<glm::vec3>());
-        std::vector<glm::vec3> pos(me->mNumVertices, glm::vec3());
-        std::vector<glm::vec2> uvs(me->mNumVertices, glm::vec2());
-        std::vector<glm::vec3> norms(me->mNumVertices, glm::vec3());
+        std::vector<glm::vec3> pos(me->mNumVertices);
+        std::vector<glm::vec2> uvs(me->mNumVertices);
+        std::vector<glm::vec3> norms(me->mNumVertices);
         std::vector<unsigned int> indices;
 
         myMesh->name = "Mesh" + std::to_string(i);
@@ -86,10 +86,10 @@ void GetMeshes(const aiScene* scene, std::vector<std::shared_ptr<IMesh>>& meshes
                 indices.push_back(f.mIndices[k]);
         }
 
-        myMesh->subPos(pos);
-        myMesh->subUVs(uvs);
-        myMesh->subNorms(norms);
-        myMesh->subIndices(indices);
+        myMesh->SubPos(pos);
+        myMesh->SubUVs(uvs);
+        myMesh->SubNorms(norms);
+        myMesh->SubIndices(indices);
         meshes.push_back(myMesh);
     }
 }
@@ -127,14 +127,12 @@ std::shared_ptr<Model> LoadModel(const std::string& file)
     std::vector<std::shared_ptr<Material>> mats;
     std::vector<std::shared_ptr<ITexture>> texs;
     std::vector<std::shared_ptr<IMesh>> meshes;
-    ProcessScene(scene, mats, texs, meshes
-                 //, context
-    );
+    ProcessScene(scene, mats, texs, meshes);
 
     // Push texs into registries
     for (auto& tex : texs)
     {
-        tex->_name = scene->GetShortFilename(file.c_str()) + tex->_name;
+        tex->m_name = scene->GetShortFilename(file.c_str()) + tex->m_name;
         // LoadTexture(tex);
     }
 

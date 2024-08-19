@@ -12,8 +12,8 @@
 #endif
 
 #if RENDER_API == OGL_API
-#include "../src/Adapter/OGL.h"
-#include "../src/Frontend/OGLMesh.hpp"
+#include "../src/Frontend/OGL/Mesh.hpp"
+#include "../src/Frontend/OGL/Factory.hpp"
 #endif
 
 #include "../src/Frontend/Renderer.hpp"
