@@ -59,14 +59,26 @@ target_link_libraries(Engine PRIVATE glad::glad)
 target_link_libraries(Engine PUBLIC glm::glm)
 target_link_libraries(Engine PRIVATE assimp::assimp)
 target_include_directories(Engine PRIVATE "${CMAKE_BINARY_DIR}")
+#
+# set(ACTOR_MNG_FILES
+#     "src/ECS/ActorManager.cpp"
+# )
+#
+# add_library(ActorManager ${ACTOR_MNG_FILES})
+# target_link_libraries(ActorManager PRIVATE EnTT::EnTT)
+#
+# install(TARGETS ActorManager)
+# install(FILES "src/DataAccess/Actor/ActorManager.hpp" DESTINATION "include/Actor")
+# # target_compile_definitions(ActorManager PRIVATE ACTORMANAGER_EXPORTS)
 
-set(ACTOR_MNG_FILES
-    "src/ECS/ActorManager.cpp"
+set(ENGINE_TEST_FILES
+    "src/Frontend/CPU/Factory.spec.cpp"
+    "src/Frontend/CPU/Mesh.spec.cpp"
+    "src/Frontend/CPU/Texture.spec.cpp"
 )
 
-add_library(ActorManager ${ACTOR_MNG_FILES})
-target_link_libraries(ActorManager PRIVATE EnTT::EnTT)
+add_executable(EngineTest ${ENGINE_TEST_FILES})
+target_link_libraries(EngineTest GTest::gtest_main)
 
-install(TARGETS ActorManager)
-install(FILES "src/DataAccess/Actor/ActorManager.hpp" DESTINATION "include/Actor")
-# target_compile_definitions(ActorManager PRIVATE ACTORMANAGER_EXPORTS)
+include(GoogleTest)
+gtest_discover_tests(EngineTest)
