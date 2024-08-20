@@ -1,10 +1,7 @@
 #include "GameScreen.hpp"
 #include <imgui.h>
-#include <iostream>
-#include <memory>
-
-#include "../constants.h"
-#include "ActorManager.hpp"
+#include <Engine/ECS/ActorManager.hpp>
+#include <Engine/Adapter/OGL.h>
 
 GameScreen::GameScreen(Manifest& game) 
   : SubWindow(game, "Gamescreen", 800, 600)
@@ -29,7 +26,7 @@ void GameScreen::NewFrame()
     ImGui::Text("GameScreen");
 
     // Get the gamerenderer
-    auto r = GetRenderer();
+    auto& r = GetRenderer();
     r.SetViewport(0, 0, GetWidth(), GetHeight()); // As large as this window
     r.Clear();
 

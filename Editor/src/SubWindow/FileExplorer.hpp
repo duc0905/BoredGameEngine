@@ -1,8 +1,9 @@
 #pragma once
 #include <functional>
+#include <Engine/DataAccess/FileManager/Manager.h>
+#include <Engine/DataAccess/FileManager/STDFM.h>
 #include "../Adapter/api.h"
 #include "../Adapter/windowAPI.h"
-#include "Bored.hpp"
 #include "SubWindow.hpp"
 
 class FileExplorer : public SubWindow

@@ -1,8 +1,7 @@
 #pragma once
-#include "Bored.hpp"
-#include "SubWindow.hpp"
 #include <memory>
 #include <string>
+#include "SubWindow.hpp"
 
 class FileContentWindow : public SubWindow
 {

@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include "../GameManifest/Manifest.hpp"
-#include "Bored.hpp"
+#include <Engine/Adapter/Window.h>
 
 /// @brief Sub-window of editor
 /// The OnUpdate method of this class should only update the logic and not contain the drawing

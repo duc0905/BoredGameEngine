@@ -1,7 +1,8 @@
 #pragma once
-#include "Bored.hpp"
 #include <string>
 #include <map>
+#include <memory>
+#include <Engine/Scene.hpp>
 
 struct Manifest {
   /* These are from Bored.json */

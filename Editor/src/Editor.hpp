@@ -3,6 +3,7 @@
 #include <string>
 #include "GameManifest/Manifest.hpp"
 #include "SubWindow/SubWindow.hpp"
+#include <Engine/Adapter/GLFWWindow.h>
 
 class Editor
 {
