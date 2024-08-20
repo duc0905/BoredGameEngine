@@ -1,6 +1,9 @@
 #include "ChessLogic.hpp"
-#include <exception>
 #include <iostream>
+
+#include <Engine/Frontend/RenderUtil.hpp>
+#include <Engine/Frontend/CPU/Mesh.hpp>
+#include <Engine/ECS/Components/Camera.hpp>
 
 void ChessLogic::OnSetup()
 {
@@ -16,7 +19,7 @@ void ChessLogic::OnSetup()
     triangle = am->Create<Bored::Actor>();
 
     Bored::Render::Model tri;
-    auto triMesh = std::make_shared<Bored::Render::OGL::Mesh>();
+    auto triMesh = std::make_shared<Bored::Render::CPU::Mesh>();
     auto triTrans = am->Get<Bored::ECS::Transform>(triangle->id);
 
     triMesh->name = "Triangle Mesh";

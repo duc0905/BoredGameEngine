@@ -1,10 +1,12 @@
 #include <chrono>
-#include <iostream>
 #include <memory>
 #include <thread>
-#include "Bored.hpp"
-#include <GLFW/glfw3.h>
 #include "ChessLogic.hpp"
+#include <Engine/Scene.hpp>
+#include <Engine/Adapter/GLFWWindow.h>
+#include <Engine/Adapter/OGL.h>
+#include <Engine/Frontend/OGL/Factory.hpp>
+#include <GLFW/glfw3.h>
 
 // NOTE: The path will be relative to the path of the terminal,
 // so we should use the path to the project file in conjuncton

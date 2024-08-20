@@ -1,6 +1,6 @@
 #pragma once
-#include "Bored.hpp"
 #include <memory>
+#include <Engine/Scene.hpp>
 
 class ChessLogic : public Bored::Module
 {
