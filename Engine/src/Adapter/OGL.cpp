@@ -448,7 +448,6 @@ void Context::Draw(Render::ShaderProgram& p_shader, Render::VertexArray& p_vao, 
     glDrawElements(GL_TRIANGLES, p_ebo.GetSize(), GL_UNSIGNED_INT, NULL);
     p_ebo.Unbind();
     p_vao.Unbind();
-    p_shader.Unbind();
 }
 
 Context* Context::GetDefault()

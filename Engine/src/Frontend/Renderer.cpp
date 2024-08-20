@@ -123,10 +123,9 @@ void Renderer::DrawActiveScene()
 
         for (auto [mesh, material] : model.renderables)
         {
-            std::cout << "[Info]: Drawing mesh: " << mesh->name << std::endl;
             // TODO: Set the material uniforms
+
             context->Draw(*m_shaderProgram, *mesh->GetVertexArray(), *mesh->GetIndexBuffer());
-            // m_shaderProgram->Draw(mesh, material);
         }
     }
     m_shaderProgram->Unbind();

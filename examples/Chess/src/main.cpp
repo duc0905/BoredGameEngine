@@ -9,28 +9,6 @@
 // NOTE: The path will be relative to the path of the terminal,
 // so we should use the path to the project file in conjuncton
 // with the file path to get the final path
-std::string cube = "build/win-deb/examples/Chess/res/cube.gltf";
-
-class Mod : public Bored::Module
-{
-  public:
-    Mod() = default;
-    virtual void OnSetup() override
-    {
-    }
-    virtual bool OnUpdate(double dt) override
-    {
-        auto am = GetActorManager();
-        auto v = am->Get<Bored::ECS::IDToPtr>();
-        am->Create<Bored::Actor>();
-
-        std::cout << "Hi from mod" << std::endl;
-        std::cout << "Number of actors: " << v.size() << std::endl;
-
-        return true;
-    };
-    virtual void OnShutdown() override{};
-};
 
 struct Game
 {

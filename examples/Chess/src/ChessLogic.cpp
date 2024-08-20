@@ -8,10 +8,10 @@ void ChessLogic::OnSetup()
 
     auto am = GetActorManager();
     
-    // std::string cubeFile = "build/win-deb/examples/Chess/res/cube.gltf";
-    // auto cubeModel = Bored::Render::LoadModel(cubeFile);
-    // cube = am->Create<Bored::Actor>();
-    // auto& model = am->AddComponent<Bored::Render::Model>(cube->id, *cubeModel);
+    std::string cubeFile = "build/win-deb/examples/Chess/res/cube.gltf";
+    auto cubeModel = Bored::Render::LoadModel(cubeFile);
+    cube = am->Create<Bored::Actor>();
+    auto& model = am->AddComponent<Bored::Render::Model>(cube->id, *cubeModel);
 
     triangle = am->Create<Bored::Actor>();
 
@@ -49,9 +49,13 @@ bool ChessLogic::OnUpdate(double dt)
 {
     auto am = GetActorManager();
     auto triTrans = am->Get<Bored::ECS::Transform>(triangle->id);
+    auto cubeTrans = am->Get<Bored::ECS::Transform>(cube->id);
 
     triTrans->rotation.z += 5.0f;
     triTrans->scale *= 1.01f;
+
+    cubeTrans->rotation.z += 7.5f;
+    cubeTrans->rotation.x += 2.5f;
 
     return true;
 }
