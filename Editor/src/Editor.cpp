@@ -3,8 +3,6 @@
 #include <imgui_impl_opengl3.h>
 #include <filesystem>
 
-#include <Engine/Adapter/OGL.h>
-
 #include "Editor.hpp"
 #include "GameManifest/Loader.hpp"
 #include "SubWindow/FileExplorer.hpp"
@@ -92,10 +90,11 @@ void Editor::Run() {
 
         for (auto w : windows) w->Create();
 
+        mainWindow->GetRenderer().BindFramebuffer();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        // mainWindow->NewFrame();
+        mainWindow->NewFrame();
     }
 }
 
@@ -112,8 +111,6 @@ void Editor::Shutdown() {
 }
 
 void Editor::OpenProject(const std::string& directory) {
-    // TODO: Implement this method
-
     if (!std::filesystem::exists(directory)) {
         std::cerr << "Directory " << directory << "DNE" << std::endl;
         return;
