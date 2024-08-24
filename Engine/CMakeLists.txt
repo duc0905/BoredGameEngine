@@ -88,16 +88,17 @@ target_link_libraries(Engine PRIVATE assimp::assimp)
 target_include_directories(Engine PRIVATE "${CMAKE_BINARY_DIR}")
 
 set(ENGINE_TEST_FILES
-    "src/Frontend/CPU/Factory.spec.cpp"
-    "src/Frontend/CPU/Mesh.spec.cpp"
-    "src/Frontend/CPU/Texture.spec.cpp"
+    "src/Frontend/Factory.spec.cpp"
+    "src/Frontend/Mesh.spec.cpp"
+    "src/Frontend/Texture.spec.cpp"
 )
 
 add_executable(EngineTest ${ENGINE_TEST_FILES})
 target_link_libraries(EngineTest Engine)
-target_link_libraries(EngineTest GTest::gtest_main)
+target_link_libraries(EngineTest GTest::gtest_main GTest::gmock_main)
 
 target_include_directories(EngineTest PRIVATE ${INCLUDE_DESTINATION_DIR})
+target_include_directories(EngineTest PRIVATE ${CMAKE_BINARY_DIR})
 
 include(GoogleTest)
 gtest_discover_tests(EngineTest)

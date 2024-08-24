@@ -117,7 +117,6 @@ void IndexBuffer::Unbind() const
 
 void IndexBuffer::SubData(std::vector<unsigned int>& p_data)
 {
-    // TODO: Implement
     size = p_data.size();
 
     Bind();
@@ -128,7 +127,6 @@ void IndexBuffer::SubData(std::vector<unsigned int>& p_data)
 
 std::vector<unsigned int> IndexBuffer::GetData() const
 {
-    // TODO: Implement
     std::vector<unsigned int> data(size);
 
     Bind();
