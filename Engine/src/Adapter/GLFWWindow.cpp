@@ -1,8 +1,10 @@
 #include <exception>
+#include <iostream>
+#include <memory>
 #include "Window.h"
 #include "GLFWWindow.h"
 #include <GLFW/glfw3.h>
-#include "../GameStruct.hpp"
+// #include "../GameStruct.hpp"
 
 namespace Bored
 {
@@ -13,10 +15,19 @@ static void error_callback(int error, const char* description)
     fprintf(stderr, "Error: %s\n", description);
 }
 
+std::unique_ptr<Window> Window::instancee_ = nullptr;
+
 Window::Window()
 {
     input = std::make_unique<Input>(this);
-    id = game.AddWindow(this);
+    // id = game.AddWindow(this);
+}
+
+Window* Window::GetInstance()
+{
+    if (!instancee_)
+        instancee_ = std::unique_ptr<Window>(new Window());
+    return instancee_.get();
 }
 
 Window::~Window()
@@ -53,14 +64,15 @@ int Window::GetHeight() const
     return height;
 }
 
-void Window::DrawContent()
+void Window::NewFrame()
 {
     Frontend::Renderer& r = GetRenderer();
-    glfwSwapBuffers(nativeWindow);
-    glfwGetFramebufferSize(nativeWindow, &width, &height);
 
-    r.SetViewport(0, 0, width, height); // Just in case another renderer reset the viewport
+    // r.SetViewport(0, 0, width, height); // Just in case another renderer reset the viewport
+    glfwSwapBuffers(nativeWindow);
     r.Clear();
+
+    glfwGetFramebufferSize(nativeWindow, &width, &height);
 }
 
 void Window::PollEvents()
@@ -80,6 +92,10 @@ void Window::OnSetup()
 
     glfwSetErrorCallback(error_callback);
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     int nMonitors = 0;
     GLFWmonitor** monitors = glfwGetMonitors(&nMonitors);
@@ -105,8 +121,8 @@ void Window::OnSetup()
 
 bool Window::OnUpdate(double dt)
 {
+    NewFrame();
     input->OnUpdate(dt);
-
     return !glfwWindowShouldClose(nativeWindow);
 }
 
@@ -128,22 +144,12 @@ void Input::OnSetup()
 {
     Frontend::Input::OnSetup();
 
-    glfwSetKeyCallback((GLFWwindow*)window->GetNativeWindow(),
-                       [](GLFWwindow* w, int key, int scan, int action, int mods) {
-                           if (game.GetWindow(w))
-                               game.GetWindow(w)->GetInput()->EvaluateKey(Input::GetKey(key), Input::GetAction(action),
-                                                                          Input::GetMods(mods), 1.0f);
-                           else
-                           {
-                               throw std::exception("Someone forgot to add the window to the GameStruct");
-                               return;
-                           }
+    glfwSetKeyCallback(
+        (GLFWwindow*)window->GetNativeWindow(), [](GLFWwindow* w, int key, int scan, int action, int mods) {
+            Window::GetInstance()->GetInput()->EvaluateKey(GetKey(key), GetAction(action), GetMods(mods), 1.0f);
 
-                           //    if (action == GLFW_PRESS)
-                           //    {
-                           //    printf("Pressed key: %d\n", key);
-                           //    }
-                       });
+            std::cout << "Receiving input " << GetKey(key) << " " << scan << " " << action << " " << mods << std::endl;
+        });
 }
 
 Frontend::Key Input::GetKey(int k)

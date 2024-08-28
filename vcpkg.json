@@ -11,10 +11,16 @@
 		"stb",
 		{
 			"name": "imgui",
-			"features":  ["docking-experimental", "glfw-binding", "opengl3-binding"]
+			"features": [
+				"docking-experimental",
+				"glfw-binding",
+				"opengl3-binding"
+			]
 		},
 		"openal-soft",
 		"audiofile",
-		"entt"
+		"entt",
+		"nlohmann-json",
+		"tinyfiledialogs"
 	]
 }

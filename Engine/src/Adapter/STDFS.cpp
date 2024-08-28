@@ -108,6 +108,7 @@ void File::WriteData(std::vector<char>& data) {
 };
 
 std::vector<char> File::GetData() {
+  // TODO: Pipe the data instead of reading all at once
   fs::path cwd = path;
   std::string filePath = (cwd / name).string();
   std::ifstream inputFile(filePath, std::ios::binary);

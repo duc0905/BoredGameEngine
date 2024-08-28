@@ -9,10 +9,13 @@ namespace Bored
 {
 struct Game
 {
-    // TODO design a way to have multiple windows
-    std::vector<Window*> windows;
-    Bored::GameLoop game_loop;
+    // Idea: design a way to have multiple windows
+    // Welp, turns out it will make the editor so much harder so nahhhhh
     short num_windows = 0;
+    std::vector<Window*> windows;
+
+    // Contains the "logic" part of the game
+    Bored::Scene game_logic;
 
     short AddWindow(Window* w)
     {
@@ -39,4 +42,4 @@ struct Game
 
 } // namespace Bored
 
-extern Bored::Game game;
+// extern Bored::Game game;
