@@ -1,68 +1,63 @@
 #pragma once
-#include <string>
 #include <memory>
-#include <GLFW/glfw3.h>
-#include "../Adapter/Render.h"
+#include "../Frontend/Renderer.hpp"
+#include "Render.h"
 
-namespace Bored {
-  namespace Window {
-
-    class Window {
-    public:
-      Window();
-      ~Window();
-
-      void SetWidth(unsigned int);
-      void SetHeight(unsigned int);
-      void SetTitle(const std::string&);
-      void SetFullscreen(bool);
-
-      unsigned int GetWidth() const;
-      unsigned int GetHeight() const;
-
-      bool OnTick(double dt);
-
-      void SwapBuffer() {
-        glfwSwapBuffers(nativeWindow);
-      }
-
-      void PollEvents() {
-        glfwPollEvents();
-      }
-
-      bool ShouldClose() {
-        return glfwWindowShouldClose(nativeWindow);
-      }
-
-      template <class T,
-        std::enable_if_t<std::is_base_of_v<Bored::Render::Context, T>, bool> = true>
-      void Start() {
-        int nMonitors = 0;
-        GLFWmonitor** monitors = glfwGetMonitors(&nMonitors);
-
-        GLFWmonitor* monitor = NULL;
-        if (fullscreen)
-          monitor = monitors[0];
-
-        nativeWindow = glfwCreateWindow(width, height, name.c_str(), monitor, NULL);
-
-        if (!nativeWindow) {
-          glfwTerminate();
-          throw std::exception("Cannot create GLFW window");
-        }
-
-        glfwMakeContextCurrent(nativeWindow);
-        glfwSwapInterval(1);
-
-        renderContext = std::make_unique<T>(this);
-      }
-    private:
-      std::string name;
-      unsigned int width = 800, height = 600;
-      bool fullscreen = false;
-      std::unique_ptr<Bored::Render::Context> renderContext;
-
-      GLFWwindow* nativeWindow = nullptr;
-    };
-  }
+namespace Bored
+{
+namespace Frontend
+{
+class Input; // Forward declare
 }
+
+class Window : public Module
+{
+  public:
+    virtual void SetWidth(int) = 0;
+    virtual void SetHeight(int) = 0;
+    virtual void SetTitle(const std::string&) = 0;
+    virtual void SetFullscreen(bool) = 0;
+
+    virtual int GetWidth() const = 0;
+    virtual int GetHeight() const = 0;
+
+    virtual void PollEvents() = 0;
+
+    /**
+     * @brief the content of the window using ImGui
+     * Can assume that is being called in a valid window
+     **/
+    virtual void NewFrame() = 0;
+
+    /**
+     * @brief Set the render context to be used by the renderer
+     * @param con
+     */
+    void UseRenderContext(Render::Context* con)
+    {
+        renderContext.reset(con);
+    }
+
+    Frontend::Renderer& GetRenderer()
+    {
+        if (!renderer)
+        {
+            if (!renderContext)
+            {
+                throw std::exception("Must call UseRenderContext before calling GetRenderer");
+            }
+            renderer.reset(new Frontend::Renderer(renderContext.get()));
+        }
+        return *renderer;
+    }
+
+    virtual Frontend::Input* GetInput() = 0;
+    virtual void* GetNativeWindow() = 0;
+
+  protected:
+    std::unique_ptr<Frontend::Renderer> renderer;
+    std::unique_ptr<Render::Context> renderContext;
+
+    // TODO: Add Audio context
+};
+} // namespace Bored

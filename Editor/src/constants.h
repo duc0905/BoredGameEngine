@@ -1,0 +1,4 @@
+#pragma once
+
+#define ACTORMANAGER_TOKEN "ACTORMANAGER"
+#define PHYSICS_TOKEN "PHYSICS"
