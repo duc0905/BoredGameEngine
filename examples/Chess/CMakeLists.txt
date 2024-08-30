@@ -4,8 +4,10 @@ add_library(Chess SHARED
 target_link_libraries(Chess PRIVATE Engine)
 
 target_include_directories(Chess PRIVATE
-  "${CMAKE_BINARY_DIR}/include"
+  ${CMAKE_INSTALL_INCLUDEDIR}
 )
+
+message("Install dir: ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}")
 
 add_executable(BoredChess
     "src/main.cpp"
@@ -15,7 +17,6 @@ add_executable(BoredChess
 target_link_libraries(BoredChess PRIVATE Engine)
 
 target_include_directories(BoredChess PRIVATE
-  "${CMAKE_BINARY_DIR}/include"
   "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}"
 )
 

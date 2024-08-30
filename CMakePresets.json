@@ -51,15 +51,118 @@
   ],
   "buildPresets": [
     {
+      "name": "base-deb",
+      "configurePreset": "win-deb",
+      "configuration": "Debug",
+      "verbose": true,
+      "hidden": true
+    },
+    {
       "name": "all-win-deb",
       "displayName": "Build everything for Windows debug",
-      "configurePreset": "win-deb",
-      "verbose": true
+      "inherits": "base-deb"
     },
     {
       "name": "all-win-rel",
       "displayName": "Build everything for Windows release",
       "configurePreset": "win-rel"
+    },
+    {
+      "name": "build-engine-deb",
+      "inherits": "base-deb",
+      "targets": [
+        "Engine",
+        "EngineTest"
+      ]
+    },
+    {
+      "name": "install-engine-deb",
+      "inherits": "base-deb",
+      "targets": [
+        "InstallEngine"
+      ]
+    },
+    {
+      "name": "build-chess-deb",
+      "inherits": "base-deb",
+      "targets": [
+        "BoredChess"
+      ]
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "test-engine-deb",
+      "configurePreset": "win-deb",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      },
+      "filter": {
+        "include": {
+          "name": "^BoredEngine::"
+        }
+      }
+    },
+    {
+      "name": "test-chess",
+      "configurePreset": "win-deb",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "stopOnFailure": false
+      },
+      "filter": {
+        "include": {
+          "name": "^BoredChess::"
+        }
+      }
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "engine-deb",
+      "displayName": "Build, install, and test engine for debug",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "win-deb"
+        },
+        {
+          "type": "build",
+          "name": "build-engine-deb"
+        },
+        {
+          "type": "build",
+          "name": "install-engine-deb"
+        },
+        {
+          "type": "test",
+          "name": "test-engine-deb"
+        }
+      ]
+    },
+    {
+      "name": "chess-deb",
+      "displayName": "Build and test chess",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "win-deb"
+        },
+        {
+          "type": "build",
+          "name": "build-chess-deb"
+        },
+        {
+          "type": "test",
+          "name": "test-chess"
+        }
+      ]
     }
   ]
 }

@@ -24,9 +24,9 @@ target_link_libraries(Stuff PRIVATE imgui::imgui)
 target_link_libraries(Stuff PRIVATE glad::glad)
 target_link_libraries(Stuff PRIVATE Engine)
 target_link_libraries(Stuff PRIVATE nlohmann_json::nlohmann_json)
+
 target_include_directories(Stuff PRIVATE
-    "${CMAKE_BINARY_DIR}"
-    "${CMAKE_BINARY_DIR}/include"
+  "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}"
 )
 
 add_executable(Editor "src/app.cpp")
@@ -34,8 +34,7 @@ target_link_libraries(Editor PRIVATE imgui::imgui)
 target_link_libraries(Editor PRIVATE tinyfiledialogs::tinyfiledialogs)
 target_link_libraries(Editor PRIVATE Stuff)
 target_include_directories(Editor PRIVATE
-    "${CMAKE_BINARY_DIR}"
-    "${CMAKE_BINARY_DIR}/include"
+  "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}"
 )
 
 # Testing
@@ -50,8 +49,7 @@ target_link_libraries(EditorTest Stuff)
 target_link_libraries(EditorTest GTest::gtest_main)
 
 target_include_directories(EditorTest PRIVATE
-    "${CMAKE_BINARY_DIR}/include"
-    "${CMAKE_SOURCE_DIR}/Editor/src"
+  "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}"
 )
 
 include(GoogleTest)

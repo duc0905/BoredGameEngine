@@ -11,14 +11,16 @@ void ChessLogic::OnSetup()
 
     auto am = GetActorManager();
     
+    /** Setup cube */
     std::string cubeFile = "build/win-deb/examples/Chess/res/cube.gltf";
     auto cubeModel = Bored::Render::LoadModel(cubeFile);
     cube = am->Create<Bored::Actor>();
     auto& model = am->AddComponent<Bored::Render::Model>(cube->id, *cubeModel);
 
+    /** Setup triangle */
     triangle = am->Create<Bored::Actor>();
+    Bored::Render::Model& tri = am->AddComponent<Bored::Render::Model>(triangle->id);
 
-    Bored::Render::Model tri;
     auto triMesh = std::make_shared<Bored::Render::CPU::Mesh>();
     auto triTrans = am->Get<Bored::ECS::Transform>(triangle->id);
 
@@ -31,17 +33,17 @@ void ChessLogic::OnSetup()
     triTrans->pos = {2.0f, 0.0f, 0.0f};
 
     tri.renderables.push_back({triMesh, nullptr});
-    am->AddComponent<Bored::Render::Model>(triangle->id, tri);
 
+    /** Setup camera */
     auto camera = am->Create<Bored::Actor>();
     auto& cameraComponent = am->AddComponent<Bored::ECS::Camera>(camera->id);
     auto& transformComponent = am->GetOrCreate<Bored::ECS::Transform>(camera->id);
 
-    m_scene->UseCamera(camera);
-
     transformComponent.pos = {0.0f, 0.0f, 1.0f};
     cameraComponent.up = {0.0f, 1.0f, 0.0f};
     cameraComponent.dir = {0.0f, 0.0f, -1.0f};
+
+    m_scene->UseCamera(camera);
 }
 
 void ChessLogic::OnSwitchScene()
