@@ -1,6 +1,6 @@
-#include "Adapter/Render.h"
-#include "Adapter/Window.h"
-#include "gtest/gtest.h"
+#include <Adapter/Render.h>
+#include <Adapter/Window.h>
+#include <gtest/gtest.h>
 #include <glm/fwd.hpp>
 #include <gtest/gtest.h>
 
