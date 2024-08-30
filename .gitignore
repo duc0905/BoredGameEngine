@@ -30,3 +30,5 @@ CMakeUserPresets.json
 
 # playground
 /examples/Playground
+
+compile_commands.json
