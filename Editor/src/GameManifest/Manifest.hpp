@@ -16,8 +16,11 @@ struct Manifest {
   } version;
 
   // Map Name/Token -> Module
+  // WARN: Deprecated. Each scene has its own modules now
   std::map<std::string, std::shared_ptr<Bored::Module>> core_modules;
   std::map<std::string, std::shared_ptr<Bored::Module>> custom_modules;
+
+  std::vector<std::shared_ptr<Bored::Scene>> scenes;
 
   /* Others */
   std::string path;

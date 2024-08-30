@@ -1,9 +1,11 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include "GameManifest/Manifest.hpp"
 #include "SubWindow/SubWindow.hpp"
 #include <Engine/Adapter/GLFWWindow.h>
+#include <Engine/Scene.hpp>
 
 class Editor
 {
@@ -29,6 +31,8 @@ private:
     Bored::GLFW::Window* mainWindow;
     // Sub windows
     std::vector<std::shared_ptr<SubWindow>> windows;
+
+    std::shared_ptr<Bored::Scene> m_activeScene;
 
     Manifest _game;
     bool _gameLoaded = false;

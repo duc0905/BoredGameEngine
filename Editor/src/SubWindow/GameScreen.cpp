@@ -1,7 +1,10 @@
 #include "GameScreen.hpp"
 #include <imgui.h>
-#include <Engine/ECS/ActorManager.hpp>
+#include <iostream>
+#include <memory>
 #include <Engine/Adapter/OGL.h>
+
+#include "../constants.h"
 
 GameScreen::GameScreen(Manifest& game) 
   : SubWindow(game, "Gamescreen", 800, 600)
