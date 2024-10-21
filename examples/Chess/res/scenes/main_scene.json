@@ -1,0 +1,86 @@
+{
+	"name": "Main Scene",
+	"modules": [
+		{
+			"name": "ChessLogic",
+			"dylib_path": "../build/win-deb/examples/Chess/Chess.dll"
+		}
+	],
+	"actors": [
+		{
+			"id": 1,
+			"name": "Cube 1",
+			"components": [
+				{
+					"name": "Transform",
+					"args": {
+						"translate": [
+							2.0,
+							0.0,
+							0.0
+						],
+						"rotate": [
+							0.0,
+							0.0,
+							0.0
+						],
+						"scale": [
+							0.0,
+							0.0,
+							0.0
+						]
+					}
+				},
+				{
+					"name": "Model",
+					"args": {
+						"filepath": "../../build/win-deb/examples/Chess/res/cube.gltf"
+					}
+				}
+			]
+		},
+		{
+			"id": 2,
+			"name": "Camera 1",
+			"components": [
+				{
+					"name": "Transform",
+					"args": {
+						"translate": [
+							0.0,
+							0.0,
+							1.0
+						],
+						"rotate": [
+							0.0,
+							0.0,
+							0.0
+						],
+						"scale": [
+							0.0,
+							0.0,
+							0.0
+						]
+					}
+				},
+				{
+					"name": "Camera",
+					"args": {
+						"dir": [
+							1.0,
+							0.0,
+							0.0
+						],
+						"up": [
+							0.0,
+							0.0,
+							-1.0
+						],
+						"yaw": 0.0,
+						"pitch": 0.0
+					}
+				}
+			]
+		}
+	]
+}

@@ -21,7 +21,7 @@ Scene::Scene()
 {
 }
 
-Scene::~Scene()
+Scen::~Scene()
 {
 }
 
@@ -42,6 +42,7 @@ void Scene::OnSetup()
 
 void Scene::OnSwitchScene()
 {
+    int d;
     for (auto mod : m_mods)
     {
         try

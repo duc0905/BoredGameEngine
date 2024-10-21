@@ -18,5 +18,8 @@
 		"ChessLogic.dll",
 		"temp.dll"
 	],
-	"dl_file": "./build/Chess/Chess.dll"
+	"dl_file": "./build/Chess/Chess.dll",
+	"scenes": [
+		"res/scenes/main_scene.json"
+	]
 }

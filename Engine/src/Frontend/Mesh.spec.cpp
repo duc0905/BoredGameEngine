@@ -1,9 +1,9 @@
-#include <Adapter/Render.h>
-#include <Adapter/Window.h>
 #include <gtest/gtest.h>
 #include <glm/fwd.hpp>
 #include <gtest/gtest.h>
 
+#include <Adapter/Render.h>
+#include <Adapter/Window.h>
 #include <Adapter/GLFWWindow.h>
 #include <Frontend/CPU/Mesh.hpp>
 #include <Frontend/OGL/Mesh.hpp>

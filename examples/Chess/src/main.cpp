@@ -2,11 +2,13 @@
 #include <memory>
 #include <thread>
 #include "ChessLogic.hpp"
+#include "Engine/ECS/Components/Transform.hpp"
 #include <Engine/Scene.hpp>
 #include <Engine/Adapter/GLFWWindow.h>
 #include <Engine/Adapter/OGL.h>
 #include <Engine/Frontend/OGL/Factory.hpp>
 #include <GLFW/glfw3.h>
+#include <nlohmann/json.hpp>
 
 // NOTE: The path will be relative to the path of the terminal,
 // so we should use the path to the project file in conjuncton
@@ -52,6 +54,10 @@ void main() {
 
 int main()
 {
+    Bored::ECS::Transform trans;
+    nlohmann::json j = trans;
+    std::cout << "JSON: " << j << std::endl;
+
     Game g;
     g.window = Bored::GLFW::Window::GetInstance();
     g.window->OnSetup();
