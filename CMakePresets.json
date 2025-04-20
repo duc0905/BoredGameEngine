@@ -1,0 +1,59 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 25,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "ninja-vcpkg",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "installDir": "${sourceDir}/install/${presetName}",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "vcpkg/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_FEATURE_FLAGS": "manifests",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": true
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "build-base",
+      "displayName": "Build with ninja",
+      "configurePreset": "ninja-vcpkg",
+      "hidden": true,
+      "verbose": true
+    },
+    {
+      "name": "build",
+      "displayName": "Build everything executable with Ninja",
+      "inherits": "build-base"
+    },
+    {
+      "name": "build-main",
+      "displayName": "Build main executable with Ninja",
+      "inherits": "build-base",
+      "targets": [
+        "main"
+      ]
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "test",
+      "displayName": "Test everything with Ninja",
+      "configurePreset": "ninja-vcpkg",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": true
+      }
+    }
+  ]
+}

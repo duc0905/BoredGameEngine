@@ -1,0 +1,31 @@
+# vim
+**/*~
+**/*.swp
+
+# VS
+/.vs
+/.vscode
+
+# vcpkg
+/vcpkg_installed
+
+# generated
+**/x64
+**/x86
+/lib
+/CMakeFiles
+CMakeCache.txt
+CMakeUserPresets.json
+
+# build
+/build
+/out
+/install
+
+# imgui
+**/imgui.ini
+
+# cache
+.cache/
+
+compile_commands.json
