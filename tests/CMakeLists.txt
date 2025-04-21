@@ -6,7 +6,7 @@ set(SOURCE_FILES
 )
 
 add_executable(test_main ${SOURCE_FILES})
-target_include_directories(test_main PRIVATE "${CMAKE_PROJECT_DIR}/src")
+target_include_directories(test_main PRIVATE "${PROJECT_SOURCE_DIR}/src")
 target_link_libraries(test_main GTest::gtest_main)
 
 include(GoogleTest)

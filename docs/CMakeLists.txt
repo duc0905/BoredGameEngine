@@ -7,12 +7,11 @@ if (DOXYGEN_FOUND)
 
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
 
-    add_custom_command(OUTPUT ${DOXYGEN_INDEX_FILE}
-                        COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE}
-                        MAIN_DEPENDENCY ${DOXYFILE}
-                        COMMENT "Generate Doxygen documentation"
-                        VERBATIM
+    # Add custom target for generating documentation
+    add_custom_target(gen_doc
+        COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE}
+        # WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        COMMENT "Generating API documentation with Doxygen"
+        VERBATIM
     )
-
-    add_custom_target(GenDocs ALL DEPENDS ${DOXYGEN_INDEX_FILE})
 endif()
