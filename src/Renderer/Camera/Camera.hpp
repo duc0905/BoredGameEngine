@@ -129,11 +129,9 @@ public:
    *
    * @param near the near-bound to clip
    *
-   * @param far the far-bound to clip
-   *
    */
-  Perspective(float fov, float width, float height, float near, float far)
-      : m_fov(fov), m_aspect(width / height), m_near(near), m_far(far) {}
+  Perspective(float fov, float width, float height, float near)
+      : m_fov(fov), m_aspect(width / height), m_near(near) {}
 
   /**
    * Get projection matrix.
@@ -144,14 +142,13 @@ public:
    *
    */
   [[nodiscard]] virtual glm::mat4 GetProjectionMatrix() const {
-    return glm::perspective(m_fov, m_aspect, m_near, m_far);
+    return glm::infinitePerspective(m_fov, m_aspect, m_near);
   }
 
 private:
   float m_fov; /**< Field of view of the camera */
   float m_aspect; /**< Aspect ratio of the image plane (width/height) */
   float m_near; /**< Near bound to clip */
-  float m_far; /**< Far bound to clip*/
 };
 
 /**
