@@ -87,8 +87,6 @@ public:
  */
 class Projector {
 public:
-  Projector(float width, float height) : m_width(width), m_height(height) {}
-
   virtual ~Projector() {}
 
   /**
@@ -100,10 +98,6 @@ public:
    * @return glm::mat4 the projection-matrix
    */
   [[nodiscard]] virtual glm::mat4 GetProjectionMatrix() const = 0;
-
-public:
-  int m_width;  /**< Width image plane in number of pixels */
-  int m_height; /**< Height of the image plane in number of pixels */
 };
 
 /**
@@ -131,8 +125,8 @@ public:
    */
   Orthographic(float left, float right, float bottom, float top, float near,
                float far)
-      : Projector(right - left, top - bottom), m_left(left), m_right(right),
-        m_bottom(bottom), m_top(top), m_near(near), m_far(far) {}
+      : m_left(left), m_right(right), m_bottom(bottom), m_top(top),
+        m_near(near), m_far(far) {}
 
   /**
    * Get projection matrix.
@@ -182,8 +176,7 @@ public:
    *
    */
   Perspective(float fov, float width, float height, float near)
-      : Projector(width, height), m_fov(fov), m_aspect(width / height),
-        m_near(near) {}
+      : m_fov(fov), m_aspect(width / height), m_f(near) {}
 
   /**
    * Get projection matrix.
@@ -194,7 +187,7 @@ public:
    *
    */
   [[nodiscard]] virtual glm::mat4 GetProjectionMatrix() const {
-    return glm::infinitePerspective(m_fov, m_aspect, m_near);
+    return glm::infinitePerspective(m_fov, m_aspect, m_f);
   }
 
   /**
@@ -231,7 +224,6 @@ public:
   float m_f;      /**< Focal length */
   float m_fov;    /**< Field of view of the camera */
   float m_aspect; /**< Aspect ratio of the image plane (width/height) */
-  float m_near;   /**< Near bound to clip */
 };
 
 /**

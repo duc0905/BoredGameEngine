@@ -8,6 +8,7 @@
 
 #include "../Renderer/Shader/Shader.hpp"
 #include "../Renderer/Texture/OGL_Texture.hpp"
+#include "Listeners.hpp"
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/scalar_constants.hpp>
 #include <glm/glm.hpp>
@@ -59,6 +60,13 @@ public:
    */
   void PollEvents() const;
 
+  /**
+   * Register a listener for the FrameBufferSize event.
+   *
+   * @param listener The listener.
+   */
+  void AddFrameBufferSizeListener(FrameBufferSizeListener* listener);
+
 private: // Callback handler functions
   static void KeyCallback(GLFWwindow *window, int key, int scancode, int action,
                           int mods);
@@ -92,6 +100,8 @@ private:
 private: // Input section
   Input m_input;
   GLFWkeyfun m_prevKeyCallback = nullptr;
+
+  std::vector<FrameBufferSizeListener*> m_fbsListeners;
 
 private:
   std::unique_ptr<OGL_Texture2D> m_renderTexture;

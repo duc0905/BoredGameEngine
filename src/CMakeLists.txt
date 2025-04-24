@@ -1,6 +1,7 @@
 find_package(glad CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
+find_package(OpenMP REQUIRED)
 
 set(MAIN_SOURCE_FILES
 	main.cpp
@@ -14,3 +15,4 @@ add_executable(main ${MAIN_SOURCE_FILES})
 target_link_libraries(main PRIVATE glm::glm)
 target_link_libraries(main PRIVATE glad::glad)
 target_link_libraries(main PRIVATE glfw)
+target_link_libraries(main PRIVATE OpenMP::OpenMP_CXX)

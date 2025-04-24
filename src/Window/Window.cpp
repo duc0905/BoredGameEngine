@@ -1,4 +1,5 @@
 #include "Window.hpp"
+#include "Listeners.hpp"
 
 #include <GLFW/glfw3.h>
 #include <chrono>
@@ -172,13 +173,14 @@ void Window::Render(I_Texture2D *texture) {
   glfwSwapBuffers(m_window); // Swap front and back buffers
 }
 
-void Window::WaitEvents(float timeout) const {
-  glfwWaitEventsTimeout(timeout);
-}
+void Window::WaitEvents(float timeout) const { glfwWaitEventsTimeout(timeout); }
 
+void Window::PollEvents() const { glfwPollEvents(); }
 
-void Window::PollEvents() const {
-  glfwPollEvents();
+void Window::AddFrameBufferSizeListener(FrameBufferSizeListener *listener) {
+  if (listener != nullptr) {
+    m_fbsListeners.push_back(listener);
+  }
 }
 
 void Window::HandleDebugMessage(GLenum source, GLenum type, unsigned int id,
@@ -287,13 +289,11 @@ void Window::HandleFrameBufferSize(int width, int height) {
   m_width = width;
   m_height = height;
 
-  std::cout << "[Info]: Window size: (" << width << ", " << height << ")"
-            << std::endl;
-
   // Reset the opengl viewport with the new dimension
   glViewport(0, 0, width, height);
 
-  // TODO: Reset our renderer with the new dimensions
+  for (auto listener : m_fbsListeners)
+    listener->OnFrameBufferSize(width, height);
 }
 
 void Window::HandleGLFWError(int error, const char *description) {
