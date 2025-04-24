@@ -19,12 +19,11 @@ class I_Object3D;
  * Mostly used in ray tracing.
  */
 struct Intersection {
-  I_Object3D* obj =
-      nullptr; /**< The intersected object. If does not intersect, this field is
-                  nullptr */
-  double lambda = 0.0;     /**< Distance to the intersection. */
-  glm::vec3 n; /**< The normal at intersection point */
-  glm::vec3 p; /**< The point at intersection */
+  I_Object3D *obj = nullptr; /**< The intersected object. If does not intersect,
+                                this field is nullptr */
+  double lambda = 0.0;       /**< Distance to the intersection. */
+  glm::vec3 n;               /**< The normal at intersection point */
+  glm::vec3 p;               /**< The point at intersection */
   double u = 0.0, v = 0.0; /**< UV-coordinates for texture and other mappings */
 };
 
@@ -109,7 +108,7 @@ public:
     return {.m_origin = m_Tinv * ray.m_origin, .m_dir = m_Tinv * ray.m_dir};
   }
 
-  [[nodiscard]] Intersection Intersect(const Ray3D& ray) {
+  [[nodiscard]] Intersection Intersect(const Ray3D &ray) {
     // Convert ray
     Ray3D ray_m = W2M_Ray(ray);
 
@@ -141,4 +140,20 @@ protected:
    * @sa Ray3D
    */
   [[nodiscard]] virtual Intersection IntersectCanonical(const Ray3D &ray) = 0;
+
+public:
+  glm::vec3 m_color;
+  struct {
+    struct {
+      float ra; /**< Ambient light albedo */
+      float rd; /**< Diffuse component albedo */
+      float rs; /**< Specular component albedo */
+      float rg; /**< Global component albedo */
+      float rt; /**< Refraction component albedo */
+    } m_albedo; /**< Albedo properties */
+
+    float alpha; /**< Opacity */
+    float r_index; /**< Refraction index */
+    float shinyness; /**< idk... */
+  } m_material; /**< Phong material of the object */
 };

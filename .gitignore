@@ -3,24 +3,24 @@
 **/*.swp
 
 # VS
-/.vs
-/.vscode
+.vs/
+.vscode/
 
 # vcpkg
-/vcpkg_installed
+vcpkg_installed/
 
 # generated
-**/x64
-**/x86
-/lib
-/CMakeFiles
+**/x64/
+**/x86/
+lib/
+CMakeFiles/
 CMakeCache.txt
 CMakeUserPresets.json
 
 # build
-/build
-/out
-/install
+build/
+out/
+install/
 
 # imgui
 **/imgui.ini
@@ -28,4 +28,6 @@ CMakeUserPresets.json
 # cache
 .cache/
 
+# my favourite
 compile_commands.json
+perf.data*

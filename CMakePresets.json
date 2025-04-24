@@ -18,6 +18,14 @@
         "CMAKE_CXX_COMPILER": "clang++",
         "CMAKE_EXPORT_COMPILE_COMMANDS": true
       }
+    },
+    {
+      "name": "debug",
+      "inherits": "ninja-vcpkg",
+      "cacheVariables": {
+        "CMAKE_C_FLAGS": "-g",
+        "CMAKE_CXX_FLAGS": "-g"
+      }
     }
   ],
   "buildPresets": [
@@ -37,6 +45,14 @@
       "name": "build-main",
       "displayName": "Build main executable with Ninja",
       "inherits": "build-base",
+      "targets": [
+        "main"
+      ]
+    },
+    {
+      "name": "build-deb",
+      "displayName": "Build with -g flag",
+      "configurePreset": "debug",
       "targets": [
         "main"
       ]

@@ -26,6 +26,8 @@ void CPU_RayTracer::SetupObjects(
     if (std::shared_ptr<I_RTObject> ptr =
             std::dynamic_pointer_cast<I_RTObject>(obj)) {
       obj->Finalize();
+
+      // TODO: Check if the object is a light source
       m_objs.push_back(ptr);
     }
   }
@@ -94,12 +96,13 @@ glm::vec3 CPU_RayTracer::TraceRay(const Ray3D &ray, int depth,
                                   std::shared_ptr<I_Object3D> Os) {
   for (auto obj : m_objs) {
     auto in = obj->Intersect(ray);
+
     if (in.obj)
       // return glm::vec3(in.lambda);
       return (in.n + glm::vec3(1.0f)) / 2.0f;
   }
 
-  return {0.0f, 0.0f, 0.0f};
+  return m_bgColor;
 }
 
 void CPU_RayTracer::OnFrameBufferSize(int width, int height) {

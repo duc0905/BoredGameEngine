@@ -31,7 +31,7 @@ private:
   float m_du, m_dv;
   float m_sx, m_sy;
   float m_left_c, m_bottom_c;
-  glm::vec3 m_bgColor;
+  glm::vec3 m_bgColor = glm::vec3{0.2f, 0.4f, 0.1f};
 
   int m_width, m_height; /**< size of the framebuffer */
 
