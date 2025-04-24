@@ -1,9 +1,13 @@
 #pragma once
 #include "Input.hpp"
 #include <glad/glad.h>
-#include <glfw/glfw3.h>
+// Ehhhhh works on Arch with capitalized
+#include <GLFW/glfw3.h>
+// Works on windows with lowercase
+// #include <glfw/glfw3.h>
 
-#include <functional>
+#include "../Renderer/Shader/Shader.hpp"
+#include "../Renderer/Texture/OGL_Texture.hpp"
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/scalar_constants.hpp>
 #include <glm/glm.hpp>
@@ -23,24 +27,37 @@ public:
    */
   Window(const int &w, const int &h);
 
-  ~Window() {
-    // Cleanup code here
-    glfwDestroyWindow(m_window);
-    glfwTerminate();
-  }
+  ~Window();
 
   /**
-   * Run the game-loop
-   */
-  void Run();
-
-private:
-  /**
-   * This function is called in the game-loop.
+   * Check the state of the window.
    *
-   * Renders the scene.
+   * @return true if the window should be closed.
    */
-  void Render();
+  bool ShouldStop() const;
+
+  /**
+   * Render the texture to the whole window.
+   *
+   * @note Should only be called once per frame.
+   *
+   * @param texture The texture the be rendered to the whole screen.
+   *
+   * @sa I_Renderer3D
+   */
+  void Render(I_Texture2D *texture);
+
+  /**
+   * Wait for any event to occur to save resources.
+   *
+   * @param timeout Maximum amount of time to wait in seconds.
+   */
+  void WaitEvents(float timeout) const;
+
+  /**
+   * Poll for window events.
+   */
+  void PollEvents() const;
 
 private: // Callback handler functions
   static void KeyCallback(GLFWwindow *window, int key, int scancode, int action,
@@ -75,6 +92,11 @@ private:
 private: // Input section
   Input m_input;
   GLFWkeyfun m_prevKeyCallback = nullptr;
+
+private:
+  std::unique_ptr<OGL_Texture2D> m_renderTexture;
+  std::unique_ptr<Shader> m_screenShader;
+  GLuint m_screenVao;
 
 private:
   bool m_debug = true;

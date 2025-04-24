@@ -70,7 +70,7 @@ public:
    *
    * Copy the content of another CPU_Texture2D.
    */
-  OGL_Texture2D(const CPU_Texture2D &other) : OGL_Texture2D() {
+  OGL_Texture2D(const I_Texture2D &other) : OGL_Texture2D() {
     WriteData(other.GetData(), other.GetSize(), other.GetBPP());
   }
 
@@ -173,19 +173,23 @@ public:
           "[Error]: Size of data is not equals to width * height * bpp");
     }
 
-    GLenum format;
+    GLenum format, internalFormat;
     switch (bpp) {
     case 1:
       format = GL_RED;
+      internalFormat = GL_R8;
       break;
     case 2:
       format = GL_RG;
+      internalFormat = GL_RG8;
       break;
     case 3:
       format = GL_RGB;
+      internalFormat = GL_RGB8;
       break;
     case 4:
       format = GL_RGBA;
+      internalFormat = GL_RGBA8;
       break;
     default:
       throw std::runtime_error("bpp can only be 1, 2, 3, or 4.");
@@ -197,6 +201,6 @@ public:
     glBindTexture(GL_TEXTURE_2D, 0);
   }
 
-private:
+public:
   GLuint m_texId;
 };

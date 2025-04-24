@@ -1,9 +1,9 @@
 #include "Window.hpp"
 
 #include <GLFW/glfw3.h>
-
 #include <chrono>
 #include <iostream>
+#include <memory>
 #include <stdexcept>
 
 Window::Window(const int &w, const int &h) : m_width(w), m_height(h) {
@@ -70,43 +70,115 @@ Window::Window(const int &w, const int &h) : m_width(w), m_height(h) {
     }
   }
 
-  m_input.m_keyToAction.insert({{GLFW_KEY_A, GLFW_PRESS, 0}, "press-a"});
-  m_input.m_keyToAction.insert({{GLFW_KEY_A, GLFW_REPEAT, 0}, "press-a"});
-  m_input.m_keyToAction.insert({{GLFW_KEY_A, GLFW_RELEASE, 0}, "rel-a"});
+  // Use byte alignment
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+  // Create a VAO for rendering the texture covers the whole screen
+  GLuint VBO, EBO;
+  // clang-format off
+  float vertices[] = {
+      // Position               UV
+      -0.8f, -0.8f, 0.0f, 1.0f, 0.0f, 0.0f,
+      -0.8f,  0.8f, 0.0f, 1.0f, 0.0f, 1.0f,
+       0.8f,  0.8f, 0.0f, 1.0f, 1.0f, 1.0f,
+       0.8f, -0.8f, 0.0f, 1.0f, 1.0f, 0.0f,
+  };
+  // clang-format on
+  unsigned int indices[] = {0, 1, 2, 0, 2, 3};
+
+  glGenVertexArrays(1, &m_screenVao);
+  glGenBuffers(1, &VBO);
+  glGenBuffers(1, &EBO);
+
+  glBindVertexArray(m_screenVao);
+  glBindBuffer(GL_ARRAY_BUFFER, VBO);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+  // Position
+  glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
+  glEnableVertexAttribArray(0);
+  // UV
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
+                        (void *)(4 * sizeof(float)));
+  glEnableVertexAttribArray(1);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,
+               GL_STATIC_DRAW);
+
+  glBindVertexArray(0);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+  m_renderTexture = std::make_unique<OGL_Texture2D>();
+  m_screenShader = std::make_unique<Shader>("res/shaders/simple.vert",
+                                            "res/shaders/simple_texture.frag");
 }
 
-void Window::Run() {
-  std::chrono::steady_clock::time_point prev = std::chrono::steady_clock::now();
+Window::~Window() {
+  // Cleanup code here
+  glfwDestroyWindow(m_window);
+  glfwTerminate();
+}
 
-  // Main loop
-  while (!glfwWindowShouldClose(m_window)) {
-    std::chrono::steady_clock::time_point now =
-        std::chrono::steady_clock::now();
+bool Window::ShouldStop() const { return glfwWindowShouldClose(m_window); }
 
-    // Elapsed time since last frame in milisecond
-    long long dt =
-        std::chrono::duration_cast<std::chrono::milliseconds>(now - prev)
-            .count();
+// void Window::Run() {
+//   std::chrono::steady_clock::time_point prev =
+//   std::chrono::steady_clock::now();
+//
+//   // Main loop
+//   while (!glfwWindowShouldClose(m_window)) {
+//     std::chrono::steady_clock::time_point now =
+//         std::chrono::steady_clock::now();
+//
+//     // Elapsed time since last frame in milisecond
+//     long long dt =
+//         std::chrono::duration_cast<std::chrono::milliseconds>(now - prev)
+//             .count();
+//
+//     if (dt >= 160) { // 6 FPS
+//       // Render here
+//       glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set clear color to black
+//       glClear(GL_COLOR_BUFFER_BIT);         // Clear the color buffer
+//
+//       Render();
+//
+//       glfwSwapBuffers(m_window); // Swap front and back buffers
+//
+//       prev = now;
+//     }
+//
+//     // Wait for atmost 2 seconds
+//     glfwWaitEventsTimeout(2.0f); // Poll for and process events
+//   }
+// }
 
-    if (dt >= 160) { // 6 FPS
-      // Render here
-      glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set clear color to black
-      glClear(GL_COLOR_BUFFER_BIT);         // Clear the color buffer
+void Window::Render(I_Texture2D *texture) {
+  glClear(GL_COLOR_BUFFER_BIT);
 
-      Render();
-
-      glfwSwapBuffers(m_window); // Swap front and back buffers
-
-      prev = now;
-    }
-
-    // Wait for atmost 2 seconds
-    glfwWaitEventsTimeout(2.0f); // Poll for and process events
+  if (!texture) {
+    return;
   }
+
+  m_renderTexture->WriteData(texture->GetData(), texture->GetSize(),
+                             texture->GetBPP());
+
+  m_screenShader->Use();
+  glBindTexture(GL_TEXTURE_2D, m_renderTexture->m_texId);
+  glBindVertexArray(m_screenVao);
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+  glfwSwapBuffers(m_window); // Swap front and back buffers
 }
 
-void Window::Render() {
-  
+void Window::WaitEvents(float timeout) const {
+  glfwWaitEventsTimeout(timeout);
+}
+
+
+void Window::PollEvents() const {
+  glfwPollEvents();
 }
 
 void Window::HandleDebugMessage(GLenum source, GLenum type, unsigned int id,
@@ -220,6 +292,8 @@ void Window::HandleFrameBufferSize(int width, int height) {
 
   // Reset the opengl viewport with the new dimension
   glViewport(0, 0, width, height);
+
+  // TODO: Reset our renderer with the new dimensions
 }
 
 void Window::HandleGLFWError(int error, const char *description) {

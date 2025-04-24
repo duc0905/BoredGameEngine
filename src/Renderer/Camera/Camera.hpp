@@ -1,7 +1,10 @@
 #pragma once
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>
+#include <glm/ext/scalar_constants.hpp>
+#include <glm/geometric.hpp>
 #include <glm/glm.hpp>
+#include <glm/trigonometric.hpp>
 #include <memory>
 
 /**
@@ -11,6 +14,14 @@
  */
 class View {
 public:
+  /**
+   * Default constructor.
+   *
+   * Use default position at (0, -3, 0), looking direction is (0, 1, 0) -
+   * y-axis, and up is (0, 0, 1) - z-axis.
+   */
+  View() : View({0.0f, -3.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}) {}
+
   /**
    * Full constructor for View.
    *
@@ -24,21 +35,48 @@ public:
    *
    */
   View(const glm::vec3 &pos, const glm::vec3 &dir, const glm::vec3 &up)
-      : m_pos(pos), m_dir(dir), m_up(up) {}
+      : m_pos(pos), m_dir(dir), m_up(up) {
+    glm::vec3 u, v, w;
+
+    // Camera axis
+    w = glm::normalize(-1.0f * dir);
+    u = glm::cross(w, glm::normalize(up));
+    v = glm::cross(u, w);
+
+    // Coord matrices
+    m_C2W[0] = glm::vec4(u, 0.0f);
+    m_C2W[1] = glm::vec4(v, 0.0f);
+    m_C2W[2] = glm::vec4(w, 0.0f);
+    m_C2W[3] = glm::vec4(pos, 1.0f);
+
+    m_W2C[0] = glm::vec4(u.x, v.x, w.x, 0.0f);
+    m_W2C[1] = glm::vec4(u.y, v.y, w.y, 0.0f);
+    m_W2C[2] = glm::vec4(u.z, v.z, w.z, 0.0f);
+    m_W2C[3] = glm::vec4(-glm::dot(u, pos), -glm::dot(v, pos),
+                         -glm::dot(w, pos), 1.0f);
+  }
 
   /**
    * Get view matrix.
    *
    * Get a 4x4 matrix for converting world coordinates to camera coordinates.
    */
-  [[nodiscard]] glm::mat4 GetViewMatrix() const {
-    return glm::lookAt(m_pos, m_pos + m_dir, m_up);
-  }
+  [[nodiscard]] glm::mat4 GetViewMatrix() const { return m_W2C; }
 
-private:
+  /**
+   * Get camera to world matrix.
+   *
+   * Get a 4x4 matrix for converting camera coordinates to world coordinates.
+   */
+  [[nodiscard]] glm::mat4 GetC2WMatrix() const { return m_C2W; }
+
+public:
   glm::vec3 m_pos; /**< Camera position */
   glm::vec3 m_dir; /**< Camera view direction */
   glm::vec3 m_up;  /**< Camera up vector */
+
+  glm::mat4 m_W2C;
+  glm::mat4 m_C2W;
 };
 
 /**
@@ -49,6 +87,8 @@ private:
  */
 class Projector {
 public:
+  Projector(float width, float height) : m_width(width), m_height(height) {}
+
   virtual ~Projector() {}
 
   /**
@@ -60,6 +100,10 @@ public:
    * @return glm::mat4 the projection-matrix
    */
   [[nodiscard]] virtual glm::mat4 GetProjectionMatrix() const = 0;
+
+public:
+  int m_width;  /**< Width image plane in number of pixels */
+  int m_height; /**< Height of the image plane in number of pixels */
 };
 
 /**
@@ -72,23 +116,23 @@ public:
    *
    * Has all the options for constructing Orthographic.
    *
-   * @param left left-bound for the projection plane.
+   * @param left left-bound for the projection plane in world coordinates.
    *
-   * @param right right-bound for the projection plane.
+   * @param right right-bound for the projection plane in world coordinates.
    *
-   * @param bottom bottom-bound for the projection plane.
+   * @param bottom bottom-bound for the projection plane in world coordinates.
    *
-   * @param top top-bound for the projection plane.
+   * @param top top-bound for the projection plane in world coordinates.
    *
-   * @param near near-bound for the projection plane.
+   * @param near near-bound for the projection plane in world coordinates.
    *
-   * @param far far-bound for the projection plane.
+   * @param far far-bound for the projection plane in world coordinates.
    *
    */
   Orthographic(float left, float right, float bottom, float top, float near,
                float far)
-      : m_left(left), m_right(right), m_bottom(bottom), m_top(top),
-        m_near(near), m_far(far) {}
+      : Projector(right - left, top - bottom), m_left(left), m_right(right),
+        m_bottom(bottom), m_top(top), m_near(near), m_far(far) {}
 
   /**
    * Get projection matrix.
@@ -117,6 +161,13 @@ private:
 class Perspective : public Projector {
 public:
   /**
+   * Default constructor.
+   *
+   * Use FOV = pi/2, width = height = 600.0f, and near = 1.0f.
+   */
+  Perspective() : Perspective(glm::pi<float>() / 2, 600.0f, 600.0f, 1.0f) {}
+
+  /**
    * Full constructor for Perspective.
    *
    * Has all the options for constructing Orthographic.
@@ -131,7 +182,8 @@ public:
    *
    */
   Perspective(float fov, float width, float height, float near)
-      : m_fov(fov), m_aspect(width / height), m_near(near) {}
+      : Projector(width, height), m_fov(fov), m_aspect(width / height),
+        m_near(near) {}
 
   /**
    * Get projection matrix.
@@ -145,10 +197,41 @@ public:
     return glm::infinitePerspective(m_fov, m_aspect, m_near);
   }
 
-private:
-  float m_fov; /**< Field of view of the camera */
+  /**
+   * Helper function to get focal length given fov and sensor width.
+   *
+   * @param fov The field of view in radians.
+   *
+   * @param d The sensor width.
+   * @note Be consistent with the unit for d and f with other parts of your
+   * code.
+   * @sa GetFOV
+   */
+  [[nodiscard]] static float GetFocalLength(float fov, float d) {
+    return d / (2.0f * glm::tan(fov / 2.0f));
+  }
+
+  /**
+   * Helper function to get fov given focal length and sensor width.
+   *
+   * @param f The focal length.
+   *
+   * @param d The sensor width.
+   *
+   * @note d and f should be using the same length unit.
+   * @note Be consistent with the unit for d and f with other parts of your
+   * code.
+   * @sa GetFocalLength
+   */
+  [[nodiscard]] static float GetFOV(float f, float d) {
+    return 2.0f * glm::atan(d / (2.0f * f));
+  }
+
+public:
+  float m_f;      /**< Focal length */
+  float m_fov;    /**< Field of view of the camera */
   float m_aspect; /**< Aspect ratio of the image plane (width/height) */
-  float m_near; /**< Near bound to clip */
+  float m_near;   /**< Near bound to clip */
 };
 
 /**
@@ -158,6 +241,13 @@ private:
  */
 class Camera {
 public:
+  /**
+   * Default constructor.
+   *
+   * Use default View and default Perspective.
+   */
+  Camera() : Camera(new View(), new Perspective()) {}
+
   /**
    * Full constructor for Camera
    *
@@ -170,14 +260,15 @@ public:
   /**
    * Get the view-projection matrix.
    *
-   * Combine the view and projection matrix from the camera's View and Projector.
+   * Combine the view and projection matrix from the camera's View and
+   * Projector.
    *
    */
   [[nodiscard]] glm::mat4 GetViewProjectionMatrix() const {
     return m_proj->GetProjectionMatrix() * m_view->GetViewMatrix();
   }
 
-protected:
+public:
   std::unique_ptr<View> m_view;
   std::unique_ptr<Projector> m_proj;
 };

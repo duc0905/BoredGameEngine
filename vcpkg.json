@@ -7,7 +7,12 @@
         "gl-api-latest"
       ]
     },
-    "glfw3",
+    {
+      "name": "glfw3",
+      "features": [
+        "wayland"
+      ]
+    },
     "glm",
     "gtest"
   ]

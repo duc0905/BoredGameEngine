@@ -1,13 +1,10 @@
 #pragma once
 #include <glad/glad.h>
-#include <glfw/glfw3.h>
+#include <GLFW/glfw3.h>
 
-#include <fstream>
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <iostream>
-#include <sstream>
 #include <string>
 
 class Shader {
