@@ -46,7 +46,7 @@ public:
    *
    * @sa I_Renderer3D
    */
-  void Render(I_Texture2D *texture);
+  void Render(std::shared_ptr<I_Texture2D> texture);
 
   /**
    * Wait for any event to occur to save resources.

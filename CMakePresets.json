@@ -7,7 +7,7 @@
   },
   "configurePresets": [
     {
-      "name": "ninja-vcpkg",
+      "name": "base",
       "binaryDir": "${sourceDir}/build/${presetName}",
       "installDir": "${sourceDir}/install/${presetName}",
       "generator": "Ninja",
@@ -21,7 +21,7 @@
     },
     {
       "name": "debug",
-      "inherits": "ninja-vcpkg",
+      "inherits": "base",
       "cacheVariables": {
         "CMAKE_C_FLAGS": "-g",
         "CMAKE_CXX_FLAGS": "-g"
@@ -32,7 +32,7 @@
     {
       "name": "build-base",
       "displayName": "Build with ninja",
-      "configurePreset": "ninja-vcpkg",
+      "configurePreset": "base",
       "hidden": true,
       "verbose": true
     },
@@ -62,7 +62,7 @@
     {
       "name": "test",
       "displayName": "Test everything with Ninja",
-      "configurePreset": "ninja-vcpkg",
+      "configurePreset": "base",
       "output": {
         "outputOnFailure": true
       },

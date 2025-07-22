@@ -79,10 +79,10 @@ Window::Window(const int &w, const int &h) : m_width(w), m_height(h) {
   // clang-format off
   float vertices[] = {
       // Position               UV
-      -0.8f, -0.8f, 0.0f, 1.0f, 0.0f, 0.0f,
-      -0.8f,  0.8f, 0.0f, 1.0f, 0.0f, 1.0f,
-       0.8f,  0.8f, 0.0f, 1.0f, 1.0f, 1.0f,
-       0.8f, -0.8f, 0.0f, 1.0f, 1.0f, 0.0f,
+      -0.8f, -0.8f, 0.2f, 1.0f, 0.0f, 0.0f,
+      -0.8f,  0.8f, 0.2f, 1.0f, 0.0f, 1.0f,
+       0.8f,  0.8f, 0.2f, 1.0f, 1.0f, 1.0f,
+       0.8f, -0.8f, 0.2f, 1.0f, 1.0f, 0.0f,
   };
   // clang-format on
   unsigned int indices[] = {0, 1, 2, 0, 2, 3};
@@ -155,8 +155,9 @@ bool Window::ShouldStop() const { return glfwWindowShouldClose(m_window); }
 //   }
 // }
 
-void Window::Render(I_Texture2D *texture) {
-  glClear(GL_COLOR_BUFFER_BIT);
+void Window::Render(std::shared_ptr<I_Texture2D> texture) {
+  glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   if (!texture) {
     return;

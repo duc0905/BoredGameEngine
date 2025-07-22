@@ -23,7 +23,7 @@ public:
   /**
    * Interface function responsible for rendering the scene.
    */
-  virtual std::unique_ptr<I_Texture2D> Render() = 0;
+  virtual std::shared_ptr<I_Texture2D> Render() = 0;
 
 public:
   Camera m_camera; /**< The camera from which to render the scene */

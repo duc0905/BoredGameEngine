@@ -1,8 +1,8 @@
-#include "Renderer/CPU/RayTracer.hpp"
 #include "Renderer/Camera/Camera.hpp"
 #include "Renderer/I_Object.hpp"
-#include "Renderer/Objects/Sphere.hpp"
+#include "Renderer/OGL/Renderer.hpp"
 #include "Window/Window.hpp"
+#include <algorithm>
 #include <chrono>
 #include <glm/ext/scalar_constants.hpp>
 #include <memory>
@@ -16,60 +16,45 @@ const unsigned int SCR_HEIGHT = 600;
 
 int main() {
   Window window(SCR_WIDTH, SCR_HEIGHT);
-  CPU_RayTracer renderer(
-      Camera(
-          new View({0.0f, 0.0f, -3.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f}),
-          new Perspective(Perspective::GetFOV(1.0f, 2.0f), SCR_WIDTH,
-                          SCR_HEIGHT, 1.0f)),
+  OGL::Renderer renderer(
+      Camera(new View({0.0f, 2.0f, 4.0f},
+                      glm::normalize(glm::vec3{0.0f, -1.0f, -2.0f}),
+                      {0.0f, 1.0f, 0.0f}),
+             new Perspective(Perspective::GetFOV(1.0f, 2.0f), SCR_WIDTH,
+                             SCR_HEIGHT, 1.0f)),
       SCR_WIDTH, SCR_HEIGHT);
   window.AddFrameBufferSizeListener(&renderer);
 
-  // Do the pre running setup
-
+  // Scene setup
   std::vector<std::shared_ptr<I_Object3D>> objects;
 
-  std::shared_ptr<Sphere> sphere;
+  std::shared_ptr<OGL::ArrayMesh> mesh;
+  // std::vector<glm::vec3> pos = {
+  //     {-1.0f, -1.0f, 0.0f}, {1.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}};
+  // std::vector<glm::vec2> uvs = {{0.0f, 0.0f}, {1.0f, 0.0f}, {0.5f, 1.0f}};
+  // std::vector<glm::vec3> norms = {
+  //     {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}};
+  // std::vector<uint32_t> indices = {0, 1, 2};
+  // mesh->SubData(pos, uvs, norms, indices);
+  // mesh->Scale({2.0f, 1.0f, 1.0f});
+  // mesh->Translate({-2.0f, -1.0f, 0.0f});
 
-  sphere = std::make_shared<Sphere>();
-  sphere->Scale({1.0f, 3.0f, 1.0f})
-      .RotateZ(glm::pi<float>() / 6.0f)
-      .Translate({1.0f, -1.0f, 3.0f});
-  objects.push_back(sphere);
+  try {
+    mesh = OGL::LoadModel("res/models/kitchentable_sink_large_decorated.gltf");
+    objects.push_back(mesh);
 
-  // for (int i = 0; i < 5; i++) {
-  //   for (int j = 0; j < 5; j++) {
-  //     sphere = std::make_shared<Sphere>();
-  //     sphere->Scale({0.1f, 0.1f, 0.1f})
-  //         .Translate({-4.0f + i * 1.6f, -4.0f + j * 1.6f, 5.0f});
-  //     objects.push_back(sphere);
-  //   }
-  // }
-  // sphere->Scale({0.3f, 0.3f, 0.3f}).Translate({1.0f, 1.0f, 1.0f});
-  // objects.push_back(sphere);
-  //
-  // sphere = std::make_shared<Sphere>();
-  // sphere->Scale({0.4f, 0.4f, 0.4f}).Translate({-2.0f, -1.0f, 3.0f});
-  // objects.push_back(sphere);
+    mesh = OGL::LoadModel("res/models/chair_A.gltf");
+    mesh->Translate({3.5f, -0.5f, 0.0f});
+    objects.push_back(mesh);
+
+    mesh = OGL::LoadModel("res/models/cube.gltf");
+    mesh->Translate({-3.5f, -0.5f, 0.5f});
+    objects.push_back(mesh);
+  } catch (std::exception &e) {
+    std::cerr << e.what() << std::endl;
+  }
 
   renderer.SetupObjects(objects);
-  std::cout << "sphere matrix: " << std::endl;
-  for (int i = 0; i < 4; i++) {
-    for (int j = 0; j < 4; j++) {
-      std::cout << sphere->m_T[j][i] << " ";
-    }
-    std::cout << std::endl;
-  }
-
-  std::cout << "sphere inv matrix: " << std::endl;
-  for (int i = 0; i < 4; i++) {
-    for (int j = 0; j < 4; j++) {
-      std::cout << sphere->m_Tinv[j][i] << " ";
-    }
-    std::cout << std::endl;
-  }
-
-  glm::vec4 p = sphere->m_Tinv * glm::vec4{0.0f, 0.0f, -35.0f, 1.0f};
-  std::cout << "p: (" << p.x << ", " << p.y << ", " << p.z << ")" << std::endl;
 
   bool running = true;
   std::chrono::steady_clock::time_point prev = std::chrono::steady_clock::now();
@@ -83,16 +68,20 @@ int main() {
         std::chrono::duration_cast<std::chrono::milliseconds>(now - prev)
             .count();
 
-    if (dt >= 2.0f) { // 0.5 FPS
-                      // Render here
+    // mesh->RotateY(glm::pi<float>() * dt / 1000.0f / 6.0f);
+
+    if (dt >= 1000.0f / 30.0f) {
+      // Render here
       auto tex = renderer.Render();
-      window.Render(tex.get());
+      window.Render(tex);
 
       prev = now;
     }
 
+    running &= !window.ShouldStop();
+
     // Wait for events for at most 2 seconds
-    window.WaitEvents(2.0f);
+    window.WaitEvents(0.16f);
   }
 
   return 0;

@@ -8,7 +8,7 @@
  */
 class I_Texture2D {
 public:
-  virtual ~I_Texture2D() {}
+  virtual ~I_Texture2D() = default;
 
   /**
    * Get the BPP - Bytes per pixel of the image.

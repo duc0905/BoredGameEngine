@@ -1,6 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
   "dependencies": [
+    "assimp",
     {
       "name": "glad",
       "features": [
@@ -8,10 +9,7 @@
       ]
     },
     {
-      "name": "glfw3",
-      "features": [
-        "wayland"
-      ]
+      "name": "glfw3"
     },
     "glm",
     "gtest"

@@ -1,9 +1,8 @@
 ﻿cmake_minimum_required(VERSION 3.25)
 
-# TODO: change project name, version number, and description
-project(my-project
-	VERSION 1.0.0
-	DESCRIPTION "A simple CMake project template for developing C++ applications"
+project(BoredGameEngine
+	VERSION 0.0.0
+	DESCRIPTION "Simple Game Engine"
 )
 
 set(CMAKE_CXX_STANDARD 20)
