@@ -6,81 +6,9 @@
 #include <glm/glm.hpp>
 #include <glm/trigonometric.hpp>
 #include <memory>
+#include "../ECS/Node.hpp"
 
 namespace Bored {
-/**
- * This class generates the view-matrices.
- *
- * View-matrices are used to convert world coordinates to camera coordinates.
- */
-class View {
-public:
-  /**
-   * Default constructor.
-   *
-   * Use default position at (0, -3, 0), looking direction is (0, 1, 0) -
-   * y-axis, and up is (0, 0, 1) - z-axis.
-   */
-  View() : View({0.0f, -3.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}) {}
-
-  /**
-   * Full constructor for View.
-   *
-   * Has all the options for constructing View.
-   *
-   * @param pos position of the camera in world coordinates.
-   *
-   * @param dir view direction of the camera.
-   *
-   * @param up the up vector of the camera.
-   *
-   */
-  // TODO: Move some of this into Camera and use its transform
-  View(const glm::vec3 &pos, const glm::vec3 &dir, const glm::vec3 &up)
-      : m_pos(pos), m_dir(dir), m_up(up) {
-    glm::vec3 u, v, w;
-
-    // Camera axis
-    w = glm::normalize(-1.0f * dir);
-    u = glm::cross(w, glm::normalize(up));
-    v = glm::cross(u, w);
-
-    // Coord matrices
-    m_C2W[0] = glm::vec4(u, 0.0f);
-    m_C2W[1] = glm::vec4(v, 0.0f);
-    m_C2W[2] = glm::vec4(w, 0.0f);
-    m_C2W[3] = glm::vec4(pos, 1.0f);
-
-    m_W2C[0] = glm::vec4(u.x, v.x, w.x, 0.0f);
-    m_W2C[1] = glm::vec4(u.y, v.y, w.y, 0.0f);
-    m_W2C[2] = glm::vec4(u.z, v.z, w.z, 0.0f);
-    m_W2C[3] = glm::vec4(-glm::dot(u, pos), -glm::dot(v, pos),
-                         -glm::dot(w, pos), 1.0f);
-  }
-
-  /**
-   * Get view matrix.
-   *
-   * Get a 4x4 matrix for converting world coordinates to camera coordinates.
-   */
-  [[nodiscard]] glm::mat4 GetViewMatrix() const { return m_W2C; }
-
-  /**
-   * Get camera to world matrix.
-   *
-   * Get a 4x4 matrix for converting camera coordinates to world coordinates.
-   */
-  [[nodiscard]] glm::mat4 GetC2WMatrix() const { return m_C2W; }
-
-public:
-  glm::vec3 m_pos; /**< Camera position */
-  glm::vec3 m_dir; /**< Camera view direction */
-  glm::vec3 m_up;  /**< Camera up vector */
-
-  glm::mat4 m_W2C;
-  glm::mat4 m_C2W;
-};
-
 /**
  * This class generates the projection-matrices.
  *
@@ -233,7 +161,7 @@ public:
  *
  * Contains a View and a Projector to abstract the concept of a camera.
  */
-class Camera {
+class Camera : public Node {
 public:
   /**
    * Default constructor.
@@ -251,6 +179,10 @@ public:
    */
   Camera(View *view, Projector *proj) : m_view(view), m_proj(proj) {}
 
+  [[nodiscard]] glm::mat4 GetViewMatrix() const {
+    return glm::inverse(transform.GetTransformMatrix());
+  }
+
   /**
    * Get the view-projection matrix.
    *
@@ -259,11 +191,10 @@ public:
    *
    */
   [[nodiscard]] glm::mat4 GetViewProjectionMatrix() const {
-    return m_proj->GetProjectionMatrix() * m_view->GetViewMatrix();
+    return m_proj->GetProjectionMatrix() * GetViewMatrix();
   }
 
 public:
-  std::unique_ptr<View> m_view;
   std::unique_ptr<Projector> m_proj;
 };
 
