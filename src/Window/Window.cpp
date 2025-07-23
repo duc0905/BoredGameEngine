@@ -20,6 +20,8 @@ Window::Window(const int &w, const int &h) : m_width(w), m_height(h) {
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
   }
 
+  glfwWindowHint(GLFW_SAMPLES, 4);
+
   // Create a windowed mode window and its OpenGL context
   m_window = glfwCreateWindow(m_width, m_height, "OpenGL Window", NULL, NULL);
   if (!m_window) {
@@ -70,6 +72,9 @@ Window::Window(const int &w, const int &h) : m_width(w), m_height(h) {
                             nullptr, GL_TRUE);
     }
   }
+
+  // Enable anti-aliasing
+  glEnable(GL_MULTISAMPLE);
 
   // Use byte alignment
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);

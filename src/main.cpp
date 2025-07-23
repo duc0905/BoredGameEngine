@@ -11,14 +11,14 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
 
 // settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 1200;
+const unsigned int SCR_HEIGHT = 800;
 
 int main() {
   Window window(SCR_WIDTH, SCR_HEIGHT);
   OGL::Renderer renderer(
-      Camera(new View({0.0f, 2.0f, 4.0f},
-                      glm::normalize(glm::vec3{0.0f, -1.0f, -2.0f}),
+      Camera(new View({0.0f, 2.0f, -4.0f},
+                      glm::normalize(glm::vec3{0.0f, -1.0f, 2.0f}),
                       {0.0f, 1.0f, 0.0f}),
              new Perspective(Perspective::GetFOV(1.0f, 2.0f), SCR_WIDTH,
                              SCR_HEIGHT, 1.0f)),
@@ -29,16 +29,22 @@ int main() {
   std::vector<std::shared_ptr<I_Object3D>> objects;
 
   std::shared_ptr<OGL::ArrayMesh> mesh;
-  // std::vector<glm::vec3> pos = {
-  //     {-1.0f, -1.0f, 0.0f}, {1.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}};
-  // std::vector<glm::vec2> uvs = {{0.0f, 0.0f}, {1.0f, 0.0f}, {0.5f, 1.0f}};
-  // std::vector<glm::vec3> norms = {
-  //     {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}};
-  // std::vector<uint32_t> indices = {0, 1, 2};
-  // mesh->SubData(pos, uvs, norms, indices);
-  // mesh->Scale({2.0f, 1.0f, 1.0f});
-  // mesh->Translate({-2.0f, -1.0f, 0.0f});
 
+  // Loading mesh from memory
+  std::vector<glm::vec3> pos = {
+      {-1.0f, -1.0f, 0.0f}, {1.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}};
+  std::vector<glm::vec2> uvs = {{0.0f, 0.0f}, {1.0f, 0.0f}, {0.5f, 1.0f}};
+  std::vector<glm::vec3> norms = {
+      {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}};
+  std::vector<uint32_t> indices = {0, 1, 2};
+  mesh = std::make_shared<OGL::ArrayMesh>();
+  mesh->SubData(pos, uvs, norms, indices);
+  mesh->Scale({2.0f, 1.0f, 1.0f})
+      .Translate({1.0f, -1.8f, -1.0f})
+      .RotateX(glm::pi<float>() * 0.3f);
+  objects.push_back(mesh);
+
+  // Loading mesh from files
   try {
     mesh = OGL::LoadModel("res/models/kitchentable_sink_large_decorated.gltf");
     objects.push_back(mesh);
@@ -70,7 +76,7 @@ int main() {
 
     // mesh->RotateY(glm::pi<float>() * dt / 1000.0f / 6.0f);
 
-    if (dt >= 1000.0f / 30.0f) {
+    if (dt >= 1000.0f / 60.0f) {
       // Render here
       auto tex = renderer.Render();
       window.Render(tex);
@@ -80,8 +86,7 @@ int main() {
 
     running &= !window.ShouldStop();
 
-    // Wait for events for at most 2 seconds
-    window.WaitEvents(0.16f);
+    window.WaitEvents(16.0f);
   }
 
   return 0;
