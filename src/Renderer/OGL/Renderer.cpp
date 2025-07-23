@@ -70,8 +70,8 @@ void Renderer::SetupObjects(
 
 std::shared_ptr<I_Texture2D> Renderer::Render() {
   glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-  glClearColor(0.2f, 0.3f, 0.1f, 1.0f);
   glViewport(0, 0, m_width, m_height);
+  glClearColor(m_bg.r, m_bg.g, m_bg.b, m_bg.a);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   for (auto obj : m_objs) {
@@ -88,6 +88,10 @@ std::shared_ptr<I_Texture2D> Renderer::Render() {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
   return m_colorTexture;
+}
+
+void Renderer::SetBackgroundColor(const glm::vec4 &color) {
+  m_bg = color;
 }
 
 void Renderer::OnFrameBufferSize(int width, int height) {

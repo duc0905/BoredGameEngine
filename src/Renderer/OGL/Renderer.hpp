@@ -59,11 +59,15 @@ public:
    * Inherits from FrameBufferSizeListener
    */
   virtual void OnFrameBufferSize(int width, int height) override;
+public:
+  void SetBackgroundColor(const glm::vec4& color);
 private:
   void ResizeColorBuffer(int width, int height);
   void ResizeDepthBuffer(int width, int height);
 
 private:
+  glm::vec4 m_bg = {0.1f, 0.2f, 0.05f, 1.0f};
+
   Camera m_camera;
   int m_width, m_height;
 
