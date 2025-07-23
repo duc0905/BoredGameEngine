@@ -7,7 +7,7 @@ namespace Bored {
 class ArrayMesh : public Node {
 public:
   ArrayMesh();
-  ~ArrayMesh();
+  virtual ~ArrayMesh();
 
   std::vector<glm::vec3> GetPositions() const;
   std::vector<glm::vec2> GetUVs() const;
@@ -20,6 +20,7 @@ public:
                const std::vector<uint32_t> &m_indices);
 
   std::shared_ptr<Shader> GetShader() const { return m_shader; }
+  void SetShader(std::shared_ptr<Shader> shader) { m_shader = shader; }
 
 protected:
   std::shared_ptr<Shader> m_shader;

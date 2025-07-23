@@ -4,7 +4,7 @@ in vec3 vNormal;
 in vec3 vPos;
 in vec2 vTexCoord;
 
-uniform vec3 uLightDir = vec3(0.3, -1.0, 0.6); // Directional light direction (world space)
+uniform vec3 uLightDir = vec3(-0.3, -1.0, -0.6); // Directional light direction (world space)
 uniform vec3 uLightColor = vec3(0.7);
 // uniform sampler2D uTexture;
 

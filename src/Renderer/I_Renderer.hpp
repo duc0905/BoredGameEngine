@@ -1,5 +1,5 @@
 #pragma once
-#include "Camera/Camera.hpp"
+#include "../ECS/Scene.hpp"
 #include "I_Object.hpp"
 #include "I_Texture.hpp"
 #include <vector>
@@ -21,10 +21,15 @@ public:
   SetupObjects(const std::vector<std::shared_ptr<I_Object3D>> &objects) {}
 
   /**
+   * This function is called once before any Render call.
+   *
+   * A renderer can implement this function to setup render data for the objects
+   * and implement any pre-rendering optimizations.
+   */
+  virtual void SetupObjects(std::shared_ptr<Bored::Scene> scene) {}
+
+  /**
    * Interface function responsible for rendering the scene.
    */
   virtual std::shared_ptr<I_Texture2D> Render() = 0;
-
-public:
-  Camera m_camera; /**< The camera from which to render the scene */
 };

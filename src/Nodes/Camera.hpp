@@ -1,4 +1,5 @@
 #pragma once
+#include "../ECS/Node.hpp"
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/scalar_constants.hpp>
@@ -6,7 +7,6 @@
 #include <glm/glm.hpp>
 #include <glm/trigonometric.hpp>
 #include <memory>
-#include "../ECS/Node.hpp"
 
 namespace Bored {
 /**
@@ -168,7 +168,7 @@ public:
    *
    * Use default View and default Perspective.
    */
-  Camera() : Camera(new View(), new Perspective()) {}
+  Camera() : Camera(new Perspective()) {}
 
   /**
    * Full constructor for Camera
@@ -177,7 +177,8 @@ public:
    *
    * @param proj Projector*
    */
-  Camera(View *view, Projector *proj) : m_view(view), m_proj(proj) {}
+  Camera(Projector *proj) : m_proj(proj) {}
+
 
   [[nodiscard]] glm::mat4 GetViewMatrix() const {
     return glm::inverse(transform.GetTransformMatrix());

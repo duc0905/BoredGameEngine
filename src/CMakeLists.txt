@@ -7,9 +7,9 @@ find_package(OpenMP)
 set(MAIN_SOURCE_FILES
 	main.cpp
 	Window/Window.cpp
-	Renderer/Camera/Camera.cpp
 	Renderer/Shader/Shader.cpp
 	Renderer/OGL/Renderer.cpp
+	Nodes/Mesh3D.cpp
 	# Renderer/CPU/RayTracer.cpp
 )
 

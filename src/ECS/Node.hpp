@@ -36,6 +36,8 @@ public:
   std::vector<std::shared_ptr<Node>> children;
 
 public:
+  virtual ~Node() = default;
+
   void AddChild(std::shared_ptr<Node> child) {
     child->parent = this;
     children.push_back(child);
