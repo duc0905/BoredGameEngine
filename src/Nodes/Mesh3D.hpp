@@ -1,0 +1,32 @@
+#pragma once
+
+#include "../Renderer/Shader/Shader.hpp"
+#include "../ECS/Node.hpp"
+
+namespace Bored {
+class ArrayMesh : public Node {
+public:
+  ArrayMesh();
+  ~ArrayMesh();
+
+  std::vector<glm::vec3> GetPositions() const;
+  std::vector<glm::vec2> GetUVs() const;
+  std::vector<glm::vec3> GetNormals() const;
+  std::vector<uint32_t> GetIndices() const;
+
+  void SubData(const std::vector<glm::vec3> &p_pos,
+               const std::vector<glm::vec2> &p_uvs,
+               const std::vector<glm::vec3> &p_norms,
+               const std::vector<uint32_t> &m_indices);
+
+  std::shared_ptr<Shader> GetShader() const { return m_shader; }
+
+protected:
+  std::shared_ptr<Shader> m_shader;
+
+public:
+  // 0: position, 1: uvs, 2: normals
+  GLuint m_vao, m_vbos[3], m_ebo;
+  unsigned int m_numVertices, m_numIndices;
+};
+} // namespace Bored
