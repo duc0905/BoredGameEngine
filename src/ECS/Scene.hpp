@@ -2,6 +2,8 @@
 
 #include "../Nodes/Camera.hpp"
 #include "Node.hpp"
+#include <functional>
+#include <iostream>
 
 namespace Bored {
 /**
@@ -26,6 +28,16 @@ public:
 
   void SetActiveCamera(std::shared_ptr<Camera> new_camera) {
     active_camera = new_camera;
+  }
+
+  void Traverse(std::function<void(std::shared_ptr<Node>)> visitor) {
+    if (!root) {
+      std::cout << "[Warning]: Scene has no root" << std::endl;
+      return;
+    }
+    
+    visitor(root);
+    root->Traverse(visitor);
   }
 
 private:

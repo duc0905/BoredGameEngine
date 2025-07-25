@@ -43,10 +43,12 @@ public:
     children.push_back(child);
   }
 
-  void Traverse(std::function<void(Node &)> visitor) {
-    visitor(*this);
-    for (auto &child : children) {
-      child->Traverse(visitor);
+  void Traverse(std::function<void(std::shared_ptr<Node>)> visitor) {
+    for (auto child : children) {
+      if (child) {
+        visitor(child);
+        child->Traverse(visitor);
+      }
     }
   }
 

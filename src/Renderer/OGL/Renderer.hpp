@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../Nodes/Mesh3D.hpp"
+#include "../../Nodes/Lighting.hpp"
 #include "../../Window/Listeners.hpp"
 #include "../I_Object.hpp"
 #include "../I_Renderer.hpp"
@@ -22,9 +23,6 @@ public:
    * and implement any pre-rendering optimizations.
    */
   virtual void
-  SetupObjects(const std::vector<std::shared_ptr<I_Object3D>> &objects) override;
-
-  virtual void
   SetupObjects(std::shared_ptr<Bored::Scene> scene) override;
 
   /**
@@ -36,26 +34,25 @@ public:
    * Inherits from FrameBufferSizeListener
    */
   virtual void OnFrameBufferSize(int width, int height) override;
-public:
-  void SetBackgroundColor(const glm::vec4& color);
 
-  void SetActiveScene(std::shared_ptr<Bored::Scene> scene);
 private:
   void ResizeColorBuffer(int width, int height);
   void ResizeDepthBuffer(int width, int height);
 
 private:
-  glm::vec4 m_bg = {0.1f, 0.2f, 0.05f, 1.0f};
 
   int m_width, m_height;
-
-  std::shared_ptr<Bored::Scene> active_scene;
 
   GLuint m_fbo, m_depthBuffer;
   std::shared_ptr<OGL_Texture2D> m_colorTexture;
 
+private:
+  std::vector<std::shared_ptr<Bored::Light>> m_lights;
+
 public:
   static std::shared_ptr<Shader> defaultMeshShader;
+
+  static std::shared_ptr<Bored::Material> defaultMaterial;
 };
 
 // TODO: Move this to a asset manager

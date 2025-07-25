@@ -1,4 +1,5 @@
 #include "Nodes/Camera.hpp"
+#include "Nodes/Lighting.hpp"
 #include "Nodes/Mesh3D.hpp"
 #include "Renderer/I_Object.hpp"
 #include "Renderer/OGL/Renderer.hpp"
@@ -69,6 +70,13 @@ int main() {
     std::cerr << e.what() << std::endl;
   }
 
+  // Setting up light sources
+  std::shared_ptr<Bored::DirectionalLight> dirLight =
+      std::make_shared<Bored::DirectionalLight>();
+  dirLight->light_color = {0.8f, 0.6f, 0.2f};
+  dirLight->transform.rotate = {0.3f, 0.1f, 0.0f};
+  root->AddChild(dirLight);
+
   renderer.SetupObjects(scene);
   renderer.SetActiveScene(scene);
 
@@ -84,9 +92,8 @@ int main() {
         std::chrono::duration_cast<std::chrono::milliseconds>(now - prev)
             .count();
 
-    // mesh->RotateY(glm::pi<float>() * dt / 1000.0f / 6.0f);
-
     if (dt >= 1000.0f / 60.0f) {
+      mesh->transform.rotate.y += glm::pi<float>() * dt / 6000.0f;
       // Render here
       auto tex = renderer.Render();
       window.Render(tex);
@@ -96,7 +103,7 @@ int main() {
 
     running &= !window.ShouldStop();
 
-    window.WaitEvents(16.0f);
+    window.WaitEvents(0.0016f);
   }
 
   return 0;

@@ -1,6 +1,7 @@
 #include "Renderer.hpp"
 
 #include <exception>
+#include <format>
 #include <memory>
 #include <stdexcept>
 
@@ -8,16 +9,33 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 #include <glad/glad.h>
+#include <typeinfo>
 
 namespace OGL {
 
 /////// RENDERER ///////
 std::shared_ptr<Shader> Renderer::defaultMeshShader;
+std::shared_ptr<Bored::Material> Renderer::defaultMaterial =
+    std::make_shared<Bored::Material>(0.1f, 0.7f, 0.2f, 2.0f);
 
 Renderer::Renderer(int width, int height) {
   if (!defaultMeshShader) {
     defaultMeshShader = std::make_shared<Shader>("res/shaders/mesh.vert",
                                                  "res/shaders/mesh.frag");
+    defaultMeshShader->Use();
+    for (int i = 0; i < 6; i++) {
+      defaultMeshShader->setUniformVec3f(
+          std::format("pointLights[{}].color", i), {0.0f, 0.0f, 0.0f});
+      defaultMeshShader->setUniformVec3f(
+          std::format("pointLights[{}].position", i), {0.0f, 0.0f, 0.0f});
+      defaultMeshShader->setUniformFloat(
+          std::format("pointLights[{}].strength", i), 0.0f);
+
+      defaultMeshShader->setUniformVec3f(std::format("dirLights[{}].color", i),
+                                         {0.0f, 0.0f, 0.0f});
+      defaultMeshShader->setUniformVec3f(
+          std::format("dirLights[{}].direction", i), {0.0f, 0.0f, 0.0f});
+    }
   }
 
   m_width = width;
@@ -54,29 +72,23 @@ Renderer::Renderer(int width, int height) {
 
 Renderer::~Renderer() { glDeleteFramebuffers(1, &m_fbo); }
 
-void Renderer::SetupObjects(
-    const std::vector<std::shared_ptr<I_Object3D>> &objects) {
-  //
-  // for (auto obj : objects) {
-  //   if (std::shared_ptr<Bored::ArrayMesh> ptr =
-  //           std::dynamic_pointer_cast<Bored::ArrayMesh>(obj)) {
-  //     obj->Finalize();
-  //
-  //     // TODO: Check if the object is a light source
-  //     m_objs.push_back(ptr);
-  //   }
-  // }
-}
-
 void Renderer::SetupObjects(std::shared_ptr<Bored::Scene> scene) {
-  scene->GetRoot()->Traverse([this](Bored::Node &node) {
+  scene->Traverse([this](std::shared_ptr<Bored::Node> node) {
     // NOTE: Only care about ArrayMesh for now
-    Bored::ArrayMesh *mesh = dynamic_cast<Bored::ArrayMesh *>(&node);
+    if (std::shared_ptr<Bored::ArrayMesh> mesh =
+            std::dynamic_pointer_cast<Bored::ArrayMesh>(node)) {
+      if (!mesh->GetShader()) {
+        mesh->SetShader(defaultMeshShader);
+      }
 
-    if (!mesh) return;
+      if (!mesh->material) {
+        mesh->material = defaultMaterial;
+      }
+    }
 
-    if (!mesh->GetShader()) {
-      mesh->SetShader(defaultMeshShader);
+    if (std::shared_ptr<Bored::Light> light =
+            std::dynamic_pointer_cast<Bored::Light>(node)) {
+      m_lights.push_back(light);
     }
   });
 }
@@ -87,35 +99,66 @@ std::shared_ptr<I_Texture2D> Renderer::Render() {
   glClearColor(m_bg.r, m_bg.g, m_bg.b, m_bg.a);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  active_scene->GetRoot()->Traverse([this](Bored::Node &node) {
-    try {
-      Bored::ArrayMesh &mesh = dynamic_cast<Bored::ArrayMesh &>(node);
+  active_scene->Traverse([this](std::shared_ptr<Bored::Node> node) {
+    // If node is a mesh
+    if (std::shared_ptr<Bored::ArrayMesh> mesh =
+            dynamic_pointer_cast<Bored::ArrayMesh>(node)) {
 
-      auto shader = mesh.GetShader();
+      auto shader = mesh->GetShader();
       shader->Use();
-      shader->setUniformMat4f("uModel", mesh.GetModelMatrix());
+      shader->setUniformVec3f(
+          "uEye", active_scene->GetActiveCamera()->transform.translate);
+
+      // MVP
+      shader->setUniformMat4f("uModel", mesh->GetModelMatrix());
       shader->setUniformMat4f("uView",
                               active_scene->GetActiveCamera()->GetViewMatrix());
       shader->setUniformMat4f(
           "uProjection",
           active_scene->GetActiveCamera()->m_proj->GetProjectionMatrix());
 
-      glBindVertexArray(mesh.m_vao);
-      glDrawElements(GL_TRIANGLES, mesh.m_numIndices, GL_UNSIGNED_INT, 0);
+      // Material
+      shader->setUniformFloat("uMaterial.ambient", mesh->material->ambient);
+      shader->setUniformFloat("uMaterial.diffuse", mesh->material->diffuse);
+      shader->setUniformFloat("uMaterial.specular", mesh->material->specular);
+      shader->setUniformFloat("uMaterial.shininess", mesh->material->shininess);
 
-    } catch (std::exception &e) {
+      // Lights
+      int pointLightIdx = 0;
+      int dirLightIdx = 0;
+      for (auto light : m_lights) {
+        if (std::shared_ptr<Bored::PointLight> l =
+                std::dynamic_pointer_cast<Bored::PointLight>(light)) {
+          shader->setUniformVec3f(
+              std::format("pointLights[{}].color", pointLightIdx),
+              l->light_color);
+          shader->setUniformVec3f(
+              std::format("pointLights[{}].position", pointLightIdx),
+              l->transform.translate);
+          shader->setUniformFloat(
+              std::format("pointLights[{}].strength", pointLightIdx),
+              l->strength);
+          pointLightIdx++;
+        }
+
+        if (std::shared_ptr<Bored::DirectionalLight> l =
+                std::dynamic_pointer_cast<Bored::DirectionalLight>(light)) {
+          shader->setUniformVec3f(
+              std::format("dirLights[{}].color", dirLightIdx), l->light_color);
+          shader->setUniformVec3f(
+              std::format("dirLights[{}].direction", dirLightIdx), l->GetDirection());
+          dirLightIdx++;
+        }
+      }
+
+      glBindVertexArray(mesh->m_vao);
+      glDrawElements(GL_TRIANGLES, mesh->m_numIndices, GL_UNSIGNED_INT, 0);
     }
   });
 
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
   return m_colorTexture;
-}
-
-void Renderer::SetBackgroundColor(const glm::vec4 &color) { m_bg = color; }
-
-void Renderer::SetActiveScene(std::shared_ptr<Bored::Scene> scene) {
-  active_scene = scene;
 }
 
 void Renderer::OnFrameBufferSize(int width, int height) {

@@ -21,11 +21,11 @@ class Shader {
   void Use();
 
   // Utility uniform functions
-  void setBool(const std::string &name, bool value) const;
+  void setUniformBool(const std::string &name, bool value) const;
 
-  void setInt(const std::string &name, int value) const;
+  void setUniformInt(const std::string &name, int value) const;
 
-  void setFloat(const std::string &name, float value) const;
+  void setUniformFloat(const std::string &name, float value) const;
 
   void setUniformMat4f(const std::string &name, const glm::mat4 &mat) const;
 
