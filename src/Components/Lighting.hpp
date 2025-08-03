@@ -1,10 +1,11 @@
 #pragma once
 
-#include "../ECS/Node.hpp"
+#include "TransformComponent.hpp"
+#include <glm/glm.hpp>
 
 namespace Bored {
 
-class Light : public Node {
+class Light {
 public:
   virtual ~Light() = default;
 
@@ -19,7 +20,7 @@ public:
 
 class DirectionalLight : public Light {
 public:
-  const glm::vec3 GetDirection() const {
+  const glm::vec3 GetDirection(const TransformComponent &transform) const {
     return glm::normalize(glm::mat3(transform.GetTransformMatrix()) *
                           glm::vec3(0.0f, -1.0f, 0.0f));
   }

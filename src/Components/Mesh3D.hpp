@@ -1,7 +1,8 @@
 #pragma once
 
-#include "../Renderer/Shader/Shader.hpp"
-#include "../ECS/Node.hpp"
+#include <vector>
+#include <memory>
+#include "../Systems/Renderer/Shader/Shader.hpp"
 
 namespace Bored {
 struct Material {
@@ -12,7 +13,7 @@ struct Material {
   float shininess;
 };
 
-class ArrayMesh : public Node {
+struct ArrayMesh {
 public:
   ArrayMesh();
   virtual ~ArrayMesh();

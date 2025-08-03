@@ -1,6 +1,6 @@
 // clang-format off
-#include <Renderer/Texture/CPU_Texture.hpp>
-#include <Renderer/Texture/OGL_Texture.hpp>
+#include <Systems/Renderer/Texture/CPU_Texture.hpp>
+#include <Systems/Renderer/Texture/OGL_Texture.hpp>
 #include <GLFW/glfw3.h>
 // clang-format on
 #include <gtest/gtest.h>

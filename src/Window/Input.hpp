@@ -24,13 +24,84 @@ template <> struct std::hash<Key> {
   }
 };
 
+enum class InputType {
+  KEY_DOWN,
+  KEY_UP,
+  MOUSE_MOVE,
+  MOUSE_BUTTON_DOWN,
+  MOUSE_BUTTON_UP,
+  MOUSE_SCROLL
+};
+
+struct InputEvent {
+  InputType type;
+
+  union {
+    struct {
+      int keyCode;
+    } key;
+
+    struct {
+      int x, y;
+      int dx, dy;
+    } mouseMove;
+
+    struct {
+      int button;
+    } mouseButton;
+
+    struct {
+      float value;
+    } scroll;
+  };
+};
+
+class InputDevice {
+public:
+  virtual ~InputDevice() = default;
+  virtual void PollEvents(std::vector<InputEvent> &outEvents) = 0;
+};
+
+class InputListener {
+public:
+  virtual ~InputListener() = default;
+
+  virtual void OnInputEvent(const InputEvent& event) = 0;
+};
+
+class InputManager {
+public:
+  void RegisterDevice(std::unique_ptr<InputDevice> device) {
+    devices.push_back(std::move(device));
+  }
+
+  void RegisterListener(std::shared_ptr<InputListener> listener) {
+    listeners.push_back(listener);
+  }
+
+  void PollAndDispatch() {
+    eventQueue.clear();
+    for (auto& device : devices)
+      device->PollEvents(eventQueue);
+
+    for (auto& event : eventQueue)
+      for (auto listener : listeners)
+        listener->OnInputEvent(event);
+  }
+
+private:
+  std::vector<std::unique_ptr<InputDevice>> devices;
+  std::vector<std::shared_ptr<InputListener>> listeners;
+  std::vector<InputEvent> eventQueue;
+};
+
 /**
  * Base class for defining an action handler.
  *
  * Defines the HandleAction method for handling actions when the Input invoke an
  * action.
  */
-template<class ...Args>
+template <class... Args>
 class ActionHandler {
 public:
   virtual ~ActionHandler() {}
@@ -162,7 +233,7 @@ public:
    *
    */
   inline void AddActionHandler(const std::string &action,
-                               ActionHandler<>* handler) {
+                               ActionHandler<> *handler) {
     if (m_actionHandlers.find(action) == m_actionHandlers.end()) {
       std::cout << "[Warning]: Overriding action handler for action '" << action
                 << "'" << std::endl;

@@ -1,4 +1,4 @@
-#include <Nodes/Camera.hpp>
+#include <Components/Camera.hpp>
 #include <gtest/gtest.h>
 
 // TEST(CameraTest, BasicViewMatrix) {

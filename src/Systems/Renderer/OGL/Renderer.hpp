@@ -1,9 +1,8 @@
 #pragma once
 
-#include "../../Nodes/Mesh3D.hpp"
-#include "../../Nodes/Lighting.hpp"
-#include "../../Window/Listeners.hpp"
-#include "../I_Object.hpp"
+#include "../../../Components/Mesh3D.hpp"
+#include "../../../Components/Lighting.hpp"
+#include "../../../Window/Listeners.hpp"
 #include "../I_Renderer.hpp"
 #include "../Shader/Shader.hpp"
 #include "../Texture/OGL_Texture.hpp"
@@ -15,6 +14,8 @@ public:
   Renderer(int width, int height);
 
   virtual ~Renderer();
+
+  virtual void OnUpdate(double dt, std::shared_ptr<Bored::Scene> scene) override {}
 
   /**
    * This function is called once before any Render call.
@@ -46,8 +47,8 @@ private:
   GLuint m_fbo, m_depthBuffer;
   std::shared_ptr<OGL_Texture2D> m_colorTexture;
 
-private:
-  std::vector<std::shared_ptr<Bored::Light>> m_lights;
+// private:
+  // std::vector<std::shared_ptr<Bored::Light>> m_lights;
 
 public:
   static std::shared_ptr<Shader> defaultMeshShader;

@@ -1,7 +1,10 @@
 #include "Renderer.hpp"
+#include "../../../Components/Camera.hpp"
+#include "../../../Components/MeshComponent.hpp"
+#include "../../../Components/TransformComponent.hpp"
 
-#include <exception>
 #include <format>
+#include <glm/matrix.hpp>
 #include <memory>
 #include <stdexcept>
 
@@ -9,7 +12,6 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 #include <glad/glad.h>
-#include <typeinfo>
 
 namespace OGL {
 
@@ -73,24 +75,19 @@ Renderer::Renderer(int width, int height) {
 Renderer::~Renderer() { glDeleteFramebuffers(1, &m_fbo); }
 
 void Renderer::SetupObjects(std::shared_ptr<Bored::Scene> scene) {
-  scene->Traverse([this](std::shared_ptr<Bored::Node> node) {
-    // NOTE: Only care about ArrayMesh for now
-    if (std::shared_ptr<Bored::ArrayMesh> mesh =
-            std::dynamic_pointer_cast<Bored::ArrayMesh>(node)) {
-      if (!mesh->GetShader()) {
-        mesh->SetShader(defaultMeshShader);
+  auto mesh_view = scene->ecs_registry.view<Bored::MeshComponent>();
+
+  for (auto &&[entity, mesh_comp] : mesh_view.each()) {
+    if (mesh_comp.mesh) {
+      if (!mesh_comp.mesh->GetShader()) {
+        mesh_comp.mesh->SetShader(defaultMeshShader);
       }
 
-      if (!mesh->material) {
-        mesh->material = defaultMaterial;
+      if (!mesh_comp.mesh->material) {
+        mesh_comp.mesh->material = defaultMaterial;
       }
     }
-
-    if (std::shared_ptr<Bored::Light> light =
-            std::dynamic_pointer_cast<Bored::Light>(node)) {
-      m_lights.push_back(light);
-    }
-  });
+  }
 }
 
 std::shared_ptr<I_Texture2D> Renderer::Render() {
@@ -99,62 +96,106 @@ std::shared_ptr<I_Texture2D> Renderer::Render() {
   glClearColor(m_bg.r, m_bg.g, m_bg.b, m_bg.a);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  active_scene->Traverse([this](std::shared_ptr<Bored::Node> node) {
-    // If node is a mesh
-    if (std::shared_ptr<Bored::ArrayMesh> mesh =
-            dynamic_pointer_cast<Bored::ArrayMesh>(node)) {
-
-      auto shader = mesh->GetShader();
-      shader->Use();
-      shader->setUniformVec3f(
-          "uEye", active_scene->GetActiveCamera()->transform.translate);
-
-      // MVP
-      shader->setUniformMat4f("uModel", mesh->GetModelMatrix());
-      shader->setUniformMat4f("uView",
-                              active_scene->GetActiveCamera()->GetViewMatrix());
-      shader->setUniformMat4f(
-          "uProjection",
-          active_scene->GetActiveCamera()->m_proj->GetProjectionMatrix());
-
-      // Material
-      shader->setUniformFloat("uMaterial.ambient", mesh->material->ambient);
-      shader->setUniformFloat("uMaterial.diffuse", mesh->material->diffuse);
-      shader->setUniformFloat("uMaterial.specular", mesh->material->specular);
-      shader->setUniformFloat("uMaterial.shininess", mesh->material->shininess);
-
-      // Lights
-      int pointLightIdx = 0;
-      int dirLightIdx = 0;
-      for (auto light : m_lights) {
-        if (std::shared_ptr<Bored::PointLight> l =
-                std::dynamic_pointer_cast<Bored::PointLight>(light)) {
-          shader->setUniformVec3f(
-              std::format("pointLights[{}].color", pointLightIdx),
-              l->light_color);
-          shader->setUniformVec3f(
-              std::format("pointLights[{}].position", pointLightIdx),
-              l->transform.translate);
-          shader->setUniformFloat(
-              std::format("pointLights[{}].strength", pointLightIdx),
-              l->strength);
-          pointLightIdx++;
-        }
-
-        if (std::shared_ptr<Bored::DirectionalLight> l =
-                std::dynamic_pointer_cast<Bored::DirectionalLight>(light)) {
-          shader->setUniformVec3f(
-              std::format("dirLights[{}].color", dirLightIdx), l->light_color);
-          shader->setUniformVec3f(
-              std::format("dirLights[{}].direction", dirLightIdx), l->GetDirection());
-          dirLightIdx++;
-        }
-      }
-
-      glBindVertexArray(mesh->m_vao);
-      glDrawElements(GL_TRIANGLES, mesh->m_numIndices, GL_UNSIGNED_INT, 0);
+  // Camera
+  glm::mat4 view_mat(1.0f);
+  glm::mat4 proj_mat(1.0f);
+  glm::vec3 cam_eye(0.0f);
+  {
+    auto cam_node = active_scene->GetActiveCamera();
+    if (!cam_node) {
+      throw std::runtime_error("Active scene has no active camera");
     }
-  });
+
+    if (!active_scene->ecs_registry
+             .all_of<Bored::TransformComponent, Bored::CameraComponent>(
+                 cam_node->id)) {
+      throw std::runtime_error(
+          "Camera Node does not have Camera component or transform component");
+    }
+
+    Bored::CameraComponent &cam_comp =
+        active_scene->ecs_registry.get<Bored::CameraComponent>(cam_node->id);
+
+    glm::mat4 model_mat(1.0f);
+    cam_node->Inverse([&model_mat, this](Bored::Node &node) {
+      model_mat = node.transform.GetTransformMatrix() * model_mat;
+    });
+
+    view_mat = glm::inverse(model_mat);
+    proj_mat = cam_comp.m_proj->GetProjectionMatrix();
+    cam_eye = model_mat * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+  }
+
+  // Get all lights
+  auto point_light_view =
+      active_scene->ecs_registry
+          .view<Bored::TransformComponent, Bored::PointLight>();
+  auto dir_light_view =
+      active_scene->ecs_registry
+          .view<Bored::TransformComponent, Bored::DirectionalLight>();
+
+  // Get all meshes
+  auto mesh_view = active_scene->ecs_registry
+                       .view<Bored::NodeComponent, Bored::MeshComponent>();
+
+  for (auto &&[entity, node_comp, mesh_comp] : mesh_view.each()) {
+    // Getting hierarchical transformation matrix
+    glm::mat4 model_mat(1.0f);
+    node_comp.node->Inverse([&model_mat, this](Bored::Node &node) {
+      model_mat = node.transform.GetTransformMatrix() * model_mat;
+    });
+
+    auto mesh = mesh_comp.mesh;
+    if (!mesh)
+      continue;
+
+    auto shader = mesh->GetShader();
+    shader->Use();
+
+    // MVP
+    shader->setUniformMat4f("uModel", model_mat);
+    // TODO: Consider using uniform buffer for these 3 stuff
+    shader->setUniformMat4f("uView", view_mat);
+    shader->setUniformMat4f("uProjection", proj_mat);
+    shader->setUniformVec3f("uEye", cam_eye);
+
+    // NOTE: Material
+    shader->setUniformFloat("uMaterial.ambient", mesh->material->ambient);
+    shader->setUniformFloat("uMaterial.diffuse", mesh->material->diffuse);
+    shader->setUniformFloat("uMaterial.specular", mesh->material->specular);
+    shader->setUniformFloat("uMaterial.shininess", mesh->material->shininess);
+
+    // NOTE: Light
+    int pls_index = 0;
+    int dls_index = 0;
+
+    // Point light sources
+    for (auto &&[entity, light_trans, light_comp] : point_light_view.each()) {
+      shader->setUniformVec3f(std::format("pointLights[{}].color", pls_index),
+                              light_comp.light_color);
+      shader->setUniformVec3f(
+          std::format("pointLights[{}].position", pls_index),
+          light_trans.translate);
+      shader->setUniformFloat(
+          std::format("pointLights[{}].strength", pls_index),
+          light_comp.strength);
+
+      pls_index++;
+    }
+
+    // NOTE: Directional lights
+    for (auto &&[entity, light_trans, light_comp] : dir_light_view.each()) {
+      shader->setUniformVec3f(std::format("dirLights[{}].color", dls_index),
+                              light_comp.light_color);
+      shader->setUniformVec3f(std::format("dirLights[{}].direction", dls_index),
+                              light_comp.GetDirection(light_trans));
+      dls_index++;
+    }
+
+    // NOTE: Render calls
+    glBindVertexArray(mesh->m_vao);
+    glDrawElements(GL_TRIANGLES, mesh->m_numIndices, GL_UNSIGNED_INT, 0);
+  }
 
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

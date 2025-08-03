@@ -6,8 +6,8 @@
 // Works on windows with lowercase
 // #include <glfw/glfw3.h>
 
-#include "../Renderer/Shader/Shader.hpp"
-#include "../Renderer/Texture/OGL_Texture.hpp"
+#include "../Systems//Renderer/Shader/Shader.hpp"
+#include "../Systems/Renderer/Texture/OGL_Texture.hpp"
 #include "Listeners.hpp"
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/scalar_constants.hpp>

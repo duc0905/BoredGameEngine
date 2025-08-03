@@ -1,5 +1,4 @@
 #pragma once
-#include "../ECS/Node.hpp"
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/scalar_constants.hpp>
@@ -161,14 +160,14 @@ public:
  *
  * Contains a View and a Projector to abstract the concept of a camera.
  */
-class Camera : public Node {
+struct CameraComponent {
 public:
   /**
    * Default constructor.
    *
    * Use default View and default Perspective.
    */
-  Camera() : Camera(new Perspective()) {}
+  CameraComponent() : CameraComponent(new Perspective()) {}
 
   /**
    * Full constructor for Camera
@@ -177,23 +176,23 @@ public:
    *
    * @param proj Projector*
    */
-  Camera(Projector *proj) : m_proj(proj) {}
+  CameraComponent(Projector *proj) : m_proj(proj) {}
 
+  //
+  // [[nodiscard]] glm::mat4 GetViewMatrix() const {
+  //   return glm::inverse(transform.GetTransformMatrix());
+  // }
 
-  [[nodiscard]] glm::mat4 GetViewMatrix() const {
-    return glm::inverse(transform.GetTransformMatrix());
-  }
-
-  /**
-   * Get the view-projection matrix.
-   *
-   * Combine the view and projection matrix from the camera's View and
-   * Projector.
-   *
-   */
-  [[nodiscard]] glm::mat4 GetViewProjectionMatrix() const {
-    return m_proj->GetProjectionMatrix() * GetViewMatrix();
-  }
+  // /**
+  //  * Get the view-projection matrix.
+  //  *
+  //  * Combine the view and projection matrix from the camera's View and
+  //  * Projector.
+  //  *
+  //  */
+  // [[nodiscard]] glm::mat4 GetViewProjectionMatrix() const {
+  //   return m_proj->GetProjectionMatrix() * GetViewMatrix();
+  // }
 
 public:
   std::unique_ptr<Projector> m_proj;
