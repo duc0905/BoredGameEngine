@@ -1,17 +1,18 @@
 #pragma once
+// clang-format off
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/ext/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+// #include <glm/gtc/type_ptr.hpp>
 #include <string>
 
 class Shader {
- public:
+public:
   GLuint shaderProgram;
 
- public:
+public:
   Shader(const char *vertexPath, const char *fragmentPath);
 
   // Destructor
@@ -30,4 +31,4 @@ class Shader {
   void setUniformMat4f(const std::string &name, const glm::mat4 &mat) const;
 
   void setUniformVec3f(const std::string &name, const glm::vec3 &vec) const;
-};  // Shader class
+}; // Shader class

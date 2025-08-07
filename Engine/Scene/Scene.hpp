@@ -1,6 +1,10 @@
 #pragma once
 
 #include "../Components/NodeComponent.hpp"
+#include "../Systems/I_System.hpp"
+// clang-format off
+#include "../Systems/Window/WindowService.hpp"
+#include "../Systems/Input/InputService.hpp"
 #include "Node.hpp"
 #include <entt/entity/fwd.hpp>
 #include <entt/entity/registry.hpp>
@@ -9,6 +13,14 @@
 #include <memory>
 
 namespace Bored {
+/**
+ * Holds pointers to services used by this scene
+ */
+struct SceneContext {
+  WindowService *window_service;
+  InputService *input_service;
+};
+
 /**
  * Represents a world/level in the game
  *
@@ -25,14 +37,37 @@ public:
 
 public:
   Scene() {}
+  virtual ~Scene() = default;
+
+  /**
+   * Function used to create initial nodes in the scene.
+   */
+  virtual void BuildScene() {}
+
+  /**
+   * Called after building the scene.
+   *
+   * Can put pre-processing optimization code here.
+   */
+  virtual void AfterBuildScene() {}
+
+  /**
+   * Function called on every frames.
+   */
+  virtual void Update(double dt) {
+    for (auto system : systems) {
+      system->OnUpdate(dt, *this);
+    }
+  }
 
   std::shared_ptr<Node> GetRoot() { return root; }
 
   void SetRoot(std::shared_ptr<Node> new_root) { root = new_root; }
 
   std::shared_ptr<Node> CreateNode() {
-    std::shared_ptr<Node> node = std::shared_ptr<Node>(new Node(ecs_registry));
-    ecs_registry.emplace<NodeComponent>(node->id, node);
+    std::shared_ptr<Node> node =
+        std::shared_ptr<Node>(new Node(*this, ecs_registry));
+    node->AddComponent<NodeComponent>(node);
     return node;
   }
 
@@ -52,7 +87,19 @@ public:
     root->Traverse(visitor);
   }
 
-private:
+  bool ShouldStop() {
+    bool ret = false;
+    for (auto system : systems) {
+      ret |= system->ShouldStop(*this);
+    }
+    return ret;
+  }
+
+public:
+  SceneContext context;
+  std::vector<std::shared_ptr<I_System>> systems;
+
+protected:
   std::shared_ptr<Node> root;
   std::shared_ptr<Node> active_camera;
 };

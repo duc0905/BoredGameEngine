@@ -1,6 +1,7 @@
 #include "Renderer.hpp"
 #include "../../../Components/Camera.hpp"
 #include "../../../Components/MeshComponent.hpp"
+#include "../../../Components/Lighting.hpp"
 #include "../../../Components/TransformComponent.hpp"
 
 #include <format>
@@ -20,7 +21,7 @@ std::shared_ptr<Shader> Renderer::defaultMeshShader;
 std::shared_ptr<Bored::Material> Renderer::defaultMaterial =
     std::make_shared<Bored::Material>(0.1f, 0.7f, 0.2f, 2.0f);
 
-Renderer::Renderer(int width, int height) {
+Renderer::Renderer(Bored::WindowService& window_service) : window(window_service) {
   if (!defaultMeshShader) {
     defaultMeshShader = std::make_shared<Shader>("res/shaders/mesh.vert",
                                                  "res/shaders/mesh.frag");
@@ -40,8 +41,9 @@ Renderer::Renderer(int width, int height) {
     }
   }
 
-  m_width = width;
-  m_height = height;
+  auto fb_size = window.GetFrameBufferSize();
+  m_width = fb_size.first;
+  m_height = fb_size.second;
 
   // Framebuffer object
   glGenFramebuffers(1, &m_fbo);
@@ -49,13 +51,13 @@ Renderer::Renderer(int width, int height) {
 
   // Color attachment
   m_colorTexture = std::make_unique<OGL_Texture2D>();
-  ResizeColorBuffer(width, height);
+  ResizeColorBuffer(m_width, m_height);
   glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
                        m_colorTexture->m_texId, 0);
 
   // Depth attachment
   glGenRenderbuffers(1, &m_depthBuffer);
-  ResizeDepthBuffer(width, height);
+  ResizeDepthBuffer(m_width, m_height);
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
                             GL_RENDERBUFFER, m_depthBuffer);
 
@@ -74,8 +76,8 @@ Renderer::Renderer(int width, int height) {
 
 Renderer::~Renderer() { glDeleteFramebuffers(1, &m_fbo); }
 
-void Renderer::SetupObjects(std::shared_ptr<Bored::Scene> scene) {
-  auto mesh_view = scene->ecs_registry.view<Bored::MeshComponent>();
+void Renderer::SetupObjects(Bored::Scene& scene) {
+  auto mesh_view = scene.ecs_registry.view<Bored::MeshComponent>();
 
   for (auto &&[entity, mesh_comp] : mesh_view.each()) {
     if (mesh_comp.mesh) {
@@ -90,7 +92,7 @@ void Renderer::SetupObjects(std::shared_ptr<Bored::Scene> scene) {
   }
 }
 
-std::shared_ptr<I_Texture2D> Renderer::Render() {
+std::shared_ptr<I_Texture2D> Renderer::Render(Bored::Scene& scene) {
   glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
   glViewport(0, 0, m_width, m_height);
   glClearColor(m_bg.r, m_bg.g, m_bg.b, m_bg.a);
@@ -101,12 +103,12 @@ std::shared_ptr<I_Texture2D> Renderer::Render() {
   glm::mat4 proj_mat(1.0f);
   glm::vec3 cam_eye(0.0f);
   {
-    auto cam_node = active_scene->GetActiveCamera();
+    auto cam_node = scene.GetActiveCamera();
     if (!cam_node) {
       throw std::runtime_error("Active scene has no active camera");
     }
 
-    if (!active_scene->ecs_registry
+    if (!scene.ecs_registry
              .all_of<Bored::TransformComponent, Bored::CameraComponent>(
                  cam_node->id)) {
       throw std::runtime_error(
@@ -114,36 +116,30 @@ std::shared_ptr<I_Texture2D> Renderer::Render() {
     }
 
     Bored::CameraComponent &cam_comp =
-        active_scene->ecs_registry.get<Bored::CameraComponent>(cam_node->id);
+        scene.ecs_registry.get<Bored::CameraComponent>(cam_node->id);
 
-    glm::mat4 model_mat(1.0f);
-    cam_node->Inverse([&model_mat, this](Bored::Node &node) {
-      model_mat = node.transform.GetTransformMatrix() * model_mat;
-    });
+    glm::mat4 cam_model_mat = cam_node->GetGlobalTransformMatrix();
 
-    view_mat = glm::inverse(model_mat);
+    view_mat = glm::inverse(cam_model_mat);
     proj_mat = cam_comp.m_proj->GetProjectionMatrix();
-    cam_eye = model_mat * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    cam_eye = cam_model_mat * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
   }
 
   // Get all lights
   auto point_light_view =
-      active_scene->ecs_registry
+      scene.ecs_registry
           .view<Bored::TransformComponent, Bored::PointLight>();
   auto dir_light_view =
-      active_scene->ecs_registry
+      scene.ecs_registry
           .view<Bored::TransformComponent, Bored::DirectionalLight>();
 
   // Get all meshes
-  auto mesh_view = active_scene->ecs_registry
+  auto mesh_view = scene.ecs_registry
                        .view<Bored::NodeComponent, Bored::MeshComponent>();
 
   for (auto &&[entity, node_comp, mesh_comp] : mesh_view.each()) {
     // Getting hierarchical transformation matrix
-    glm::mat4 model_mat(1.0f);
-    node_comp.node->Inverse([&model_mat, this](Bored::Node &node) {
-      model_mat = node.transform.GetTransformMatrix() * model_mat;
-    });
+    glm::mat4 model_mat = node_comp.node->GetGlobalTransformMatrix();
 
     auto mesh = mesh_comp.mesh;
     if (!mesh)

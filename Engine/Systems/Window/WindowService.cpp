@@ -1,13 +1,13 @@
-#include "Window.hpp"
+#include "WindowService.hpp"
 #include "Listeners.hpp"
 
 #include <GLFW/glfw3.h>
-#include <chrono>
 #include <iostream>
 #include <memory>
 #include <stdexcept>
 
-Window::Window(const int &w, const int &h) : m_width(w), m_height(h) {
+namespace Bored {
+WindowService::WindowService(const int &w, const int &h) : m_width(w), m_height(h) {
   // Initialize OpenGL context and other setup here
   // Initialize GLFW
   if (!glfwInit()) {
@@ -33,16 +33,11 @@ Window::Window(const int &w, const int &h) : m_width(w), m_height(h) {
   // Make the window's context current
   glfwMakeContextCurrent(m_window);
 
+  // Create the input service
+  input_service = std::make_unique<InputService>(m_window);
+
   // Match glfw refresh rate with monitor refresh rate
   glfwSwapInterval(1);
-
-  // To get back this in GLFW callbacks
-  glfwSetWindowUserPointer(m_window, this);
-
-  // Window size callback
-  glfwSetFramebufferSizeCallback(m_window, &Window::FrameBufferSizeCallback);
-
-  m_prevKeyCallback = glfwSetKeyCallback(m_window, &Window::KeyCallback);
 
   // Initialize GLAD
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -67,7 +62,7 @@ Window::Window(const int &w, const int &h) : m_width(w), m_height(h) {
       std::cout << "[Info]: Enabling OpenGL Debug output" << std::endl;
       glEnable(GL_DEBUG_OUTPUT);
       glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-      glDebugMessageCallback(Window::DebugOutputCallback, this);
+      glDebugMessageCallback(WindowService::DebugOutputCallback, this);
       glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0,
                             nullptr, GL_TRUE);
     }
@@ -121,46 +116,28 @@ Window::Window(const int &w, const int &h) : m_width(w), m_height(h) {
                                             "res/shaders/simple_texture.frag");
 }
 
-Window::~Window() {
+WindowService::~WindowService() {
   // Cleanup code here
   glfwDestroyWindow(m_window);
   glfwTerminate();
 }
 
-bool Window::ShouldStop() const { return glfwWindowShouldClose(m_window); }
-
-// void Window::Run() {
-//   std::chrono::steady_clock::time_point prev =
-//   std::chrono::steady_clock::now();
+// bool WindowService::ShouldStop(Scene &scene) {
+//   return glfwWindowShouldClose(m_window);
+// }
 //
-//   // Main loop
-//   while (!glfwWindowShouldClose(m_window)) {
-//     std::chrono::steady_clock::time_point now =
-//         std::chrono::steady_clock::now();
+// void WindowService::OnUpdate(double dt, Scene &scene) {
+//   PollEvents();
 //
-//     // Elapsed time since last frame in milisecond
-//     long long dt =
-//         std::chrono::duration_cast<std::chrono::milliseconds>(now - prev)
-//             .count();
+//   if (renderer) {
+//     auto tex = renderer->Render(scene);
+//     Render(tex);
 //
-//     if (dt >= 160) { // 6 FPS
-//       // Render here
-//       glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set clear color to black
-//       glClear(GL_COLOR_BUFFER_BIT);         // Clear the color buffer
-//
-//       Render();
-//
-//       glfwSwapBuffers(m_window); // Swap front and back buffers
-//
-//       prev = now;
-//     }
-//
-//     // Wait for atmost 2 seconds
-//     glfwWaitEventsTimeout(2.0f); // Poll for and process events
+//     glfwSwapBuffers(m_window); // Swap front and back buffers
 //   }
 // }
 
-void Window::Render(std::shared_ptr<I_Texture2D> texture) {
+void WindowService::Render(std::shared_ptr<I_Texture2D> texture) {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -177,20 +154,20 @@ void Window::Render(std::shared_ptr<I_Texture2D> texture) {
   glBindVertexArray(m_screenVao);
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-  glfwSwapBuffers(m_window); // Swap front and back buffers
+  glfwSwapBuffers(m_window);
 }
 
-void Window::WaitEvents(float timeout) const { glfwWaitEventsTimeout(timeout); }
+void WindowService::WaitEvents(float timeout) const { glfwWaitEventsTimeout(timeout); }
 
-void Window::PollEvents() const { glfwPollEvents(); }
+void WindowService::PollEvents() const { glfwPollEvents(); }
 
-void Window::AddFrameBufferSizeListener(FrameBufferSizeListener *listener) {
+void WindowService::AddFrameBufferSizeListener(FrameBufferSizeListener *listener) {
   if (listener != nullptr) {
     m_fbsListeners.push_back(listener);
   }
 }
 
-void Window::HandleDebugMessage(GLenum source, GLenum type, unsigned int id,
+void WindowService::HandleDebugMessage(GLenum source, GLenum type, unsigned int id,
                                 GLenum severity, GLsizei length,
                                 const char *message) {
   // ignore non-significant error/warning codes
@@ -271,10 +248,10 @@ void Window::HandleDebugMessage(GLenum source, GLenum type, unsigned int id,
   std::cout << std::endl;
 }
 
-void Window::DebugOutputCallback(GLenum source, GLenum type, unsigned int id,
+void WindowService::DebugOutputCallback(GLenum source, GLenum type, unsigned int id,
                                  GLenum severity, GLsizei length,
                                  const char *message, const void *userParam) {
-  Window *_this = reinterpret_cast<Window *>(const_cast<void *>(userParam));
+  WindowService *_this = reinterpret_cast<WindowService *>(const_cast<void *>(userParam));
   if (_this) {
     _this->HandleDebugMessage(source, type, id, severity, length, message);
   } else {
@@ -283,52 +260,56 @@ void Window::DebugOutputCallback(GLenum source, GLenum type, unsigned int id,
   }
 }
 
-void Window::FrameBufferSizeCallback(GLFWwindow *window, int width,
-                                     int height) {
-  Window *_this = static_cast<Window *>(glfwGetWindowUserPointer(window));
+// void Window::FrameBufferSizeCallback(GLFWwindow *window, int width,
+//                                      int height) {
+//   Window *_this = static_cast<Window *>(glfwGetWindowUserPointer(window));
+//
+//   if (_this) {
+//     _this->HandleFrameBufferSize(width, height);
+//   }
+// }
+//
+// void Window::HandleFrameBufferSize(int width, int height) {
+//   m_width = width;
+//   m_height = height;
+//
+//   // Reset the opengl viewport with the new dimension
+//   glViewport(0, 0, width, height);
+//
+//   for (auto listener : m_fbsListeners)
+//     listener->OnFrameBufferSize(width, height);
+// }
 
-  if (_this) {
-    _this->HandleFrameBufferSize(width, height);
-  }
-}
-
-void Window::HandleFrameBufferSize(int width, int height) {
-  m_width = width;
-  m_height = height;
-
-  // Reset the opengl viewport with the new dimension
-  glViewport(0, 0, width, height);
-
-  for (auto listener : m_fbsListeners)
-    listener->OnFrameBufferSize(width, height);
-}
-
-void Window::HandleGLFWError(int error, const char *description) {
+void WindowService::HandleGLFWError(int error, const char *description) {
   std::cout << "[Error]: GLFW (" << error << "): " << description << std::endl;
 }
 
-void Window::KeyCallback(GLFWwindow *window, int key, int scancode, int action,
-                         int mods) {
-  Window *_this = static_cast<Window *>(glfwGetWindowUserPointer(window));
-  if (_this) {
-    _this->HandleKey(key, scancode, action, mods);
-  }
-}
+// void Window::KeyCallback(GLFWwindow *window, int key, int scancode, int action,
+//                          int mods) {
+//   Window *_this = static_cast<Window *>(glfwGetWindowUserPointer(window));
+//   if (_this) {
+//     _this->HandleKey(key, scancode, action, mods);
+//   }
+// }
+//
+// void Window::HandleKey(int key, int scancode, int action, int mods) {
+//   if (m_prevKeyCallback != nullptr)
+//     m_prevKeyCallback(m_window, key, scancode, action, mods);
+//
+//   if (m_input)
+//     m_input->HandleKey(key, action, mods);
+// }
+//
+// void Window::CursorPosCallback(GLFWwindow *window, double x, double y) {
+//   Window *_this = static_cast<Window *>(glfwGetWindowUserPointer(window));
+//   if (_this) {
+//     _this->HandleCursorPos(x, y);
+//   }
+// }
+//
+// void Window::HandleCursorPos(double x, double y) {
+//   if (m_input)
+//     m_input->HandleCursorPosition((int)x, (int)y);
+// }
 
-void Window::HandleKey(int key, int scancode, int action, int mods) {
-  if (m_prevKeyCallback != nullptr)
-    m_prevKeyCallback(m_window, key, scancode, action, mods);
-
-  m_input.HandleKey(key, action, mods);
-}
-
-void Window::CursorPosCallback(GLFWwindow *window, double x, double y) {
-  Window *_this = static_cast<Window *>(glfwGetWindowUserPointer(window));
-  if (_this) {
-    _this->HandleCursorPos(x, y);
-  }
-}
-
-void Window::HandleCursorPos(double x, double y) {
-  m_input.HandleCursorPosition(x, y);
-}
+} // namespace Bored

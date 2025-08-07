@@ -9,7 +9,7 @@ set(SOURCE_FILES
 )
 
 add_executable(test_main ${SOURCE_FILES})
-target_include_directories(test_main PRIVATE "${PROJECT_SOURCE_DIR}/src")
+target_include_directories(test_main PRIVATE "${PROJECT_SOURCE_DIR}/Engine")
 target_link_libraries(test_main PRIVATE GTest::gtest_main)
 target_link_libraries(test_main PRIVATE glfw)
 target_link_libraries(test_main PRIVATE glad::glad)

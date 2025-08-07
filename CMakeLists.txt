@@ -5,15 +5,18 @@ project(BoredGameEngine
 	DESCRIPTION "Simple Game Engine"
 )
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED On)
 set(CMAKE_CXX_EXTENSIONS Off)
 
-# Source code
-add_subdirectory("src")
+# Engine code
+add_subdirectory("Engine")
 
 # Tests on our code
 add_subdirectory("tests")
 
 # Documentations
 add_subdirectory("docs")
+
+# Demo projects
+add_subdirectory("demo")

@@ -1,20 +1,30 @@
 #pragma once
-#include "Input.hpp"
-#include <glad/glad.h>
 // Ehhhhh works on Arch with capitalized
-#include <GLFW/glfw3.h>
+// #include <GLFW/glfw3.h>
 // Works on windows with lowercase
 // #include <glfw/glfw3.h>
+// clang-format off
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
-#include "../Systems//Renderer/Shader/Shader.hpp"
-#include "../Systems/Renderer/Texture/OGL_Texture.hpp"
+#include "../Input/InputService.hpp"
+#include "../Renderer/Shader/Shader.hpp"
+#include "../Renderer/Texture/OGL_Texture.hpp"
 #include "Listeners.hpp"
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/scalar_constants.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-class Window {
+namespace Bored {
+class WindowService {
+public:
+  std::unique_ptr<InputService> input_service;
+
+public:
+  int m_width, m_height;
+  GLFWwindow *m_window;
+
 public:
   /**
    * Create a Window.
@@ -26,16 +36,18 @@ public:
    * @param h The height of the window.
    *
    */
-  Window(const int &w, const int &h);
+  WindowService(const int &w, const int &h);
 
-  ~Window();
+  virtual ~WindowService();
+
+  // virtual void OnUpdate(double dt, Scene &scene) override;
 
   /**
    * Check the state of the window.
    *
    * @return true if the window should be closed.
    */
-  bool ShouldStop() const;
+  // virtual bool ShouldStop(Scene &scene) override;
 
   /**
    * Render the texture to the whole window.
@@ -65,43 +77,29 @@ public:
    *
    * @param listener The listener.
    */
-  void AddFrameBufferSizeListener(FrameBufferSizeListener* listener);
+  void AddFrameBufferSizeListener(FrameBufferSizeListener *listener);
+
+  std::pair<int, int> GetFrameBufferSize() {
+    int w, h;
+    glfwGetFramebufferSize(m_window, &w, &h);
+    return {w, h};
+  }
 
 private: // Callback handler functions
-  static void KeyCallback(GLFWwindow *window, int key, int scancode, int action,
-                          int mods);
-
-  void HandleKey(int key, int scancode, int action, int mods);
+  void HandleDebugMessage(GLenum source, GLenum type, unsigned int id,
+                          GLenum severity, GLsizei length, const char *message);
 
   static void GLAPIENTRY DebugOutputCallback(GLenum source, GLenum type,
                                              unsigned int id, GLenum severity,
                                              GLsizei length,
                                              const char *message,
                                              const void *userParam);
-
-  static void CursorPosCallback(GLFWwindow *window, double x, double y);
-
-  void HandleCursorPos(double x, double y);
-
-  void HandleDebugMessage(GLenum source, GLenum type, unsigned int id,
-                          GLenum severity, GLsizei length, const char *message);
-
-  static void FrameBufferSizeCallback(GLFWwindow *window, int width,
-                                      int height);
-
-  void HandleFrameBufferSize(int width, int height);
-
   static void HandleGLFWError(int error, const char *description);
 
-private:
-  int m_width, m_height;
-  GLFWwindow *m_window;
-
 private: // Input section
-  Input m_input;
   GLFWkeyfun m_prevKeyCallback = nullptr;
 
-  std::vector<FrameBufferSizeListener*> m_fbsListeners;
+  std::vector<FrameBufferSizeListener *> m_fbsListeners;
 
 private:
   std::unique_ptr<OGL_Texture2D> m_renderTexture;
@@ -110,4 +108,5 @@ private:
 
 private:
   bool m_debug = true;
-}; // Renderer
+};
+} // namespace Bored

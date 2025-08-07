@@ -38,7 +38,7 @@ public:
 
   inline virtual void WriteData(const std::vector<std::byte> &data,
                                 const glm::vec2 &size, int bpp) {
-    std::size_t real_size = size[0] * size[1] * bpp;
+    size_t real_size = size[0] * size[1] * bpp;
     if (data.size() != real_size) {
       throw std::runtime_error(
           "[Error]: Size of data is not equals to width * height * bpp");
