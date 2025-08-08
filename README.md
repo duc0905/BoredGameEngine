@@ -95,6 +95,8 @@ The html documentation will be at `./build/base/docs/html/index.html`.
 
 Once built, you can link the static library and use the header files in the Engine to your libraries and/or executables.
 
+See `demo` folder.
+
 
 ## 🤝 Contributing
 
