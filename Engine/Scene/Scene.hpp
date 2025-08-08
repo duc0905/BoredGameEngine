@@ -11,6 +11,7 @@
 #include <functional>
 #include <iostream>
 #include <memory>
+#include <chrono>
 
 namespace Bored {
 /**
@@ -57,6 +58,32 @@ public:
   virtual void Update(double dt) {
     for (auto system : systems) {
       system->OnUpdate(dt, *this);
+    }
+  }
+
+  /**
+   * The game loop.
+   */
+  void GameLoop() {
+    bool running = true;
+    std::chrono::steady_clock::time_point prev = std::chrono::steady_clock::now();
+
+    // Main loop
+    while (running) {
+      std::chrono::steady_clock::time_point now =
+        std::chrono::steady_clock::now();
+
+      // Elapsed time since last frame in seconds
+      float dt = std::chrono::duration_cast<std::chrono::milliseconds>(now - prev)
+        .count() /
+        1000.0f;
+
+      // Update scene here
+      Update(dt);
+
+      running &= !ShouldStop();
+
+      prev = now;
     }
   }
 
