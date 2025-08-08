@@ -1,6 +1,3 @@
-#include <chrono>
-#include <glm/ext/scalar_constants.hpp>
-#include <glm/geometric.hpp>
 #include <memory>
 
 #include "MyScene.hpp"
