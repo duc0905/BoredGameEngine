@@ -42,11 +42,12 @@
       "inherits": "build-base"
     },
     {
-      "name": "build-main",
-      "displayName": "Build main executable with Ninja",
+      "name": "build-demo",
+      "displayName": "Build demo projects with Ninja",
       "inherits": "build-base",
       "targets": [
-        "main"
+        "demo1",
+        "demo2"
       ]
     },
     {

@@ -1,40 +1,105 @@
-# CMake-vcpkg-ninja template
 
-A simple project for C++ development using:
+# Bored game engine
 
-- [CMake](https://cmake.org/)
-- [Ninja](https://ninja-build.org/) (Optional) - Build system
-- [Clang](https://releases.llvm.org/download.html) - C/C++ compiler
-- [Doxygen](https://www.doxygen.nl/manual/install.html) - Generating code documentation
-- [GTest](https://google.github.io/googletest/) - Testing and mocking framework.
-  - Do not need to install this independently. It is already installed with vcpkg manifest.
+A simple game engine as a learning project to discover different areas of Computer Science such as Computer Graphics, Optimization, Audio, etc., and to practice different techniques in Software engineering.
 
-## Folder structure:
-- `build/`: the output folder for CMake config and build
-    - `build/<config-preset>/docs/html/index.html`: the entrypoint for the Doxygen documentation for our project
-- `docs/`: documentation related files
-    - `docs/Doxyfile.in`: configuration file for generating the final Doxyfile with CMake to be used with doxygen
-- `src/`: source code
-- `tests/`: test code
-- `vcpkg/`: git submodule of the original vcpkg repository
-- `vcpkg.json`: vcpkg manifest file
 
-## CMake presets
 
-List all presets:
-```sh
-cmake --list-presets=all
+## 💡 Tech Stack
+
+- Language: C++
+- Build tools: Clang, CMake, vcpkg, Doxygen
+- Libraries: see `vcpkg.json`
+- Testing library: Googletest
+## 🚀 Features and roadmap
+
+- Scene \& node
+  - Each scene is a seperate map/level
+  - Each scene has a Node-tree
+  - Each scene has its own ECS system
+- Rendering
+  - [x] Orthographic \& perspective cameras
+  - [x] Importing meshes
+  - Material system
+    - [x] Phong model
+    - [ ] PBR
+    - [ ] Texture mapping
+    - [ ] Normal mapping
+  - Lighting
+    - [x] Directional light
+    - [x] Point light
+    - [ ] Spot light
+  - [ ] Shadow mapping
+- [ ] Audio
+- [ ] Physics
+- [ ] Interactive editor
+- [ ] Serialize \& deserialize
+- [x] Scripting
+- [x] Input handling
+- [ ] Networking
+## ⚙️ Installation
+
+**📋 Prerequisites**
+
+- CMake >= 3.25.0
+- Ninja build system
+- Git
+- Clang compiler
+
+**🛠️ Build**
+
+Clone the project
+
+```bash
+  git clone --recurse-submodules https://github.com/duc0905/BoredGameEngine.git
 ```
 
-Presets in this template:
-1. Configuration presets:
-    - ninja-vcpkg
-2. Build presets:
-    - build
-    - build-main
-3. Test presets:
-    - test
+Go to the project directory
 
-## compile_commands.json file
+```bash
+  cd ./BoredGameEngine
+```
 
-- CMake generates the file at `build/<config-preset>/compile_commands.json`. Create a symlink to the file is recommended.
+Configure the build system. Vcpkg will automatically download the dependencies in this step, so it might take a few minutes.
+
+```bash
+  cmake --preset base
+```
+
+Building CMake targets
+
+```bash
+  cmake --build --preset build
+```
+
+Currently, there are 3 targets:
+
+- Engine - the static library containing core engine code
+  - Directory: build/base/Engine/Engine.lib
+- demo1 - the simple demo using the core functions of the engine
+  - Directory: build/base/demo/demo1/demo1.exe
+- demo2 - user-defined components and services demo
+  - Directory: build/base/demo/demo2/demo2.exe
+## 📖 Documentation
+
+Use the custom CMake target to generate documentation using Doxygen:
+
+```bash
+  cmake --build --preset build --target gen_doc
+```
+
+The html documentation will be at `./build/base/docs/html/index.html`.
+
+
+## 🎮 Usage
+
+Once built, you can link the static library and use the header files in the Engine to your libraries and/or executables.
+
+
+## 🤝 Contributing
+
+Contributions are always welcome! Since this is my personal project and I would prefer implementing myself, I would love to receive suggestions and/or guidance on new ideas, feature, or bugs for the project. However, you are free to work on a copy of the project for your own.
+## 📄 License
+
+[MIT](https://choosealicense.com/licenses/mit/)
+
