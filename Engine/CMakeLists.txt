@@ -6,15 +6,13 @@ find_package(entt CONFIG REQUIRED)
 find_package(OpenMP)
 
 set(ENGINE_SOURCE_FILES
-	# main.cpp
-	Systems/Window/WindowService.cpp
+	Systems/Input/IOService.cpp
 	Systems/Renderer/Shader/Shader.cpp
 	Systems/Renderer/OGL/Renderer.cpp
 	Components/Mesh3D.cpp
 	# Renderer/CPU/RayTracer.cpp
 )
 
-# add_executable(main ${ENGINE_SOURCE_FILES})
 add_library(Engine ${ENGINE_SOURCE_FILES})
 target_link_libraries(Engine PUBLIC glm::glm)
 target_link_libraries(Engine PRIVATE EnTT::EnTT)

@@ -1,7 +1,7 @@
 #include "Renderer.hpp"
 #include "../../../Components/Camera.hpp"
-#include "../../../Components/MeshComponent.hpp"
 #include "../../../Components/Lighting.hpp"
+#include "../../../Components/MeshComponent.hpp"
 #include "../../../Components/TransformComponent.hpp"
 
 #include <format>
@@ -21,7 +21,7 @@ std::shared_ptr<Shader> Renderer::defaultMeshShader;
 std::shared_ptr<Bored::Material> Renderer::defaultMaterial =
     std::make_shared<Bored::Material>(0.1f, 0.7f, 0.2f, 2.0f);
 
-Renderer::Renderer(Bored::WindowService& window_service) : window(window_service) {
+Renderer::Renderer(Bored::IOService &io_service) : io(io_service) {
   if (!defaultMeshShader) {
     defaultMeshShader = std::make_shared<Shader>("res/shaders/mesh.vert",
                                                  "res/shaders/mesh.frag");
@@ -41,7 +41,7 @@ Renderer::Renderer(Bored::WindowService& window_service) : window(window_service
     }
   }
 
-  auto fb_size = window.GetFrameBufferSize();
+  auto fb_size = io_service.GetFrameBufferSize();
   m_width = fb_size.first;
   m_height = fb_size.second;
 
@@ -72,11 +72,15 @@ Renderer::Renderer(Bored::WindowService& window_service) : window(window_service
   glDepthFunc(GL_LESS);
 
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+  io_service.SetFrameBufferSizeHandler(std::bind(&Renderer::OnFrameBufferSize,
+                                                 this, std::placeholders::_1,
+                                                 std::placeholders::_2));
 }
 
 Renderer::~Renderer() { glDeleteFramebuffers(1, &m_fbo); }
 
-void Renderer::SetupObjects(Bored::Scene& scene) {
+void Renderer::SetupObjects(Bored::Scene &scene) {
   auto mesh_view = scene.ecs_registry.view<Bored::MeshComponent>();
 
   for (auto &&[entity, mesh_comp] : mesh_view.each()) {
@@ -92,7 +96,15 @@ void Renderer::SetupObjects(Bored::Scene& scene) {
   }
 }
 
-std::shared_ptr<I_Texture2D> Renderer::Render(Bored::Scene& scene) {
+void Renderer::OnFrameBufferSize(int width, int height) {
+  m_width = width;
+  m_height = height;
+
+  ResizeColorBuffer(width, height);
+  ResizeDepthBuffer(width, height);
+}
+
+std::shared_ptr<I_Texture2D> Renderer::Render(Bored::Scene &scene) {
   glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
   glViewport(0, 0, m_width, m_height);
   glClearColor(m_bg.r, m_bg.g, m_bg.b, m_bg.a);
@@ -108,9 +120,8 @@ std::shared_ptr<I_Texture2D> Renderer::Render(Bored::Scene& scene) {
       throw std::runtime_error("Active scene has no active camera");
     }
 
-    if (!scene.ecs_registry
-             .all_of<Bored::TransformComponent, Bored::CameraComponent>(
-                 cam_node->id)) {
+    if (!scene.ecs_registry.all_of<Bored::TransformComponent,
+                                   Bored::CameraComponent>(cam_node->id)) {
       throw std::runtime_error(
           "Camera Node does not have Camera component or transform component");
     }
@@ -127,15 +138,14 @@ std::shared_ptr<I_Texture2D> Renderer::Render(Bored::Scene& scene) {
 
   // Get all lights
   auto point_light_view =
-      scene.ecs_registry
-          .view<Bored::TransformComponent, Bored::PointLight>();
+      scene.ecs_registry.view<Bored::TransformComponent, Bored::PointLight>();
   auto dir_light_view =
       scene.ecs_registry
           .view<Bored::TransformComponent, Bored::DirectionalLight>();
 
   // Get all meshes
-  auto mesh_view = scene.ecs_registry
-                       .view<Bored::NodeComponent, Bored::MeshComponent>();
+  auto mesh_view =
+      scene.ecs_registry.view<Bored::NodeComponent, Bored::MeshComponent>();
 
   for (auto &&[entity, node_comp, mesh_comp] : mesh_view.each()) {
     // Getting hierarchical transformation matrix
@@ -196,14 +206,6 @@ std::shared_ptr<I_Texture2D> Renderer::Render(Bored::Scene& scene) {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
   return m_colorTexture;
-}
-
-void Renderer::OnFrameBufferSize(int width, int height) {
-  m_width = width;
-  m_height = height;
-
-  ResizeColorBuffer(width, height);
-  ResizeDepthBuffer(width, height);
 }
 
 void Renderer::ResizeColorBuffer(int width, int height) {

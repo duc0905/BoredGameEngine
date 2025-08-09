@@ -3,7 +3,6 @@
 #include "../../Components/InputComponent.hpp"
 #include "../../Scene/Scene.hpp"
 #include "../I_System.hpp"
-#include "InputService.hpp"
 #include <GLFW/glfw3.h>
 #include <functional>
 #include <memory>
@@ -24,7 +23,7 @@ namespace Bored {
  */
 class Input : public I_System {
 public:
-  Input(InputService &input_service) : input_service(input_service) {
+  Input(IOService &input_service) : input_service(input_service) {
     auto pos = input_service.GetCursorPos();
     prev_cursor_pos_x = pos.first;
     prev_cursor_pos_y = pos.second;
@@ -163,7 +162,7 @@ public:
   //     m_cursorPosHandler; /**< Handler for mouse position events */
 
 private:
-  InputService &input_service;
+  IOService &input_service;
 
   std::vector<InputEvent> eventQueue;
 

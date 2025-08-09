@@ -3,8 +3,7 @@
 #include "../Components/NodeComponent.hpp"
 #include "../Systems/I_System.hpp"
 // clang-format off
-#include "../Systems/Window/WindowService.hpp"
-#include "../Systems/Input/InputService.hpp"
+#include "../Systems/Input/IOService.hpp"
 #include "Node.hpp"
 #include <entt/entity/fwd.hpp>
 #include <entt/entity/registry.hpp>
@@ -18,8 +17,7 @@ namespace Bored {
  * Holds pointers to services used by this scene
  */
 struct SceneContext {
-  WindowService *window_service;
-  InputService *input_service;
+  IOService *io;
 };
 
 /**

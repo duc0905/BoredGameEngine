@@ -11,19 +11,16 @@
 
 MyScene::MyScene() {
   // Setup window system
-  window = std::make_shared<Bored::WindowService>(800, 600);
-  renderer = std::make_shared<OGL::Renderer>(*window);
-  window->AddFrameBufferSizeListener(renderer.get());
+  io = std::make_shared<Bored::IOService>(800, 600);
+  renderer = std::make_shared<OGL::Renderer>(*io);
   systems.push_back(renderer);
 
   // Setup input system
-  std::shared_ptr<Bored::Input> input =
-      std::make_shared<Bored::Input>(*window->input_service);
+  std::shared_ptr<Bored::Input> input = std::make_shared<Bored::Input>(*io);
   systems.push_back(input);
 
   // Populate the services into scene context
-  context.window_service = window.get();
-  context.input_service = window->input_service.get();
+  context.io = io.get();
 
   // My cucstom system
   std::shared_ptr<Bored::I_System> gravity_system =
@@ -59,7 +56,7 @@ void MyScene::BuildScene() {
   // 1 satelite orbitting
   std::shared_ptr<Bored::Node> orbitor = CreateNode();
   orbitor->AddComponent<Bored::MeshComponent>(sphere);
-  auto& movement = orbitor->AddComponent<MovementComponent>();
+  auto &movement = orbitor->AddComponent<MovementComponent>();
   movement.velocity = {4.0f, 0.0f, 0.0f};
   orbitor->transform.translate = {0.0f, 5.0f, 0.0f};
   orbitor->transform.scale = {0.3f, 0.3f, 0.3f};

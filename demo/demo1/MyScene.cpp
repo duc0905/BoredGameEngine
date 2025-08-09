@@ -3,6 +3,7 @@
 #include "Components/Camera.hpp"
 #include "Components/Lighting.hpp"
 #include "Components/MeshComponent.hpp"
+#include "Systems/Input/IOService.hpp"
 #include "Systems/Input/InputSystem.hpp"
 
 void CameraController::OnInput(double dt, Bored::InputEvent &event,
@@ -51,11 +52,11 @@ void CameraController::OnInput(double dt, Bored::InputEvent &event,
   if (event.type == Bored::InputType::KEY_DOWN &&
       event.key.keyCode == GLFW_KEY_ESCAPE) {
     if (is_mouse_hidden) {
-      node->scene.context.input_service->SetCursorMode(
+      node->scene.context.io->SetCursorMode(
           Bored::CursorMode::VISIBLE);
       is_mouse_hidden = false;
     } else {
-      node->scene.context.input_service->SetCursorMode(
+      node->scene.context.io->SetCursorMode(
           Bored::CursorMode::DISABLED);
       is_mouse_hidden = true;
     }
@@ -64,21 +65,17 @@ void CameraController::OnInput(double dt, Bored::InputEvent &event,
 
 MyScene::MyScene() {
   // Setup window system
-  window = std::make_shared<Bored::WindowService>(SCR_WIDTH, SCR_HEIGHT);
-  renderer = std::make_shared<OGL::Renderer>(*window);
-  window->AddFrameBufferSizeListener(renderer.get());
+  io = std::make_shared<Bored::IOService>(SCR_WIDTH, SCR_HEIGHT);
+  renderer = std::make_shared<OGL::Renderer>(*io);
   systems.push_back(renderer);
-  // window->renderer = renderer;
-  // scene->systems.push_back(window);
 
   // Setup input system
   std::shared_ptr<Bored::Input> input =
-      std::make_shared<Bored::Input>(*window->input_service);
+      std::make_shared<Bored::Input>(*io);
   systems.push_back(input);
 
   // Populate the services into scene context
-  context.window_service = window.get();
-  context.input_service = window->input_service.get();
+  context.io = io.get();
 }
 
 void MyScene::BuildScene() {

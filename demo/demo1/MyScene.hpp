@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Systems/Input/IOService.hpp"
 #include <Components/InputComponent.hpp>
 #include <Scene/Scene.hpp>
 #include <Systems/Renderer/OGL/Renderer.hpp>
@@ -30,5 +31,5 @@ public:
 
 private:
   std::shared_ptr<OGL::Renderer> renderer;
-  std::shared_ptr<Bored::WindowService> window;
+  std::shared_ptr<Bored::IOService> io;
 };

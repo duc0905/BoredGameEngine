@@ -1,47 +1,39 @@
-#include "WindowService.hpp"
-#include "Listeners.hpp"
-
+#include "IOService.hpp"
 #include <GLFW/glfw3.h>
-#include <iostream>
-#include <memory>
-#include <stdexcept>
 
 namespace Bored {
-WindowService::WindowService(const int &w, const int &h) : m_width(w), m_height(h) {
-  // Initialize OpenGL context and other setup here
-  // Initialize GLFW
+IOService::IOService(int width, int height) {
   if (!glfwInit()) {
-    std::cout << "[Error]: Failed to initialize GLFW" << std::endl;
     throw std::runtime_error("GLFW initialization failed");
   }
 
   if (m_debug) {
-    std::cout << "[Info]: Running in debug mode" << std::endl;
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
   }
 
+  // Anti aliasing
   glfwWindowHint(GLFW_SAMPLES, 4);
 
   // Create a windowed mode window and its OpenGL context
-  m_window = glfwCreateWindow(m_width, m_height, "OpenGL Window", NULL, NULL);
-  if (!m_window) {
-    std::cerr << "Failed to create GLFW window" << std::endl;
+  window = glfwCreateWindow(width, height, "OpenGL Window", NULL, NULL);
+  if (!window) {
     glfwTerminate();
     throw std::runtime_error("GLFW window creation failed");
   }
 
-  // Make the window's context current
-  glfwMakeContextCurrent(m_window);
+  glfwMakeContextCurrent(window);
 
-  // Create the input service
-  input_service = std::make_unique<InputService>(m_window);
+  // Magic stuff
+  glfwSetWindowUserPointer(window, this);
 
-  // Match glfw refresh rate with monitor refresh rate
-  glfwSwapInterval(1);
+  // Set callback handlers
+  glfwSetKeyCallback(window, &IOService::KeyCallback);
+  glfwSetCursorPosCallback(window, &IOService::CursorPosCallback);
+  glfwSetMouseButtonCallback(window, &IOService::MouseButtonCallback);
+  glfwSetFramebufferSizeCallback(window, &IOService::FrameBufferSizeCallback);
 
   // Initialize GLAD
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-    std::cout << "[Error]: Failed to initialize GLAD" << std::endl;
     throw std::runtime_error("GLAD initialization failed");
   }
 
@@ -62,7 +54,7 @@ WindowService::WindowService(const int &w, const int &h) : m_width(w), m_height(
       std::cout << "[Info]: Enabling OpenGL Debug output" << std::endl;
       glEnable(GL_DEBUG_OUTPUT);
       glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-      glDebugMessageCallback(WindowService::DebugOutputCallback, this);
+      glDebugMessageCallback(IOService::DebugOutputCallback, this);
       glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0,
                             nullptr, GL_TRUE);
     }
@@ -76,14 +68,15 @@ WindowService::WindowService(const int &w, const int &h) : m_width(w), m_height(
 
   // Create a VAO for rendering the texture covers the whole screen
   GLuint VBO, EBO;
+
   // clang-format off
-  float vertices[] = {
-      // Position               UV
-      -0.8f, -0.8f, 0.2f, 1.0f, 0.0f, 0.0f,
-      -0.8f,  0.8f, 0.2f, 1.0f, 0.0f, 1.0f,
-       0.8f,  0.8f, 0.2f, 1.0f, 1.0f, 1.0f,
-       0.8f, -0.8f, 0.2f, 1.0f, 1.0f, 0.0f,
-  };
+    float vertices[] = {
+        // Position               UV
+        -0.8f, -0.8f, 0.2f, 1.0f, 0.0f, 0.0f,
+        -0.8f,  0.8f, 0.2f, 1.0f, 0.0f, 1.0f,
+         0.8f,  0.8f, 0.2f, 1.0f, 1.0f, 1.0f,
+         0.8f, -0.8f, 0.2f, 1.0f, 1.0f, 0.0f,
+    };
   // clang-format on
   unsigned int indices[] = {0, 1, 2, 0, 2, 3};
 
@@ -116,28 +109,44 @@ WindowService::WindowService(const int &w, const int &h) : m_width(w), m_height(
                                             "res/shaders/simple_texture.frag");
 }
 
-WindowService::~WindowService() {
-  // Cleanup code here
-  glfwDestroyWindow(m_window);
-  glfwTerminate();
+void IOService::SetCursorMode(CursorMode mode) {
+  switch (mode) {
+  case CursorMode::VISIBLE:
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    break;
+  case CursorMode::CAPTURED:
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_CAPTURED);
+    break;
+  case CursorMode::HIDDEN:
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+    break;
+  case CursorMode::DISABLED:
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    if (glfwRawMouseMotionSupported())
+      glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+    break;
+  }
 }
 
-// bool WindowService::ShouldStop(Scene &scene) {
-//   return glfwWindowShouldClose(m_window);
-// }
-//
-// void WindowService::OnUpdate(double dt, Scene &scene) {
-//   PollEvents();
-//
-//   if (renderer) {
-//     auto tex = renderer->Render(scene);
-//     Render(tex);
-//
-//     glfwSwapBuffers(m_window); // Swap front and back buffers
-//   }
-// }
+void IOService::PollEvents() { glfwPollEvents(); }
 
-void WindowService::Render(std::shared_ptr<I_Texture2D> texture) {
+bool IOService::ShouldStop() const { return glfwWindowShouldClose(window); }
+
+std::pair<int, int> IOService::GetCursorPos() const {
+  double x, y;
+  glfwGetCursorPos(window, &x, &y);
+  return {(int)x, (int)y};
+}
+
+bool IOService::IsKeyPressed(int key) const { return glfwGetKey(window, key); }
+
+std::pair<int, int> IOService::GetFrameBufferSize() const {
+  std::pair<int, int> size;
+  glfwGetFramebufferSize(window, &size.first, &size.second);
+  return size;
+}
+
+void IOService::Render(std::shared_ptr<I_Texture2D> texture) {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -154,22 +163,61 @@ void WindowService::Render(std::shared_ptr<I_Texture2D> texture) {
   glBindVertexArray(m_screenVao);
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-  glfwSwapBuffers(m_window);
+  glfwSwapBuffers(window);
 }
 
-void WindowService::WaitEvents(float timeout) const { glfwWaitEventsTimeout(timeout); }
-
-void WindowService::PollEvents() const { glfwPollEvents(); }
-
-void WindowService::AddFrameBufferSizeListener(FrameBufferSizeListener *listener) {
-  if (listener != nullptr) {
-    m_fbsListeners.push_back(listener);
-  }
+void IOService::SetKeyHandler(std::function<void(int, int, int)> handler) {
+  key_callback = handler;
 }
 
-void WindowService::HandleDebugMessage(GLenum source, GLenum type, unsigned int id,
-                                GLenum severity, GLsizei length,
-                                const char *message) {
+void IOService::SetCursorPosHandler(std::function<void(int, int)> handler) {
+  cursor_pos_callback = handler;
+}
+
+void IOService::SetFrameBufferSizeHandler(
+    std::function<void(int, int)> handler) {
+  frame_buffer_size_callback = handler;
+}
+
+void IOService::SetMouseButtonHandler(
+    std::function<void(int, int, int)> handler) {
+  mouse_button_callback = handler;
+}
+
+void IOService::KeyCallback(GLFWwindow *window, int key, int scancode,
+                            int action, int mods) {
+  IOService *this_ = static_cast<IOService *>(glfwGetWindowUserPointer(window));
+
+  if (this_->key_callback)
+    this_->key_callback(key, action, mods);
+}
+
+void IOService::CursorPosCallback(GLFWwindow *window, double x, double y) {
+  IOService *this_ = static_cast<IOService *>(glfwGetWindowUserPointer(window));
+
+  if (this_->cursor_pos_callback)
+    this_->cursor_pos_callback((int)x, (int)y);
+}
+
+void IOService::FrameBufferSizeCallback(GLFWwindow *window, int width,
+                                        int height) {
+  IOService *this_ = static_cast<IOService *>(glfwGetWindowUserPointer(window));
+
+  if (this_->frame_buffer_size_callback)
+    this_->frame_buffer_size_callback(width, height);
+}
+
+void IOService::MouseButtonCallback(GLFWwindow *window, int key, int action,
+                                    int mods) {
+  IOService *this_ = static_cast<IOService *>(glfwGetWindowUserPointer(window));
+
+  if (this_->mouse_button_callback)
+    this_->mouse_button_callback(key, action, mods);
+}
+
+void IOService::HandleDebugMessage(GLenum source, GLenum type, unsigned int id,
+                                   GLenum severity, GLsizei length,
+                                   const char *message) {
   // ignore non-significant error/warning codes
   if (id == 131169 || id == 131185 || id == 131218 || id == 131204)
     return;
@@ -248,10 +296,12 @@ void WindowService::HandleDebugMessage(GLenum source, GLenum type, unsigned int 
   std::cout << std::endl;
 }
 
-void WindowService::DebugOutputCallback(GLenum source, GLenum type, unsigned int id,
-                                 GLenum severity, GLsizei length,
-                                 const char *message, const void *userParam) {
-  WindowService *_this = reinterpret_cast<WindowService *>(const_cast<void *>(userParam));
+void IOService::DebugOutputCallback(GLenum source, GLenum type, unsigned int id,
+                                    GLenum severity, GLsizei length,
+                                    const char *message,
+                                    const void *userParam) {
+  IOService *_this =
+      reinterpret_cast<IOService *>(const_cast<void *>(userParam));
   if (_this) {
     _this->HandleDebugMessage(source, type, id, severity, length, message);
   } else {
@@ -260,56 +310,7 @@ void WindowService::DebugOutputCallback(GLenum source, GLenum type, unsigned int
   }
 }
 
-// void Window::FrameBufferSizeCallback(GLFWwindow *window, int width,
-//                                      int height) {
-//   Window *_this = static_cast<Window *>(glfwGetWindowUserPointer(window));
-//
-//   if (_this) {
-//     _this->HandleFrameBufferSize(width, height);
-//   }
-// }
-//
-// void Window::HandleFrameBufferSize(int width, int height) {
-//   m_width = width;
-//   m_height = height;
-//
-//   // Reset the opengl viewport with the new dimension
-//   glViewport(0, 0, width, height);
-//
-//   for (auto listener : m_fbsListeners)
-//     listener->OnFrameBufferSize(width, height);
-// }
-
-void WindowService::HandleGLFWError(int error, const char *description) {
+void IOService::HandleGLFWError(int error, const char *description) {
   std::cout << "[Error]: GLFW (" << error << "): " << description << std::endl;
 }
-
-// void Window::KeyCallback(GLFWwindow *window, int key, int scancode, int action,
-//                          int mods) {
-//   Window *_this = static_cast<Window *>(glfwGetWindowUserPointer(window));
-//   if (_this) {
-//     _this->HandleKey(key, scancode, action, mods);
-//   }
-// }
-//
-// void Window::HandleKey(int key, int scancode, int action, int mods) {
-//   if (m_prevKeyCallback != nullptr)
-//     m_prevKeyCallback(m_window, key, scancode, action, mods);
-//
-//   if (m_input)
-//     m_input->HandleKey(key, action, mods);
-// }
-//
-// void Window::CursorPosCallback(GLFWwindow *window, double x, double y) {
-//   Window *_this = static_cast<Window *>(glfwGetWindowUserPointer(window));
-//   if (_this) {
-//     _this->HandleCursorPos(x, y);
-//   }
-// }
-//
-// void Window::HandleCursorPos(double x, double y) {
-//   if (m_input)
-//     m_input->HandleCursorPosition((int)x, (int)y);
-// }
-
 } // namespace Bored
