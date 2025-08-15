@@ -6,7 +6,7 @@ find_package(entt CONFIG REQUIRED)
 find_package(OpenMP)
 
 set(ENGINE_SOURCE_FILES
-	Systems/Input/IOService.cpp
+	Services/IOService.cpp
 	Systems/Renderer/Shader/Shader.cpp
 	Systems/Renderer/OGL/Renderer.cpp
 	Components/Mesh3D.cpp

@@ -60,7 +60,7 @@ void CameraController::OnInput(double dt, Bored::InputEvent &event,
   }
 }
 
-MyScene::MyScene() {
+MyScene::MyScene() : Scene("Demo 1 scene") {
   // Setup window system
   io = std::make_shared<Bored::IOService>(SCR_WIDTH, SCR_HEIGHT);
   renderer = std::make_shared<OGL::Renderer>(*io);
@@ -77,9 +77,11 @@ MyScene::MyScene() {
 void MyScene::BuildScene() {
   // Building scene
   std::shared_ptr<Bored::Node> root = CreateNode();
+  root->name = "Root";
   SetRoot(root);
 
   std::shared_ptr<Bored::Node> camera_node = CreateNode();
+  camera_node->name = "Camera";
   camera_node->AddComponent<Bored::CameraComponent>(new Bored::Perspective(
       Bored::Perspective::GetFOV(1.0f, 2.0f), SCR_WIDTH, SCR_HEIGHT, 1.0f));
   Bored::TransformComponent &camera_transform =
@@ -95,6 +97,7 @@ void MyScene::BuildScene() {
   SetActiveCamera(camera_node);
 
   std::shared_ptr<Bored::Node> triangle_node = CreateNode();
+  triangle_node->name = "Triangle";
   Bored::MeshComponent &triangle_mesh_comp =
       triangle_node->AddComponent<Bored::MeshComponent>();
   triangle_mesh_comp.mesh = std::make_shared<Bored::ArrayMesh>();
@@ -117,6 +120,7 @@ void MyScene::BuildScene() {
   // Loading mesh from files
   try {
     std::shared_ptr<Bored::Node> kitchen_table_node = CreateNode();
+    kitchen_table_node->name = "Kitchen table";
     Bored::MeshComponent &kitchen_table_mesh_comp =
         kitchen_table_node->AddComponent<Bored::MeshComponent>();
     kitchen_table_mesh_comp.mesh =
@@ -124,6 +128,7 @@ void MyScene::BuildScene() {
     root->AddChild(kitchen_table_node);
 
     std::shared_ptr<Bored::Node> chair_node = CreateNode();
+    chair_node->name = "Chair";
     Bored::MeshComponent &chair_mesh_comp =
         chair_node->AddComponent<Bored::MeshComponent>();
     chair_mesh_comp.mesh = OGL::LoadModel("res/models/chair_A.gltf");
@@ -131,6 +136,7 @@ void MyScene::BuildScene() {
     root->AddChild(chair_node);
 
     std::shared_ptr<Bored::Node> cube_node = CreateNode();
+    cube_node->name = "Cube";
     Bored::MeshComponent &cube_mesh_comp =
         cube_node->AddComponent<Bored::MeshComponent>();
     cube_mesh_comp.mesh = OGL::LoadModel("res/models/cube.gltf");
@@ -142,6 +148,7 @@ void MyScene::BuildScene() {
 
   // Setting up light sources
   std::shared_ptr<Bored::Node> dir_light_node = CreateNode();
+  dir_light_node->name = "Directional light";
   Bored::DirectionalLight &dir_light_comp =
       dir_light_node->AddComponent<Bored::DirectionalLight>();
   dir_light_comp.light_color = {0.8f, 0.6f, 0.2f};

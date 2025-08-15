@@ -12,6 +12,9 @@ set(CMAKE_CXX_EXTENSIONS Off)
 # Engine code
 add_subdirectory("Engine")
 
+# Editor code
+add_subdirectory("Editor")
+
 # Tests on our code
 add_subdirectory("tests")
 

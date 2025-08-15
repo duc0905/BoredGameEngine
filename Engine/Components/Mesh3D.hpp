@@ -38,7 +38,5 @@ public:
   // 0: position, 1: uvs, 2: normals
   GLuint m_vao, m_vbos[3], m_ebo;
   unsigned int m_numVertices, m_numIndices;
-
-  std::shared_ptr<Material> material;
 };
 } // namespace Bored

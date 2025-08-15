@@ -5,12 +5,9 @@
 #include <GLFW/glfw3.h>
 
 // clang-format on
+#include "../Systems/Renderer/Shader/Shader.hpp"
+#include "../Systems/Renderer/Texture/OGL_Texture.hpp"
 #include <functional>
-#include <iostream>
-#include <stdexcept>
-
-#include "../Renderer/Shader/Shader.hpp"
-#include "../Renderer/Texture/OGL_Texture.hpp"
 
 namespace Bored {
 enum class CursorMode { VISIBLE, CAPTURED, DISABLED, HIDDEN };
@@ -23,7 +20,9 @@ public:
   bool m_debug = true;
 
 public:
-  IOService(int width = 800, int height = 600);
+  IOService(int width = 800, int height = 600, bool fullscreen = false);
+
+  ~IOService();
 
   void SetCursorMode(CursorMode mode);
 
@@ -80,7 +79,7 @@ private: // OpenGL error handling code
                                              const void *userParam);
   static void HandleGLFWError(int error, const char *description);
 
-private:
+public:
   GLFWwindow *window;
 
 private:

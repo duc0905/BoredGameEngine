@@ -36,6 +36,7 @@ void MyScene::BuildScene() {
 
   // Camera
   std::shared_ptr<Bored::Node> camera_node = CreateNode();
+  camera_node->name = "Camera";
   camera_node->AddComponent<Bored::CameraComponent>(new Bored::Perspective(
       Bored::Perspective::GetFOV(1.0f, 2.0f), 800, 600, 1.0f));
   Bored::TransformComponent &camera_transform =

@@ -1,9 +1,16 @@
 #pragma once
-#include <glm/glm.hpp>
+#include "Component.hpp"
 #include <glm/ext/matrix_transform.hpp>
+#include <glm/glm.hpp>
 
 namespace Bored {
 struct TransformComponent {
+  SETUP_COMPONENT(TransformComponent) {
+    RegisterProp<&TransformComponent::translate>("translate");
+    RegisterProp<&TransformComponent::rotate>("rotate");
+    RegisterProp<&TransformComponent::scale>("scale");
+  }
+
   // Transformation
   glm::vec3 translate{0.0f, 0.0f, 0.0f};
   glm::vec3 rotate{0.0f, 0.0f, 0.0f};

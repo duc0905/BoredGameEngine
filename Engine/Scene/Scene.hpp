@@ -3,7 +3,7 @@
 #include "../Components/NodeComponent.hpp"
 #include "../Systems/I_System.hpp"
 // clang-format off
-#include "../Systems/Input/IOService.hpp"
+#include "../Services/IOService.hpp"
 #include "Node.hpp"
 #include <entt/entity/fwd.hpp>
 #include <entt/entity/registry.hpp>
@@ -11,6 +11,7 @@
 #include <iostream>
 #include <memory>
 #include <chrono>
+#include <string>
 
 namespace Bored {
 /**
@@ -34,8 +35,10 @@ class Scene {
 public:
   entt::registry ecs_registry;
 
+  std::string name;
+
 public:
-  Scene() {}
+  Scene(const std::string& name = "Scene") : name(name) {}
   virtual ~Scene() = default;
 
   /**

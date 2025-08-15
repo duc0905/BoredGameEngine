@@ -2,7 +2,7 @@
 #include <GLFW/glfw3.h>
 
 namespace Bored {
-IOService::IOService(int width, int height) {
+IOService::IOService(int width, int height, bool fullscreen) {
   if (!glfwInit()) {
     throw std::runtime_error("GLFW initialization failed");
   }
@@ -14,8 +14,27 @@ IOService::IOService(int width, int height) {
   // Anti aliasing
   glfwWindowHint(GLFW_SAMPLES, 4);
 
+  glfwWindowHint(GLFW_FOCUSED, GLFW_TRUE);
+  glfwWindowHint(GLFW_CENTER_CURSOR, GLFW_TRUE);
+  
+
   // Create a windowed mode window and its OpenGL context
-  window = glfwCreateWindow(width, height, "OpenGL Window", NULL, NULL);
+  if (fullscreen) {
+    GLFWmonitor *monitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode *mode = glfwGetVideoMode(monitor);
+
+    glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+    glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+    glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+    glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+    glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+
+    window = glfwCreateWindow(mode->width, mode->height, "GLFW Window", NULL,
+                              NULL);
+  } else {
+    window = glfwCreateWindow(width, height, "GLFW Window", NULL, NULL);
+  }
+
   if (!window) {
     glfwTerminate();
     throw std::runtime_error("GLFW window creation failed");
@@ -70,13 +89,13 @@ IOService::IOService(int width, int height) {
   GLuint VBO, EBO;
 
   // clang-format off
-    float vertices[] = {
-        // Position               UV
-        -0.8f, -0.8f, 0.2f, 1.0f, 0.0f, 0.0f,
-        -0.8f,  0.8f, 0.2f, 1.0f, 0.0f, 1.0f,
-         0.8f,  0.8f, 0.2f, 1.0f, 1.0f, 1.0f,
-         0.8f, -0.8f, 0.2f, 1.0f, 1.0f, 0.0f,
-    };
+  float vertices[] = {
+    // Position               UV
+    -0.9f, -0.9f, 0.0f, 1.0f, 0.0f, 0.0f,
+    -0.9f,  0.9f, 0.0f, 1.0f, 0.0f, 1.0f,
+    0.9f,  0.9f, 0.0f, 1.0f, 1.0f, 1.0f,
+    0.9f, -0.9f, 0.0f, 1.0f, 1.0f, 0.0f,
+  };
   // clang-format on
   unsigned int indices[] = {0, 1, 2, 0, 2, 3};
 
@@ -107,6 +126,11 @@ IOService::IOService(int width, int height) {
   m_renderTexture = std::make_unique<OGL_Texture2D>();
   m_screenShader = std::make_unique<Shader>("res/shaders/simple.vert",
                                             "res/shaders/simple_texture.frag");
+}
+
+IOService::~IOService() {
+  glfwDestroyWindow(window);
+  glfwTerminate();
 }
 
 void IOService::SetCursorMode(CursorMode mode) {

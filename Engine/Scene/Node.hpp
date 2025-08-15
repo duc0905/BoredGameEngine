@@ -6,6 +6,7 @@
 #include <format>
 #include <functional>
 #include <memory>
+#include <string>
 #include <vector>
 
 namespace Bored {
@@ -17,6 +18,7 @@ struct Node {
 
 public:
   entt::entity id;
+  std::string name;
   Node *parent = nullptr;
   std::vector<std::shared_ptr<Node>> children;
 
@@ -103,7 +105,9 @@ private:
   // NOTE: Have to use Scene to create a node.
   Node(Scene &scene, entt::registry &registry)
       : scene(scene), registry(registry), id(registry.create()),
-        transform(registry.emplace<Bored::TransformComponent>(id)) {}
+        transform(registry.emplace<Bored::TransformComponent>(id)) {
+    name = std::format("Node #{}", (unsigned int)id);
+  }
 
 public:
   Scene &scene;
