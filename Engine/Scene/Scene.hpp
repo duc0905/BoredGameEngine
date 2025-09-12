@@ -66,11 +66,10 @@ public:
    * The game loop.
    */
   void GameLoop() {
-    bool running = true;
     std::chrono::steady_clock::time_point prev = std::chrono::steady_clock::now();
 
     // Main loop
-    while (running) {
+    while (!ShouldStop()) {
       std::chrono::steady_clock::time_point now =
         std::chrono::steady_clock::now();
 
@@ -81,8 +80,6 @@ public:
 
       // Update scene here
       Update(dt);
-
-      running &= !ShouldStop();
 
       prev = now;
     }

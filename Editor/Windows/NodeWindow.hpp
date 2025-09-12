@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Components/Lighting.hpp"
 #include "Components/TransformComponent.hpp"
 #include "Scene/Node.hpp"
 #include <entt/entity/storage.hpp>
@@ -50,6 +51,8 @@ public:
     // TODO: More types
     // TODO: What about user-defined types
     Bored::TransformComponent::Register();
+    Bored::PointLight::Register();
+    Bored::DirectionalLight::Register();
   }
 
   void OnSelectNode(std::shared_ptr<Bored::Node> p_node) { node = p_node; }
@@ -61,9 +64,11 @@ public:
     } else {
       ImGui::Text("%s", node->name.c_str());
 
+      // Iterate through every registered components
       for (auto &&[id, type] : entt::resolve()) {
         auto *storage = node->registry.storage(type.id());
 
+        // Check if the entity has this component
         if (storage && storage->contains(node->id)) {
           auto *raw = storage->value(node->id);
           auto any = type.from_void(raw);
@@ -81,12 +86,12 @@ public:
                 data.set(any, value);
               }
             }
+
+            // TODO: Render other field types - int, float, double, string, etc.
           }
         }
       }
     }
-
-    // TODO: Do the component exploring
 
     ImGui::End();
   }
