@@ -112,7 +112,11 @@ void MazeScene::BuildScene() {
   std::shared_ptr<Bored::ArrayMesh> floor_tile_model = OGL::LoadModel(
       resource_path + "models/kaykit_prototype/Primitive_Floor.gltf");
   std::shared_ptr<Bored::Material> black_tile_mat =
-      std::make_shared<Bored::Material>();
+      std::make_shared<Bored::Material>(glm::vec3{0.1f, 0.1f, 0.1f}, 0.1f, 0.7f,
+                                        0.2f, 1.0f);
+  std::shared_ptr<Bored::Material> white_tile_mat =
+      std::make_shared<Bored::Material>(glm::vec3{0.9f, 0.9f, 0.9f}, 0.1f, 0.7f,
+                                        0.2f, 1.0f);
 
   // Massive 10x10 floor
   for (int i = 0; i < 10; i++) {
@@ -120,7 +124,10 @@ void MazeScene::BuildScene() {
       std::shared_ptr<Bored::Node> floor_tile = CreateNode();
       auto &mesh_comp = floor_tile->AddComponent<Bored::MeshComponent>();
       mesh_comp.mesh = floor_tile_model;
-      mesh_comp.mesh->material;
+      if ((i + j) % 2 == 0)
+        mesh_comp.material = black_tile_mat;
+      else
+        mesh_comp.material = white_tile_mat;
       floor_tile->transform.translate = {i * 1.0f, 0.0f, j * 1.0f};
       floor_tile->transform.scale = {0.25, 0.5f, 0.25f};
       root->AddChild(floor_tile);

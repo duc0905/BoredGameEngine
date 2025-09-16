@@ -23,6 +23,8 @@ struct PointLight {
 };
 
 struct Material {
+    vec3 color;
+
     float ambient;
     float diffuse;
     float specular;
@@ -45,7 +47,7 @@ vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir, Material ma
     float diff = max(dot(normal, lightDir), 0.0);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), uMaterial.shininess);
 
-    return light.color * (uMaterial.ambient + uMaterial.diffuse * diff + uMaterial.specular * spec);
+    return light.color * material.color * (uMaterial.ambient + uMaterial.diffuse * diff + uMaterial.specular * spec);
 }
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir, Material material) {
@@ -56,7 +58,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir, Material materi
     float diff = max(dot(normal, lightDir), 0.0);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), uMaterial.shininess);
 
-    return light.color * light.strength * (uMaterial.ambient + uMaterial.diffuse * diff + uMaterial.specular * spec);
+    return light.color * material.color * light.strength * (uMaterial.ambient + uMaterial.diffuse * diff + uMaterial.specular * spec);
 }
 
 void main() {

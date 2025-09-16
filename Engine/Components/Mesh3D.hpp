@@ -6,6 +6,8 @@
 
 namespace Bored {
 struct Material {
+  glm::vec3 color;
+
   float ambient;
   float diffuse;
   float specular;

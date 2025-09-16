@@ -19,7 +19,7 @@ namespace OGL {
 /////// RENDERER ///////
 std::shared_ptr<Shader> Renderer::defaultMeshShader;
 std::shared_ptr<Bored::Material> Renderer::defaultMaterial =
-    std::make_shared<Bored::Material>(0.1f, 0.7f, 0.2f, 2.0f);
+    std::make_shared<Bored::Material>(glm::vec3{0.8f, 0.8f, 0.8f}, 0.1f, 0.7f, 0.2f, 2.0f);
 
 Renderer::Renderer(Bored::IOService &io_service) : io(io_service) {
   if (!defaultMeshShader) {
@@ -89,8 +89,8 @@ void Renderer::SetupObjects(Bored::Scene &scene) {
         mesh_comp.mesh->SetShader(defaultMeshShader);
       }
 
-      if (!mesh_comp.mesh->material) {
-        mesh_comp.mesh->material = defaultMaterial;
+      if (!mesh_comp.material) {
+        mesh_comp.material = defaultMaterial;
       }
     }
   }
@@ -152,6 +152,7 @@ std::shared_ptr<I_Texture2D> Renderer::Render(Bored::Scene &scene) {
     glm::mat4 model_mat = node_comp.node->GetGlobalTransformMatrix();
 
     auto mesh = mesh_comp.mesh;
+    auto material = mesh_comp.material;
     if (!mesh)
       continue;
 
@@ -166,10 +167,11 @@ std::shared_ptr<I_Texture2D> Renderer::Render(Bored::Scene &scene) {
     shader->setUniformVec3f("uEye", cam_eye);
 
     // NOTE: Material
-    shader->setUniformFloat("uMaterial.ambient", mesh->material->ambient);
-    shader->setUniformFloat("uMaterial.diffuse", mesh->material->diffuse);
-    shader->setUniformFloat("uMaterial.specular", mesh->material->specular);
-    shader->setUniformFloat("uMaterial.shininess", mesh->material->shininess);
+    shader->setUniformVec3f("uMaterial.color", material->color);
+    shader->setUniformFloat("uMaterial.ambient", material->ambient);
+    shader->setUniformFloat("uMaterial.diffuse", material->diffuse);
+    shader->setUniformFloat("uMaterial.specular", material->specular);
+    shader->setUniformFloat("uMaterial.shininess", material->shininess);
 
     // NOTE: Light
     int pls_index = 0;
