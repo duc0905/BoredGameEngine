@@ -9,8 +9,12 @@ struct Material {
   glm::vec3 ambient;
   glm::vec3 diffuse;
   glm::vec3 specular;
-
   float shininess;
+
+  Material() = default;
+  Material(const glm::vec3 &amb, const glm::vec3 &diff, const glm::vec3 &spec,
+           float shin)
+      : ambient(amb), diffuse(diff), specular(spec), shininess(shin) {}
 };
 
 struct ArrayMesh {

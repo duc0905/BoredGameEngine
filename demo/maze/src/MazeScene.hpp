@@ -3,6 +3,7 @@
 #include "Components/InputComponent.hpp"
 #include "Scene/Scene.hpp"
 #include "Systems/Renderer/OGL/Renderer.hpp"
+#include "Utils/AssetManager.hpp"
 
 // settings
 const unsigned int SCR_WIDTH = 1200;
@@ -31,4 +32,5 @@ public:
 private:
   std::shared_ptr<OGL::Renderer> renderer;
   std::shared_ptr<Bored::IOService> io;
+  Bored::AssetManager &asset_manager;
 };

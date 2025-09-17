@@ -19,8 +19,9 @@ namespace OGL {
 /////// RENDERER ///////
 std::shared_ptr<Shader> Renderer::defaultMeshShader;
 std::shared_ptr<Bored::Material> Renderer::defaultMaterial =
-    std::make_shared<Bored::Material>(glm::vec3{0.8f, 0.8f, 0.8f}, 0.1f, 0.7f,
-                                      0.2f, 2.0f);
+    std::make_shared<Bored::Material>(glm::vec3{0.8f, 0.8f, 0.8f},
+                                      glm::vec3{0.1f, 0.1f, 0.1f},
+                                      glm::vec3{0.2f, 0.2f, 0.2f}, 2.0f);
 
 Renderer::Renderer(Bored::IOService &io_service) : io(io_service) {
   if (!defaultMeshShader) {

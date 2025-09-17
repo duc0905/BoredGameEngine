@@ -10,6 +10,9 @@
 
 namespace Bored {
 
+// Define the static member
+std::unique_ptr<AssetManager> AssetManager::instance = nullptr;
+
 std::shared_ptr<MeshComponent>
 AssetManager::LoadModel(const std::string &filepath) {
 
@@ -55,7 +58,8 @@ AssetManager::LoadModel(const std::string &filepath) {
 
   } else {
     mesh_component->material = std::make_shared<Material>(
-        glm::vec3{0.8f, 0.8f, 0.8f}, 0.1f, 0.7f, 0.2f, 2.0f);
+        glm::vec3{0.1f, 0.1f, 0.1f}, glm::vec3{0.8f, 0.8f, 0.8f},
+        glm::vec3{0.2f, 0.2f, 0.2f}, 2.0f);
   }
 
   for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
@@ -82,11 +86,24 @@ AssetManager::LoadModel(const std::string &filepath) {
     }
   }
 
+  mesh_component->mesh = std::make_shared<ArrayMesh>();
   mesh_component->mesh->SubData(pos, uvs, norm, indices);
 
   std::cout << "Imported mesh: " << scene->mName.C_Str() << " with "
             << scene->mNumMeshes << " sub meshes, " << pos.size()
             << " vertices and " << indices.size() << " indices" << std::endl;
+
+  std::cout << "Material: \n \tAmbient: " << mesh_component->material->ambient.x
+            << ", " << mesh_component->material->ambient.y << ", "
+            << mesh_component->material->ambient.z << std::endl;
+  std::cout << "\tDiffuse: " << mesh_component->material->diffuse.x << ", "
+            << mesh_component->material->diffuse.y << ", "
+            << mesh_component->material->diffuse.z << std::endl;
+  std::cout << "\tSpecular: " << mesh_component->material->specular.x << ", "
+            << mesh_component->material->specular.y << ", "
+            << mesh_component->material->specular.z << std::endl;
+  std::cout << "\tShininess: " << mesh_component->material->shininess
+            << std::endl;
   return mesh_component;
 }
 

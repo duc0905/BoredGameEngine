@@ -75,7 +75,7 @@ void PlayerController::OnInput(double dt, Bored::InputEvent &event,
   }
 }
 
-MazeScene::MazeScene() {
+MazeScene::MazeScene() : asset_manager(Bored::AssetManager::GetInstance()) {
   // Setup window system
   io = std::make_shared<Bored::IOService>(SCR_WIDTH, SCR_HEIGHT);
   renderer = std::make_shared<OGL::Renderer>(*io);
@@ -109,27 +109,34 @@ void MazeScene::BuildScene() {
   // Walls and floors
   // Loading models
   // TODO: should let the asset registry handle this
-  std::shared_ptr<Bored::ArrayMesh> floor_tile_model = OGL::LoadModel(
-      resource_path + "models/kaykit_prototype/Primitive_Floor.gltf");
-  std::shared_ptr<Bored::ArrayMesh> wall_model = OGL::LoadModel(
+  std::shared_ptr<Bored::MeshComponent> floor_tile_model =
+      asset_manager.LoadModel(resource_path +
+                              "models/kaykit_prototype/Primitive_Floor.gltf");
+  std::shared_ptr<Bored::MeshComponent> wall_model = asset_manager.LoadModel(
       resource_path + "models/kaykit_prototype/Primitive_Wall.gltf");
-  std::shared_ptr<Bored::Material> black_tile_mat =
-      std::make_shared<Bored::Material>(glm::vec3{0.1f, 0.1f, 0.1f}, 0.1f, 0.7f,
-                                        0.2f, 1.0f);
-  std::shared_ptr<Bored::Material> white_tile_mat =
-      std::make_shared<Bored::Material>(glm::vec3{0.9f, 0.9f, 0.9f}, 0.1f, 0.7f,
-                                        0.2f, 1.0f);
+  // std::shared_ptr<Bored::Material> black_tile_mat =
+  //     std::make_shared<Bored::Material>(glm::vec3{0.1f, 0.1f, 0.1f}, 0.1f,
+  //     0.7f,
+  //                                       0.2f, 1.0f);
+  // std::shared_ptr<Bored::Material> white_tile_mat =
+  //     std::make_shared<Bored::Material>(glm::vec3{0.9f, 0.9f, 0.9f}, 0.1f,
+  //     0.7f,
+  //                                       0.2f, 1.0f);
+  // std::shared_ptr<Bored::Material> wall_mat =
+  // std::make_shared<Bored::Material>(
+  //     glm::vec3{0.9f, 0.9f, 0.9f}, 0.1f, 0.7f, 0.2f, 1.0f);
 
   // Massive 10x10 floor
   for (int i = 0; i < 10; i++) {
     for (int j = 0; j < 10; j++) {
       std::shared_ptr<Bored::Node> floor_tile = CreateNode();
       auto &mesh_comp = floor_tile->AddComponent<Bored::MeshComponent>();
-      mesh_comp.mesh = floor_tile_model;
-      if ((i + j) % 2 == 0)
-        mesh_comp.material = black_tile_mat;
-      else
-        mesh_comp.material = white_tile_mat;
+      mesh_comp.mesh = floor_tile_model->mesh;
+      mesh_comp.material = floor_tile_model->material;
+      // if ((i + j) % 2 == 0)
+      //   mesh_comp.material = floor_tile_model->material;
+      // else
+      //   mesh_comp.material = floor_tile_model->material;
       floor_tile->transform.translate = {i * 1.0f, -0.5f, j * 1.0f};
       floor_tile->transform.scale = {0.25, 0.5f, 0.25f};
       root->AddChild(floor_tile);
@@ -140,7 +147,8 @@ void MazeScene::BuildScene() {
     for (int j = 0; j < 10; j += 2) {
       std::shared_ptr<Bored::Node> wall = CreateNode();
       auto &mesh_comp = wall->AddComponent<Bored::MeshComponent>();
-      mesh_comp.mesh = wall_model;
+      mesh_comp.mesh = wall_model->mesh;
+      mesh_comp.material = wall_model->material;
 
       wall->transform.translate = {i * 1.0f, 0.0f, j * 1.0f};
       wall->transform.scale = {0.25f, 0.25f, 0.25f};
