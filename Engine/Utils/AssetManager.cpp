@@ -3,6 +3,7 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 #include <glm/glm.hpp>
+#include <iostream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -82,6 +83,10 @@ AssetManager::LoadModel(const std::string &filepath) {
   }
 
   mesh_component->mesh->SubData(pos, uvs, norm, indices);
+
+  std::cout << "Imported mesh: " << scene->mName.C_Str() << " with "
+            << scene->mNumMeshes << " sub meshes, " << pos.size()
+            << " vertices and " << indices.size() << " indices" << std::endl;
   return mesh_component;
 }
 

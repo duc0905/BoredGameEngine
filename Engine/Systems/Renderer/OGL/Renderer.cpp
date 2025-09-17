@@ -168,10 +168,9 @@ std::shared_ptr<I_Texture2D> Renderer::Render(Bored::Scene &scene) {
     shader->setUniformVec3f("uEye", cam_eye);
 
     // NOTE: Material
-    shader->setUniformVec3f("uMaterial.color", material->color);
-    shader->setUniformFloat("uMaterial.ambient", material->ambient);
-    shader->setUniformFloat("uMaterial.diffuse", material->diffuse);
-    shader->setUniformFloat("uMaterial.specular", material->specular);
+    shader->setUniformVec3f("uMaterial.ambient", material->ambient);
+    shader->setUniformVec3f("uMaterial.diffuse", material->diffuse);
+    shader->setUniformVec3f("uMaterial.specular", material->specular);
     shader->setUniformFloat("uMaterial.shininess", material->shininess);
 
     // NOTE: Light
@@ -221,58 +220,5 @@ void Renderer::ResizeDepthBuffer(int width, int height) {
   glBindRenderbuffer(GL_RENDERBUFFER, m_depthBuffer);
   glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
   glBindRenderbuffer(GL_RENDERBUFFER, 0);
-}
-
-std::shared_ptr<Bored::ArrayMesh> LoadModel(const std::string &filepath) {
-  std::shared_ptr<Bored::ArrayMesh> mesh = std::make_shared<Bored::ArrayMesh>();
-
-  std::vector<glm::vec3> pos;
-  std::vector<glm::vec2> uvs;
-  std::vector<glm::vec3> norm;
-  std::vector<uint32_t> indices;
-
-  uint32_t index_offset = 0;
-
-  Assimp::Importer importer;
-  const aiScene *scene =
-      importer.ReadFile(filepath, aiProcess_Triangulate | aiProcess_GenNormals |
-                                      aiProcess_CalcTangentSpace |
-                                      aiProcess_JoinIdenticalVertices);
-
-  if (nullptr == scene || !scene->HasMeshes()) {
-    throw std::runtime_error(importer.GetErrorString());
-  }
-
-  for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
-    const aiMesh *ai_mesh = scene->mMeshes[i];
-
-    for (unsigned int j = 0; j < ai_mesh->mNumVertices; j++) {
-      pos.emplace_back(ai_mesh->mVertices[j].x, ai_mesh->mVertices[j].y,
-                       ai_mesh->mVertices[j].z);
-      norm.emplace_back(ai_mesh->mNormals[j].x, ai_mesh->mNormals[j].y,
-                        ai_mesh->mNormals[j].z);
-      if (ai_mesh->HasTextureCoords(0)) {
-        uvs.emplace_back(ai_mesh->mTextureCoords[0][j].x,
-                         ai_mesh->mTextureCoords[0][j].y);
-      } else {
-        uvs.emplace_back(0.0f, 0.0f);
-      }
-    }
-
-    for (unsigned int j = 0; j < ai_mesh->mNumFaces; j++) {
-      const aiFace &face = ai_mesh->mFaces[j];
-      for (unsigned int k = 0; k < face.mNumIndices; k++) {
-        indices.push_back(face.mIndices[k] + index_offset);
-      }
-    }
-  }
-
-  mesh->SubData(pos, uvs, norm, indices);
-
-  std::cout << "Imported mesh: " << scene->mName.C_Str() << " with "
-            << scene->mNumMeshes << " sub meshes, " << pos.size()
-            << " vertices and " << indices.size() << " indices" << std::endl;
-
-  return mesh;
 }
 } // namespace OGL
