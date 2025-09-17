@@ -11,6 +11,7 @@ set(ENGINE_SOURCE_FILES
 	Systems/Renderer/OGL/Renderer.cpp
 	Components/Mesh3D.cpp
 	# Renderer/CPU/RayTracer.cpp
+	Utils/AssetManager.cpp
 )
 
 add_library(Engine ${ENGINE_SOURCE_FILES})
