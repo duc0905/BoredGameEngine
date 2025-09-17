@@ -111,6 +111,8 @@ void MazeScene::BuildScene() {
   // TODO: should let the asset registry handle this
   std::shared_ptr<Bored::ArrayMesh> floor_tile_model = OGL::LoadModel(
       resource_path + "models/kaykit_prototype/Primitive_Floor.gltf");
+  std::shared_ptr<Bored::ArrayMesh> wall_model = OGL::LoadModel(
+      resource_path + "models/kaykit_prototype/Primitive_Wall.gltf");
   std::shared_ptr<Bored::Material> black_tile_mat =
       std::make_shared<Bored::Material>(glm::vec3{0.1f, 0.1f, 0.1f}, 0.1f, 0.7f,
                                         0.2f, 1.0f);
@@ -128,9 +130,21 @@ void MazeScene::BuildScene() {
         mesh_comp.material = black_tile_mat;
       else
         mesh_comp.material = white_tile_mat;
-      floor_tile->transform.translate = {i * 1.0f, 0.0f, j * 1.0f};
+      floor_tile->transform.translate = {i * 1.0f, -0.5f, j * 1.0f};
       floor_tile->transform.scale = {0.25, 0.5f, 0.25f};
       root->AddChild(floor_tile);
+    }
+  }
+
+  for (int i = 0; i < 10; i += 2) {
+    for (int j = 0; j < 10; j += 2) {
+      std::shared_ptr<Bored::Node> wall = CreateNode();
+      auto &mesh_comp = wall->AddComponent<Bored::MeshComponent>();
+      mesh_comp.mesh = wall_model;
+
+      wall->transform.translate = {i * 1.0f, 0.0f, j * 1.0f};
+      wall->transform.scale = {0.25f, 0.25f, 0.25f};
+      root->AddChild(wall);
     }
   }
 
@@ -138,7 +152,7 @@ void MazeScene::BuildScene() {
   std::shared_ptr<Bored::Node> dir_light_node = CreateNode();
   Bored::DirectionalLight &dir_light_comp =
       dir_light_node->AddComponent<Bored::DirectionalLight>();
-  dir_light_comp.light_color = {0.8f, 0.6f, 0.2f};
+  dir_light_comp.light_color = {0.8f, 0.6f, 0.4f};
   dir_light_node->transform.rotate = {0.3f, 0.1f, 0.0f};
   root->AddChild(dir_light_node);
 }
