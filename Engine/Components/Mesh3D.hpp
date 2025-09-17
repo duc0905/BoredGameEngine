@@ -1,16 +1,14 @@
 #pragma once
 
-#include <vector>
-#include <memory>
 #include "../Systems/Renderer/Shader/Shader.hpp"
+#include <memory>
+#include <vector>
 
 namespace Bored {
 struct Material {
-  glm::vec3 color;
-
-  float ambient;
-  float diffuse;
-  float specular;
+  glm::vec3 ambient;
+  glm::vec3 diffuse;
+  glm::vec3 specular;
 
   float shininess;
 };
