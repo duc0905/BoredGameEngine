@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Systems/Renderer/I_Texture.hpp"
 #include "../Systems/Renderer/Shader/Shader.hpp"
 #include <memory>
 #include <vector>
@@ -10,11 +11,17 @@ struct Material {
   glm::vec3 diffuse;
   glm::vec3 specular;
   float shininess;
+  std::shared_ptr<I_Texture2D> diffuse_texture;
 
   Material() = default;
   Material(const glm::vec3 &amb, const glm::vec3 &diff, const glm::vec3 &spec,
+           float shin, std::shared_ptr<I_Texture2D> diffuse_tex)
+      : ambient(amb), diffuse(diff), specular(spec), shininess(shin),
+        diffuse_texture(diffuse_tex) {}
+  Material(const glm::vec3 &amb, const glm::vec3 &diff, const glm::vec3 &spec,
            float shin)
-      : ambient(amb), diffuse(diff), specular(spec), shininess(shin) {}
+      : ambient(amb), diffuse(diff), specular(spec), shininess(shin),
+        diffuse_texture(nullptr) {}
 };
 
 struct ArrayMesh {

@@ -6,6 +6,8 @@ in vec2 vTexCoord;
 in vec3 vFragPos;
 
 // uniform sampler2D uTexture;
+uniform sampler2D uDiffuseMap;
+uniform bool uHaveDiffuseMap;
 
 uniform vec3 uEye;
 
@@ -38,6 +40,10 @@ uniform PointLight pointLights[MAX_LIGHT];
 
 uniform Material uMaterial;
 
+vec3 GetDiffuseColor(Material material) {
+    return uHaveDiffuseMap ? texture(uDiffuseMap, vTexCoord).rgb : material.diffuse;
+}
+
 vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir, Material material) {
     vec3 lightDir = normalize(-light.direction);
     vec3 reflectDir = reflect(-lightDir, normal);
@@ -45,7 +51,9 @@ vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir, Material ma
     float diff = max(dot(normal, lightDir), 0.0);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), uMaterial.shininess);
 
-    return light.color * (uMaterial.diffuse * diff + uMaterial.specular * spec) + uMaterial.ambient;
+    vec3 diffuseColor = GetDiffuseColor(material);
+
+    return light.color * (diffuseColor * diff + uMaterial.specular * spec) + uMaterial.ambient;
 }
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir, Material material) {
@@ -56,7 +64,9 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir, Material materi
     float diff = max(dot(normal, lightDir), 0.0);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), uMaterial.shininess);
 
-    return light.color * light.strength * (uMaterial.diffuse * diff + uMaterial.specular * spec) + uMaterial.ambient;
+    vec3 diffuseColor = GetDiffuseColor(material);
+
+    return light.color * light.strength * (diffuseColor * diff + uMaterial.specular * spec) + uMaterial.ambient;
 }
 
 void main() {

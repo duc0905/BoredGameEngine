@@ -113,7 +113,7 @@ void MazeScene::BuildScene() {
       asset_manager.LoadModel(resource_path +
                               "models/kaykit_prototype/Primitive_Floor.gltf");
   std::shared_ptr<Bored::MeshComponent> wall_model = asset_manager.LoadModel(
-      resource_path + "models/kaykit_prototype/Primitive_Wall.gltf");
+      resource_path + "models/kaykit_prototype/Cube_Prototype_Large_B.gltf");
   // std::shared_ptr<Bored::Material> black_tile_mat =
   //     std::make_shared<Bored::Material>(glm::vec3{0.1f, 0.1f, 0.1f}, 0.1f,
   //     0.7f,
@@ -160,7 +160,7 @@ void MazeScene::BuildScene() {
   std::shared_ptr<Bored::Node> dir_light_node = CreateNode();
   Bored::DirectionalLight &dir_light_comp =
       dir_light_node->AddComponent<Bored::DirectionalLight>();
-  dir_light_comp.light_color = {0.8f, 0.6f, 0.4f};
+  dir_light_comp.light_color = {1.0f, 1.0f, 1.0f};
   dir_light_node->transform.rotate = {0.3f, 0.1f, 0.0f};
   root->AddChild(dir_light_node);
 }

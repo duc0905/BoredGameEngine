@@ -17,7 +17,7 @@ public:
     if (!instance) {
       instance = std::unique_ptr<AssetManager>(new AssetManager());
       instance->m_models =
-          std::unordered_map<std::string, std::shared_ptr<ArrayMesh>>();
+          std::unordered_map<std::string, std::shared_ptr<MeshComponent>>();
       instance->m_textures =
           std::unordered_map<std::string, std::shared_ptr<I_Texture2D>>();
       instance->m_materials =
@@ -31,7 +31,7 @@ public:
 
 private:
   static std::unique_ptr<AssetManager> instance;
-  std::unordered_map<std::string, std::shared_ptr<ArrayMesh>> m_models;
+  std::unordered_map<std::string, std::shared_ptr<MeshComponent>> m_models;
   std::unordered_map<std::string, std::shared_ptr<I_Texture2D>> m_textures;
   std::unordered_map<std::string, std::shared_ptr<Material>> m_materials;
 };

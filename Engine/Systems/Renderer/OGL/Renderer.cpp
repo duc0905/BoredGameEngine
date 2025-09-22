@@ -174,6 +174,21 @@ std::shared_ptr<I_Texture2D> Renderer::Render(Bored::Scene &scene) {
     shader->setUniformVec3f("uMaterial.specular", material->specular);
     shader->setUniformFloat("uMaterial.shininess", material->shininess);
 
+    if (material->diffuse_texture) {
+      shader->setUniformBool("uHaveDiffuseMap", true);
+
+      auto tex =
+          std::dynamic_pointer_cast<OGL_Texture2D>(material->diffuse_texture);
+      const int unit = 0;
+      shader->setUniformInt("uDiffuseMap", unit);
+
+      // TODO: Find a better way to do this
+      glActiveTexture(GL_TEXTURE0 + unit);
+      glBindTexture(GL_TEXTURE_2D, tex->m_texId);
+    } else {
+      shader->setUniformBool("uHaveDiffuseMap", false);
+    }
+
     // NOTE: Light
     int pls_index = 0;
     int dls_index = 0;
