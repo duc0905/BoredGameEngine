@@ -36,11 +36,9 @@ class PhysicsSystem : public Bored::I_System {
       if (trans_comp.translate.y < 1.0f) {
         trans_comp.translate.y = 1.0f;
         phys_comp.grounded = true;
-        std::cout << "ground" << std::endl;
       } else {
         phys_comp.velocity.y -= GRAVITY * dt;
         phys_comp.grounded = false;
-        std::cout << "fly" << std::endl;
       }
     }
   }

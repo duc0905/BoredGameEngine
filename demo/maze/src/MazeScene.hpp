@@ -20,7 +20,7 @@ private:
   // up, down, right, left, space, ctrl
   bool keydown[6]{false, false, false, false, false, false};
 
-  float speed = 1.5f;
+  float speed = 2.5f;
   float jump_strength = 4.0f;
   float sensivity = 0.8f;
   bool is_mouse_hidden = false;
@@ -38,8 +38,23 @@ public:
   virtual void AfterBuildScene() override;
 
 private:
+  enum Tile {
+    EMPTY,
+    WALL_H,
+    WALL_V,
+    CORNER_1,
+    CORNER_2,
+    CORNER_3,
+    CORNER_4,
+    T_1,
+    T_2,
+    T_3,
+    T_4,
+    CROSS
+  };
+
   unsigned int width, height;
-  std::vector<std::vector<char>> level;
+  std::vector<std::vector<Tile>> level;
 
   std::shared_ptr<OGL::Renderer> renderer;
   std::shared_ptr<Bored::IOService> io;
