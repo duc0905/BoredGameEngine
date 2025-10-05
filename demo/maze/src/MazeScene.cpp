@@ -86,7 +86,7 @@ MazeScene::MazeScene() : asset_manager(Bored::AssetManager::GetInstance()) {
   systems.push_back(input);
 
   // Populate the services into scene context
-  context.io = io.get();
+  context.io = io;
 }
 
 void MazeScene::BuildScene() {

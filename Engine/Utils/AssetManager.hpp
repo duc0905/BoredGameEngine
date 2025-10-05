@@ -7,6 +7,7 @@
 #include <unordered_map>
 
 #include "../Systems/Renderer/I_Texture.hpp"
+#include "Font.hpp"
 
 namespace Bored {
 
@@ -28,6 +29,8 @@ public:
 
   std::shared_ptr<MeshComponent> LoadModel(const std::string &filepath);
   std::shared_ptr<I_Texture2D> LoadTexture(const std::string &filepath);
+
+  std::shared_ptr<Font> LoadFontTTF(const std::string& path);
 
 private:
   static std::unique_ptr<AssetManager> instance;
