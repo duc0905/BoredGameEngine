@@ -13,6 +13,7 @@ set(ENGINE_SOURCE_FILES
 	Components/Mesh3D.cpp
 	# Renderer/CPU/RayTracer.cpp
 	Utils/AssetManager.cpp
+	Utils/Networks/WindowsSocket.cpp
 )
 
 add_library(Engine ${ENGINE_SOURCE_FILES})
@@ -22,6 +23,10 @@ target_link_libraries(Engine PRIVATE glad::glad)
 target_link_libraries(Engine PRIVATE glfw)
 target_link_libraries(Engine PRIVATE assimp::assimp)
 target_include_directories(Engine PRIVATE ${Stb_INCLUDE_DIR})
+
+if (WIN32)
+	target_link_libraries(Engine PUBLIC Ws2_32)
+endif()
 
 if (OpenMP_CXX_FOUND)
 	target_link_libraries(Engine PRIVATE OpenMP::OpenMP_CXX)
