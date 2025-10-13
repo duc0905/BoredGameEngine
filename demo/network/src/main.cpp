@@ -1,31 +1,69 @@
 #include "Utils/Networks/WindowsSocket.hpp"
+#include <Systems/Networks/NetworkServerService.hpp>
 #include <iostream>
 
 using namespace Bored::Net;
 
 int run_server(int port) {
 
-  try {
-    WindowsSocket srv;
-    srv.Open(IPv4, Datagram, UDP);
-    srv.Bind("", port); // "" or "0.0.0.0" listens on all interfaces
+  std::shared_ptr<Server> server = std::make_shared<Server>();
+  server->Start(port);
 
-    std::cout << "UDP echo server on port " << port << "...\n";
-    for (;;) {
-      std::string fromAddr;
-      int fromPort = 0;
-      std::string payload = srv.ReceiveFrom(fromAddr, fromPort);
-      std::cout << "Got " << payload.size() << " bytes from " << fromAddr << ":"
-                << fromPort << " -> '" << payload << "'\n";
+  while (true) {
+    char command;
+    std::cout << "Input your action: " << std::endl;
+    std::cin >> command;
 
-      // Echo it back
-      srv.SendTo(fromAddr, fromPort, payload);
+    switch (command) {
+    case 'q':
+      std::cout << "Exit!";
+      return 0;
+
+    case 'e':
+      std::cout << "e";
+      break;
+
+    case 'g': {
+      std::vector<Msg> msg = server->GetAllMessage();
+      if (msg.size() == 0) {
+        std::cout << "No message found" << std::endl;
+        break;
+      };
+      for (Msg m : msg) {
+        std::cout << m.payload << " from " << m.from << ":" << m.port
+                  << std::endl;
+      };
+      break;
     }
-  } catch (const std::exception &e) {
-    std::cerr << "Server error: " << e.what() << "\n";
-    return 1;
-  }
+
+    default:
+      std::cout << "Unrecognized command" << std::endl;
+    }
+  };
+
   return 0;
+  // try {
+  // WindowsSocket srv;
+  // srv.Open(IPv4, Datagram, UDP);
+  // srv.Bind("", port); // "" or "0.0.0.0" listens on all interfaces
+  //
+  //   std::cout << "UDP echo server on port " << port << "...\n";
+  //   for (;;) {
+  //     std::string fromAddr;
+  //     int fromPort = 0;
+  //     std::string payload = srv.ReceiveFrom(fromAddr, fromPort);
+  //     std::cout << "Got " << payload.size() << " bytes from " << fromAddr <<
+  //     ":"
+  //               << fromPort << " -> '" << payload << "'\n";
+  //
+  //     // Echo it back
+  //     srv.SendTo(fromAddr, fromPort, payload);
+  //   }
+  // } catch (const std::exception &e) {
+  //   std::cerr << "Server error: " << e.what() << "\n";
+  //   return 1;
+  // }
+  // return 0;
 }
 
 int run_client(int port, const char *msg, const char *host) {
@@ -41,10 +79,10 @@ int run_client(int port, const char *msg, const char *host) {
     std::string fromAddr;
     int fromPort = 0;
     haveSth = cli.HasReadable(500);
-    std::cout << "Have message?: " << haveSth << std::endl;
-    std::string reply = cli.ReceiveFrom(fromAddr, fromPort);
-    std::cout << "Reply from " << fromAddr << ":" << fromPort << " -> '"
-              << reply << "'\n";
+    // std::cout << "Have message?: " << haveSth << std::endl;
+    // std::string reply = cli.ReceiveFrom(fromAddr, fromPort);
+    // std::cout << "Reply from " << fromAddr << ":" << fromPort << " -> '"
+    // << reply << "'\n";
   } catch (const std::exception &e) {
     std::cerr << "Client error: " << e.what() << "\n";
     return 1;
