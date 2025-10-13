@@ -33,10 +33,15 @@ int run_client(int port, const char *msg, const char *host) {
     WindowsSocket cli;
     cli.Open(IPv4, Datagram, UDP);
     cli.SendTo(host, port, msg);
+    bool haveSth = cli.HasReadable();
+
+    std::cout << "Have message?: " << haveSth << std::endl;
     std::cout << "Sent: '" << msg << "' to " << host << ":" << port << "\n";
 
     std::string fromAddr;
     int fromPort = 0;
+    haveSth = cli.HasReadable(500);
+    std::cout << "Have message?: " << haveSth << std::endl;
     std::string reply = cli.ReceiveFrom(fromAddr, fromPort);
     std::cout << "Reply from " << fromAddr << ":" << fromPort << " -> '"
               << reply << "'\n";
@@ -59,8 +64,8 @@ int main(int argc, char **argv) {
   const char *msg = (argc > 3) ? argv[3] : "hello via ISocket";
 
   const char *host = (argc > 4) ? argv[4] : "127.0.0.1";
-  std::cout << "Using mode: " << mode << " with port " << port << "& host " << host
-            << "& mes " << msg << std::endl;
+  std::cout << "Using mode: " << mode << " with port " << port << "& host "
+            << host << "& mes " << msg << std::endl;
 
   if (mode == "server") {
     return run_server(port);

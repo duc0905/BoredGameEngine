@@ -16,6 +16,7 @@ public:
   void SendTo(const std::string &address, const int port,
               const std::string &message) override;
   std::string ReceiveFrom(std::string &out_address, int &out_port) override;
+  bool HasReadable(int timeout_ms = 0) override;
 
 private:
   SOCKET sock_ = INVALID_SOCKET;

@@ -145,4 +145,24 @@ std::string WindowsSocket::ReceiveFrom(std::string &out_address,
   return std::string(buf.data(), n);
 }
 
+bool WindowsSocket::HasReadable(int timeout_ms){
+  fd_set rfds;
+  FD_ZERO(&rfds);
+	FD_SET(sock_, &rfds);
+
+timeval tv{};
+  timeval* ptv = nullptr;
+  if (timeout_ms >= 0) {
+    tv.tv_sec  = timeout_ms / 1000;
+    tv.tv_usec = (timeout_ms % 1000) * 1000;
+    ptv = &tv;
+  }
+  int ready = select(0, &rfds, nullptr, nullptr, ptv);
+  if (ready == SOCKET_ERROR) {
+    throw std::runtime_error("select() failed: " + getLastError());
+  }
+  return ready > 0 && FD_ISSET(sock_, &rfds);
+
+};
+
 } // namespace Bored::Net
