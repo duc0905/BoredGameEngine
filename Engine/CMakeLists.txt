@@ -10,8 +10,9 @@ set(ENGINE_SOURCE_FILES
 	Systems/Input/IOService.cpp
 	Systems/Renderer/Shader/Shader.cpp
 	Systems/Renderer/OGL/Renderer.cpp
-	Systems/Networks/NetworkServerService.cpp
 	Components/Mesh3D.cpp
+	Systems/Networks/NetworkServerService.cpp
+	Systems/Networks/NetworkClientService.cpp
 	# Renderer/CPU/RayTracer.cpp
 	Utils/AssetManager.cpp
 	Utils/Networks/WindowsSocket.cpp

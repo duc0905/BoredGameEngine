@@ -1,6 +1,7 @@
 #include "NetworkServerService.hpp"
 #include <iostream>
 #include <memory>
+#include <mutex>
 #include <stdexcept>
 #ifdef _WIN32
 #include "../../Utils/Networks/WindowsSocket.hpp"
@@ -8,7 +9,10 @@
 
 namespace Bored::Net {
 
-Server::Server() { initSocket(); };
+Server::Server(std::string compatible_id) {
+  initSocket();
+  compatible_id_ = compatible_id;
+};
 
 Server::~Server() { Stop(); };
 
@@ -39,8 +43,15 @@ void Server::Stop() {
   sock_->Close();
 };
 
-void Server::BroadCastMessage() {
-
+void Server::BroadCastMessage(std::string payload) {
+  for (auto c : clients_) {
+    try {
+      sock_->SendTo(c.address, c.port, payload);
+    } catch (const std::runtime_error &err) {
+      std::cout << "Failed to broadcast: " << err.what() << std::endl;
+      handleFailedSendConn(c);
+    }
+  }
 };
 
 std::vector<Msg> Server::GetAllMessage() {
@@ -49,6 +60,23 @@ std::vector<Msg> Server::GetAllMessage() {
   out.swap(mqueue_);
   return out;
 };
+
+void Server::handleNewConn(Conn conn) {
+  std::cout << "Recevied connect req from: " << conn.address << ":" << conn.port
+            << std::endl;
+  sock_->SendTo(conn.address, conn.port, compatible_id_);
+  clients_.insert(conn);
+};
+
+void Server::handleFailedSendConn(Conn conn) {
+  if (retried_.count(conn) >= kRetried) {
+    std::lock_guard<std::mutex> lk(c_mtx_);
+    retried_.erase(conn);
+    clients_.erase(conn);
+  }
+
+  retried_[conn]++;
+}
 
 void Server::initSocket() {
 #ifdef _WIN32
@@ -92,22 +120,19 @@ void Server::listenLoop(int port) {
 
     {
       std::lock_guard<std::mutex> lk(c_mtx_);
-      ClientConn new_c(from, port);
-      bool is_added = false;
-      for (auto c : clients_) {
-        if (c.port == port && c.address == from)
-          is_added = true;
+      Conn new_c(from, port);
+      const std::string suffix = ":connect_req";
+      if (!clients_.count(new_c) && payload.ends_with(suffix)) {
+        std::string sent_id = payload.substr(0, payload.size() - suffix.size());
+        if (sent_id == compatible_id_) {
+          handleNewConn(new_c);
+        }
+      } else {
+	if(retried_.find(new_c) != retried_.end()) {retried_.erase(new_c);};
+        std::lock_guard<std::mutex> lk(q_mtx_);
+        Msg new_m(from, port, payload);
+        mqueue_.push_back(new_m);
       }
-
-      if (!is_added) {
-        clients_.push_back(new_c);
-      };
-    }
-
-    {
-      std::lock_guard<std::mutex> lk(q_mtx_);
-      Msg new_m(payload, port, from);
-      mqueue_.push_back(new_m);
     }
   }
 };

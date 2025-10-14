@@ -4,37 +4,34 @@
 #include <memory>
 #include <mutex>
 #include <thread>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 namespace Bored::Net {
 
-struct ClientConn {
-  std::string address;
-  int port;
-};
-
-struct Msg {
-  std::string from;
-  int port;
-  std::string payload;
-};
+constexpr int kRetried = 3;
 
 class Server {
 public:
-  Server();
+  Server(std::string compatible_id = "");
   ~Server();
   void Start(int port = 8080);
   void Stop();
-  void BroadCastMessage();
+  void BroadCastMessage(std::string payload);
   std::vector<Msg> GetAllMessage();
 
 private:
   void initSocket();
   void listenLoop(int port);
 
+  void handleNewConn(Conn conn);
+  void handleFailedSendConn(Conn conn);
+
 private:
+  std::string compatible_id_;
   std::shared_ptr<ISocket> sock_;
-  std::vector<ClientConn> clients_;
+  std::unordered_set<Conn> clients_;
   std::mutex c_mtx_;
 
   std::vector<Msg> mqueue_;
@@ -42,6 +39,7 @@ private:
   std::atomic<bool> running_;
 
   std::thread listener_;
+  std::unordered_map<Conn, int> retried_;
 };
 
 } // namespace Bored::Net

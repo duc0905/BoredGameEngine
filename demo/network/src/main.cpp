@@ -1,6 +1,8 @@
 #include "Utils/Networks/WindowsSocket.hpp"
+#include <Systems/Networks/NetworkClientService.hpp>
 #include <Systems/Networks/NetworkServerService.hpp>
 #include <iostream>
+#include <memory>
 
 using namespace Bored::Net;
 
@@ -36,6 +38,12 @@ int run_server(int port) {
       break;
     }
 
+    case 's': {
+      std::string msg = "Broadcasting";
+      server->BroadCastMessage(msg);
+      break;
+    }
+
     default:
       std::cout << "Unrecognized command" << std::endl;
     }
@@ -67,27 +75,72 @@ int run_server(int port) {
 }
 
 int run_client(int port, const char *msg, const char *host) {
-  try {
-    WindowsSocket cli;
-    cli.Open(IPv4, Datagram, UDP);
-    cli.SendTo(host, port, msg);
-    bool haveSth = cli.HasReadable();
 
-    std::cout << "Have message?: " << haveSth << std::endl;
-    std::cout << "Sent: '" << msg << "' to " << host << ":" << port << "\n";
+  std::shared_ptr<Client> client = std::make_shared<Client>();
+  bool ok = client->Connect(9000, host, port);
+  if (!ok) {
+    return 0;
+  };
 
-    std::string fromAddr;
-    int fromPort = 0;
-    haveSth = cli.HasReadable(500);
-    // std::cout << "Have message?: " << haveSth << std::endl;
-    // std::string reply = cli.ReceiveFrom(fromAddr, fromPort);
-    // std::cout << "Reply from " << fromAddr << ":" << fromPort << " -> '"
-    // << reply << "'\n";
-  } catch (const std::exception &e) {
-    std::cerr << "Client error: " << e.what() << "\n";
-    return 1;
-  }
+  while (true) {
+    char command;
+    std::cout << "Input your action: " << std::endl;
+    std::cin >> command;
+
+    switch (command) {
+    case 'q':
+      std::cout << "Exit!";
+      return 0;
+
+    case 'e':
+      std::cout << "e";
+      break;
+
+    case 'g': {
+      std::vector<std::string> msg = client->GetAllMessage();
+      if (msg.size() == 0) {
+        std::cout << "No message found" << std::endl;
+        break;
+      };
+      for (auto m : msg) {
+        std::cout << "Received: " << m << std::endl;
+      };
+      break;
+    }
+
+    case 's': {
+				std::string msg = "Boom!";
+				client->SendToServer(msg);
+				break;
+			}
+
+    default:
+      std::cout << "Unrecognized command" << std::endl;
+    }
+  };
+
   return 0;
+  // try {
+  //   WindowsSocket cli;
+  //   cli.Open(IPv4, Datagram, UDP);
+  //   cli.SendTo(host, port, msg);
+  //   bool haveSth = cli.HasReadable();
+  //
+  //   std::cout << "Have message?: " << haveSth << std::endl;
+  //   std::cout << "Sent: '" << msg << "' to " << host << ":" << port << "\n";
+  //
+  //   std::string fromAddr;
+  //   int fromPort = 0;
+  //   haveSth = cli.HasReadable(500);
+  //   // std::cout << "Have message?: " << haveSth << std::endl;
+  //   // std::string reply = cli.ReceiveFrom(fromAddr, fromPort);
+  //   // std::cout << "Reply from " << fromAddr << ":" << fromPort << " -> '"
+  //   // << reply << "'\n";
+  // } catch (const std::exception &e) {
+  //   std::cerr << "Client error: " << e.what() << "\n";
+  //   return 1;
+  // }
+  // return 0;
 }
 
 int main(int argc, char **argv) {
