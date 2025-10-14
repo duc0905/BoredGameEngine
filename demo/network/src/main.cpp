@@ -50,28 +50,6 @@ int run_server(int port) {
   };
 
   return 0;
-  // try {
-  // WindowsSocket srv;
-  // srv.Open(IPv4, Datagram, UDP);
-  // srv.Bind("", port); // "" or "0.0.0.0" listens on all interfaces
-  //
-  //   std::cout << "UDP echo server on port " << port << "...\n";
-  //   for (;;) {
-  //     std::string fromAddr;
-  //     int fromPort = 0;
-  //     std::string payload = srv.ReceiveFrom(fromAddr, fromPort);
-  //     std::cout << "Got " << payload.size() << " bytes from " << fromAddr <<
-  //     ":"
-  //               << fromPort << " -> '" << payload << "'\n";
-  //
-  //     // Echo it back
-  //     srv.SendTo(fromAddr, fromPort, payload);
-  //   }
-  // } catch (const std::exception &e) {
-  //   std::cerr << "Server error: " << e.what() << "\n";
-  //   return 1;
-  // }
-  // return 0;
 }
 
 int run_client(int port, const char *msg, const char *host) {
@@ -109,10 +87,10 @@ int run_client(int port, const char *msg, const char *host) {
     }
 
     case 's': {
-				std::string msg = "Boom!";
-				client->SendToServer(msg);
-				break;
-			}
+      std::string msg = "Boom!";
+      client->SendToServer(msg);
+      break;
+    }
 
     default:
       std::cout << "Unrecognized command" << std::endl;
@@ -120,27 +98,6 @@ int run_client(int port, const char *msg, const char *host) {
   };
 
   return 0;
-  // try {
-  //   WindowsSocket cli;
-  //   cli.Open(IPv4, Datagram, UDP);
-  //   cli.SendTo(host, port, msg);
-  //   bool haveSth = cli.HasReadable();
-  //
-  //   std::cout << "Have message?: " << haveSth << std::endl;
-  //   std::cout << "Sent: '" << msg << "' to " << host << ":" << port << "\n";
-  //
-  //   std::string fromAddr;
-  //   int fromPort = 0;
-  //   haveSth = cli.HasReadable(500);
-  //   // std::cout << "Have message?: " << haveSth << std::endl;
-  //   // std::string reply = cli.ReceiveFrom(fromAddr, fromPort);
-  //   // std::cout << "Reply from " << fromAddr << ":" << fromPort << " -> '"
-  //   // << reply << "'\n";
-  // } catch (const std::exception &e) {
-  //   std::cerr << "Client error: " << e.what() << "\n";
-  //   return 1;
-  // }
-  // return 0;
 }
 
 int main(int argc, char **argv) {

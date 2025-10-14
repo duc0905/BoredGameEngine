@@ -128,7 +128,9 @@ void Server::listenLoop(int port) {
           handleNewConn(new_c);
         }
       } else {
-	if(retried_.find(new_c) != retried_.end()) {retried_.erase(new_c);};
+        if (retried_.find(new_c) != retried_.end()) {
+          retried_.erase(new_c);
+        };
         std::lock_guard<std::mutex> lk(q_mtx_);
         Msg new_m(from, port, payload);
         mqueue_.push_back(new_m);

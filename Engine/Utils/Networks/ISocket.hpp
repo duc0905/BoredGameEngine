@@ -50,7 +50,6 @@ struct hash<Bored::Net::Conn> {
   size_t operator()(const Bored::Net::Conn& c) const noexcept {
     size_t h1 = hash<std::string>{}(c.address);
     size_t h2 = hash<int>{}(c.port);
-    // Better combine than simple XOR:
     return h1 ^ (h2 + 0x9e3779b9 + (h1 << 6) + (h1 >> 2));
   }
 };
