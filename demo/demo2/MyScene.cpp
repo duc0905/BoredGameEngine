@@ -20,7 +20,7 @@ MyScene::MyScene() {
   systems.push_back(input);
 
   // Populate the services into scene context
-  context.io = io.get();
+  context.io = io;
 
   // My cucstom system
   std::shared_ptr<Bored::I_System> gravity_system =

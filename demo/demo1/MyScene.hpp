@@ -31,5 +31,4 @@ public:
 
 private:
   std::shared_ptr<OGL::Renderer> renderer;
-  std::shared_ptr<Bored::IOService> io;
 };

@@ -1,6 +1,5 @@
 #include "Scene2D.hpp"
 #include "Components/FlatComponent.hpp"
-#include "Scene/Node.hpp"
 #include "Systems/Input/IOService.hpp"
 #include "Systems/Input/InputSystem.hpp"
 #include "Systems/Renderer2D/CPU_Renderer2D.hpp"
