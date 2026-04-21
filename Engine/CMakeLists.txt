@@ -14,6 +14,7 @@ set(ENGINE_SOURCE_FILES
 	Components/Mesh3D.cpp
 	# Renderer/CPU/RayTracer.cpp
 	Utils/AssetManager.cpp
+  Utils/Font.cpp
 )
 
 add_library(Engine ${ENGINE_SOURCE_FILES})

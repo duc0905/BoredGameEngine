@@ -10,6 +10,7 @@
 #include <glm/glm.hpp>
 #include <ios>
 #include <iostream>
+#include <memory>
 #include <ostream>
 #include <stdexcept>
 #include <string>
@@ -170,118 +171,15 @@ AssetManager::LoadTexture(const std::string &filepath) {
   return texture;
 }
 
-/* Fonts */
-
-struct FontDirectory {};
-
-struct OffsetSubtable {
-  uint32_t scaler_type;   /*< Indicate the OFA scaler to be used. */
-  uint16_t numTables;     /*< Number of tables */
-  uint16_t searchRange;   /*< (Maximum power of 2 <= numTables) * 16 */
-  uint16_t entrySelector; /*< log_2(maximum power of 2 <= numTables) */
-  uint16_t rangeShift;    /*< numTables * 16 - searchRange */
-
-  friend std::ostream &operator<<(std::ostream &os,
-                                  const OffsetSubtable &subtable) {
-    os << "\tScaler type: " << subtable.scaler_type << std::endl;
-    os << "\tNumber of tables: " << subtable.numTables << std::endl;
-    os << "\tSearch range: " << subtable.searchRange << std::endl;
-    os << "\tEntry selector: " << subtable.entrySelector << std::endl;
-    os << "\tRange shift: " << subtable.rangeShift << std::endl;
-
-    return os;
-  }
-};
-
-struct TableDirectoy {
-  uint32_t tag;      /*< Table name */
-  uint32_t checkSum; /*< Checksum of the table content */
-  uint32_t offset;   /*< Offset from beginning of sfnt */
-  uint32_t length;   /*< Length of the table in byte (not including padding) */
-
-  friend std::ostream &operator<<(std::ostream &os,
-                                  const TableDirectoy &directory) {
-    char name[5];
-    memcpy(name, &directory.tag, 4);
-
-    os << "\t\tTable name: " << name << std::endl;
-    os << "\t\tCheck sum: " << directory.checkSum << std::endl;
-    os << "\t\tOffset: " << directory.offset << std::endl;
-    os << "\t\tLength: " << directory.length << std::endl;
-
-    return os;
-  }
-};
-
-/**
- * Converting from little endian to big endian and vice-versa.
- *
- * Reversing the bytes of the variable.
- */
-template <typename T>
-void ReverseBytes(T& value) {
-  uint8_t numBytes = sizeof(T);
-  char* temp = new char[numBytes];
-  memcpy(temp, &value, numBytes);
-
-  for (int i = 0; i < numBytes / 2; i++) {
-    temp[i] += temp[numBytes - 1 - i];
-    temp[numBytes - 1 - i] = temp[i] - temp[numBytes - 1 - i];
-    temp[i] = temp[i] - temp[numBytes - 1 - i];
-  }
-
-  value = *(T*)temp;
-  delete[] temp;
-}
 
 std::shared_ptr<Font> AssetManager::LoadFontTTF(const std::string &filepath) {
-  // TODO: implement
-  std::ifstream file(filepath, std::ios::binary);
-  std::filesystem::path path(filepath);
-
-  if (!file) {
-    throw std::runtime_error(std::format("Error while opening file {}", filepath));
+  if (m_fonts.find(filepath) != m_fonts.end()) {
+    return m_fonts[filepath];
   }
 
-  std::cout << "Font: " << path.filename() << std::endl;
+  std::shared_ptr<Font> font = std::make_shared<Font>(filepath);
+  m_fonts[filepath] = font;
 
-  OffsetSubtable offset_subtable;
-  std::vector<TableDirectoy> table_dirs;
-
-  // Big-endian to little endian
-  file.read((char*)&offset_subtable.scaler_type, sizeof(uint32_t));
-  ReverseBytes(offset_subtable.scaler_type);
-
-  file.read((char*)&offset_subtable.numTables, sizeof(uint16_t));
-  ReverseBytes(offset_subtable.numTables);
-
-  file.read((char*)&offset_subtable.searchRange, sizeof(uint16_t));
-  ReverseBytes(offset_subtable.searchRange);
-
-  file.read((char*)&offset_subtable.entrySelector, sizeof(uint16_t));
-  ReverseBytes(offset_subtable.entrySelector);
-
-  file.read((char*)&offset_subtable.rangeShift, sizeof(uint16_t));
-  ReverseBytes(offset_subtable.rangeShift);
-
-  std::cout << offset_subtable << std::endl;
-
-  table_dirs.resize(offset_subtable.numTables);
-
-  for (int i = 0; i < offset_subtable.numTables; i++) {
-    // Read table entries
-    file.read((char*)&table_dirs[i].tag, sizeof(uint32_t));
-    file.read((char*)&table_dirs[i].checkSum, sizeof(uint32_t));
-    ReverseBytes(table_dirs[i].checkSum);
-    file.read((char*)&table_dirs[i].offset, sizeof(uint32_t));
-    ReverseBytes(table_dirs[i].offset);
-    file.read((char*)&table_dirs[i].length, sizeof(uint32_t));
-    ReverseBytes(table_dirs[i].length);
-
-    std::cout << "=================" << i << "=================" << std::endl;
-    std::cout << table_dirs[i] << std::endl;
-  }
-
-  return nullptr;
+  return font;
 }
 } // namespace Bored

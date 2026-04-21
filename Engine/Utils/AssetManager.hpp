@@ -37,5 +37,6 @@ private:
   std::unordered_map<std::string, std::shared_ptr<MeshComponent>> m_models;
   std::unordered_map<std::string, std::shared_ptr<I_Texture2D>> m_textures;
   std::unordered_map<std::string, std::shared_ptr<Material>> m_materials;
+  std::unordered_map<std::string, std::shared_ptr<Font>> m_fonts;
 };
 } // namespace Bored
