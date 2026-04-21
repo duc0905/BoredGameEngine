@@ -55,7 +55,7 @@
       "displayName": "Build with -g flag",
       "configurePreset": "debug",
       "targets": [
-        "main"
+        "maze"
       ]
     }
   ],

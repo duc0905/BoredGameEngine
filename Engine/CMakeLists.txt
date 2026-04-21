@@ -2,7 +2,7 @@ find_package(glad CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(assimp CONFIG REQUIRED)
-find_package(entt CONFIG REQUIRED)
+find_package(EnTT CONFIG REQUIRED)
 find_package(Stb REQUIRED)
 find_package(OpenMP)
 

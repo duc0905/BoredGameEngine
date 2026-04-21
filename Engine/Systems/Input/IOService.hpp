@@ -6,8 +6,7 @@
 
 // clang-format on
 #include <functional>
-#include <iostream>
-#include <stdexcept>
+#include <memory>
 
 #include "../Renderer/Shader/Shader.hpp"
 #include "../Renderer/Texture/OGL_Texture.hpp"
