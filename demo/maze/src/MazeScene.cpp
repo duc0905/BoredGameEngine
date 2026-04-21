@@ -51,7 +51,6 @@ void PlayerController::OnInput(double dt, Bored::InputEvent &event,
   if (event.type == Bored::InputType::KEY_DOWN) {
     if (event.key.keyCode == GLFW_KEY_W) {
       keydown[0] = true;
-
       event.handled = true;
     }
 
@@ -173,17 +172,17 @@ MazeScene::MazeScene(const std::string &filepath) {
       std::vector<Tile> level_row;
       for (char c : line) {
         switch (c) {
-          case '0':
-            level_row.push_back(Tile::EMPTY);
-            break;
-          case '1':
-            level_row.push_back(Tile::WALL_H);
-            break;
-          case 'x':
-            level_row.push_back(Tile::GOAL);
-            break;
-          default:
-            level_row.push_back(Tile::EMPTY);
+        case '0':
+          level_row.push_back(Tile::EMPTY);
+          break;
+        case '1':
+          level_row.push_back(Tile::WALL_H);
+          break;
+        case 'x':
+          level_row.push_back(Tile::GOAL);
+          break;
+        default:
+          level_row.push_back(Tile::EMPTY);
           break;
         }
       }
