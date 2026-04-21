@@ -6,6 +6,7 @@ in vec2 vTexCoord;
 in vec3 vFragPos;
 
 // uniform sampler2D uTexture;
+// TODO: make this part of the material
 uniform sampler2D uDiffuseMap;
 uniform bool uHaveDiffuseMap;
 
@@ -84,9 +85,6 @@ void main() {
     for (int i = 0; i < MAX_LIGHT; i++) {
         finalColor += CalcPointLight(pointLights[i], normal, viewDir, uMaterial);
     }
-
-    // TODO: Texture mapping
-    // vec3 texColor = texture(uTexture, FragTexCoord).rgb;
 
     FragColor = vec4(finalColor, 1.0);
 }
