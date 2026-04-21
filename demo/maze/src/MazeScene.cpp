@@ -1,12 +1,12 @@
 #include "MazeScene.hpp"
 #include "Components/Camera.hpp"
 #include "Components/Lighting.hpp"
-#include "Components/Mesh3D.hpp"
 #include "Components/MeshComponent.hpp"
 #include "Components/TransformComponent.hpp"
 #include "GravitySystem.hpp"
 #include "Systems/Input/InputSystem.hpp"
 #include "Systems/Renderer/OGL/Renderer.hpp"
+#include "Utils/AssetManager.hpp"
 #include <GLFW/glfw3.h>
 #include <fstream>
 #include <glm/geometric.hpp>
@@ -51,6 +51,7 @@ void PlayerController::OnInput(double dt, Bored::InputEvent &event,
   if (event.type == Bored::InputType::KEY_DOWN) {
     if (event.key.keyCode == GLFW_KEY_W) {
       keydown[0] = true;
+
       event.handled = true;
     }
 
@@ -169,11 +170,24 @@ MazeScene::MazeScene(const std::string &filepath) {
               << " as level file:" << std::endl;
     while (std::getline(level_file, line)) {
       std::cout << line << std::endl;
-      std::vector<char> level_row;
+      std::vector<Tile> level_row;
       for (char c : line) {
-        level_row.push_back(c);
+        switch (c) {
+          case '0':
+            level_row.push_back(Tile::EMPTY);
+            break;
+          case '1':
+            level_row.push_back(Tile::WALL_H);
+            break;
+          case 'x':
+            level_row.push_back(Tile::GOAL);
+            break;
+          default:
+            level_row.push_back(Tile::EMPTY);
+          break;
+        }
       }
-      level_char.push_back(level_row);
+      level.push_back(level_row);
     }
 
     height = level.size();
@@ -190,6 +204,8 @@ void MazeScene::BuildScene() {
   std::shared_ptr<Bored::Node> root = CreateNode();
   SetRoot(root);
 
+  auto &am = Bored::AssetManager::GetInstance();
+
   // Player node
   std::shared_ptr<Bored::Node> player_node = CreateNode();
   player_node->AddComponent<Bored::CameraComponent>(new Bored::Perspective(
@@ -205,45 +221,34 @@ void MazeScene::BuildScene() {
 
   // Walls and floors
   // Loading models
-  // TODO: should let the asset registry handle this
-  std::shared_ptr<Bored::ArrayMesh> floor_tile_model = OGL::LoadModel(
+  std::shared_ptr<Bored::MeshComponent> floor_tile_model = am.LoadModel(
       resource_path + "models/kaykit_prototype/Primitive_Floor.gltf");
-  std::shared_ptr<Bored::ArrayMesh> wall_model = OGL::LoadModel(
-      resource_path + "models/kaykit_prototype/Primitive_Wall.gltf");
-  std::shared_ptr<Bored::ArrayMesh> wall_corner_model = OGL::LoadModel(
-      resource_path + "models/kaykit_prototype/Wall_Corner.gltf");
-  std::shared_ptr<Bored::ArrayMesh> wall_t_model = OGL::LoadModel(
-      resource_path + "models/kaykit_prototype/Wall_T.gltf");
-  std::shared_ptr<Bored::ArrayMesh> wall_cross_model = OGL::LoadModel(
-      resource_path + "models/kaykit_prototype/Wall_Cross.gltf");
-  std::shared_ptr<Bored::Material> black_tile_mat =
-      std::make_shared<Bored::Material>(glm::vec3{0.1f, 0.1f, 0.1f}, 0.1f, 0.7f,
-                                        0.2f, 1.0f);
-  std::shared_ptr<Bored::Material> white_tile_mat =
-      std::make_shared<Bored::Material>(glm::vec3{0.9f, 0.9f, 0.9f}, 0.1f, 0.7f,
-                                        0.2f, 1.0f);
-  std::shared_ptr<Bored::Material> yellow_tile_mat =
-      std::make_shared<Bored::Material>(glm::vec3{0.9f, 0.9f, 0.1f}, 0.1f, 0.7f,
-                                        0.2f, 1.0f);
+  std::shared_ptr<Bored::MeshComponent> wall_model = am.LoadModel(
+      resource_path + "models/kaykit_prototype/Cube_Prototype_Large_B.gltf");
+  // std::shared_ptr<Bored::Material> black_tile_mat =
+  //     std::make_shared<Bored::Material>(glm::vec3{0.1f, 0.1f, 0.1f}, 0.1f,
+  //     0.7f,
+  //                                       0.2f, 1.0f);
+  // std::shared_ptr<Bored::Material> white_tile_mat =
+  //     std::make_shared<Bored::Material>(glm::vec3{0.9f, 0.9f, 0.9f}, 0.1f,
+  //     0.7f,
+  //                                       0.2f, 1.0f);
+  // std::shared_ptr<Bored::Material> wall_mat =
+  // std::make_shared<Bored::Material>(
+  //     glm::vec3{0.9f, 0.9f, 0.9f}, 0.1f, 0.7f, 0.2f, 1.0f);
 
-  // floor
-  for (int i = 0; i < width; i++) {
-    for (int j = 0; j < height; j++) {
+  // Massive 10x10 floor
+  for (int i = 0; i < height; i++) {
+    for (int j = 0; j < width; j++) {
       std::shared_ptr<Bored::Node> floor_tile = CreateNode();
       auto &mesh_comp = floor_tile->AddComponent<Bored::MeshComponent>();
-      mesh_comp.mesh = floor_tile_model;
-
-      // Checker board style floor
-      if ((i + j) % 2 == 0)
-        mesh_comp.material = black_tile_mat;
-      else
-        mesh_comp.material = white_tile_mat;
-
-      // Goal
-      if (level[i][j] == 'x')
-        mesh_comp.material = yellow_tile_mat;
-
-      floor_tile->transform.translate = {i * 1.0f, -1.0f, j * 1.0f};
+      mesh_comp.mesh = floor_tile_model->mesh;
+      mesh_comp.material = floor_tile_model->material;
+      // if ((i + j) % 2 == 0)
+      //   mesh_comp.material = floor_tile_model->material;
+      // else
+      //   mesh_comp.material = floor_tile_model->material;
+      floor_tile->transform.translate = {i * 1.0f, -0.5f, j * 1.0f};
       floor_tile->transform.scale = {0.25, 0.5f, 0.25f};
       root->AddChild(floor_tile);
     }
@@ -252,10 +257,10 @@ void MazeScene::BuildScene() {
   // walls
   for (int i = 0; i < height; i++) {
     for (int j = 0; j < width; j++) {
-      if (level[i][j] == '1') {
+      if (level[i][j] == Tile::WALL_H) {
         std::shared_ptr<Bored::Node> wall = CreateNode();
         auto &mesh_comp = wall->AddComponent<Bored::MeshComponent>();
-        mesh_comp.mesh = wall_model;
+        mesh_comp = *wall_model;
 
         wall->transform.translate = {i * 1.0f, 0.0f, j * 1.0f};
         wall->transform.scale = {0.25f, 0.25f, 0.25f};

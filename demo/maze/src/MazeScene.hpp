@@ -15,7 +15,8 @@ public:
   virtual void OnInput(double dt, Bored::InputEvent &event,
                        std::shared_ptr<Bored::Node> node) override;
 
-  void UpdateMovement(Bored::TransformComponent& trans, PhysicsComponent& phys);
+  void UpdateMovement(Bored::TransformComponent &trans, PhysicsComponent &phys);
+
 private:
   // up, down, right, left, space, ctrl
   bool keydown[6]{false, false, false, false, false, false};
@@ -28,7 +29,7 @@ private:
 
 class MazeScene : public Bored::Scene {
 public:
-  MazeScene(const std::string& filepath);
+  MazeScene(const std::string &filepath);
 
   /**
    * Construct the maze from the file given in the constructor.
@@ -50,7 +51,8 @@ private:
     T_2,
     T_3,
     T_4,
-    CROSS
+    CROSS,
+    GOAL
   };
 
   unsigned int width, height;

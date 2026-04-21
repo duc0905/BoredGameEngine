@@ -1,13 +1,13 @@
 #include "MyScene.hpp"
 #include "Components/Camera.hpp"
 #include "Components/Lighting.hpp"
-#include "Components/Mesh3D.hpp"
 #include "Components/MeshComponent.hpp"
 #include "Gravity.hpp"
 #include "Scene/Node.hpp"
 #include "Systems/I_System.hpp"
 #include "Systems/Input/InputSystem.hpp"
 #include "Systems/Renderer/OGL/Renderer.hpp"
+#include "Utils/AssetManager.hpp"
 
 MyScene::MyScene() {
   // Setup window system
@@ -29,8 +29,8 @@ MyScene::MyScene() {
 }
 
 void MyScene::BuildScene() {
-  std::shared_ptr<Bored::ArrayMesh> sphere =
-      OGL::LoadModel("res/models/sphere.gltf");
+  auto &am = Bored::AssetManager::GetInstance();
+  auto sphere = am.LoadModel("res/models/sphere.gltf");
 
   root = CreateNode();
 
@@ -49,13 +49,13 @@ void MyScene::BuildScene() {
 
   // 1 center body with mass
   std::shared_ptr<Bored::Node> central_gravity = CreateNode();
-  central_gravity->AddComponent<Bored::MeshComponent>(sphere);
+  central_gravity->AddComponent<Bored::MeshComponent>(*sphere);
   central_gravity->AddComponent<GravityComponent>(10e10);
   root->AddChild(central_gravity);
 
   // 1 satelite orbitting
   std::shared_ptr<Bored::Node> orbitor = CreateNode();
-  orbitor->AddComponent<Bored::MeshComponent>(sphere);
+  orbitor->AddComponent<Bored::MeshComponent>(*sphere);
   auto &movement = orbitor->AddComponent<MovementComponent>();
   movement.velocity = {4.0f, 0.0f, 0.0f};
   orbitor->transform.translate = {0.0f, 5.0f, 0.0f};

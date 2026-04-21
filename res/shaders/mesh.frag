@@ -6,6 +6,9 @@ in vec2 vTexCoord;
 in vec3 vFragPos;
 
 // uniform sampler2D uTexture;
+// TODO: make this part of the material
+uniform sampler2D uDiffuseMap;
+uniform bool uHaveDiffuseMap;
 
 uniform vec3 uEye;
 
@@ -23,11 +26,9 @@ struct PointLight {
 };
 
 struct Material {
-    vec3 color;
-
-    float ambient;
-    float diffuse;
-    float specular;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
 
     float shininess;
 };
@@ -40,6 +41,10 @@ uniform PointLight pointLights[MAX_LIGHT];
 
 uniform Material uMaterial;
 
+vec3 GetDiffuseColor(Material material) {
+    return uHaveDiffuseMap ? texture(uDiffuseMap, vTexCoord).rgb : material.diffuse;
+}
+
 vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir, Material material) {
     vec3 lightDir = normalize(-light.direction);
     vec3 reflectDir = reflect(-lightDir, normal);
@@ -47,7 +52,9 @@ vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir, Material ma
     float diff = max(dot(normal, lightDir), 0.0);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), uMaterial.shininess);
 
-    return light.color * material.color * (uMaterial.ambient + uMaterial.diffuse * diff + uMaterial.specular * spec);
+    vec3 diffuseColor = GetDiffuseColor(material);
+
+    return light.color * (diffuseColor * diff + uMaterial.specular * spec) + uMaterial.ambient;
 }
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir, Material material) {
@@ -58,7 +65,9 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir, Material materi
     float diff = max(dot(normal, lightDir), 0.0);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), uMaterial.shininess);
 
-    return light.color * material.color * light.strength * (uMaterial.ambient + uMaterial.diffuse * diff + uMaterial.specular * spec);
+    vec3 diffuseColor = GetDiffuseColor(material);
+
+    return light.color * light.strength * (diffuseColor * diff + uMaterial.specular * spec) + uMaterial.ambient;
 }
 
 void main() {
@@ -76,9 +85,6 @@ void main() {
     for (int i = 0; i < MAX_LIGHT; i++) {
         finalColor += CalcPointLight(pointLights[i], normal, viewDir, uMaterial);
     }
-
-    // TODO: Texture mapping
-    // vec3 texColor = texture(uTexture, FragTexCoord).rgb;
 
     FragColor = vec4(finalColor, 1.0);
 }

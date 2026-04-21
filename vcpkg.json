@@ -13,6 +13,7 @@
       "name": "glfw3"
     },
     "glm",
-    "gtest"
+    "gtest",
+    "stb"
   ]
 }
