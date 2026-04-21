@@ -21,6 +21,7 @@
         "opengl3-binding"
       ]
     },
-    "gtest"
+    "gtest",
+    "stb"
   ]
 }
