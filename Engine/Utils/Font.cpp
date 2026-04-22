@@ -2,7 +2,7 @@
 #include <bitset>
 #include <cstring>
 #include <filesystem>
-#include <fstream>
+// #include <fstream>
 #include <ios>
 #include <iostream>
 #include <unordered_map>
@@ -188,13 +188,38 @@ void Font::ParseLocaTable(TableDirectoy &table_dir, std::ifstream &file) {
   }
 }
 
+struct TempSimpleGlyph {
+  GlyphDesc glyphDesc;
+  uint16_t n = 0;
+  std::vector<uint16_t> endPtsOfContours;
+  uint16_t instructionLength = 0;
+  std::vector<uint8_t> instructions;
+  std::vector<uint8_t> flags;
+  std::vector<int16_t> x_coords, y_coords;
+};
+
+struct TempGlyphComponent {
+  uint16_t flag = 0;
+  uint16_t glyphIndex = 0;
+  int16_t a = 0, b = 0, c = 0, d = 0, e = 0, f = 0;
+  uint16_t compound_point = 0, component_point = 0;
+};
+
+struct TempCompoundGlyph {
+  GlyphDesc glyphDesc;
+  std::vector<TempGlyphComponent> components;
+};
+
 void Font::ParseGlyfTable(TableDirectoy &table_dir, std::ifstream &file) {
   file.seekg(table_dir.offset, std::ios::beg);
 
-  // uint16_t numGlyphs = maxp_table.numGlyphs;
-  uint16_t numGlyphs = 8;
+  std::unordered_map<uint16_t, TempCompoundGlyph> temp_compoundGlyphs;
+  std::unordered_map<uint16_t, TempSimpleGlyph> temp_simpleGlyphs;
+
+  uint16_t numGlyphs = maxp_table.numGlyphs;
+  // uint16_t numGlyphs = 140;
   for (int i = 0; i < numGlyphs; i++) {
-    glyphDesc desc;
+    GlyphDesc desc;
 
     if (loca_table.offsets[i].second == 0)
       continue;
@@ -203,8 +228,6 @@ void Font::ParseGlyfTable(TableDirectoy &table_dir, std::ifstream &file) {
 
     file.read((char *)&desc.numberOfContours, sizeof(int16_t));
     ReverseBytes(desc.numberOfContours);
-
-    // if (desc.numberOfContours == 0) continue;
 
     file.read((char *)&desc.xMin, sizeof(int16_t));
     ReverseBytes(desc.xMin);
@@ -219,7 +242,7 @@ void Font::ParseGlyfTable(TableDirectoy &table_dir, std::ifstream &file) {
     ReverseBytes(desc.yMax);
 
     if (desc.numberOfContours > 0) { // Simple glyph
-      simpleGlyph g;
+      TempSimpleGlyph g;
       uint16_t end = 0;
       uint8_t instruction;
 
@@ -306,21 +329,190 @@ void Font::ParseGlyfTable(TableDirectoy &table_dir, std::ifstream &file) {
         g.y_coords.push_back(y_final);
       }
 
-      // std::cout << 0 << ": " << g.x_coords[0] << " " << g.y_coords[0] << " "
-      //           << g.flags[0] << std::endl;
       for (int j = 1; j < g.n; j++) {
         g.x_coords[j] = g.x_coords[j - 1] + g.x_coords[j];
         g.y_coords[j] = g.y_coords[j - 1] + g.y_coords[j];
-
-        // std::cout << j << ": " << g.x_coords[j] << " " << g.y_coords[j] << "
-        // "
-        //           << std::bitset<8>(g.flags[j]) << std::endl;
       }
 
-      glyf_table.simpleGlyphs[i] = g;
+      temp_simpleGlyphs[i] = g;
     } else { // Compound glyph
+      TempCompoundGlyph g;
+      g.glyphDesc = desc;
+
+      while (true) {
+        TempGlyphComponent comp;
+
+        file.read((char *)&comp.flag, sizeof(uint16_t));
+        ReverseBytes(comp.flag);
+
+        file.read((char *)&comp.glyphIndex, sizeof(uint16_t));
+        ReverseBytes(comp.glyphIndex);
+
+        // std::cout << i << " flag: " << std::bitset<16>(comp.flag) <<
+        // std::endl;
+
+        bool arg_1_and_2_are_words = comp.flag & (1 << 0);
+        bool args_are_xy_values = comp.flag & (1 << 1);
+        bool we_have_a_scale = comp.flag & (1 << 3);
+        bool more_component = comp.flag & (1 << 5);
+        bool we_have_an_x_and_y_scale = comp.flag & (1 << 6);
+        bool we_have_a_2_by_2 = comp.flag & (1 << 7);
+
+        if (arg_1_and_2_are_words && args_are_xy_values) {
+          file.read((char *)&comp.e, sizeof(int16_t));
+          ReverseBytes(comp.e);
+
+          file.read((char *)&comp.f, sizeof(int16_t));
+          ReverseBytes(comp.f);
+        } else if (!arg_1_and_2_are_words && args_are_xy_values) {
+          int8_t x, y;
+          file.read((char *)&x, sizeof(int8_t));
+          comp.e = x;
+
+          file.read((char *)&y, sizeof(int8_t));
+          comp.f = y;
+        } else if (arg_1_and_2_are_words && !args_are_xy_values) {
+          file.read((char *)&comp.compound_point, sizeof(uint16_t));
+          ReverseBytes(comp.compound_point);
+
+          file.read((char *)&comp.component_point, sizeof(uint16_t));
+          ReverseBytes(comp.component_point);
+        } else {
+          uint8_t x, y;
+          file.read((char *)&x, sizeof(int8_t));
+          comp.compound_point = x;
+
+          file.read((char *)&y, sizeof(int8_t));
+          comp.component_point = y;
+        }
+
+        if (we_have_a_scale) {
+          int16_t s;
+          file.read((char *)&s, sizeof(int16_t));
+          ReverseBytes(s);
+          comp.a = s;
+          comp.b = 0;
+          comp.c = 0;
+          comp.d = s;
+        } else if (we_have_an_x_and_y_scale) {
+          file.read((char *)&comp.a, sizeof(int16_t));
+          ReverseBytes(comp.a);
+
+          file.read((char *)&comp.d, sizeof(int16_t));
+          ReverseBytes(comp.d);
+
+          comp.b = 0;
+          comp.c = 0;
+        } else if (we_have_a_2_by_2) {
+          file.read((char *)&comp.a, sizeof(int16_t));
+          ReverseBytes(comp.a);
+
+          file.read((char *)&comp.b, sizeof(int16_t));
+          ReverseBytes(comp.b);
+
+          file.read((char *)&comp.c, sizeof(int16_t));
+          ReverseBytes(comp.c);
+
+          file.read((char *)&comp.d, sizeof(int16_t));
+          ReverseBytes(comp.d);
+        } else {
+          comp.a = 1;
+          comp.b = 0;
+          comp.c = 0;
+          comp.d = 1;
+        }
+
+        g.components.push_back(comp);
+
+        if (!more_component)
+          break;
+      }
+
+      temp_compoundGlyphs[i] = g;
     }
   }
+
+  // NOTE: Find the implicit points and convert to easier data structure
+  for (auto &&[idx, g] : temp_simpleGlyphs) {
+    std::vector<bool> temp_on_curves;
+    std::vector<GlyphPoint> points;
+
+    for (int i = 0; i < g.n - 1; i++) {
+      auto &flag = g.flags[i];
+      bool on_curve = flag & (1 << 0);
+      auto x = g.x_coords[i];
+      auto y = g.y_coords[i];
+
+      auto &next_flag = g.flags[i + 1];
+      bool next_on_curve = next_flag & (1 << 0);
+      auto next_x = g.x_coords[i + 1];
+      auto next_y = g.y_coords[i + 1];
+
+      temp_on_curves.push_back(on_curve);
+      points.push_back({x, y});
+
+      if (on_curve == next_on_curve) {
+        bool inter_on_curve = !on_curve;
+        int16_t inter_x = (x + next_x) / 2;
+        int16_t inter_y = (y + next_y) / 2;
+
+        temp_on_curves.push_back(inter_on_curve);
+        points.push_back({inter_x, inter_y});
+      }
+    }
+
+    {
+      auto &flag = g.flags[g.n - 1];
+      bool on_curve = flag & (1 << 0);
+      auto x = g.x_coords[g.n - 1];
+      auto y = g.y_coords[g.n - 1];
+
+      auto &next_flag = g.flags[0];
+      bool next_on_curve = next_flag & (1 << 0);
+      auto next_x = g.x_coords[0];
+      auto next_y = g.y_coords[0];
+
+      temp_on_curves.push_back(on_curve);
+      points.push_back({x, y});
+
+      if (on_curve == next_on_curve) {
+        bool inter_on_curve = !on_curve;
+        int16_t inter_x = (x + next_x) / 2;
+        int16_t inter_y = (y + next_y) / 2;
+
+        temp_on_curves.push_back(inter_on_curve);
+        points.push_back({inter_x, inter_y});
+      }
+    }
+
+    std::vector<char> on_curves((temp_on_curves.size() + 7) / 8, 0);
+    for (int i = 0; i < temp_on_curves.size(); i++) {
+      size_t byte_idx = i / 8;
+      size_t bit_offset = i % 8;
+
+      if (temp_on_curves[i]) {
+        on_curves[byte_idx] |= (1 << bit_offset);
+      }
+    }
+
+    glyf_table.simpleGlyphs[idx] = {g.glyphDesc, on_curves, points};
+  }
+
+  // TODO: Convert compound glyphs too
+
+}
+
+std::ostream &operator<<(std::ostream &os, const TableDirectoy &directory) {
+  char name[5];
+  memcpy(name, &directory.tag, 4);
+  name[4] = '\0';
+
+  os << "\t\tTable name: " << name << std::endl;
+  os << "\t\tCheck sum: " << directory.checkSum << std::endl;
+  os << "\t\tOffset: " << directory.offset << std::endl;
+  os << "\t\tLength: " << directory.length << std::endl;
+
+  return os;
 }
 
 Bored::Font::Font(const std::string &filepath) {
@@ -332,8 +524,6 @@ Bored::Font::Font(const std::string &filepath) {
     throw std::runtime_error(
         std::format("Error while opening file {}", filepath));
   }
-
-  std::cout << "Font: " << path.filename() << std::endl;
 
   OffsetSubtable offset_subtable;
   std::unordered_map<std::string, TableDirectoy> table_dirs;
@@ -354,17 +544,15 @@ Bored::Font::Font(const std::string &filepath) {
   file.read((char *)&offset_subtable.rangeShift, sizeof(uint16_t));
   ReverseBytes(offset_subtable.rangeShift);
 
-  std::cout << offset_subtable << std::endl;
-
-  // table_dirs.resize(offset_subtable.numTables);
+  // std::cout << offset_subtable << std::endl;
 
   for (int i = 0; i < offset_subtable.numTables; i++) {
     TableDirectoy table_dir;
     char name[5];
     // Read table entries
     file.read((char *)&table_dir.tag, sizeof(uint32_t));
-    memcpy(name, &table_dir.tag, 4);
     name[4] = '\0';
+    memcpy(name, &table_dir.tag, 4);
 
     file.read((char *)&table_dir.checkSum, sizeof(uint32_t));
     ReverseBytes(table_dir.checkSum);
@@ -375,9 +563,7 @@ Bored::Font::Font(const std::string &filepath) {
 
     table_dirs[name] = table_dir;
 
-    // std::cout << "=================" << i << "=================" <<
-    // std::endl;
-    std::cout << table_dir << std::endl;
+    // std::cout << table_dir << std::endl;
   }
 
   ParseMaxpTable(table_dirs["maxp"], file);
