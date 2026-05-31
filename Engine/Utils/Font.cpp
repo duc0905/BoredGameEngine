@@ -499,7 +499,19 @@ void Font::ParseGlyfTable(TableDirectoy &table_dir, std::ifstream &file) {
   }
 
   // TODO: Convert compound glyphs too
+  for (auto&& [idx, g] : temp_compoundGlyphs) {
+    // Only store the transform matrix
+    // If the component uses matching points, find those points to get the
+    // translation
+    
+    // Only temporary, not actually storing this.
+    // Using this for matching points
+    std::vector<std::pair<int16_t, int16_t>> compound_points;
 
+    for (auto& comp : g.components) {
+
+    }
+  }
 }
 
 std::ostream &operator<<(std::ostream &os, const TableDirectoy &directory) {
