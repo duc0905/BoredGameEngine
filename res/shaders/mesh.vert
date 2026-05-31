@@ -9,14 +9,14 @@ uniform mat4 uView;
 uniform mat4 uProjection;
 
 out vec3 vNormal;
-out vec3 vPos;
+out vec3 vFragPos;
 out vec2 vTexCoord;
 
 void main() {
-    vPos = vec3(uModel * vec4(aPosition, 1.0));
+    vFragPos = vec3(uModel * vec4(aPosition, 1.0));
     // TODO: Normal mapping
     vNormal = mat3(uModel) * aNormal;
 
     vTexCoord = aTexCoord;
-    gl_Position = uProjection * uView * vec4(vPos, 1.0);
+    gl_Position = uProjection * uView * vec4(vFragPos, 1.0);
 }

@@ -8,6 +8,7 @@
 #include "../Systems/Renderer/Shader/Shader.hpp"
 #include "../Systems/Renderer/Texture/OGL_Texture.hpp"
 #include <functional>
+#include <memory>
 
 namespace Bored {
 enum class CursorMode { VISIBLE, CAPTURED, DISABLED, HIDDEN };

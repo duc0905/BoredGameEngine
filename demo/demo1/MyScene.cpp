@@ -4,6 +4,7 @@
 #include "Components/Lighting.hpp"
 #include "Components/MeshComponent.hpp"
 #include "Systems/Input/InputSystem.hpp"
+#include "Utils/AssetManager.hpp"
 
 void CameraController::OnInput(double dt, Bored::InputEvent &event,
                                std::shared_ptr<Bored::Node> node) {
@@ -62,16 +63,14 @@ void CameraController::OnInput(double dt, Bored::InputEvent &event,
 
 MyScene::MyScene() {
   // Setup window system
-  io = std::make_shared<Bored::IOService>(SCR_WIDTH, SCR_HEIGHT);
-  renderer = std::make_shared<OGL::Renderer>(*io);
+  context.io = std::make_shared<Bored::IOService>(SCR_WIDTH, SCR_HEIGHT);
+  renderer = std::make_shared<OGL::Renderer>(*context.io);
   systems.push_back(renderer);
 
   // Setup input system
-  std::shared_ptr<Bored::Input> input = std::make_shared<Bored::Input>(*io);
+  std::shared_ptr<Bored::Input> input =
+      std::make_shared<Bored::Input>(*context.io);
   systems.push_back(input);
-
-  // Populate the services into scene context
-  context.io = io.get();
 }
 
 void MyScene::BuildScene() {
@@ -113,27 +112,37 @@ void MyScene::BuildScene() {
   triangle_node->transform.rotate.x = -glm::pi<float>() * 0.3f;
 
   root->AddChild(triangle_node);
+  auto &am = Bored::AssetManager::GetInstance();
 
   // Loading mesh from files
   try {
     std::shared_ptr<Bored::Node> kitchen_table_node = CreateNode();
     Bored::MeshComponent &kitchen_table_mesh_comp =
         kitchen_table_node->AddComponent<Bored::MeshComponent>();
-    kitchen_table_mesh_comp.mesh =
-        OGL::LoadModel("res/models/kitchentable_sink_large_decorated.gltf");
+    kitchen_table_mesh_comp =
+        *am.LoadModel("res/models/kitchentable_sink_large_decorated.gltf");
     root->AddChild(kitchen_table_node);
 
+  } catch (std::exception &e) {
+    std::cerr << e.what() << std::endl;
+  }
+
+  try {
     std::shared_ptr<Bored::Node> chair_node = CreateNode();
     Bored::MeshComponent &chair_mesh_comp =
         chair_node->AddComponent<Bored::MeshComponent>();
-    chair_mesh_comp.mesh = OGL::LoadModel("res/models/chair_A.gltf");
+    chair_mesh_comp = *am.LoadModel("res/models/chair_A.gltf");
     chair_node->transform.translate = {3.5f, -0.5f, 0.0f};
     root->AddChild(chair_node);
+  } catch (std::exception &e) {
+    std::cerr << e.what() << std::endl;
+  }
 
+  try {
     std::shared_ptr<Bored::Node> cube_node = CreateNode();
     Bored::MeshComponent &cube_mesh_comp =
         cube_node->AddComponent<Bored::MeshComponent>();
-    cube_mesh_comp.mesh = OGL::LoadModel("res/models/cube.gltf");
+    cube_mesh_comp = *am.LoadModel("res/models/cube.gltf");
     cube_node->transform.translate = {-3.5f, -0.5f, 0.5f};
     root->AddChild(cube_node);
   } catch (std::exception &e) {

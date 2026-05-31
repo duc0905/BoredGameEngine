@@ -2,9 +2,16 @@
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
+#include <cstring>
+#include <assimp/types.h>
 #include <filesystem>
+#include <format>
+#include <fstream>
 #include <glm/glm.hpp>
+#include <ios>
 #include <iostream>
+#include <memory>
+#include <ostream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -67,12 +74,13 @@ AssetManager::LoadModel(const std::string &filepath) {
         glm::vec3{specular.r, specular.g, specular.b}, shininess);
 
     aiString str;
-    material->GetTexture(aiTextureType_DIFFUSE, 0, &str);
-
-    std::filesystem::path path = std::filesystem::path(filepath).parent_path();
-    std::filesystem::path diffuse_path = path / str.C_Str();
-    mesh_component->material->diffuse_texture =
-        LoadTexture(diffuse_path.string());
+    if (AI_SUCCESS == material->GetTexture(aiTextureType_DIFFUSE, 0, &str)) {
+      std::filesystem::path path =
+          std::filesystem::path(filepath).parent_path();
+      std::filesystem::path diffuse_path = path / str.C_Str();
+      mesh_component->material->diffuse_texture =
+          LoadTexture(diffuse_path.string());
+    }
   } else {
     mesh_component->material = std::make_shared<Material>(
         glm::vec3{0.1f, 0.1f, 0.1f}, glm::vec3{0.8f, 0.8f, 0.8f},
@@ -122,10 +130,12 @@ AssetManager::LoadModel(const std::string &filepath) {
   std::cout << "\tShininess: " << mesh_component->material->shininess
             << std::endl;
 
-  std::cout << "\tDiffuse texture: "
-            << mesh_component->material->diffuse_texture->GetSize().x << ", "
-            << mesh_component->material->diffuse_texture->GetSize().y
-            << std::endl;
+  if (mesh_component->material->diffuse_texture) {
+    std::cout << "\tDiffuse texture: "
+              << mesh_component->material->diffuse_texture->GetSize().x << ", "
+              << mesh_component->material->diffuse_texture->GetSize().y
+              << std::endl;
+  }
 
   m_models[filepath] = mesh_component;
   return mesh_component;
@@ -159,5 +169,17 @@ AssetManager::LoadTexture(const std::string &filepath) {
   m_textures[filepath] = texture;
 
   return texture;
+}
+
+
+std::shared_ptr<Font> AssetManager::LoadFontTTF(const std::string &filepath) {
+  if (m_fonts.find(filepath) != m_fonts.end()) {
+    return m_fonts[filepath];
+  }
+
+  std::shared_ptr<Font> font = std::make_shared<Font>(filepath);
+  m_fonts[filepath] = font;
+
+  return font;
 }
 } // namespace Bored

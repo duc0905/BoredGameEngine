@@ -18,7 +18,7 @@ namespace Bored {
  * Holds pointers to services used by this scene
  */
 struct SceneContext {
-  IOService *io;
+  std::shared_ptr<IOService> io;
 };
 
 /**

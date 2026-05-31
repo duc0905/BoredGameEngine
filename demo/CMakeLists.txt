@@ -3,3 +3,5 @@ add_subdirectory("demo1")
 add_subdirectory("demo2")
 
 add_subdirectory("maze")
+
+add_subdirectory("menu")

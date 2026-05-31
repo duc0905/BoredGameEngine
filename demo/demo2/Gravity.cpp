@@ -12,9 +12,7 @@ void GravitySystem::OnUpdate(double dt, Bored::Scene &scene) {
 
   // Update velocity and location
   for (auto &&[_, trans_comp, move_comp] : movement_view.each()) {
-    trans_comp.translate +=
-        (move_comp.velocity * (float)dt) +
-        (0.5f * move_comp.acceleration * (float)dt * (float)dt);
+    trans_comp.translate += move_comp.velocity * (float)dt;
     move_comp.velocity += (float)dt * move_comp.acceleration;
   }
 
