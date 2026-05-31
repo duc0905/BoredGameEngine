@@ -63,16 +63,13 @@ void CameraController::OnInput(double dt, Bored::InputEvent &event,
 
 MyScene::MyScene() : Scene("Demo 1 scene") {
   // Setup window system
-  io = std::make_shared<Bored::IOService>(SCR_WIDTH, SCR_HEIGHT);
-  renderer = std::make_shared<OGL::Renderer>(*io);
+  context.io = std::make_shared<Bored::IOService>(SCR_WIDTH, SCR_HEIGHT);
+  renderer = std::make_shared<OGL::Renderer>(*context.io);
   systems.push_back(renderer);
 
   // Setup input system
-  std::shared_ptr<Bored::Input> input = std::make_shared<Bored::Input>(*io);
+  std::shared_ptr<Bored::Input> input = std::make_shared<Bored::Input>(*context.io);
   systems.push_back(input);
-
-  // Populate the services into scene context
-  context.io = io.get();
 }
 
 void MyScene::BuildScene() {
