@@ -29,7 +29,7 @@ std::shared_ptr<I_Texture2D> CPU_Renderer2D::Render(Scene &scene) {
   //
   //    Check if it is of type button
 
-  auto view = scene.ecs_registry.view<FlatComponent>();
+  auto view = scene.ecs_registry.view<Element2D::FlatComponent>();
 
   for (auto &&[id, flat_comp] : view->each()) {
     flat_comp.element->Render(pixels);

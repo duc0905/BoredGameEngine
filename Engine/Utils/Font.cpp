@@ -1,8 +1,8 @@
 #include "Font.hpp"
-#include <bitset>
+#include <cstdlib>
 #include <cstring>
+#include <functional>
 #include <filesystem>
-// #include <fstream>
 #include <ios>
 #include <iostream>
 #include <unordered_map>
@@ -201,7 +201,7 @@ struct TempSimpleGlyph {
 struct TempGlyphComponent {
   uint16_t flag = 0;
   uint16_t glyphIndex = 0;
-  int16_t a = 0, b = 0, c = 0, d = 0, e = 0, f = 0;
+  float a = 0, b = 0, c = 0, d = 0, e = 0, f = 0;
   uint16_t compound_point = 0, component_point = 0;
 };
 
@@ -238,13 +238,14 @@ void Font::ParseGlyfTable(TableDirectoy &table_dir, std::ifstream &file) {
     file.read((char *)&desc.xMax, sizeof(int16_t));
     ReverseBytes(desc.xMax);
 
-    file.read((char *)&desc.xMax, sizeof(int16_t));
+    file.read((char *)&desc.yMax, sizeof(int16_t));
     ReverseBytes(desc.yMax);
 
     if (desc.numberOfContours > 0) { // Simple glyph
       TempSimpleGlyph g;
       uint16_t end = 0;
       uint8_t instruction;
+      g.glyphDesc = desc;
 
       for (int _ = 0; _ < desc.numberOfContours; _++) {
         file.read((char *)&end, sizeof(uint16_t));
@@ -338,8 +339,9 @@ void Font::ParseGlyfTable(TableDirectoy &table_dir, std::ifstream &file) {
     } else { // Compound glyph
       TempCompoundGlyph g;
       g.glyphDesc = desc;
+      bool more_component;
 
-      while (true) {
+      do {
         TempGlyphComponent comp;
 
         file.read((char *)&comp.flag, sizeof(uint16_t));
@@ -390,43 +392,51 @@ void Font::ParseGlyfTable(TableDirectoy &table_dir, std::ifstream &file) {
           int16_t s;
           file.read((char *)&s, sizeof(int16_t));
           ReverseBytes(s);
-          comp.a = s;
-          comp.b = 0;
-          comp.c = 0;
-          comp.d = s;
+          comp.a = (float)s / 16384.0f;
+          comp.b = 0.0f;
+          comp.c = 0.0f;
+          comp.d = comp.a;
         } else if (we_have_an_x_and_y_scale) {
-          file.read((char *)&comp.a, sizeof(int16_t));
-          ReverseBytes(comp.a);
+          int16_t s;
+          file.read((char *)&s, sizeof(int16_t));
+          ReverseBytes(s);
+          comp.a = (float)s / 16384.0f;
 
-          file.read((char *)&comp.d, sizeof(int16_t));
-          ReverseBytes(comp.d);
+          file.read((char *)&s, sizeof(int16_t));
+          ReverseBytes(s);
+          comp.d = (float)s / 16384.0f;
 
-          comp.b = 0;
-          comp.c = 0;
+          comp.b = 0.0f;
+          comp.c = 0.0f;
         } else if (we_have_a_2_by_2) {
-          file.read((char *)&comp.a, sizeof(int16_t));
-          ReverseBytes(comp.a);
+          int16_t s;
+          file.read((char *)&s, sizeof(int16_t));
+          ReverseBytes(s);
+          comp.a = (float)s / 16384.0f;
 
-          file.read((char *)&comp.b, sizeof(int16_t));
-          ReverseBytes(comp.b);
+          file.read((char *)&s, sizeof(int16_t));
+          ReverseBytes(s);
+          comp.b = (float)s / 16384.0f;
 
-          file.read((char *)&comp.c, sizeof(int16_t));
-          ReverseBytes(comp.c);
+          file.read((char *)&s, sizeof(int16_t));
+          ReverseBytes(s);
+          comp.c = (float)s / 16384.0f;
 
-          file.read((char *)&comp.d, sizeof(int16_t));
-          ReverseBytes(comp.d);
+          file.read((char *)&s, sizeof(int16_t));
+          ReverseBytes(s);
+          comp.d = (float)s / 16384.0f;
         } else {
-          comp.a = 1;
-          comp.b = 0;
-          comp.c = 0;
-          comp.d = 1;
+          comp.a = 1.0f;
+          comp.b = 0.0f;
+          comp.c = 0.0f;
+          comp.d = 1.0f;
         }
 
         g.components.push_back(comp);
 
         if (!more_component)
           break;
-      }
+      } while (more_component);
 
       temp_compoundGlyphs[i] = g;
     }
@@ -495,11 +505,102 @@ void Font::ParseGlyfTable(TableDirectoy &table_dir, std::ifstream &file) {
       }
     }
 
-    glyf_table.simpleGlyphs[idx] = {g.glyphDesc, on_curves, points};
+    glyf_table.glyphs[idx] = {g.glyphDesc, on_curves, points};
   }
 
-  // TODO: Convert compound glyphs too
+  std::function<SimpleGlyph &(unsigned short)> get_glyph =
+      [&](unsigned short idx) -> SimpleGlyph & {
+    if (glyf_table.glyphs.find(idx) == glyf_table.glyphs.end()) {
+      if (temp_compoundGlyphs.find(idx) == temp_compoundGlyphs.end()) {
+        throw std::runtime_error(std::format("Cannot find glyph {}", idx));
+      } else {
+        auto &g = temp_compoundGlyphs[idx];
 
+        std::vector<GlyphPoint> compound_points;
+        std::vector<char> on_curves;
+
+        for (auto &comp : g.components) {
+          auto comp_idx = comp.glyphIndex;
+          auto &comp_glyph = get_glyph(comp_idx);
+          auto &flag = comp.flag;
+          auto comp_points_copy = comp_glyph.points;
+
+          bool arg_1_and_2_are_words = flag & (1 << 0);
+          bool args_are_xy_values = flag & (1 << 1);
+          bool we_have_a_scale = flag & (1 << 3);
+          bool more_component = flag & (1 << 5);
+          bool we_have_an_x_and_y_scale = flag & (1 << 6);
+          bool we_have_a_2_by_2 = flag & (1 << 7);
+          bool scaled_component_offset = flag & (1 << 11);
+
+          // Get the final matrix
+          if (!args_are_xy_values) {
+            if (comp.component_point >= compound_points.size() ||
+                comp.component_point >= comp_glyph.points.size())
+              throw std::runtime_error(
+                  "Compound glyph references points out of bound");
+
+            auto &compound_point = compound_points[comp.compound_point];
+            auto &component_point = comp_glyph.points[comp.component_point];
+
+            comp.e = compound_point.x - component_point.x;
+            comp.f = compound_point.y - component_point.y;
+          } else if (scaled_component_offset) { // Scale e and f
+            uint16_t m0 = 0, n0 = 0;
+            float m = 0.0f, n = 0.0f;
+            m0 = std::max(std::abs(comp.a), std::abs(comp.b));
+            n0 = std::max(std::abs(comp.c), std::abs(comp.d));
+
+            if (std::abs(std::abs(comp.a) - std::abs(comp.c)) <= 33) {
+              m = 2.0f * (float)m0;
+            } else {
+              m = (float)m0;
+            }
+
+            if (std::abs(std::abs(comp.b) - std::abs(comp.d)) <= 33) {
+              n = 2.0f * (float)n0;
+            } else {
+              n = (float)n0;
+            }
+
+            comp.e *= m;
+            comp.f *= n;
+          }
+
+          // Transform points
+          for (auto &point : comp_points_copy) {
+            point.x = point.x * comp.a + point.y * comp.b + comp.e;
+            point.y = point.x * comp.c + point.y * comp.d + comp.f;
+          }
+
+          // Concatenate component points
+          compound_points.reserve(compound_points.size() +
+                                  comp_points_copy.size());
+          compound_points.insert(compound_points.end(),
+                                 comp_points_copy.begin(),
+                                 comp_points_copy.end());
+
+          // Concatenate component on_curves to current on_curves.
+          on_curves.reserve(on_curves.size() + comp_glyph.on_curves.size());
+          on_curves.insert(on_curves.end(), comp_glyph.on_curves.begin(),
+                           comp_glyph.on_curves.end());
+        }
+
+        glyf_table.glyphs[idx] = {g.glyphDesc, on_curves, compound_points};
+      }
+    }
+
+    return glyf_table.glyphs[idx];
+  };
+
+  // NOTE: Convert compound glyphs too
+  for (auto &&[idx, g] : temp_compoundGlyphs) {
+    // Only store the transform matrix
+    // If the component uses matching points, find those points to get the
+    // translation
+
+    get_glyph(idx);
+  }
 }
 
 std::ostream &operator<<(std::ostream &os, const TableDirectoy &directory) {
@@ -572,6 +673,12 @@ Bored::Font::Font(const std::string &filepath) {
   ParseGlyfTable(table_dirs["glyf"], file);
 
   file.close();
+}
+
+std::shared_ptr<I_Texture2D> Font::RenderGlyph(unsigned short idx) {
+  // TODO: implement
+
+  return nullptr;
 }
 
 } // namespace Bored

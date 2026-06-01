@@ -1,24 +1,20 @@
 #include "Scene2D.hpp"
-#include "Utils/AssetManager.hpp"
 #include <iostream>
+#include <string>
 
-int main(int argc, char* argv[]) {
-  // Scene2D scene;
-  //
-  // scene.BuildScene();
-  //
-  // scene.AfterBuildScene();
-  //
-  // scene.GameLoop();
-
-  if (argc <= 1) {
-    std::cout << "Require filepath" << std::endl;
+int main(int argc, char *argv[]) {
+  if (argc <= 2) {
+    std::cerr << "Require filepath and glyph index" << std::endl;
     return 1;
   }
 
-  Bored::AssetManager& am = Bored::AssetManager::GetInstance();
+  Scene2D scene(argv[1], std::stoi(argv[2]));
 
-  am.LoadFontTTF(argv[1]);
+  scene.BuildScene();
+
+  scene.AfterBuildScene();
+
+  scene.GameLoop();
 
   return 0;
 }

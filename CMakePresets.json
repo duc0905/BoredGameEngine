@@ -23,8 +23,7 @@
       "name": "debug",
       "inherits": "base",
       "cacheVariables": {
-        "CMAKE_C_FLAGS": "-g",
-        "CMAKE_CXX_FLAGS": "-g"
+        "CMAKE_BUILD_TYPE": "Debug"
       }
     }
   ],

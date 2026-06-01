@@ -1,11 +1,12 @@
 #pragma once
 
 #include <cstdint>
-// #include <cstring>
-// #include <ostream>
 #include <fstream>
+#include <memory>
 #include <unordered_map>
 #include <vector>
+
+#include "../Systems/Renderer/I_Texture.hpp"
 
 namespace Bored {
 struct FontTable {
@@ -40,15 +41,25 @@ struct GlyphPoint {
 
 struct SimpleGlyph {
   GlyphDesc desc;
-  std::vector<char> on_curves; // Seperate for space efficiency
+  std::vector<char> on_curves; // Seperate from points for space efficiency
   std::vector<GlyphPoint> points;
 };
 
+// Decision: Either store the full compound glyph data or store reference to
+// simple glyphs Trade off: Redundant vs Reference:
+//  Redundant:
+//  - Pros:
+//    - Simple data structure, using the same for both Simple and Compound glyph
+//    - Getting rid of the transform matrix of each component
+//    - Precalculate all points
+//  - Cons:
+//    - Requires more memory
+// My decision: Redundant
 struct CompoundGlyph {};
 
 struct glyfTable : public FontTable {
   std::unordered_map<uint16_t, CompoundGlyph> compoundGlyphs;
-  std::unordered_map<uint16_t, SimpleGlyph> simpleGlyphs;
+  std::unordered_map<uint16_t, SimpleGlyph> glyphs;
 };
 
 struct headTable : public FontTable {
@@ -149,6 +160,8 @@ class Font {
 public:
   Font(const std::string &filepath);
 
+  std::shared_ptr<I_Texture2D> RenderGlyph(unsigned short idx);
+
 private:
   void ParseHeadTable(TableDirectoy &table_dir, std::ifstream &file);
   void ParseCmapTable(TableDirectoy &table_dir, std::ifstream &file);
@@ -156,7 +169,7 @@ private:
   void ParseLocaTable(TableDirectoy &table_dir, std::ifstream &file);
   void ParseGlyfTable(TableDirectoy &table_dir, std::ifstream &file);
 
-private:
+public:
   cmapTable cmap_table;
   glyfTable glyf_table;
   headTable head_table;

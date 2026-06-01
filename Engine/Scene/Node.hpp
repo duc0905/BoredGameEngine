@@ -12,6 +12,14 @@ namespace Bored {
 
 class Scene;
 
+/**
+ * A node in the scene hierarchy.
+ *
+ * A node only store the relationship to other nodes. Avoid storing data in a
+ * Node. Use entt (ECS) to store data for the node instead.
+ *
+ * See Node::AddComponent and Node::HasComponent
+ */
 struct Node {
   friend class Scene;
 
