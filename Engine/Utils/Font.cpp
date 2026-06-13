@@ -1,8 +1,8 @@
 #include "Font.hpp"
 #include <cstdlib>
 #include <cstring>
-#include <functional>
 #include <filesystem>
+#include <functional>
 #include <ios>
 #include <iostream>
 #include <unordered_map>
@@ -52,9 +52,6 @@ void Font::ParseCmapTable(TableDirectoy &table_dir, std::ifstream &file) {
     ReverseBytes(sub.offset);
 
     cmap_table.subtables.push_back(sub);
-
-    std::cout << "Subtable: " << sub.platformID << " " << sub.platformSpecificID
-              << " " << sub.offset << std::endl;
   }
 }
 
@@ -201,7 +198,8 @@ struct TempSimpleGlyph {
 struct TempGlyphComponent {
   uint16_t flag = 0;
   uint16_t glyphIndex = 0;
-  float a = 0, b = 0, c = 0, d = 0, e = 0, f = 0;
+  float a = 0.0f, b = 0.0f, c = 0.0f, d = 0.0f;
+  int16_t e = 0, f = 0;
   uint16_t compound_point = 0, component_point = 0;
 };
 
@@ -339,7 +337,7 @@ void Font::ParseGlyfTable(TableDirectoy &table_dir, std::ifstream &file) {
     } else { // Compound glyph
       TempCompoundGlyph g;
       g.glyphDesc = desc;
-      bool more_component;
+      bool more_component = false;
 
       do {
         TempGlyphComponent comp;
@@ -350,13 +348,10 @@ void Font::ParseGlyfTable(TableDirectoy &table_dir, std::ifstream &file) {
         file.read((char *)&comp.glyphIndex, sizeof(uint16_t));
         ReverseBytes(comp.glyphIndex);
 
-        // std::cout << i << " flag: " << std::bitset<16>(comp.flag) <<
-        // std::endl;
-
         bool arg_1_and_2_are_words = comp.flag & (1 << 0);
         bool args_are_xy_values = comp.flag & (1 << 1);
         bool we_have_a_scale = comp.flag & (1 << 3);
-        bool more_component = comp.flag & (1 << 5);
+        more_component = comp.flag & (1 << 5);
         bool we_have_an_x_and_y_scale = comp.flag & (1 << 6);
         bool we_have_a_2_by_2 = comp.flag & (1 << 7);
 
@@ -433,9 +428,6 @@ void Font::ParseGlyfTable(TableDirectoy &table_dir, std::ifstream &file) {
         }
 
         g.components.push_back(comp);
-
-        if (!more_component)
-          break;
       } while (more_component);
 
       temp_compoundGlyphs[i] = g;
@@ -645,8 +637,6 @@ Bored::Font::Font(const std::string &filepath) {
   file.read((char *)&offset_subtable.rangeShift, sizeof(uint16_t));
   ReverseBytes(offset_subtable.rangeShift);
 
-  // std::cout << offset_subtable << std::endl;
-
   for (int i = 0; i < offset_subtable.numTables; i++) {
     TableDirectoy table_dir;
     char name[5];
@@ -663,8 +653,6 @@ Bored::Font::Font(const std::string &filepath) {
     ReverseBytes(table_dir.length);
 
     table_dirs[name] = table_dir;
-
-    // std::cout << table_dir << std::endl;
   }
 
   ParseMaxpTable(table_dirs["maxp"], file);

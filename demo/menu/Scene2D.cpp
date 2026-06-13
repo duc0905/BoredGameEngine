@@ -60,15 +60,27 @@ void GlyphImage::Render(std::shared_ptr<I_Texture2D> texture) {
   float s_y = (float)(tex_size.y - 100) / (float)glyph_size_y;
   float s = std::min(s_x, s_y);
 
-  for (auto &point : g.points) {
+  for (uint i = 0; i < g.points.size(); i++) {
+    auto &point = g.points[i];
+    bool on_curve = g.on_curves[i / 8] & (1 << (i % 8));
+    std::byte color[4] = {std::byte(0), std::byte(0), std::byte(0),
+                          std::byte(0)};
+
     int x = (point.x + xMin) * s + 50;
     int y = (point.y + yMin) * s + 50;
+
+    color[3] = std::byte(255);
+    if (on_curve) {
+      color[2] = std::byte(255);
+    } else {
+      color[0] = std::byte(255);
+    }
 
     for (int i = -4; i < 4; i++) {
       for (int j = -4; j < 4; j++) {
         unsigned int idx = ((y + i) * tex_size.x + (x + j)) * bpp;
         for (int channel = 0; channel < bpp; channel++) {
-          tex[idx + channel] = static_cast<std::byte>(255);
+          tex[idx + channel] = color[channel];
         }
       }
     }
