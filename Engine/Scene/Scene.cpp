@@ -1,4 +1,6 @@
 #include "Scene.hpp"
+#include "../Components/NodeComponent.hpp"
+#include <chrono>
 #include <stdexcept>
 
 namespace Bored {
