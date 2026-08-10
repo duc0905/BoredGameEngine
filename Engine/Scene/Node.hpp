@@ -1,4 +1,5 @@
 #pragma once
+#include "../Components/BehaviourComponent.hpp"
 #include "../Components/TransformComponent.hpp"
 #include <entt/entity/entity.hpp>
 #include <entt/entity/fwd.hpp>
@@ -6,7 +7,8 @@
 #include <format>
 #include <functional>
 #include <memory>
-#include <vector>
+#include <set>
+#include <stdexcept>
 
 namespace Bored {
 
@@ -20,21 +22,65 @@ class Scene;
  *
  * See Node::AddComponent and Node::HasComponent
  */
-struct Node {
+struct Node : public std::enable_shared_from_this<Node> {
   friend class Scene;
 
 public:
   entt::entity id;
   Node *parent = nullptr;
-  std::vector<std::shared_ptr<Node>> children;
+  bool is_in_scene = false;
+  std::set<std::shared_ptr<Node>> children;
 
 public:
   /**
    * Add a child node.
    */
   void AddChild(std::shared_ptr<Node> child) {
+    if (!child)
+      throw std::runtime_error("child is nullptr");
+
+    if (is_in_scene)
+      child->TraverseForward([](std::shared_ptr<Node> node) {
+        node->is_in_scene = true;
+        if (node->HasComponent<BehaviourComponent>()) {
+          auto &behaviourComp = node->GetComponent<BehaviourComponent>();
+
+          if (behaviourComp.behaviour)
+            behaviourComp.behaviour->OnAttach();
+        }
+      });
+
     child->parent = this;
-    children.push_back(child);
+    children.insert(child);
+  }
+
+  /**
+   * Remove a child node and its descendants.
+   */
+  void RemoveChild(std::shared_ptr<Node> child) {
+    if (!child)
+      throw std::runtime_error("child is nullptr");
+
+    auto it = children.find(child);
+
+    if (it == children.end())
+      throw std::runtime_error("child is not a child of this node");
+    else {
+      if (is_in_scene) {
+        // Calling OnDetach on child's descendants.
+        child->TraverseBackward([](std::shared_ptr<Node> node) {
+          node->is_in_scene = false;
+          if (node->HasComponent<BehaviourComponent>()) {
+            auto &behaviourComp = node->GetComponent<BehaviourComponent>();
+            if (behaviourComp.behaviour)
+              behaviourComp.behaviour->OnDetach();
+          }
+        });
+      }
+
+      child->parent = nullptr;
+      children.erase(it);
+    }
   }
 
   /**
@@ -42,13 +88,28 @@ public:
    *
    * Traverse from root to every child in DFS order.
    */
-  void Traverse(std::function<void(std::shared_ptr<Node>)> visitor) {
+  void TraverseForward(std::function<void(std::shared_ptr<Node>)> visitor) {
+    visitor(shared_from_this());
     for (auto child : children) {
       if (child) {
-        visitor(child);
-        child->Traverse(visitor);
+        child->TraverseForward(visitor);
       }
     }
+  }
+
+  /**
+   * Helper function letting other code to traverse the scene tree.
+   *
+   * Traverse from root to every child in DFS order, visiting the children
+   * before visiting parents.
+   */
+  void TraverseBackward(std::function<void(std::shared_ptr<Node>)> visitor) {
+    for (auto child : children) {
+      if (child) {
+        child->TraverseBackward(visitor);
+      }
+    }
+    visitor(shared_from_this());
   }
 
   /**
@@ -70,6 +131,11 @@ public:
     return parent->GetRootNode();
   }
 
+  /**
+   * Get global transform mastrix.
+   *
+   * Parent's transform matrix * local transform matrix.
+   */
   [[nodiscard]] glm::mat4 GetGlobalTransformMatrix() const {
     if (parent) {
       return parent->GetGlobalTransformMatrix() *
@@ -122,3 +188,5 @@ public:
 };
 
 } // namespace Bored
+
+#include "../Components/BehaviourComponentImpl.hpp"
