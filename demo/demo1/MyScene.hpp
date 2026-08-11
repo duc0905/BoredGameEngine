@@ -20,6 +20,9 @@ public:
 const unsigned int SCR_WIDTH = 1200;
 const unsigned int SCR_HEIGHT = 800;
 
+/*
+ * @todo Create a simple InputSystem for this demo.
+ */
 class MyScene : public Bored::Scene {
 public:
   MyScene();

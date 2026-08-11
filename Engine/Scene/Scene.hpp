@@ -9,6 +9,7 @@
 #include <functional>
 #include <memory>
 
+#include "../Components/InputComponent.hpp"
 #include "Object.hpp"
 
 namespace Bored {
@@ -17,6 +18,22 @@ namespace Bored {
  */
 struct SceneContext {
   std::shared_ptr<IOService> io;
+};
+
+/**
+ * An interface for input system architecture.
+ *
+ * Allow user to define how to handle physical inputs differently in different
+ * scene. The input is passed in here from InputSystem.
+ */
+class InputHandler {
+ public:
+  virtual ~InputHandler() {}
+
+  /**
+   * Entrypoint right after hardware input is processed.
+   */
+  virtual void HandleEvent(InputEvent& e) {};
 };
 
 /**
@@ -33,8 +50,10 @@ class Scene {
  public:
   entt::registry ecs_registry;
 
+  std::unique_ptr<InputHandler> input_handler;
+
  public:
-  Scene() {}
+  Scene() : input_handler(std::make_unique<InputHandler>()) {}
   virtual ~Scene() = default;
 
   /**

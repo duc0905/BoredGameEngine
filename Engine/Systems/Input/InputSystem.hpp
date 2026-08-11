@@ -1,11 +1,8 @@
 #pragma once
 
 #include "../../Components/InputComponent.hpp"
-#include "../../Scene/Scene.hpp"
 #include "../I_System.hpp"
-#include <GLFW/glfw3.h>
-#include <functional>
-#include <memory>
+#include "IOService.hpp"
 
 namespace Bored {
 /**
@@ -18,58 +15,32 @@ namespace Bored {
  * Different inputs can be mapped to the same action, which will be handled by
  * the same handler.
  *
- * @todo handles text input, scroll input
+ * @todo handles text input, scroll input, custom USB/Wifi/Bluetooth input.
  *
  */
-class Input : public I_System {
-public:
-  Input(IOService &input_service) : input_service(input_service) {
-    auto pos = input_service.GetCursorPos();
-    prev_cursor_pos_x = pos.first;
-    prev_cursor_pos_y = pos.second;
+class InputSystem : public I_System {
+ public:
+  /**
+   * @param io_service IOService - the wrapper for GLFW.
+   */
+  InputSystem(IOService& io_service);
 
-    input_service.SetKeyHandler(
-        std::bind(&Input::HandleKey, this, std::placeholders::_1,
-                  std::placeholders::_2, std::placeholders::_3));
+  ~InputSystem() = default;
 
-    input_service.SetCursorPosHandler(std::bind(&Input::HandleCursorPosition,
-                                                this, std::placeholders::_1,
-                                                std::placeholders::_2));
-
-    input_service.SetMouseButtonHandler(
-        std::bind(&Input::HandleMouseButton, this, std::placeholders::_1,
-                  std::placeholders::_2, std::placeholders::_3));
-  }
-
-  ~Input() = default;
+  /**
+   * Handles the event.
+   *
+   * Allowing user to use/define the input handling system suitable for their
+   * purpose per scene. Default: no handling.
+   */
+  virtual void HandleInputEvents(std::vector<InputEvent>& events) {}
 
   /**
    * Dispatch the input events to the scene tree from root.
    */
-  virtual void OnUpdate(double dt, Scene &scene) override {
-    input_service.PollEvents();
+  virtual void OnUpdate(double dt, Scene& scene) override;
 
-    // Get all input components, and then do stuff
-    for (auto &event : eventQueue) {
-      scene.TraverseForward([&event, dt](std::shared_ptr<Object> node) {
-        if (event.handled)
-          return;
-
-        if (node->HasComponent<InputComponent>()) {
-          auto &input_comp = node->GetComponent<InputComponent>();
-
-          if (input_comp.input_handler)
-            input_comp.input_handler->OnInput(dt, event, node);
-        }
-      });
-    }
-
-    eventQueue.clear();
-  }
-
-  virtual bool ShouldStop(Scene &) override {
-    return input_service.ShouldStop();
-  }
+  virtual bool ShouldStop(Scene&) override;
 
   /**
    * Handles mouse movement inputs.
@@ -83,16 +54,7 @@ public:
    * content area.
    *
    */
-  inline void HandleCursorPosition(int x, int y) {
-    InputEvent e;
-    e.type = InputType::MOUSE_MOVE;
-    e.mouseMove = {x, y, x - prev_cursor_pos_x, y - prev_cursor_pos_y};
-
-    prev_cursor_pos_x = x;
-    prev_cursor_pos_y = y;
-
-    eventQueue.push_back(e);
-  }
+  inline void HandleCursorPosition(int x, int y);
 
   /**
    * Handles mouse button inputs.
@@ -109,19 +71,7 @@ public:
    * @sa HandleKey
    *
    */
-  inline void HandleMouseButton(int button, int action, int mods) {
-    InputEvent e;
-    if (action == GLFW_PRESS) {
-      e.type = InputType::MOUSE_BUTTON_DOWN;
-    } else {
-      e.type = InputType::MOUSE_BUTTON_UP;
-    }
-
-    e.mouseButton.button = button;
-    e.mouseButton.mods = mods;
-
-    eventQueue.push_back(e);
-  }
+  inline void HandleMouseButton(int button, int action, int mods);
 
   /**
    * Handles key inputs.
@@ -137,37 +87,15 @@ public:
    * @param mods The GLFW key modifier bits.
    *
    */
-  inline void HandleKey(int key, int action, int mods) {
-    InputEvent e;
+  inline void HandleKey(int key, int action, int mods);
 
-    if (action == GLFW_PRESS) {
-      e.type = InputType::KEY_DOWN;
-    } else if (action == GLFW_REPEAT) {
-      e.type = InputType::KEY_REPEAT;
-    } else {
-      e.type = InputType::KEY_UP;
-    }
-
-    e.key.keyCode = key;
-    e.key.mods = mods;
-
-    eventQueue.push_back(e);
-  }
-
-public:
-  // std::unordered_map<Key, std::string> m_keyToAction; /**< Maps Key to action
-  // */ std::unordered_map<std::string, std::unique_ptr<ActionHandler<>>>
-  //     m_actionHandlers; /**< action handler */
-  // std::unique_ptr<ActionHandler<double, double>>
-  //     m_cursorPosHandler; /**< Handler for mouse position events */
-
-private:
-  IOService &input_service;
+ private:
+  IOService& input_service;
 
   std::vector<InputEvent> eventQueue;
 
-private:
+ private:
   int prev_cursor_pos_x, prev_cursor_pos_y;
 };
 
-} // namespace Bored
+}  // namespace Bored
