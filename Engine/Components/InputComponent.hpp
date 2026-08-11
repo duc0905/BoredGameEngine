@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include "../Scene/Node.hpp"
+#include "../Scene/Object.hpp"
 
 namespace Bored {
 enum class InputType {
@@ -43,7 +43,7 @@ struct InputEvent {
 
 class InputHandler {
 public:
-  virtual void OnInput(double dt, InputEvent &event, std::shared_ptr<Node> node) = 0;
+  virtual void OnInput(double dt, InputEvent &event, std::shared_ptr<Object> node) = 0;
 };
 
 struct InputComponent {

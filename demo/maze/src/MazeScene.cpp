@@ -1,14 +1,13 @@
 #include "MazeScene.hpp"
 #include "Components/Camera.hpp"
 #include "Components/Lighting.hpp"
-#include "Components/Mesh3D.hpp"
 #include "Components/MeshComponent.hpp"
 #include "Systems/Input/InputSystem.hpp"
 #include "Systems/Renderer/OGL/Renderer.hpp"
 #include <GLFW/glfw3.h>
 
 void PlayerController::OnInput(double dt, Bored::InputEvent &event,
-                               std::shared_ptr<Bored::Node> node) {
+                               std::shared_ptr<Bored::Object> node) {
   if (event.type == Bored::InputType::KEY_DOWN ||
       event.type == Bored::InputType::KEY_REPEAT) {
     // auto movement_comp = node->GetComponent<MovementComponent>();
@@ -88,11 +87,11 @@ MazeScene::MazeScene() : asset_manager(Bored::AssetManager::GetInstance()) {
 
 void MazeScene::BuildScene() {
   // Building scene
-  std::shared_ptr<Bored::Node> root = CreateNode();
+  std::shared_ptr<Bored::Object> root = CreateNode();
   SetRoot(root);
 
   // Player node
-  std::shared_ptr<Bored::Node> player_node = CreateNode();
+  std::shared_ptr<Bored::Object> player_node = CreateNode();
   player_node->AddComponent<Bored::CameraComponent>(new Bored::Perspective(
       Bored::Perspective::GetFOV(1.0f, 2.0f), SCR_WIDTH, SCR_HEIGHT, 1.0f));
   // Player control
@@ -126,7 +125,7 @@ void MazeScene::BuildScene() {
   // Massive 10x10 floor
   for (int i = 0; i < 10; i++) {
     for (int j = 0; j < 10; j++) {
-      std::shared_ptr<Bored::Node> floor_tile = CreateNode();
+      std::shared_ptr<Bored::Object> floor_tile = CreateNode();
       auto &mesh_comp = floor_tile->AddComponent<Bored::MeshComponent>();
       mesh_comp.mesh = floor_tile_model->mesh;
       mesh_comp.material = floor_tile_model->material;
@@ -142,7 +141,7 @@ void MazeScene::BuildScene() {
 
   for (int i = 0; i < 10; i += 2) {
     for (int j = 0; j < 10; j += 2) {
-      std::shared_ptr<Bored::Node> wall = CreateNode();
+      std::shared_ptr<Bored::Object> wall = CreateNode();
       auto &mesh_comp = wall->AddComponent<Bored::MeshComponent>();
       mesh_comp.mesh = wall_model->mesh;
       mesh_comp.material = wall_model->material;
@@ -154,7 +153,7 @@ void MazeScene::BuildScene() {
   }
 
   // Lighting
-  std::shared_ptr<Bored::Node> dir_light_node = CreateNode();
+  std::shared_ptr<Bored::Object> dir_light_node = CreateNode();
   Bored::DirectionalLight &dir_light_comp =
       dir_light_node->AddComponent<Bored::DirectionalLight>();
   dir_light_comp.light_color = {1.0f, 1.0f, 1.0f};

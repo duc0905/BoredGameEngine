@@ -1,11 +1,12 @@
 // clang-format off
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+// clang-format on
+#include <gtest/gtest.h>
+
 #include <Components/InputComponent.hpp>
 #include <Scene/Scene.hpp>
 #include <Systems/Input/InputSystem.hpp>
-// clang-format on
-#include <gtest/gtest.h>
 #include <memory>
 #include <vector>
 
@@ -13,13 +14,12 @@
  * InputHandler that records every received event so tests can inspect them.
  */
 class RecordingHandler : public Bored::InputHandler {
-public:
-  virtual void OnInput(double dt, Bored::InputEvent &event,
-                       std::shared_ptr<Bored::Node> node) override {
+ public:
+  virtual void OnInput(double dt, Bored::InputEvent& event,
+                       std::shared_ptr<Bored::Object> node) override {
     events.push_back(event);
     last_dt = dt;
-    if (mark_handled)
-      event.handled = true;
+    if (mark_handled) event.handled = true;
   }
 
   std::vector<Bored::InputEvent> events;
@@ -28,7 +28,7 @@ public:
 };
 
 class InputSystemTest : public testing::Test {
-protected:
+ protected:
   static void SetUpTestSuite() {
     glfwInit();
     glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
@@ -67,11 +67,11 @@ protected:
     return scene;
   }
 
-  static GLFWwindow *m_window;
+  static GLFWwindow* m_window;
   std::unique_ptr<Bored::IOService> m_io;
   std::unique_ptr<Bored::Input> m_input;
 };
-GLFWwindow *InputSystemTest::m_window = nullptr;
+GLFWwindow* InputSystemTest::m_window = nullptr;
 
 ///////////// Key press detection //////////////
 

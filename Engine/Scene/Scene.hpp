@@ -9,7 +9,7 @@
 #include <functional>
 #include <memory>
 
-#include "Node.hpp"
+#include "Object.hpp"
 
 namespace Bored {
 /**
@@ -59,7 +59,7 @@ class Scene {
    */
   void GameLoop();
 
-  std::shared_ptr<Node> GetRoot();
+  std::shared_ptr<Object> GetRoot();
 
   /**
    * Set the root of the scene.
@@ -69,21 +69,21 @@ class Scene {
    *
    * @param new_root std::shared_ptr<Node> the new root to the scene.
    */
-  void SetRoot(std::shared_ptr<Node> new_root);
+  void SetRoot(std::shared_ptr<Object> new_root);
 
   /**
    * Initalize a new node associated with this scene.
    *
    * @return std::shared_ptr<Node> the newly created node.
    */
-  std::shared_ptr<Node> CreateNode();
+  std::shared_ptr<Object> CreateNode();
 
   /**
    * Returns the camera being used to render the scene.
    *
    * @return std::shared_ptr<Node> the node with Camera component being used.
    */
-  std::shared_ptr<Node> GetActiveCamera();
+  std::shared_ptr<Object> GetActiveCamera();
 
   /**
    * Set the camera to be used to render the scene.
@@ -93,7 +93,7 @@ class Scene {
    *
    * @todo Check if new_camera has a CameraComponent
    */
-  void SetActiveCamera(std::shared_ptr<Node> new_camera);
+  void SetActiveCamera(std::shared_ptr<Object> new_camera);
 
   /**
    * Traverse the scene tree.
@@ -101,7 +101,7 @@ class Scene {
    * Traverse from the root following DFS path. visitor is called upon the node
    * is visited.
    */
-  void TraverseForward(std::function<void(std::shared_ptr<Node>)> visitor);
+  void TraverseForward(std::function<void(std::shared_ptr<Object>)> visitor);
 
   /**
    * Traverse the scene tree.
@@ -109,7 +109,7 @@ class Scene {
    * Traverse from the root following DFS path. visitor is called after all
    * children are visited.
    */
-  void TraverseBackward(std::function<void(std::shared_ptr<Node>)> visitor);
+  void TraverseBackward(std::function<void(std::shared_ptr<Object>)> visitor);
 
   /**
    * Check if the scene should stop.
@@ -121,7 +121,7 @@ class Scene {
   std::vector<std::shared_ptr<I_System>> systems;
 
  protected:
-  std::shared_ptr<Node> root;
-  std::shared_ptr<Node> active_camera;
+  std::shared_ptr<Object> root;
+  std::shared_ptr<Object> active_camera;
 };
 }  // namespace Bored

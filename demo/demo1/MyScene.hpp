@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Systems/Input/IOService.hpp"
 #include <Components/InputComponent.hpp>
 #include <Scene/Scene.hpp>
 #include <Systems/Renderer/OGL/Renderer.hpp>
@@ -14,7 +13,7 @@ public:
 
 public:
   virtual void OnInput(double dt, Bored::InputEvent &event,
-                       std::shared_ptr<Bored::Node> node) override;
+                       std::shared_ptr<Bored::Object> node) override;
 };
 
 // settings

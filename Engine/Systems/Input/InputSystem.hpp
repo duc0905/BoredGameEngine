@@ -51,7 +51,7 @@ public:
 
     // Get all input components, and then do stuff
     for (auto &event : eventQueue) {
-      scene.Traverse([&event, dt](std::shared_ptr<Node> node) {
+      scene.TraverseForward([&event, dt](std::shared_ptr<Object> node) {
         if (event.handled)
           return;
 

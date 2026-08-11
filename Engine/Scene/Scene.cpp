@@ -1,7 +1,9 @@
 #include "Scene.hpp"
-#include "../Components/NodeComponent.hpp"
+
 #include <chrono>
 #include <stdexcept>
+
+#include "../Components/NodeComponent.hpp"
 
 namespace Bored {
 void Scene::Update(double dt) {
@@ -33,48 +35,44 @@ void Scene::GameLoop() {
   }
 }
 
-std::shared_ptr<Node> Scene::GetRoot() { return root; }
+std::shared_ptr<Object> Scene::GetRoot() { return root; }
 
-void Scene::SetRoot(std::shared_ptr<Node> new_root) {
+void Scene::SetRoot(std::shared_ptr<Object> new_root) {
   if (root) {
-    TraverseBackward([](std::shared_ptr<Node> node) {
+    TraverseBackward([](std::shared_ptr<Object> node) {
       node->is_in_scene = false;
       if (node->HasComponent<BehaviourComponent>()) {
-        auto &behaviourComp = node->GetComponent<BehaviourComponent>();
+        auto& behaviourComp = node->GetComponent<BehaviourComponent>();
 
-        if (behaviourComp.behaviour)
-          behaviourComp.behaviour->OnDetach();
+        if (behaviourComp.behaviour) behaviourComp.behaviour->OnDetach();
       }
     });
   }
 
   root = new_root;
-  TraverseForward([](std::shared_ptr<Node> node) {
+  TraverseForward([](std::shared_ptr<Object> node) {
     node->is_in_scene = true;
     if (node->HasComponent<BehaviourComponent>()) {
-      auto &behaviourComp = node->GetComponent<BehaviourComponent>();
+      auto& behaviourComp = node->GetComponent<BehaviourComponent>();
 
-      if (behaviourComp.behaviour)
-        behaviourComp.behaviour->OnAttach();
+      if (behaviourComp.behaviour) behaviourComp.behaviour->OnAttach();
     }
   });
 }
 
-std::shared_ptr<Node> Scene::CreateNode() {
-  std::shared_ptr<Node> node =
-      std::shared_ptr<Node>(new Node(*this, ecs_registry));
-  node->AddComponent<NodeComponent>(node);
+std::shared_ptr<Object> Scene::CreateNode() {
+  std::shared_ptr<Object> node = Object::Create(*this, ecs_registry);
   return node;
 }
 
-std::shared_ptr<Node> Scene::GetActiveCamera() { return active_camera; }
+std::shared_ptr<Object> Scene::GetActiveCamera() { return active_camera; }
 
-void Scene::SetActiveCamera(std::shared_ptr<Node> new_camera) {
+void Scene::SetActiveCamera(std::shared_ptr<Object> new_camera) {
   active_camera = new_camera;
 }
 
 void Scene::TraverseForward(
-    std::function<void(std::shared_ptr<Node>)> visitor) {
+    std::function<void(std::shared_ptr<Object>)> visitor) {
   if (!root) {
     std::cout << "[Warning]: Scene has no root" << std::endl;
     throw std::runtime_error("Scene has no root");
@@ -84,7 +82,7 @@ void Scene::TraverseForward(
 }
 
 void Scene::TraverseBackward(
-    std::function<void(std::shared_ptr<Node>)> visitor) {
+    std::function<void(std::shared_ptr<Object>)> visitor) {
   if (!root) {
     std::cout << "[Warning]: Scene has no root" << std::endl;
     throw std::runtime_error("Scene has no root");
@@ -101,4 +99,4 @@ bool Scene::ShouldStop() {
   return ret;
 }
 
-} // namespace Bored
+}  // namespace Bored
