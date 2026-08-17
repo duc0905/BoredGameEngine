@@ -50,7 +50,7 @@ std::pair<int, InputSystem::InputCtx&> InputSystem::CreateContext() {
 
 void InputSystem::SwitchContext(unsigned int ctx_idx) {
   // Get active context
-  if (active_ctx_idx >= contexts.size())
+  if (ctx_idx >= contexts.size())
     throw std::runtime_error("active input context index out of bound");
 
   active_ctx_idx = ctx_idx;

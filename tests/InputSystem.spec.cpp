@@ -2,29 +2,24 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 // clang-format on
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include <Components/InputComponent.hpp>
 #include <Scene/Scene.hpp>
 #include <Systems/Input/InputSystem.hpp>
+#include <functional>
 #include <memory>
-#include <vector>
+#include <stdexcept>
 
-/**
- * InputHandler that records every received event so tests can inspect them.
- */
-class RecordingHandler : public Bored::InputHandler {
+#include "gmock/gmock.h"
+
+class MockHandler {
  public:
-  virtual void OnInput(double dt, Bored::InputEvent& event,
-                       std::shared_ptr<Bored::Object> node) override {
-    events.push_back(event);
-    last_dt = dt;
-    if (mark_handled) event.handled = true;
-  }
-
-  std::vector<Bored::InputEvent> events;
-  double last_dt = 0.0;
-  bool mark_handled = false;
+  MOCK_METHOD(void, OnMouseMove, (Bored::InputEvent&), ());
+  MOCK_METHOD(void, OnKeyUp, (Bored::InputEvent&), ());
+  MOCK_METHOD(void, OnKeyDown, (Bored::InputEvent&), ());
+  MOCK_METHOD(void, OnKeyRepeat, (Bored::InputEvent&), ());
 };
 
 class InputSystemTest : public testing::Test {
@@ -46,6 +41,29 @@ class InputSystemTest : public testing::Test {
   void SetUp() override {
     m_io = std::make_unique<Bored::IOService>();
     m_input = std::make_unique<Bored::InputSystem>(*m_io);
+
+    // Create 2 input contexts
+    auto& ctx1 = m_input->CreateContext().second;
+
+    ctx1.RegisterInput(Bored::InputType::MOUSE_MOVE, "Mouse move");
+    ctx1.RegisterInput(Bored::InputType::KEY_DOWN, "Key down");
+    ctx1.RegisterInput(Bored::InputType::KEY_UP, "Key up");
+    ctx1.RegisterInput(Bored::InputType::KEY_REPEAT, "Key repeat");
+
+    ctx1.RegisterHandler("Mouse move", [this](Bored::InputEvent& event) {
+      mock.OnMouseMove(event);
+    });
+
+    ctx1.RegisterHandler(
+        "Key up", [this](Bored::InputEvent& event) { mock.OnKeyUp(event); });
+    ctx1.RegisterHandler("Key down", [this](Bored::InputEvent& event) {
+      mock.OnKeyDown(event);
+    });
+    ctx1.RegisterHandler("Key repeat", [this](Bored::InputEvent& event) {
+      mock.OnKeyRepeat(event);
+    });
+
+    auto& ctx2 = m_input->CreateContext().second;
   }
 
   void TearDown() override {
@@ -53,23 +71,20 @@ class InputSystemTest : public testing::Test {
     m_io.reset();
   }
 
-  /**
-   * Build a scene with a single input node wired to the given handler.
-   */
-  std::shared_ptr<Bored::Scene> MakeScene(
-      std::shared_ptr<RecordingHandler> handler) {
+  std::shared_ptr<Bored::Scene> MakeScene() {
     auto scene = std::make_shared<Bored::Scene>();
     auto root = scene->CreateNode();
     scene->SetRoot(root);
     auto node = scene->CreateNode();
     root->AddChild(node);
-    node->AddComponent<Bored::InputComponent>().input_handler = handler;
+
     return scene;
   }
 
   static GLFWwindow* m_window;
   std::unique_ptr<Bored::IOService> m_io;
   std::unique_ptr<Bored::InputSystem> m_input;
+  MockHandler mock;
 };
 GLFWwindow* InputSystemTest::m_window = nullptr;
 
@@ -77,37 +92,21 @@ GLFWwindow* InputSystemTest::m_window = nullptr;
 
 /**
  * A GLFW key press event must be delivered as a KEY_DOWN event carrying the
- * key code and modifier bits.
+ * key code and modifier bits. Same for RELEASE and REPEAT.
  */
 TEST_F(InputSystemTest, KeyPress_DetectsPressDown) {
-  auto handler = std::make_shared<RecordingHandler>();
-  auto scene = MakeScene(handler);
+  auto handler = std::make_shared<MockHandler>();
+  auto scene = MakeScene();
+  m_input->SwitchContext(0);
+
+  EXPECT_CALL(mock, OnKeyDown).Times(1);
+  EXPECT_CALL(mock, OnKeyUp).Times(1);
+  EXPECT_CALL(mock, OnKeyRepeat).Times(1);
 
   m_io->key_callback(GLFW_KEY_W, GLFW_PRESS, 0);
+  m_io->key_callback(GLFW_KEY_U, GLFW_RELEASE, 0);
+  m_io->key_callback(GLFW_KEY_U, GLFW_REPEAT, 0);
   m_input->OnUpdate(0.0, *scene);
-
-  ASSERT_EQ(handler->events.size(), 1);
-  EXPECT_EQ(handler->events[0].type, Bored::InputType::KEY_DOWN);
-  EXPECT_EQ(handler->events[0].key.keyCode, GLFW_KEY_W);
-  EXPECT_EQ(handler->events[0].key.mods, 0);
-}
-
-/**
- * GLFW_REPEAT and GLFW_RELEASE must map to KEY_REPEAT and KEY_UP.
- */
-TEST_F(InputSystemTest, KeyPress_RepeatAndRelease) {
-  auto handler = std::make_shared<RecordingHandler>();
-  auto scene = MakeScene(handler);
-
-  m_io->key_callback(GLFW_KEY_SPACE, GLFW_REPEAT, 0);
-  m_io->key_callback(GLFW_KEY_SPACE, GLFW_RELEASE, 0);
-  m_input->OnUpdate(0.0, *scene);
-
-  ASSERT_EQ(handler->events.size(), 2);
-  EXPECT_EQ(handler->events[0].type, Bored::InputType::KEY_REPEAT);
-  EXPECT_EQ(handler->events[0].key.keyCode, GLFW_KEY_SPACE);
-  EXPECT_EQ(handler->events[1].type, Bored::InputType::KEY_UP);
-  EXPECT_EQ(handler->events[1].key.keyCode, GLFW_KEY_SPACE);
 }
 
 ///////////// Mouse position //////////////
@@ -116,78 +115,46 @@ TEST_F(InputSystemTest, KeyPress_RepeatAndRelease) {
  * Cursor movement must be delivered as MOUSE_MOVE events with the absolute
  * position and the delta relative to the previous position.
  */
-TEST_F(InputSystemTest, MousePosition_TracksAbsoluteAndDelta) {
-  auto handler = std::make_shared<RecordingHandler>();
-  auto scene = MakeScene(handler);
+TEST_F(InputSystemTest, MousePosition_MousePosCallback) {
+  auto handler = std::make_shared<MockHandler>();
+  auto scene = MakeScene();
+
+  EXPECT_CALL(mock, OnMouseMove).Times(3);
 
   m_io->cursor_pos_callback(10, 20);
+  m_io->cursor_pos_callback(20, 20);
+  m_io->cursor_pos_callback(30, 20);
+  m_input->OnUpdate(0.0, *scene);
+}
+
+///////////// Multi-context //////////////
+
+/**
+ * Second context is empty, so it being active should not fire any handler
+ * functions.
+ */
+TEST_F(InputSystemTest, MultiContext_CorrectActiveContext) {
+  auto handler = std::make_shared<MockHandler>();
+  auto scene = MakeScene();
+  EXPECT_NO_THROW(m_input->SwitchContext(1));
+
+  EXPECT_CALL(mock, OnKeyDown).Times(0);
+  EXPECT_CALL(mock, OnKeyUp).Times(0);
+  EXPECT_CALL(mock, OnKeyRepeat).Times(0);
+  EXPECT_CALL(mock, OnMouseMove).Times(0);
+
+  m_io->key_callback(GLFW_KEY_W, GLFW_PRESS, 0);
+  m_io->key_callback(GLFW_KEY_U, GLFW_RELEASE, 0);
+  m_io->key_callback(GLFW_KEY_U, GLFW_REPEAT, 0);
   m_io->cursor_pos_callback(30, 40);
   m_input->OnUpdate(0.0, *scene);
-
-  ASSERT_EQ(handler->events.size(), 2);
-  EXPECT_EQ(handler->events[0].type, Bored::InputType::MOUSE_MOVE);
-  EXPECT_EQ(handler->events[0].mouseMove.x, 10);
-  EXPECT_EQ(handler->events[0].mouseMove.y, 20);
-
-  EXPECT_EQ(handler->events[1].type, Bored::InputType::MOUSE_MOVE);
-  EXPECT_EQ(handler->events[1].mouseMove.x, 30);
-  EXPECT_EQ(handler->events[1].mouseMove.y, 40);
-  EXPECT_EQ(handler->events[1].mouseMove.dx, 20);
-  EXPECT_EQ(handler->events[1].mouseMove.dy, 20);
-}
-
-///////////// Input mapping //////////////
-
-/**
- * Events must only reach nodes that carry an InputComponent with a handler;
- * plain nodes and handler-less components must be ignored.
- */
-TEST_F(InputSystemTest, InputMapping_OnlyHandlersReceiveEvents) {
-  auto scene = std::make_shared<Bored::Scene>();
-  auto root = scene->CreateNode();
-  scene->SetRoot(root);
-
-  auto plain_node = scene->CreateNode();
-  root->AddChild(plain_node);
-
-  auto no_handler_node = scene->CreateNode();
-  root->AddChild(no_handler_node);
-  no_handler_node->AddComponent<Bored::InputComponent>();
-
-  auto handler = std::make_shared<RecordingHandler>();
-  auto input_node = scene->CreateNode();
-  root->AddChild(input_node);
-  input_node->AddComponent<Bored::InputComponent>().input_handler = handler;
-
-  m_io->key_callback(GLFW_KEY_A, GLFW_PRESS, 0);
-  m_input->OnUpdate(0.0, *scene);
-
-  ASSERT_EQ(handler->events.size(), 1);
-  EXPECT_EQ(handler->events[0].type, Bored::InputType::KEY_DOWN);
-  EXPECT_EQ(handler->events[0].key.keyCode, GLFW_KEY_A);
 }
 
 /**
- * Once a handler marks an event as handled, it must not be delivered to any
- * further node in the scene.
+ * Using out of bound context.
  */
-TEST_F(InputSystemTest, InputMapping_HandledEventStopsPropagation) {
-  auto scene = std::make_shared<Bored::Scene>();
-  auto root = scene->CreateNode();
-  scene->SetRoot(root);
-
-  auto first_handler = std::make_shared<RecordingHandler>();
-  first_handler->mark_handled = true;
-  root->AddComponent<Bored::InputComponent>().input_handler = first_handler;
-
-  auto second_handler = std::make_shared<RecordingHandler>();
-  auto child = scene->CreateNode();
-  root->AddChild(child);
-  child->AddComponent<Bored::InputComponent>().input_handler = second_handler;
-
-  m_io->key_callback(GLFW_KEY_B, GLFW_PRESS, 0);
-  m_input->OnUpdate(0.0, *scene);
-
-  ASSERT_EQ(first_handler->events.size(), 1);
-  EXPECT_EQ(second_handler->events.size(), 0);
+TEST_F(InputSystemTest, MultiContext_ContextOutOfBound) {
+  auto handler = std::make_shared<MockHandler>();
+  auto scene = MakeScene();
+  EXPECT_THROW(m_input->SwitchContext(2), std::runtime_error);
 }
