@@ -3,6 +3,7 @@
 #include "../../../Components/Lighting.hpp"
 #include "../../../Components/MeshComponent.hpp"
 #include "../../../Components/TransformComponent.hpp"
+#include "../../../Components/NodeComponent.hpp"
 
 #include <format>
 #include <glm/matrix.hpp>
@@ -151,7 +152,7 @@ std::shared_ptr<I_Texture2D> Renderer::Render(Bored::Scene &scene) {
 
   for (auto &&[entity, node_comp, mesh_comp] : mesh_view.each()) {
     // Getting hierarchical transformation matrix
-    glm::mat4 model_mat = node_comp.node->GetGlobalTransformMatrix();
+    glm::mat4 model_mat = node_comp.self->GetGlobalTransformMatrix();
 
     auto mesh = mesh_comp.mesh;
     auto material = mesh_comp.material;

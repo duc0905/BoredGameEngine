@@ -13,7 +13,7 @@ const std::string resource_path = "demo/maze/res/";
 class PlayerController : public Bored::InputHandler {
 public:
   virtual void OnInput(double dt, Bored::InputEvent &event,
-                       std::shared_ptr<Bored::Node> node) override;
+                       std::shared_ptr<Bored::Object> node) override;
 
 private:
   float speed = 10.0f;

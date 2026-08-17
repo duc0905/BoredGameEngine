@@ -1,16 +1,15 @@
 #pragma once
 
-#include "../Components/NodeComponent.hpp"
 #include "../Systems/I_System.hpp"
 // clang-format off
 #include "../Systems/Input/IOService.hpp"
-#include "Node.hpp"
+// clang-format on
 #include <entt/entity/fwd.hpp>
 #include <entt/entity/registry.hpp>
 #include <functional>
-#include <iostream>
 #include <memory>
-#include <chrono>
+
+#include "Object.hpp"
 
 namespace Bored {
 /**
@@ -31,10 +30,10 @@ struct SceneContext {
  * Write me later
  */
 class Scene {
-public:
+ public:
   entt::registry ecs_registry;
 
-public:
+ public:
   Scene() {}
   virtual ~Scene() = default;
 
@@ -53,79 +52,76 @@ public:
   /**
    * Function called on every frames.
    */
-  virtual void Update(double dt) {
-    for (auto system : systems) {
-      system->OnUpdate(dt, *this);
-    }
-  }
+  virtual void Update(double dt);
 
   /**
    * The game loop.
    */
-  void GameLoop() {
-    bool running = true;
-    std::chrono::steady_clock::time_point prev = std::chrono::steady_clock::now();
+  void GameLoop();
 
-    // Main loop
-    while (running) {
-      std::chrono::steady_clock::time_point now =
-        std::chrono::steady_clock::now();
+  std::shared_ptr<Object> GetRoot();
 
-      // Elapsed time since last frame in seconds
-      float dt = std::chrono::duration_cast<std::chrono::milliseconds>(now - prev)
-        .count() /
-        1000.0f;
+  /**
+   * Set the root of the scene.
+   *
+   * Only replace the root of the scene with new_root. The old root is not
+   * explicitly deleted and is still usable.
+   *
+   * @param new_root std::shared_ptr<Node> the new root to the scene.
+   */
+  void SetRoot(std::shared_ptr<Object> new_root);
 
-      // Update scene here
-      Update(dt);
+  /**
+   * Initalize a new node associated with this scene.
+   *
+   * @return std::shared_ptr<Node> the newly created node.
+   */
+  std::shared_ptr<Object> CreateNode();
 
-      running &= !ShouldStop();
+  /**
+   * Returns the camera being used to render the scene.
+   *
+   * @return std::shared_ptr<Node> the node with Camera component being used.
+   */
+  std::shared_ptr<Object> GetActiveCamera();
 
-      prev = now;
-    }
-  }
+  /**
+   * Set the camera to be used to render the scene.
+   *
+   * @param std::shared_ptr<Node> the node to be used as the camera. Make sure
+   * to have a CameraComponent.
+   *
+   * @todo Check if new_camera has a CameraComponent
+   */
+  void SetActiveCamera(std::shared_ptr<Object> new_camera);
 
-  std::shared_ptr<Node> GetRoot() { return root; }
+  /**
+   * Traverse the scene tree.
+   *
+   * Traverse from the root following DFS path. visitor is called upon the node
+   * is visited.
+   */
+  void TraverseForward(std::function<void(std::shared_ptr<Object>)> visitor);
 
-  void SetRoot(std::shared_ptr<Node> new_root) { root = new_root; }
+  /**
+   * Traverse the scene tree.
+   *
+   * Traverse from the root following DFS path. visitor is called after all
+   * children are visited.
+   */
+  void TraverseBackward(std::function<void(std::shared_ptr<Object>)> visitor);
 
-  std::shared_ptr<Node> CreateNode() {
-    std::shared_ptr<Node> node =
-        std::shared_ptr<Node>(new Node(*this, ecs_registry));
-    node->AddComponent<NodeComponent>(node);
-    return node;
-  }
+  /**
+   * Check if the scene should stop.
+   */
+  bool ShouldStop();
 
-  std::shared_ptr<Node> GetActiveCamera() { return active_camera; }
-
-  void SetActiveCamera(std::shared_ptr<Node> new_camera) {
-    active_camera = new_camera;
-  }
-
-  void Traverse(std::function<void(std::shared_ptr<Node>)> visitor) {
-    if (!root) {
-      std::cout << "[Warning]: Scene has no root" << std::endl;
-      return;
-    }
-
-    visitor(root);
-    root->Traverse(visitor);
-  }
-
-  bool ShouldStop() {
-    bool ret = false;
-    for (auto system : systems) {
-      ret |= system->ShouldStop(*this);
-    }
-    return ret;
-  }
-
-public:
+ public:
   SceneContext context;
   std::vector<std::shared_ptr<I_System>> systems;
 
-protected:
-  std::shared_ptr<Node> root;
-  std::shared_ptr<Node> active_camera;
+ protected:
+  std::shared_ptr<Object> root;
+  std::shared_ptr<Object> active_camera;
 };
-} // namespace Bored
+}  // namespace Bored

@@ -1,8 +1,5 @@
 #pragma once
 
-#include <memory>
-#include "../Scene/Node.hpp"
-
 namespace Bored {
 enum class InputType {
   KEY_DOWN,
@@ -41,12 +38,12 @@ struct InputEvent {
   };
 };
 
-class InputHandler {
-public:
-  virtual void OnInput(double dt, InputEvent &event, std::shared_ptr<Node> node) = 0;
-};
-
-struct InputComponent {
-  std::shared_ptr<InputHandler> input_handler;
-};
+// class InputHandler {
+// public:
+//   virtual void OnInput(double dt, InputEvent &event, std::shared_ptr<Object> node) = 0;
+// };
+//
+// struct InputComponent {
+//   std::shared_ptr<InputHandler> input_handler;
+// };
 } // namespace Bored
