@@ -6,6 +6,7 @@
 #include <functional>
 #include <memory>
 #include <stdexcept>
+#include <type_traits>
 
 #include "../Components/BehaviourComponent.hpp"
 #include "../Components/NodeComponent.hpp"
@@ -76,6 +77,14 @@ struct Object : public std::enable_shared_from_this<Object> {
       child->node.parent = nullptr;
       node.children.erase(it);
     }
+  }
+
+  template <typename Behav, typename... Args,
+            std::enable_if_t<std::is_base_of_v<Behaviour, Behav>, bool> = true>
+  std::shared_ptr<Behav> CreateBehaviour(Args&&... args) {
+    std::shared_ptr<Behav> behav = std::shared_ptr<Behav>(new Behav(args...));
+    behav->obj = shared_from_this();
+    return behav;
   }
 
   /**
@@ -178,7 +187,8 @@ struct Object : public std::enable_shared_from_this<Object> {
         node(registry.emplace<Bored::NodeComponent>(id)) {}
 
   // NOTE: Have to use Scene to create a node.
-  static std::shared_ptr<Object> Create(Scene& scene, entt::registry& registry) {
+  static std::shared_ptr<Object> Create(Scene& scene,
+                                        entt::registry& registry) {
     auto obj = std::shared_ptr<Object>(new Object(scene, registry));
     obj->node.self = obj->shared_from_this();
     return obj;

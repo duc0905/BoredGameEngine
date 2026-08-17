@@ -1,19 +1,22 @@
 #pragma once
 
+#include <map>
+
 #include "../../Components/InputComponent.hpp"
 #include "../I_System.hpp"
 #include "IOService.hpp"
 
 namespace Bored {
 /**
- * A class for handling input from different sources using a simple design.
+ * A class for handling physical input from different sources using context
+ * mapping input handling.
  *
- * An input event is mapped to a "action". An action can have a handler. The
+ * An input event is mapped to an "action". An action can have a handler. The
  * user can define the mapping between the input event and the action and the
  * mapping between the action and the handler.
  *
- * Different inputs can be mapped to the same action, which will be handled by
- * the same handler.
+ * A context contains a mapping between physical input and an action and a
+ * mapping between an action and its funciton handler.
  *
  * @todo handles text input, scroll input, custom USB/Wifi/Bluetooth input.
  *
@@ -27,13 +30,54 @@ class InputSystem : public I_System {
 
   ~InputSystem() = default;
 
+  // Mapping physical event to action name
+  typedef std::map<InputType, std::string> InputActionMap;
+
+  typedef std::function<void(InputEvent&)> InputHandler;
+
+  // Mapping action to function handler
+  // @todo Debate whether InputEvent should be passed to function handler
+  // everytime.
+  typedef std::map<std::string, InputHandler> ActionHandlerMap;
+
+  class InputCtx {
+    friend class InputSystem;
+
+   public:
+    void RegisterInput(InputType type, const std::string& action) {
+      itoa_map.insert({type, action});
+    }
+
+    void RegisterHandler(const std::string& action, InputHandler handler) {
+      atoh_map.insert({action, handler});
+    }
+
+   private:
+    InputActionMap itoa_map;
+    ActionHandlerMap atoh_map;
+  };
+
   /**
    * Handles the event.
    *
-   * Allowing user to use/define the input handling system suitable for their
-   * purpose per scene. Default: no handling.
+   * Use Context mapping for handling input event.
    */
-  virtual void HandleInputEvents(std::vector<InputEvent>& events) {}
+  void HandleInputEvents(std::vector<InputEvent>& events);
+
+  /**
+   * Create a new input context.
+   *
+   * @return the index of the newly created context and the reference to the
+   * context.
+   */
+  std::pair<int, InputCtx&> CreateContext();
+
+  /**
+   * Change the active input context.
+   *
+   * @param ctx_idx uint the index of the new context.
+   */
+  void SwitchContext(unsigned int ctx_idx);
 
   /**
    * Dispatch the input events to the scene tree from root.
@@ -96,6 +140,10 @@ class InputSystem : public I_System {
 
  private:
   int prev_cursor_pos_x, prev_cursor_pos_y;
+
+ private:  // Context mapping input handling design
+  std::vector<InputCtx> contexts;
+  unsigned int active_ctx_idx = 0;
 };
 
 }  // namespace Bored

@@ -18,6 +18,7 @@ class Object;
  */
 class Behaviour {
   friend class BehaviourSystem;
+  friend class Object;
 
 public:
   virtual ~Behaviour() {}
@@ -56,7 +57,9 @@ protected:
   template <typename T, typename... Args> T &AddComponent(Args &&...args);
 
 protected:
-  std::shared_ptr<Object> node; /*< Reference to the object this belongs to. */
+  std::shared_ptr<Object> obj; /*< Reference to the object this belongs to. */
+protected:
+  Behaviour() = default;
 };
 
 /**

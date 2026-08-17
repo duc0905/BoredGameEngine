@@ -6,6 +6,7 @@
 #include "Gravity.hpp"
 #include "Scene/Object.hpp"
 #include "Systems/I_System.hpp"
+#include "Systems/Input/ContextMappingInputSystem.hpp"
 #include "Systems/Input/InputSystem.hpp"
 #include "Systems/Renderer/OGL/Renderer.hpp"
 #include "Utils/AssetManager.hpp"
@@ -17,7 +18,8 @@ MyScene::MyScene() {
   systems.push_back(renderer);
 
   // Setup input system
-  std::shared_ptr<Bored::Input> input = std::make_shared<Bored::Input>(*io);
+  std::shared_ptr<Bored::InputSystem> input =
+      std::make_shared<Bored::ContextMappingInputSystem>(*io);
   systems.push_back(input);
 
   // Populate the services into scene context

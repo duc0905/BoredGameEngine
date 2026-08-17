@@ -81,7 +81,7 @@ MazeScene::MazeScene() : asset_manager(Bored::AssetManager::GetInstance()) {
   systems.push_back(renderer);
 
   // Setup input system
-  std::shared_ptr<Bored::Input> input = std::make_shared<Bored::Input>(*context.io);
+  std::shared_ptr<Bored::InputSystem> input = std::make_shared<Bored::InputSystem>(*context.io);
   systems.push_back(input);
 }
 

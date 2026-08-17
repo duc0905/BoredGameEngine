@@ -9,6 +9,7 @@ find_package(OpenMP)
 set(ENGINE_SOURCE_FILES
   Scene/Scene.cpp
   Systems/Input/IOService.cpp
+  Systems/Input/InputSystem.cpp
   Systems/BehaviourSystem.cpp
   Systems/Renderer/Shader/Shader.cpp
   Systems/Renderer/OGL/Renderer.cpp

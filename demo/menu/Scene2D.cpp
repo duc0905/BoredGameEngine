@@ -13,8 +13,8 @@ Scene2D::Scene2D(const std::string &font_filepath, unsigned short glyph_idx) {
   systems.push_back(renderer);
 
   // Setup input system
-  std::shared_ptr<Bored::Input> input =
-      std::make_shared<Bored::Input>(*context.io);
+  std::shared_ptr<Bored::InputSystem> input =
+      std::make_shared<Bored::InputSystem>(*context.io);
   systems.push_back(input);
 
   Bored::AssetManager &am = Bored::AssetManager::GetInstance();

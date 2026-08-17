@@ -45,7 +45,7 @@ class InputSystemTest : public testing::Test {
 
   void SetUp() override {
     m_io = std::make_unique<Bored::IOService>();
-    m_input = std::make_unique<Bored::Input>(*m_io);
+    m_input = std::make_unique<Bored::InputSystem>(*m_io);
   }
 
   void TearDown() override {
@@ -69,7 +69,7 @@ class InputSystemTest : public testing::Test {
 
   static GLFWwindow* m_window;
   std::unique_ptr<Bored::IOService> m_io;
-  std::unique_ptr<Bored::Input> m_input;
+  std::unique_ptr<Bored::InputSystem> m_input;
 };
 GLFWwindow* InputSystemTest::m_window = nullptr;
 

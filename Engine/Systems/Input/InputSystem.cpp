@@ -1,5 +1,3 @@
-#pragma once
-
 #include "InputSystem.hpp"
 
 #include <functional>
@@ -24,6 +22,38 @@ InputSystem::InputSystem(IOService& io_service) : input_service(io_service) {
   io_service.SetMouseButtonHandler(
       std::bind(&InputSystem::HandleMouseButton, this, std::placeholders::_1,
                 std::placeholders::_2, std::placeholders::_3));
+}
+
+void InputSystem::HandleInputEvents(std::vector<InputEvent>& events) {
+  // Get active context
+  if (active_ctx_idx >= contexts.size())
+    throw std::runtime_error("active input context index out of bound");
+
+  InputCtx& context = contexts[active_ctx_idx];
+
+  for (auto& e : events) {
+    if (context.itoa_map.contains(e.type)) {
+      auto& action = context.itoa_map[e.type];
+
+      if (context.atoh_map.contains(action)) {
+        auto& handler = context.atoh_map[action];
+        handler(e);
+      }
+    }  // else: physical input not mapped in this context.
+  }
+}
+
+std::pair<int, InputSystem::InputCtx&> InputSystem::CreateContext() {
+  auto& new_ctx = contexts.emplace_back();
+  return {contexts.size() - 1, new_ctx};
+}
+
+void InputSystem::SwitchContext(unsigned int ctx_idx) {
+  // Get active context
+  if (active_ctx_idx >= contexts.size())
+    throw std::runtime_error("active input context index out of bound");
+
+  active_ctx_idx = ctx_idx;
 }
 
 void InputSystem::OnUpdate(double dt, Scene& scene) {
